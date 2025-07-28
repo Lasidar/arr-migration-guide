@@ -1,0 +1,9 @@
+[submodule "sonarr"]
+	path = sonarr
+	url = https://github.com/Sonarr/Sonarr.git
+[submodule "lidarr"]
+	path = lidarr
+	url = https://github.com/Lidarr/Lidarr.git
+[submodule "readarr"]
+	path = readarr
+	url = https://github.com/Readarr/Readarr.git
