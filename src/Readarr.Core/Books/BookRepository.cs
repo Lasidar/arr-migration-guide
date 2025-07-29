@@ -22,6 +22,7 @@ namespace Readarr.Core.Books
         List<Book> AuthorBooksBetweenDates(Author author, System.DateTime startDate, System.DateTime endDate, bool includeUnmonitored);
         void SetBookMonitored(int bookId, bool monitored);
         void SetBooksMonitored(List<int> bookIds, bool monitored);
+        PagingSpec<Book> BooksWithoutFiles(PagingSpec<Book> pagingSpec);
     }
 
     public class BookRepository : BasicRepository<Book>, IBookRepository
@@ -158,6 +159,22 @@ namespace Readarr.Core.Books
         public void SetBooksMonitored(List<int> bookIds, bool monitored)
         {
             SetMonitoredFlagForBooks(bookIds, monitored);
+        }
+
+        public PagingSpec<Book> BooksWithoutFiles(PagingSpec<Book> pagingSpec)
+        {
+            // This would need to be implemented with proper paging logic
+            // For now, return a simple implementation
+            var allBooksWithoutFiles = Query(b => b.Editions.All(e => e.BookFileId == 0)).ToList();
+            
+            pagingSpec.Records = allBooksWithoutFiles
+                .Skip((pagingSpec.Page - 1) * pagingSpec.PageSize)
+                .Take(pagingSpec.PageSize)
+                .ToList();
+            
+            pagingSpec.TotalRecords = allBooksWithoutFiles.Count;
+            
+            return pagingSpec;
         }
     }
 }
