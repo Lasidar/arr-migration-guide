@@ -1,3 +1,4 @@
+using Dapper;
 using NLog;
 using Readarr.Core.Datastore;
 
@@ -21,31 +22,31 @@ namespace Readarr.Core.Housekeeping.Housekeepers
             using var mapper = _database.OpenConnection();
 
             // Delete author metadata not linked to any authors
-            mapper.ExecuteNonQuery(@"DELETE FROM ""AuthorMetadata""
+            mapper.Execute(@"DELETE FROM ""AuthorMetadata""
                                      WHERE ""Id"" NOT IN (
                                          SELECT DISTINCT ""AuthorMetadataId"" FROM ""Authors""
                                      )");
 
             // Delete book metadata not linked to any books
-            mapper.ExecuteNonQuery(@"DELETE FROM ""BookMetadata""
+            mapper.Execute(@"DELETE FROM ""BookMetadata""
                                      WHERE ""Id"" NOT IN (
                                          SELECT DISTINCT ""BookMetadataId"" FROM ""Books""
                                      )");
 
             // Delete editions not linked to any books
-            mapper.ExecuteNonQuery(@"DELETE FROM ""Editions""
+            mapper.Execute(@"DELETE FROM ""Editions""
                                      WHERE ""BookId"" NOT IN (
                                          SELECT DISTINCT ""Id"" FROM ""Books""
                                      )");
 
             // Delete series book links where the book doesn't exist
-            mapper.ExecuteNonQuery(@"DELETE FROM ""SeriesBookLink""
+            mapper.Execute(@"DELETE FROM ""SeriesBookLink""
                                      WHERE ""BookId"" NOT IN (
                                          SELECT DISTINCT ""Id"" FROM ""Books""
                                      )");
 
             // Delete series book links where the series doesn't exist
-            mapper.ExecuteNonQuery(@"DELETE FROM ""SeriesBookLink""
+            mapper.Execute(@"DELETE FROM ""SeriesBookLink""
                                      WHERE ""SeriesId"" NOT IN (
                                          SELECT DISTINCT ""Id"" FROM ""Series""
                                      )");

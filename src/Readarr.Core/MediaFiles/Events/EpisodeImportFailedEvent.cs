@@ -21,7 +21,13 @@ namespace Readarr.Core.MediaFiles.Events
 
             if (downloadClientItem != null)
             {
-                DownloadClientInfo = downloadClientItem.DownloadClientInfo;
+                DownloadClientInfo = new DownloadClientItemClientInfo
+                {
+                    Protocol = downloadClientItem.DownloadClientInfo.Type == DownloadClientType.Usenet ? DownloadProtocol.Usenet : DownloadProtocol.Torrent,
+                    Type = downloadClientItem.DownloadClientInfo.Type.ToString(),
+                    Id = 0, // TODO: Get actual download client ID
+                    Name = downloadClientItem.DownloadClientInfo.Name
+                };
                 DownloadId = downloadClientItem.DownloadId;
             }
         }

@@ -405,7 +405,7 @@ namespace Readarr.Core.MetadataSource.BookInfo
             return new Ratings
             {
                 Votes = resource.Count,
-                Value = resource.Value,
+                Value = (decimal)resource.Value,
                 Popularity = resource.Popularity ?? 0
             };
         }
@@ -418,7 +418,8 @@ namespace Readarr.Core.MetadataSource.BookInfo
                     return AuthorStatusType.Continuing;
                 case "ended":
                 case "dead":
-                    return AuthorStatusType.Ended;
+                case "deceased":
+                    return AuthorStatusType.Deceased;
                 default:
                     return AuthorStatusType.Continuing;
             }
