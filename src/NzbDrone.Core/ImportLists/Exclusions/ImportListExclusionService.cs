@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Tv.Events;
+using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.ImportLists.Exclusions
 {

@@ -9,7 +9,7 @@ using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
 {

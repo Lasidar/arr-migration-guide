@@ -4,7 +4,7 @@ using NUnit.Framework;
 using NzbDrone.Core.DataAugmentation.Scene;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Test.Framework;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
 {

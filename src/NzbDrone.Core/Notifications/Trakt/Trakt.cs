@@ -10,7 +10,7 @@ using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.Notifications.Trakt.Resource;
 using NzbDrone.Core.Qualities;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Trakt

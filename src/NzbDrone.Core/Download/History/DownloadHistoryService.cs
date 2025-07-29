@@ -5,7 +5,7 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Core.History;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Tv.Events;
+using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.Download.History
 {

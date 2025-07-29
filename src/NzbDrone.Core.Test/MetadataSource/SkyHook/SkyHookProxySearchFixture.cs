@@ -4,7 +4,7 @@ using NUnit.Framework;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.MetadataSource.SkyHook;
 using NzbDrone.Core.Test.Framework;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using NzbDrone.Test.Common;
 using NzbDrone.Test.Common.Categories;
 

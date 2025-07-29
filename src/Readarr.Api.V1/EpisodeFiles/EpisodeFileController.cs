@@ -13,7 +13,7 @@ using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using NzbDrone.SignalR;
 using Readarr.Http;
 using Readarr.Http.REST;

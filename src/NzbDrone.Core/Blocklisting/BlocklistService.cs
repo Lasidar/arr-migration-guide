@@ -8,7 +8,7 @@ using NzbDrone.Core.Indexers;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Tv.Events;
+using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.Blocklisting
 {

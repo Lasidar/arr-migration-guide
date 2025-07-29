@@ -1,7 +1,7 @@
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaCover;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using Readarr.Http.REST;
 
 namespace Readarr.Api.V5.Series;

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Organizer;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using Readarr.Http;
 
 namespace Readarr.Api.V5.Series;

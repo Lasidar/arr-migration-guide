@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.DecisionEngine.Specifications;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using NzbDrone.SignalR;
 using Readarr.Http;
 using Readarr.Http.REST;

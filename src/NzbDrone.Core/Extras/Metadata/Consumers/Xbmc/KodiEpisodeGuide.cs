@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 {

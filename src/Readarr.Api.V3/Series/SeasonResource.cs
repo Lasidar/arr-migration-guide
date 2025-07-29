@@ -1,5 +1,5 @@
 using NzbDrone.Core.MediaCover;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace Readarr.Api.V5.Series;
 

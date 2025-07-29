@@ -7,7 +7,7 @@ using NzbDrone.Core.Indexers;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Qualities;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using Readarr.Api.V3.CustomFormats;
 using Readarr.Api.V3.Series;
 using Readarr.Http.REST;

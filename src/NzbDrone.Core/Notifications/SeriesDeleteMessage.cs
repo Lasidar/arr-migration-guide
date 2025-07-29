@@ -1,4 +1,4 @@
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Notifications
 {

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace Readarr.Api.V3.SeasonPass
 {

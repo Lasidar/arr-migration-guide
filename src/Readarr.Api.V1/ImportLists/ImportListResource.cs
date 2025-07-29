@@ -1,6 +1,6 @@
 using System;
 using NzbDrone.Core.ImportLists;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace Readarr.Api.V3.ImportLists
 {

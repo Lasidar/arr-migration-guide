@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using FluentValidation.Results;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.ThingiProvider;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Notifications
 {

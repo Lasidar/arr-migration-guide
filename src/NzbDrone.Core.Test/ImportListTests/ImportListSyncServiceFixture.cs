@@ -11,7 +11,7 @@ using NzbDrone.Core.ImportLists.ImportListItems;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Test.Framework;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Test.ImportListTests
 {

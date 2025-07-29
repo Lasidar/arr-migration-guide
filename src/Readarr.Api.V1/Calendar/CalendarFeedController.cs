@@ -8,7 +8,7 @@ using Ical.Net.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Tags;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using Readarr.Http;
 
 namespace Readarr.Api.V3.Calendar

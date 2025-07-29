@@ -7,7 +7,7 @@ using NzbDrone.Common.Disk;
 using NzbDrone.Core.DiskSpace;
 using NzbDrone.Core.RootFolders;
 using NzbDrone.Core.Test.Framework;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using NzbDrone.Test.Common;
 
 namespace NzbDrone.Core.Test.DiskSpace

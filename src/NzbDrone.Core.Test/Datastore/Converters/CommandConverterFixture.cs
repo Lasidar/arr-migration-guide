@@ -4,7 +4,7 @@ using NUnit.Framework;
 using NzbDrone.Core.Datastore.Converters;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Test.Framework;
-using NzbDrone.Core.Tv.Commands;
+using NzbDrone.Core.Books.Commands;
 
 namespace NzbDrone.Core.Test.Datastore.Converters
 {

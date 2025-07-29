@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using NzbDrone.Core.Parser;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Housekeeping.Housekeepers
 {

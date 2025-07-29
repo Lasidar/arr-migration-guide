@@ -4,8 +4,8 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Messaging.Commands;
-using NzbDrone.Core.Tv;
-using NzbDrone.Core.Tv.Commands;
+using NzbDrone.Core.Books;
+using NzbDrone.Core.Books.Commands;
 using Readarr.Http;
 
 namespace Readarr.Api.V3.Series

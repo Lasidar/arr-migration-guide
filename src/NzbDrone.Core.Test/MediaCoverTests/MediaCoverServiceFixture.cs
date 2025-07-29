@@ -9,8 +9,8 @@ using NzbDrone.Common.Disk;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Test.Framework;
-using NzbDrone.Core.Tv;
-using NzbDrone.Core.Tv.Events;
+using NzbDrone.Core.Books;
+using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.Test.MediaCoverTests
 {

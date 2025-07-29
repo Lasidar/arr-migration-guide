@@ -1,6 +1,6 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using Readarr.Http;
 
 namespace Readarr.Api.V3.SeasonPass

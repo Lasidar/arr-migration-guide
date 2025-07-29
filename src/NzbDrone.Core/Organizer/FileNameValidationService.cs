@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using FluentValidation.Results;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Organizer
 {

@@ -5,7 +5,7 @@ using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.DataAugmentation.Scene;
 using NzbDrone.Core.Download.Clients;
 using NzbDrone.Core.Languages;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Parser.Model
 {

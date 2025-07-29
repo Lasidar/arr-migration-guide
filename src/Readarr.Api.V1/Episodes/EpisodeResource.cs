@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using NzbDrone.Core.MediaCover;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using Readarr.Api.V3.EpisodeFiles;
 using Readarr.Api.V3.Series;
 using Readarr.Http.REST;

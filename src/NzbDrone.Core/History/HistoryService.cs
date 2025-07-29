@@ -10,7 +10,7 @@ using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Tv.Events;
+using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.History
 {

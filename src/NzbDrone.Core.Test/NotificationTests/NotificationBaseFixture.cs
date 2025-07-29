@@ -5,7 +5,7 @@ using FluentValidation.Results;
 using NUnit.Framework;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Notifications;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using NzbDrone.Core.Validation;
 using NzbDrone.Test.Common;
 

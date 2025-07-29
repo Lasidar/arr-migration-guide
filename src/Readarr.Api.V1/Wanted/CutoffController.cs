@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.DecisionEngine.Specifications;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using NzbDrone.SignalR;
 using Readarr.Api.V3.Episodes;
 using Readarr.Http;

@@ -10,8 +10,8 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Tv;
-using NzbDrone.Core.Tv.Events;
+using NzbDrone.Core.Books;
+using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.MediaCover
 {

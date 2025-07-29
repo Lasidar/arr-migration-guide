@@ -11,8 +11,8 @@ using NzbDrone.Core.History;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Tv;
-using NzbDrone.Core.Tv.Events;
+using NzbDrone.Core.Books;
+using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.Download.TrackedDownloads
 {

@@ -5,8 +5,8 @@ using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Core.DataAugmentation.Scene;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Tv;
-using NzbDrone.Core.Tv.Events;
+using NzbDrone.Core.Books;
+using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.DataAugmentation.Xem
 {

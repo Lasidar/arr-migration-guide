@@ -8,7 +8,7 @@ using NzbDrone.Core.Localization;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.RootFolders;
 using NzbDrone.Core.ThingiProvider.Events;
-using NzbDrone.Core.Tv.Events;
+using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.HealthCheck.Checks
 {

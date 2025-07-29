@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using NzbDrone.Common.Messaging;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.MediaFiles.Events
 {

@@ -1,5 +1,5 @@
 ﻿using System;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Notifications.Webhook
 {

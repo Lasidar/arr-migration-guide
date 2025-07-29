@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using NzbDrone.Common.Disk;
 using NzbDrone.Core.Localization;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.HealthCheck.Checks
 {

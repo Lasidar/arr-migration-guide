@@ -3,7 +3,7 @@ using System.IO;
 using NLog;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.MediaFiles.EpisodeImport
 {

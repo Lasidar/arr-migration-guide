@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using NzbDrone.Core.DataAugmentation.Scene;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.IndexerSearch.Definitions
 {

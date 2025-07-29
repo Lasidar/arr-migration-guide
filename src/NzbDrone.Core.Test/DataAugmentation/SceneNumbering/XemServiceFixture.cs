@@ -8,8 +8,8 @@ using NUnit.Framework;
 using NzbDrone.Core.DataAugmentation.Xem;
 using NzbDrone.Core.DataAugmentation.Xem.Model;
 using NzbDrone.Core.Test.Framework;
-using NzbDrone.Core.Tv;
-using NzbDrone.Core.Tv.Events;
+using NzbDrone.Core.Books;
+using NzbDrone.Core.Books.Events;
 using NzbDrone.Test.Common;
 
 namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering

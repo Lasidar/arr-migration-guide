@@ -6,7 +6,7 @@ using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using NzbDrone.SignalR;
 using Readarr.Api.V3.EpisodeFiles;
 using Readarr.Api.V3.Series;

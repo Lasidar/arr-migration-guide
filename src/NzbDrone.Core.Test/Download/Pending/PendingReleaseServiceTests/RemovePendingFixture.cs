@@ -8,7 +8,7 @@ using NzbDrone.Core.Download.Pending;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Test.Framework;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
 {

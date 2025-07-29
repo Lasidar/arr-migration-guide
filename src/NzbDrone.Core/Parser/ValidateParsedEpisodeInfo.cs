@@ -1,7 +1,7 @@
 using NLog;
 using NzbDrone.Common.Instrumentation;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Parser
 {

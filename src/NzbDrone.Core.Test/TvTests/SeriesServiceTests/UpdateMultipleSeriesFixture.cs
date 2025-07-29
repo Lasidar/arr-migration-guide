@@ -8,7 +8,7 @@ using NUnit.Framework;
 using NzbDrone.Core.AutoTagging;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Test.Framework;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 using NzbDrone.Test.Common;
 
 namespace NzbDrone.Core.Test.TvTests.SeriesServiceTests

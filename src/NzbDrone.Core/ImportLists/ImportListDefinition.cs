@@ -1,7 +1,7 @@
 using System;
 using Equ;
 using NzbDrone.Core.ThingiProvider;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.ImportLists
 {
