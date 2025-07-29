@@ -65,32 +65,32 @@ namespace Readarr.Core.DecisionEngine
 
         private int CompareIndexerPriority(DownloadDecision x, DownloadDecision y)
         {
-            return CompareByReverse(x.RemoteEpisode.Release, y.RemoteEpisode.Release, release => release.IndexerPriority);
+            return CompareByReverse(x.RemoteBook.Release, y.RemoteBook.Release, release => release.IndexerPriority);
         }
 
         private int CompareQuality(DownloadDecision x, DownloadDecision y)
         {
             if (_configService.DownloadPropersAndRepacks == ProperDownloadTypes.DoNotPrefer)
             {
-                return CompareBy(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode => remoteEpisode.Series.QualityProfile.Value.GetIndex(remoteEpisode.ParsedEpisodeInfo.Quality.Quality));
+                return CompareBy(x.RemoteBook, y.RemoteBook, remoteBook => remoteBook.Author.QualityProfile.Value.GetIndex(remoteBook.ParsedBookInfo.Quality.Quality));
             }
 
             return CompareAll(
-                CompareBy(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode => remoteEpisode.Series.QualityProfile.Value.GetIndex(remoteEpisode.ParsedEpisodeInfo.Quality.Quality)),
-                CompareBy(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode => remoteEpisode.ParsedEpisodeInfo.Quality.Revision));
+                CompareBy(x.RemoteBook, y.RemoteBook, remoteBook => remoteBook.Author.QualityProfile.Value.GetIndex(remoteBook.ParsedBookInfo.Quality.Quality)),
+                CompareBy(x.RemoteBook, y.RemoteBook, remoteBook => remoteBook.ParsedBookInfo.Quality.Revision));
         }
 
         private int CompareCustomFormatScore(DownloadDecision x, DownloadDecision y)
         {
-            return CompareBy(x.RemoteEpisode, y.RemoteEpisode, remoteMovie => remoteMovie.CustomFormatScore);
+            return CompareBy(x.RemoteBook, y.RemoteBook, remoteBook => remoteBook.CustomFormatScore);
         }
 
         private int CompareProtocol(DownloadDecision x, DownloadDecision y)
         {
-            var result = CompareBy(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode =>
+            var result = CompareBy(x.RemoteBook, y.RemoteBook, remoteBook =>
             {
-                var delayProfile = _delayProfileService.BestForTags(remoteEpisode.Series.Tags);
-                var downloadProtocol = remoteEpisode.Release.DownloadProtocol;
+                var delayProfile = _delayProfileService.BestForTags(remoteBook.Author.Tags);
+                var downloadProtocol = remoteBook.Release.DownloadProtocol;
                 return downloadProtocol == delayProfile.PreferredProtocol;
             });
 
@@ -99,49 +99,38 @@ namespace Readarr.Core.DecisionEngine
 
         private int CompareEpisodeCount(DownloadDecision x, DownloadDecision y)
         {
-            var seasonPackCompare = CompareBy(x.RemoteEpisode,
-                y.RemoteEpisode,
-                remoteEpisode => remoteEpisode.ParsedEpisodeInfo.FullSeason);
-
-            if (seasonPackCompare != 0)
-            {
-                return seasonPackCompare;
-            }
-
-            if (x.RemoteEpisode.Series.SeriesType == SeriesTypes.Anime &
-                y.RemoteEpisode.Series.SeriesType == SeriesTypes.Anime)
-            {
-                return CompareBy(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode => remoteEpisode.Episodes.Count);
-            }
-
-            return CompareByReverse(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode => remoteEpisode.Episodes.Count);
+            // TODO: Implement book count comparison
+            // For now, just compare by book count if available
+            return CompareBy(x.RemoteBook, y.RemoteBook, remoteBook => remoteBook.Books?.Count ?? 1);
         }
 
         private int CompareEpisodeNumber(DownloadDecision x, DownloadDecision y)
         {
-            return CompareByReverse(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode => remoteEpisode.Episodes.Select(e => e.EpisodeNumber).MinOrDefault());
+            // TODO: Implement book number comparison
+            // For now, return 0 as books don't have episode numbers
+            return 0;
         }
 
         private int ComparePeersIfTorrent(DownloadDecision x, DownloadDecision y)
         {
             // Different protocols should get caught when checking the preferred protocol,
             // since we're dealing with the same series in our comparisons
-            if (x.RemoteEpisode.Release.DownloadProtocol != DownloadProtocol.Torrent ||
-                y.RemoteEpisode.Release.DownloadProtocol != DownloadProtocol.Torrent)
+            if (x.RemoteBook.Release.DownloadProtocol != DownloadProtocol.Torrent ||
+                y.RemoteBook.Release.DownloadProtocol != DownloadProtocol.Torrent)
             {
                 return 0;
             }
 
             return CompareAll(
-                CompareBy(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode =>
+                CompareBy(x.RemoteBook, y.RemoteBook, remoteBook =>
                 {
-                    var seeders = TorrentInfo.GetSeeders(remoteEpisode.Release);
+                    var seeders = TorrentInfo.GetSeeders(remoteBook.Release);
 
                     return seeders.HasValue && seeders.Value > 0 ? Math.Round(Math.Log10(seeders.Value)) : 0;
                 }),
-                CompareBy(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode =>
+                CompareBy(x.RemoteBook, y.RemoteBook, remoteBook =>
                 {
-                    var peers = TorrentInfo.GetPeers(remoteEpisode.Release);
+                    var peers = TorrentInfo.GetPeers(remoteBook.Release);
 
                     return peers.HasValue && peers.Value > 0 ? Math.Round(Math.Log10(peers.Value)) : 0;
                 }));
@@ -149,16 +138,16 @@ namespace Readarr.Core.DecisionEngine
 
         private int CompareAgeIfUsenet(DownloadDecision x, DownloadDecision y)
         {
-            if (x.RemoteEpisode.Release.DownloadProtocol != DownloadProtocol.Usenet ||
-                y.RemoteEpisode.Release.DownloadProtocol != DownloadProtocol.Usenet)
+            if (x.RemoteBook.Release.DownloadProtocol != DownloadProtocol.Usenet ||
+                y.RemoteBook.Release.DownloadProtocol != DownloadProtocol.Usenet)
             {
                 return 0;
             }
 
-            return CompareBy(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode =>
+            return CompareBy(x.RemoteBook, y.RemoteBook, remoteBook =>
             {
-                var ageHours = remoteEpisode.Release.AgeHours;
-                var age = remoteEpisode.Release.Age;
+                var ageHours = remoteBook.Release.AgeHours;
+                var age = remoteBook.Release.Age;
 
                 if (ageHours < 1)
                 {
@@ -181,25 +170,24 @@ namespace Readarr.Core.DecisionEngine
 
         private int CompareSize(DownloadDecision x, DownloadDecision y)
         {
-            var sizeCompare =  CompareBy(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode =>
+            var sizeCompare =  CompareBy(x.RemoteBook, y.RemoteBook, remoteBook =>
             {
-                var qualityProfile = remoteEpisode.Series.QualityProfile.Value;
-                var qualityIndex = qualityProfile.GetIndex(remoteEpisode.ParsedEpisodeInfo.Quality.Quality, true);
+                var qualityProfile = remoteBook.Author.QualityProfile.Value;
+                var qualityIndex = qualityProfile.GetIndex(remoteBook.ParsedBookInfo.Quality.Quality, true);
                 var qualityOrGroup = qualityProfile.Items[qualityIndex.Index];
                 var item = qualityOrGroup.Quality == null ? qualityOrGroup.Items[qualityIndex.GroupIndex] : qualityOrGroup;
                 var preferredSize = item.PreferredSize;
 
                 // If no value for preferred it means unlimited so fallback to sort largest is best
-                if (preferredSize.HasValue && remoteEpisode.Series.Runtime > 0)
+                if (preferredSize.HasValue)
                 {
-                    var preferredEpisodeSize = remoteEpisode.Series.Runtime * preferredSize.Value.Megabytes();
-
-                    // Calculate closest to the preferred size
-                    return Math.Abs((remoteEpisode.Release.Size - preferredEpisodeSize).Round(200.Megabytes())) * (-1);
+                    // TODO: Calculate preferred size based on book characteristics
+                    // For now, just use the raw size comparison
+                    return Math.Abs((remoteBook.Release.Size - preferredSize.Value.Megabytes()).Round(200.Megabytes())) * (-1);
                 }
                 else
                 {
-                    return remoteEpisode.Release.Size.Round(200.Megabytes());
+                    return remoteBook.Release.Size.Round(200.Megabytes());
                 }
             });
 

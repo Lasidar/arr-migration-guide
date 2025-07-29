@@ -200,7 +200,7 @@ namespace Readarr.Core.Books
             _authorRepository.SetFields(author, a => a.AddOptions);
         }
 
-        private bool UpdateTags(Author author)
+        public bool UpdateTags(Author author)
         {
             var tagsAdded = new HashSet<int>();
             var tagsRemoved = new HashSet<int>();
