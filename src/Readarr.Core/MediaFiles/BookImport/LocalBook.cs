@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using Readarr.Common.Disk;
 using Readarr.Core.Books;
 using Readarr.Core.Languages;
+using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Qualities;
 
