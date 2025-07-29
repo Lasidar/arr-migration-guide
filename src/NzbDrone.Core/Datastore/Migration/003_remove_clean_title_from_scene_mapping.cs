@@ -12,7 +12,7 @@ namespace NzbDrone.Core.Datastore.Migration
 
             Create.TableForModel("SceneMappings")
                   .WithColumn("TvdbId").AsInt32()
-                  .WithColumn("SeasonNumber").AsInt32()
+                  .WithColumn("BookNumber").AsInt32()
                   .WithColumn("SearchTerm").AsString()
                   .WithColumn("ParseTerm").AsString();
         }

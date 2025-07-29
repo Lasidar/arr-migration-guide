@@ -25,14 +25,14 @@ namespace NzbDrone.Core.Test.IndexerTests.IntegrationTests
             _singleSearchCriteria = new SingleEpisodeSearchCriteria()
                 {
                     SceneTitles = new List<string> { "Person of Interest" },
-                    SeasonNumber = 1,
-                    EpisodeNumber = 1
+                    BookNumber = 1,
+                    EditionNumber = 1
                 };
 
             _animeSearchCriteria = new AnimeEpisodeSearchCriteria()
             {
                 SceneTitles = new List<string> { "Steins;Gate" },
-                AbsoluteEpisodeNumber = 1
+                AbsoluteEditionNumber = 1
             };
         }
 

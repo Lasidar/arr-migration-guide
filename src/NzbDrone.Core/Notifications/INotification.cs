@@ -11,9 +11,9 @@ namespace NzbDrone.Core.Notifications
 
         void OnGrab(GrabMessage grabMessage);
         void OnDownload(DownloadMessage message);
-        void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles);
+        void OnRename(Series series, List<RenamedEditionFile> renamedFiles);
         void OnImportComplete(ImportCompleteMessage message);
-        void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage);
+        void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage);
         void OnSeriesAdd(SeriesAddMessage message);
         void OnSeriesDelete(SeriesDeleteMessage deleteMessage);
         void OnHealthIssue(HealthCheck.HealthCheck healthCheck);
@@ -28,8 +28,8 @@ namespace NzbDrone.Core.Notifications
         bool SupportsOnRename { get; }
         bool SupportsOnSeriesAdd { get; }
         bool SupportsOnSeriesDelete { get; }
-        bool SupportsOnEpisodeFileDelete { get; }
-        bool SupportsOnEpisodeFileDeleteForUpgrade { get; }
+        bool SupportsOnEditionFileDelete { get; }
+        bool SupportsOnEditionFileDeleteForUpgrade { get; }
         bool SupportsOnHealthIssue { get; }
         bool SupportsOnHealthRestored { get; }
         bool SupportsOnApplicationUpdate { get; }

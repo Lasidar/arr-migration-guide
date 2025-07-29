@@ -5,7 +5,7 @@ using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications.Search
 {
-    public class SeasonMatchSpecification : IDownloadDecisionEngineSpecification
+    public class BookMatchSpecification : IDownloadDecisionEngineSpecification
     {
         private readonly Logger _logger;
         private readonly ISceneMappingService _sceneMappingService;
@@ -33,7 +33,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
                 return DownloadSpecDecision.Accept();
             }
 
-            if (singleEpisodeSpec.SeasonNumber != remoteEpisode.ParsedEpisodeInfo.SeasonNumber)
+            if (singleEpisodeSpec.BookNumber != remoteEpisode.ParsedEpisodeInfo.BookNumber)
             {
                 _logger.Debug("Season number does not match searched season number, skipping.");
                 return DownloadSpecDecision.Reject(DownloadRejectionReason.WrongSeason, "Wrong season");

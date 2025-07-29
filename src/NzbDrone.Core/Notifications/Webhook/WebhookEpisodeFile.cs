@@ -5,13 +5,13 @@ using NzbDrone.Core.MediaFiles;
 
 namespace NzbDrone.Core.Notifications.Webhook
 {
-    public class WebhookEpisodeFile
+    public class WebhookEditionFile
     {
-        public WebhookEpisodeFile()
+        public WebhookEditionFile()
         {
         }
 
-        public WebhookEpisodeFile(EpisodeFile episodeFile)
+        public WebhookEditionFile(EditionFile episodeFile)
         {
             Id = episodeFile.Id;
             RelativePath = episodeFile.RelativePath;
@@ -26,7 +26,7 @@ namespace NzbDrone.Core.Notifications.Webhook
 
             if (episodeFile.MediaInfo != null)
             {
-                MediaInfo = new WebhookEpisodeFileMediaInfo(episodeFile);
+                MediaInfo = new WebhookEditionFileMediaInfo(episodeFile);
             }
         }
 
@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Notifications.Webhook
         public long Size { get; set; }
         public DateTime DateAdded { get; set; }
         public List<Language> Languages { get; set; }
-        public WebhookEpisodeFileMediaInfo MediaInfo { get; set; }
+        public WebhookEditionFileMediaInfo MediaInfo { get; set; }
         public string SourcePath { get; set; }
         public string RecycleBinPath { get; set; }
     }

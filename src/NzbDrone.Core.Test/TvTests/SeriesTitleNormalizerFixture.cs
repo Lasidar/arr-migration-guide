@@ -5,7 +5,7 @@ using NzbDrone.Core.Books;
 namespace NzbDrone.Core.Test.TvTests
 {
     [TestFixture]
-    public class SeriesTitleNormalizerFixture
+    public class AuthorTitleNormalizerFixture
     {
         [TestCase("A to Z", 281588, "a to z")]
         public void should_use_precomputed_title(string title, int tvdbId, string expected)

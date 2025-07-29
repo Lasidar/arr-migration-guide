@@ -19,7 +19,7 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
                                      WHERE ""Id"" IN (
                                      SELECT ""Blocklist"".""Id"" FROM ""Blocklist""
                                      LEFT OUTER JOIN ""Series""
-                                     ON ""Blocklist"".""SeriesId"" = ""Series"".""Id""
+                                     ON ""Blocklist"".""AuthorId"" = ""Series"".""Id""
                                      WHERE ""Series"".""Id"" IS NULL)");
         }
     }

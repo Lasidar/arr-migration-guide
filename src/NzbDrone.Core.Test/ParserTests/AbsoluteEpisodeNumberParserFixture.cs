@@ -8,7 +8,7 @@ using NzbDrone.Test.Common;
 namespace NzbDrone.Core.Test.ParserTests
 {
     [TestFixture]
-    public class AbsoluteEpisodeNumberParserFixture : CoreTest
+    public class AbsoluteEditionNumberParserFixture : CoreTest
     {
         [TestCase("[SubDESU]_Show_One_07_(1280x720_x264-AAC)_[6B7FD717]", "Show One", 7, 0, 0)]
         [TestCase("[Chihiro]_Show!!_-_06_[848x480_H.264_AAC][859EEAFA]", "Show!!", 6, 0, 0)]
@@ -141,13 +141,13 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[Kaleido-subs] Animation - 12 (S01E12) - (WEB 1080p HEVC x265 10-bit E-AC3 2.0) [1ADD8F6D]", "Animation", 12, 1, 12)]
 
         // [TestCase("", "", 0, 0, 0)]
-        public void should_parse_absolute_numbers(string postTitle, string title, int absoluteEpisodeNumber, int seasonNumber, int episodeNumber)
+        public void should_parse_absolute_numbers(string postTitle, string title, int absoluteEditionNumber, int seasonNumber, int episodeNumber)
         {
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
-            result.AbsoluteEpisodeNumbers.Single().Should().Be(absoluteEpisodeNumber);
-            result.SeasonNumber.Should().Be(seasonNumber);
-            result.EpisodeNumbers.SingleOrDefault().Should().Be(episodeNumber);
+            result.AbsoluteEditionNumbers.Single().Should().Be(absoluteEditionNumber);
+            result.BookNumber.Should().Be(seasonNumber);
+            result.EditionNumbers.SingleOrDefault().Should().Be(episodeNumber);
             result.SeriesTitle.Should().Be(title);
             result.FullSeason.Should().BeFalse();
         }
@@ -155,13 +155,13 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[DeadFish] Another Anime Show - 01 - Special [BD][720p][AAC]", "Another Anime Show", 1)]
         [TestCase("[DeadFish] Another Anime Show - 01 - OVA [BD][720p][AAC]", "Another Anime Show", 1)]
         [TestCase("[DeadFish] Another Anime Show - 01 - OVD [BD][720p][AAC]", "Another Anime Show", 1)]
-        public void should_parse_absolute_specials(string postTitle, string title, int absoluteEpisodeNumber)
+        public void should_parse_absolute_specials(string postTitle, string title, int absoluteEditionNumber)
         {
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
-            result.AbsoluteEpisodeNumbers.Single().Should().Be(absoluteEpisodeNumber);
-            result.SeasonNumber.Should().Be(0);
-            result.EpisodeNumbers.SingleOrDefault().Should().Be(0);
+            result.AbsoluteEditionNumbers.Single().Should().Be(absoluteEditionNumber);
+            result.BookNumber.Should().Be(0);
+            result.EditionNumbers.SingleOrDefault().Should().Be(0);
             result.SeriesTitle.Should().Be(title);
             result.FullSeason.Should().BeFalse();
             result.Special.Should().BeTrue();
@@ -190,13 +190,13 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[HatSubs] One Series 1017-1088 (WEB 1080p)", "One Series", 1017, 1088)]
 
         // [TestCase("", "", 1, 2)]
-        public void should_parse_multi_episode_absolute_numbers(string postTitle, string title, int firstAbsoluteEpisodeNumber, int lastAbsoluteEpisodeNumber)
+        public void should_parse_multi_episode_absolute_numbers(string postTitle, string title, int firstAbsoluteEditionNumber, int lastAbsoluteEditionNumber)
         {
-            var absoluteEpisodeNumbers = Enumerable.Range(firstAbsoluteEpisodeNumber, lastAbsoluteEpisodeNumber - firstAbsoluteEpisodeNumber + 1)
+            var absoluteEditionNumbers = Enumerable.Range(firstAbsoluteEditionNumber, lastAbsoluteEditionNumber - firstAbsoluteEditionNumber + 1)
                                                         .ToArray();
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
-            result.AbsoluteEpisodeNumbers.Should().BeEquivalentTo(absoluteEpisodeNumbers);
+            result.AbsoluteEditionNumbers.Should().BeEquivalentTo(absoluteEditionNumbers);
             result.SeriesTitle.Should().Be(title);
             result.FullSeason.Should().BeFalse();
         }
@@ -209,34 +209,34 @@ namespace NzbDrone.Core.Test.ParserTests
         {
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.SeriesTitle.Should().Be(title);
             result.FullSeason.Should().BeTrue();
-            result.SeasonNumber.Should().Be(seasonNumber);
+            result.BookNumber.Should().Be(seasonNumber);
         }
 
         [TestCase("[Anime Time] Series no Mayo - 12.5.mkv", "Series no Mayo", 12.5)]
         [TestCase("[SubsPlease] Series Title - 26.5.1 (1080p) [29AF1C23].mkv", "Series Title", 26.5)]
         [TestCase("[HorribleSubs] Show Slayer - 10.5 [1080p].mkv", "Show Slayer", 10.5)]
-        public void should_handle_anime_recap_numbering(string postTitle, string title, double specialEpisodeNumber)
+        public void should_handle_anime_recap_numbering(string postTitle, string title, double specialEditionNumber)
         {
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
             result.SeriesTitle.Should().Be(title);
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
-            result.SpecialAbsoluteEpisodeNumbers.Should().NotBeEmpty();
-            result.SpecialAbsoluteEpisodeNumbers.Should().BeEquivalentTo(new[] { (decimal)specialEpisodeNumber });
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
+            result.SpecialAbsoluteEditionNumbers.Should().NotBeEmpty();
+            result.SpecialAbsoluteEditionNumbers.Should().BeEquivalentTo(new[] { (decimal)specialEditionNumber });
             result.FullSeason.Should().BeFalse();
         }
 
         [TestCase("Series Title 921-928 [English Dub][1080p][onepiecedubb]", "921.mkv", "Series Title", 921)]
-        public void should_handle_ambiguously_named_anime_files_in_batch_release(string releaseName, string filename, string title, int absoluteEpisodeNumber)
+        public void should_handle_ambiguously_named_anime_files_in_batch_release(string releaseName, string filename, string title, int absoluteEditionNumber)
         {
             var result = Parser.Parser.ParsePath(Path.Combine(@"C:\Test".AsOsAgnostic(), releaseName, filename));
             result.Should().NotBeNull();
-            result.AbsoluteEpisodeNumbers.Single().Should().Be(absoluteEpisodeNumber);
-            result.SeasonNumber.Should().Be(0);
-            result.EpisodeNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Single().Should().Be(absoluteEditionNumber);
+            result.BookNumber.Should().Be(0);
+            result.EditionNumbers.Should().BeEmpty();
             result.SeriesTitle.Should().Be(title);
             result.FullSeason.Should().BeFalse();
         }
@@ -245,18 +245,18 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[Thighs] Anime Reincarnation - 17.5 (S00E01) (BD 1080p FLAC AAC) [Dual-Audio] [A6E2110E]", "Anime Reincarnation", 17.5, 0, 1)]
         [TestCase("[sam] Anime - 15.5 (S00E01) [BD 1080p FLAC] [3E8D676D]",  "Anime", 15.5, 0, 1)]
         [TestCase("[Kaleido-subs] Sky Series - 07.5 (S00E01) - (BD 1080p HEVC x265 10-bit Opus 2.0) [A548C980].mkv", "Sky Series", 7.5, 0, 1)]
-        public void should_parse_absolute_followed_by_standard_as_standard(string releaseName, string title, decimal specialEpisodeNumber, int seasonNumber, int episodeNumber)
+        public void should_parse_absolute_followed_by_standard_as_standard(string releaseName, string title, decimal specialEditionNumber, int seasonNumber, int episodeNumber)
         {
             var result = Parser.Parser.ParseTitle(releaseName);
 
             result.Should().NotBeNull();
-            result.EpisodeNumbers.Should().HaveCount(1);
-            result.SeasonNumber.Should().Be(seasonNumber);
-            result.EpisodeNumbers.First().Should().Be(episodeNumber);
+            result.EditionNumbers.Should().HaveCount(1);
+            result.BookNumber.Should().Be(seasonNumber);
+            result.EditionNumbers.First().Should().Be(episodeNumber);
             result.SeriesTitle.Should().Be(title);
-            result.SpecialAbsoluteEpisodeNumbers.Should().HaveCount(1);
-            result.SpecialAbsoluteEpisodeNumbers.First().Should().Be(specialEpisodeNumber);
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.SpecialAbsoluteEditionNumbers.Should().HaveCount(1);
+            result.SpecialAbsoluteEditionNumbers.First().Should().Be(specialEditionNumber);
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeFalse();
         }
     }

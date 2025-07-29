@@ -5,16 +5,16 @@ using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.MediaFiles.Events
 {
-    public class EpisodeImportedEvent : IEvent
+    public class EditionImportedEvent : IEvent
     {
         public LocalEpisode EpisodeInfo { get; private set; }
-        public EpisodeFile ImportedEpisode { get; private set; }
-        public List<DeletedEpisodeFile> OldFiles { get; private set; }
+        public EditionFile ImportedEpisode { get; private set; }
+        public List<DeletedEditionFile> OldFiles { get; private set; }
         public bool NewDownload { get; private set; }
         public DownloadClientItemClientInfo DownloadClientInfo { get; set; }
         public string DownloadId { get; private set; }
 
-        public EpisodeImportedEvent(LocalEpisode episodeInfo, EpisodeFile importedEpisode, List<DeletedEpisodeFile> oldFiles, bool newDownload, DownloadClientItem downloadClientItem)
+        public EpisodeImportedEvent(LocalEpisode episodeInfo, EditionFile importedEpisode, List<DeletedEditionFile> oldFiles, bool newDownload, DownloadClientItem downloadClientItem)
         {
             EpisodeInfo = episodeInfo;
             ImportedEpisode = importedEpisode;

@@ -15,8 +15,8 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
         public void Clean()
         {
             DeleteOrphanedBySeries();
-            DeleteOrphanedByEpisodeFile();
-            DeleteWhereEpisodeFileIsZero();
+            DeleteOrphanedByEditionFile();
+            DeleteWhereEditionFileIsZero();
         }
 
         private void DeleteOrphanedBySeries()
@@ -26,29 +26,29 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
                                      WHERE ""Id"" IN (
                                      SELECT ""ExtraFiles"".""Id"" FROM ""ExtraFiles""
                                      LEFT OUTER JOIN ""Series""
-                                     ON ""ExtraFiles"".""SeriesId"" = ""Series"".""Id""
+                                     ON ""ExtraFiles"".""AuthorId"" = ""Series"".""Id""
                                      WHERE ""Series"".""Id"" IS NULL)");
         }
 
-        private void DeleteOrphanedByEpisodeFile()
+        private void DeleteOrphanedByEditionFile()
         {
             using var mapper = _database.OpenConnection();
             mapper.Execute(@"DELETE FROM ""ExtraFiles""
                                      WHERE ""Id"" IN (
                                      SELECT ""ExtraFiles"".""Id"" FROM ""ExtraFiles""
-                                     LEFT OUTER JOIN ""EpisodeFiles""
-                                     ON ""ExtraFiles"".""EpisodeFileId"" = ""EpisodeFiles"".""Id""
-                                     WHERE ""ExtraFiles"".""EpisodeFileId"" > 0
-                                     AND ""EpisodeFiles"".""Id"" IS NULL)");
+                                     LEFT OUTER JOIN ""EditionFiles""
+                                     ON ""ExtraFiles"".""EditionFileId"" = ""EditionFiles"".""Id""
+                                     WHERE ""ExtraFiles"".""EditionFileId"" > 0
+                                     AND ""EditionFiles"".""Id"" IS NULL)");
         }
 
-        private void DeleteWhereEpisodeFileIsZero()
+        private void DeleteWhereEditionFileIsZero()
         {
             using var mapper = _database.OpenConnection();
             mapper.Execute(@"DELETE FROM ""ExtraFiles""
                                      WHERE ""Id"" IN (
                                      SELECT ""Id"" FROM ""ExtraFiles""
-                                     WHERE ""EpisodeFileId"" = 0)");
+                                     WHERE ""EditionFileId"" = 0)");
         }
     }
 }

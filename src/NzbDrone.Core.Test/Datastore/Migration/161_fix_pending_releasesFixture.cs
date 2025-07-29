@@ -25,7 +25,7 @@ namespace NzbDrone.Core.Test.Datastore.Migration
             {
                 c.Insert.IntoTable("PendingReleases").Row(new
                 {
-                    SeriesId = 1,
+                    AuthorId = 1,
                     Title = "Test Series",
                     Added = DateTime.UtcNow,
                     ParsedEpisodeInfo = @"{
@@ -53,8 +53,8 @@ namespace NzbDrone.Core.Test.Datastore.Migration
   ""episodeNumbers"": [
     10
   ],
-  ""absoluteEpisodeNumbers"": [],
-  ""specialAbsoluteEpisodeNumbers"": [],
+  ""absoluteEditionNumbers"": [],
+  ""specialAbsoluteEditionNumbers"": [],
   ""language"": {
     ""id"": 1,
     ""name"": ""English""
@@ -85,7 +85,7 @@ namespace NzbDrone.Core.Test.Datastore.Migration
             pending.Language.Should().Be(Language.English.Id);
         }
 
-        private class SeriesTitleInfo161
+        private class AuthorTitleInfo161
         {
             public string Title { get; set; }
             public string TitleWithoutYear { get; set; }
@@ -97,10 +97,10 @@ namespace NzbDrone.Core.Test.Datastore.Migration
             public string SeriesTitle { get; set; }
             public SeriesTitleInfo161 SeriesTitleInfo { get; set; }
             public QualityModel162 Quality { get; set; }
-            public int SeasonNumber { get; set; }
-            public List<int> EpisodeNumbers { get; set; }
-            public List<int> AbsoluteEpisodeNumbers { get; set; }
-            public List<int> SpecialAbsoluteEpisodeNumbers { get; set; }
+            public int BookNumber { get; set; }
+            public List<int> EditionNumbers { get; set; }
+            public List<int> AbsoluteEditionNumbers { get; set; }
+            public List<int> SpecialAbsoluteEditionNumbers { get; set; }
             public int Language { get; set; }
             public bool FullSeason { get; set; }
             public bool IsPartialSeason { get; set; }

@@ -57,7 +57,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         {
             return Builder<Episode>.CreateNew()
                             .With(e => e.Id = id)
-                            .With(e => e.EpisodeNumber = id)
+                            .With(e => e.EditionNumber = id)
                             .Build();
         }
 
@@ -145,7 +145,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             decisions.Add(new DownloadDecision(remoteEpisode2));
 
             var qualifiedReports = Subject.PrioritizeDecisions(decisions);
-            qualifiedReports.First().RemoteEpisode.Episodes.First().EpisodeNumber.Should().Be(1);
+            qualifiedReports.First().RemoteEpisode.Episodes.First().EditionNumber.Should().Be(1);
         }
 
         [Test]
@@ -159,7 +159,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             decisions.Add(new DownloadDecision(remoteEpisode2));
 
             var qualifiedReports = Subject.PrioritizeDecisions(decisions);
-            qualifiedReports.First().RemoteEpisode.Episodes.First().EpisodeNumber.Should().Be(1);
+            qualifiedReports.First().RemoteEpisode.Episodes.First().EditionNumber.Should().Be(1);
         }
 
         [Test]

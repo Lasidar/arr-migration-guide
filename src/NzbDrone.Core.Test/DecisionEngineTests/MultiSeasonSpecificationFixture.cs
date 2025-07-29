@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                 },
                 Episodes = Builder<Episode>.CreateListOfSize(3)
                                            .All()
-                                           .With(s => s.SeriesId = series.Id)
+                                           .With(s => s.AuthorId = series.Id)
                                            .BuildList(),
                 Series = series,
                 Release = new ReleaseInfo
@@ -39,7 +39,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                 }
             };
 
-            Mocker.GetMock<IEpisodeService>().Setup(s => s.EpisodesBetweenDates(It.IsAny<DateTime>(), It.IsAny<DateTime>(), false))
+            Mocker.GetMock<IEditionService>().Setup(s => s.EpisodesBetweenDates(It.IsAny<DateTime>(), It.IsAny<DateTime>(), false))
                                              .Returns(new List<Episode>());
         }
 

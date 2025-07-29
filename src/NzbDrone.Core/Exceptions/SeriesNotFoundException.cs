@@ -2,26 +2,26 @@
 
 namespace NzbDrone.Core.Exceptions
 {
-    public class SeriesNotFoundException : NzbDroneException
+    public class AuthorNotFoundException : NzbDroneException
     {
-        public int TvdbSeriesId { get; set; }
+        public int TvdbAuthorId { get; set; }
 
-        public SeriesNotFoundException(int tvdbSeriesId)
-            : base(string.Format("Series with tvdbid {0} was not found, it may have been removed from TheTVDB.", tvdbSeriesId))
+        public SeriesNotFoundException(int tvdbAuthorId)
+            : base(string.Format("Series with tvdbid {0} was not found, it may have been removed from TheTVDB.", tvdbAuthorId))
         {
-            TvdbSeriesId = tvdbSeriesId;
+            TvdbAuthorId = tvdbAuthorId;
         }
 
-        public SeriesNotFoundException(int tvdbSeriesId, string message, params object[] args)
+        public SeriesNotFoundException(int tvdbAuthorId, string message, params object[] args)
             : base(message, args)
         {
-            TvdbSeriesId = tvdbSeriesId;
+            TvdbAuthorId = tvdbAuthorId;
         }
 
-        public SeriesNotFoundException(int tvdbSeriesId, string message)
+        public SeriesNotFoundException(int tvdbAuthorId, string message)
             : base(message)
         {
-            TvdbSeriesId = tvdbSeriesId;
+            TvdbAuthorId = tvdbAuthorId;
         }
     }
 }

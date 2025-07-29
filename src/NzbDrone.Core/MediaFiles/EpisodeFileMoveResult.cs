@@ -2,14 +2,14 @@ using System.Collections.Generic;
 
 namespace NzbDrone.Core.MediaFiles
 {
-    public class EpisodeFileMoveResult
+    public class EditionFileMoveResult
     {
-        public EpisodeFileMoveResult()
+        public EditionFileMoveResult()
         {
-            OldFiles = new List<DeletedEpisodeFile>();
+            OldFiles = new List<DeletedEditionFile>();
         }
 
-        public EpisodeFile EpisodeFile { get; set; }
-        public List<DeletedEpisodeFile> OldFiles { get; set; }
+        public EditionFile EditionFile { get; set; }
+        public List<DeletedEditionFile> OldFiles { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace NzbDrone.Core.Books.Commands
 
     public class BulkMoveSeries : IEquatable<BulkMoveSeries>
     {
-        public int SeriesId { get; set; }
+        public int AuthorId { get; set; }
         public string SourcePath { get; set; }
 
         public bool Equals(BulkMoveSeries other)
@@ -25,7 +25,7 @@ namespace NzbDrone.Core.Books.Commands
                 return false;
             }
 
-            return SeriesId.Equals(other.SeriesId);
+            return AuthorId.Equals(other.AuthorId);
         }
 
         public override bool Equals(object obj)
@@ -40,12 +40,12 @@ namespace NzbDrone.Core.Books.Commands
                 return false;
             }
 
-            return SeriesId.Equals(((BulkMoveSeries)obj).SeriesId);
+            return AuthorId.Equals(((BulkMoveSeries)obj).AuthorId);
         }
 
         public override int GetHashCode()
         {
-            return SeriesId.GetHashCode();
+            return AuthorId.GetHashCode();
         }
     }
 }

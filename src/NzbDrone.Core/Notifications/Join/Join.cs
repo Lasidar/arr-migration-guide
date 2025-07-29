@@ -32,7 +32,7 @@ namespace NzbDrone.Core.Notifications.Join
             _proxy.SendNotification(IMPORT_COMPLETE_TITLE_BRANDED, message.Message, Settings);
         }
 
-        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        public override void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             _proxy.SendNotification(EPISODE_DELETED_TITLE_BRANDED, deleteMessage.Message, Settings);
         }

@@ -12,8 +12,8 @@ namespace Readarr.Api.V3.Notifications
         public bool OnRename { get; set; }
         public bool OnSeriesAdd { get; set; }
         public bool OnSeriesDelete { get; set; }
-        public bool OnEpisodeFileDelete { get; set; }
-        public bool OnEpisodeFileDeleteForUpgrade { get; set; }
+        public bool OnEditionFileDelete { get; set; }
+        public bool OnEditionFileDeleteForUpgrade { get; set; }
         public bool OnHealthIssue { get; set; }
         public bool IncludeHealthWarnings { get; set; }
         public bool OnHealthRestored { get; set; }
@@ -26,8 +26,8 @@ namespace Readarr.Api.V3.Notifications
         public bool SupportsOnRename { get; set; }
         public bool SupportsOnSeriesAdd { get; set; }
         public bool SupportsOnSeriesDelete { get; set; }
-        public bool SupportsOnEpisodeFileDelete { get; set; }
-        public bool SupportsOnEpisodeFileDeleteForUpgrade { get; set; }
+        public bool SupportsOnEditionFileDelete { get; set; }
+        public bool SupportsOnEditionFileDeleteForUpgrade { get; set; }
         public bool SupportsOnHealthIssue { get; set; }
         public bool SupportsOnHealthRestored { get; set; }
         public bool SupportsOnApplicationUpdate { get; set; }
@@ -53,8 +53,8 @@ namespace Readarr.Api.V3.Notifications
             resource.OnRename = definition.OnRename;
             resource.OnSeriesAdd = definition.OnSeriesAdd;
             resource.OnSeriesDelete = definition.OnSeriesDelete;
-            resource.OnEpisodeFileDelete = definition.OnEpisodeFileDelete;
-            resource.OnEpisodeFileDeleteForUpgrade = definition.OnEpisodeFileDeleteForUpgrade;
+            resource.OnEditionFileDelete = definition.OnEditionFileDelete;
+            resource.OnEditionFileDeleteForUpgrade = definition.OnEditionFileDeleteForUpgrade;
             resource.OnHealthIssue = definition.OnHealthIssue;
             resource.IncludeHealthWarnings = definition.IncludeHealthWarnings;
             resource.OnHealthRestored = definition.OnHealthRestored;
@@ -67,8 +67,8 @@ namespace Readarr.Api.V3.Notifications
             resource.SupportsOnRename = definition.SupportsOnRename;
             resource.SupportsOnSeriesAdd = definition.SupportsOnSeriesAdd;
             resource.SupportsOnSeriesDelete = definition.SupportsOnSeriesDelete;
-            resource.SupportsOnEpisodeFileDelete = definition.SupportsOnEpisodeFileDelete;
-            resource.SupportsOnEpisodeFileDeleteForUpgrade = definition.SupportsOnEpisodeFileDeleteForUpgrade;
+            resource.SupportsOnEditionFileDelete = definition.SupportsOnEditionFileDelete;
+            resource.SupportsOnEditionFileDeleteForUpgrade = definition.SupportsOnEditionFileDeleteForUpgrade;
             resource.SupportsOnHealthIssue = definition.SupportsOnHealthIssue;
             resource.SupportsOnHealthRestored = definition.SupportsOnHealthRestored;
             resource.SupportsOnApplicationUpdate = definition.SupportsOnApplicationUpdate;
@@ -93,8 +93,8 @@ namespace Readarr.Api.V3.Notifications
             definition.OnRename = resource.OnRename;
             definition.OnSeriesAdd = resource.OnSeriesAdd;
             definition.OnSeriesDelete = resource.OnSeriesDelete;
-            definition.OnEpisodeFileDelete = resource.OnEpisodeFileDelete;
-            definition.OnEpisodeFileDeleteForUpgrade = resource.OnEpisodeFileDeleteForUpgrade;
+            definition.OnEditionFileDelete = resource.OnEditionFileDelete;
+            definition.OnEditionFileDeleteForUpgrade = resource.OnEditionFileDeleteForUpgrade;
             definition.OnHealthIssue = resource.OnHealthIssue;
             definition.IncludeHealthWarnings = resource.IncludeHealthWarnings;
             definition.OnHealthRestored = resource.OnHealthRestored;
@@ -107,8 +107,8 @@ namespace Readarr.Api.V3.Notifications
             definition.SupportsOnRename = resource.SupportsOnRename;
             definition.SupportsOnSeriesAdd = resource.SupportsOnSeriesAdd;
             definition.SupportsOnSeriesDelete = resource.SupportsOnSeriesDelete;
-            definition.SupportsOnEpisodeFileDelete = resource.SupportsOnEpisodeFileDelete;
-            definition.SupportsOnEpisodeFileDeleteForUpgrade = resource.SupportsOnEpisodeFileDeleteForUpgrade;
+            definition.SupportsOnEditionFileDelete = resource.SupportsOnEditionFileDelete;
+            definition.SupportsOnEditionFileDeleteForUpgrade = resource.SupportsOnEditionFileDeleteForUpgrade;
             definition.SupportsOnHealthIssue = resource.SupportsOnHealthIssue;
             definition.SupportsOnHealthRestored = resource.SupportsOnHealthRestored;
             definition.SupportsOnApplicationUpdate = resource.SupportsOnApplicationUpdate;

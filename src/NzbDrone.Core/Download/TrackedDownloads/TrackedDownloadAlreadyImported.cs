@@ -36,11 +36,11 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 
                 if (lastHistoryItem == null)
                 {
-                    _logger.Trace("No history for episode: S{0:00}E{1:00} [{2}]", e.SeasonNumber, e.EpisodeNumber, e.Id);
+                    _logger.Trace("No history for episode: S{0:00}E{1:00} [{2}]", e.BookNumber, e.EditionNumber, e.Id);
                     return false;
                 }
 
-                _logger.Trace("Last event for episode: S{0:00}E{1:00} [{2}] is: {3}", e.SeasonNumber, e.EpisodeNumber, e.Id, lastHistoryItem.EventType);
+                _logger.Trace("Last event for episode: S{0:00}E{1:00} [{2}] is: {3}", e.BookNumber, e.EditionNumber, e.Id, lastHistoryItem.EventType);
 
                 return lastHistoryItem.EventType == EpisodeHistoryEventType.DownloadFolderImported;
             });

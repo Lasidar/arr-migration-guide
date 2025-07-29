@@ -21,13 +21,13 @@ namespace NzbDrone.Core.Organizer
 {
     public interface IBuildFileNames
     {
-        string BuildFileName(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension = "", NamingConfig namingConfig = null, List<CustomFormat> customFormats = null);
-        string BuildFilePath(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null);
+        string BuildFileName(List<Episode> episodes, Series series, EditionFile episodeFile, string extension = "", NamingConfig namingConfig = null, List<CustomFormat> customFormats = null);
+        string BuildFilePath(List<Episode> episodes, Series series, EditionFile episodeFile, string extension, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null);
         string BuildSeasonPath(Series series, int seasonNumber);
         string GetSeriesFolder(Series series, NamingConfig namingConfig = null);
         string GetSeasonFolder(Series series, int seasonNumber, NamingConfig namingConfig = null);
         bool RequiresEpisodeTitle(Series series, List<Episode> episodes);
-        bool RequiresAbsoluteEpisodeNumber();
+        bool RequiresAbsoluteEditionNumber();
     }
 
     public class FileNameBuilder : IBuildFileNames
@@ -42,7 +42,7 @@ namespace NzbDrone.Core.Organizer
         private readonly ICached<EpisodeFormat[]> _episodeFormatCache;
         private readonly ICached<AbsoluteEpisodeFormat[]> _absoluteEpisodeFormatCache;
         private readonly ICached<bool> _requiresEpisodeTitleCache;
-        private readonly ICached<bool> _requiresAbsoluteEpisodeNumberCache;
+        private readonly ICached<bool> _requiresAbsoluteEditionNumberCache;
         private readonly ICached<bool> _patternHasEpisodeIdentifierCache;
         private readonly Logger _logger;
 
@@ -129,12 +129,12 @@ namespace NzbDrone.Core.Organizer
             _episodeFormatCache = cacheManager.GetCache<EpisodeFormat[]>(GetType(), "episodeFormat");
             _absoluteEpisodeFormatCache = cacheManager.GetCache<AbsoluteEpisodeFormat[]>(GetType(), "absoluteEpisodeFormat");
             _requiresEpisodeTitleCache = cacheManager.GetCache<bool>(GetType(), "requiresEpisodeTitle");
-            _requiresAbsoluteEpisodeNumberCache = cacheManager.GetCache<bool>(GetType(), "requiresAbsoluteEpisodeNumber");
+            _requiresAbsoluteEditionNumberCache = cacheManager.GetCache<bool>(GetType(), "requiresAbsoluteEditionNumber");
             _patternHasEpisodeIdentifierCache = cacheManager.GetCache<bool>(GetType(), "patternHasEpisodeIdentifier");
             _logger = logger;
         }
 
-        private string BuildFileName(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension, int maxPath, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
+        private string BuildFileName(List<Episode> episodes, Series series, EditionFile episodeFile, string extension, int maxPath, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
         {
             if (namingConfig == null)
             {
@@ -163,16 +163,16 @@ namespace NzbDrone.Core.Organizer
 
             var pattern = namingConfig.StandardEpisodeFormat;
 
-            episodes = episodes.OrderBy(e => e.SeasonNumber).ThenBy(e => e.EpisodeNumber).ToList();
+            episodes = episodes.OrderBy(e => e.BookNumber).ThenBy(e => e.EditionNumber).ToList();
 
-            if (series.SeriesType == SeriesTypes.Daily && episodes.First().SeasonNumber > 0)
+            if (series.SeriesType == SeriesTypes.Daily && episodes.First().BookNumber > 0)
             {
                 pattern = namingConfig.DailyEpisodeFormat;
             }
 
             if (series.SeriesType == SeriesTypes.Anime &&
-                (episodes.All(e => e.AbsoluteEpisodeNumber.HasValue) ||
-                !RequiresAbsoluteEpisodeNumber()))
+                (episodes.All(e => e.AbsoluteEditionNumber.HasValue) ||
+                !RequiresAbsoluteEditionNumber()))
             {
                 pattern = namingConfig.AnimeEpisodeFormat;
             }
@@ -186,7 +186,7 @@ namespace NzbDrone.Core.Organizer
                 var tokenHandlers = new Dictionary<string, Func<TokenMatch, string>>(FileNameBuilderTokenEqualityComparer.Instance);
                 var patternHasEpisodeIdentifier = GetPatternHasEpisodeIdentifier(splitPattern);
 
-                splitPattern = AddSeasonEpisodeNumberingTokens(splitPattern, tokenHandlers, episodes, namingConfig);
+                splitPattern = AddSeasonEditionNumberingTokens(splitPattern, tokenHandlers, episodes, namingConfig);
                 splitPattern = AddAbsoluteNumberingTokens(splitPattern, tokenHandlers, series, episodes, namingConfig);
                 splitPattern = splitPattern.Replace("...", "{{ellipsis}}");
 
@@ -196,7 +196,7 @@ namespace NzbDrone.Core.Organizer
                 AddIdTokens(tokenHandlers, series);
                 AddEpisodeTokens(tokenHandlers, episodes);
                 AddEpisodeTitlePlaceholderTokens(tokenHandlers);
-                AddEpisodeFileTokens(tokenHandlers, episodeFile, !patternHasEpisodeIdentifier || episodeFile.Id == 0);
+                AddEditionFileTokens(tokenHandlers, episodeFile, !patternHasEpisodeIdentifier || episodeFile.Id == 0);
                 AddQualityTokens(tokenHandlers, series, episodeFile);
                 AddMediaInfoTokens(tokenHandlers, episodeFile);
                 AddCustomFormats(tokenHandlers, series, episodeFile, customFormats);
@@ -224,16 +224,16 @@ namespace NzbDrone.Core.Organizer
             return string.Join(Path.DirectorySeparatorChar.ToString(), components) + extension;
         }
 
-        public string BuildFileName(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension = "", NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
+        public string BuildFileName(List<Episode> episodes, Series series, EditionFile episodeFile, string extension = "", NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
         {
             return BuildFileName(episodes, series, episodeFile, extension, LongPathSupport.MaxFilePathLength, namingConfig, customFormats);
         }
 
-        public string BuildFilePath(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
+        public string BuildFilePath(List<Episode> episodes, Series series, EditionFile episodeFile, string extension, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
         {
             Ensure.That(extension, () => extension).IsNotNullOrWhiteSpace();
 
-            var seasonPath = BuildSeasonPath(series, episodes.First().SeasonNumber);
+            var seasonPath = BuildSeasonPath(series, episodes.First().BookNumber);
             var remainingPathLength = LongPathSupport.MaxFilePathLength - seasonPath.GetByteCount() - 1;
             var fileName = BuildFileName(episodes, series, episodeFile, extension, remainingPathLength, namingConfig, customFormats);
 
@@ -412,7 +412,7 @@ namespace NzbDrone.Core.Organizer
                 pattern = namingConfig.DailyEpisodeFormat;
             }
 
-            if (series.SeriesType == SeriesTypes.Anime && episodes.All(e => e.AbsoluteEpisodeNumber.HasValue))
+            if (series.SeriesType == SeriesTypes.Anime && episodes.All(e => e.AbsoluteEditionNumber.HasValue))
             {
                 pattern = namingConfig.AnimeEpisodeFormat;
             }
@@ -436,12 +436,12 @@ namespace NzbDrone.Core.Organizer
             });
         }
 
-        public bool RequiresAbsoluteEpisodeNumber()
+        public bool RequiresAbsoluteEditionNumber()
         {
             var namingConfig = _namingConfigService.GetConfig();
             var pattern = namingConfig.AnimeEpisodeFormat;
 
-            return _requiresAbsoluteEpisodeNumberCache.Get(pattern, () =>
+            return _requiresAbsoluteEditionNumberCache.Get(pattern, () =>
             {
                 var matches = AbsoluteEpisodeRegex.Matches(pattern);
 
@@ -467,7 +467,7 @@ namespace NzbDrone.Core.Organizer
             tokenHandlers["{Series Year}"] = m => series.Year.ToString();
         }
 
-        private string AddSeasonEpisodeNumberingTokens(string pattern, Dictionary<string, Func<TokenMatch, string>> tokenHandlers, List<Episode> episodes, NamingConfig namingConfig)
+        private string AddSeasonEditionNumberingTokens(string pattern, Dictionary<string, Func<TokenMatch, string>> tokenHandlers, List<Episode> episodes, NamingConfig namingConfig)
         {
             var episodeFormats = GetEpisodeFormat(pattern).DistinctBy(v => v.SeasonEpisodePattern).ToList();
 
@@ -516,15 +516,15 @@ namespace NzbDrone.Core.Organizer
                 tokenHandlers[token] = m => seasonEpisodePattern;
             }
 
-            AddSeasonTokens(tokenHandlers, episodes.First().SeasonNumber);
+            AddSeasonTokens(tokenHandlers, episodes.First().BookNumber);
 
             if (episodes.Count > 1)
             {
-                tokenHandlers["{Episode}"] = m => episodes.First().EpisodeNumber.ToString(m.CustomFormat) + "-" + episodes.Last().EpisodeNumber.ToString(m.CustomFormat);
+                tokenHandlers["{Episode}"] = m => episodes.First().EditionNumber.ToString(m.CustomFormat) + "-" + episodes.Last().EditionNumber.ToString(m.CustomFormat);
             }
             else
             {
-                tokenHandlers["{Episode}"] = m => episodes.First().EpisodeNumber.ToString(m.CustomFormat);
+                tokenHandlers["{Episode}"] = m => episodes.First().EditionNumber.ToString(m.CustomFormat);
             }
 
             return pattern;
@@ -537,7 +537,7 @@ namespace NzbDrone.Core.Organizer
             var index = 1;
             foreach (var absoluteEpisodeFormat in absoluteEpisodeFormats)
             {
-                if (series.SeriesType != SeriesTypes.Anime || episodes.Any(e => !e.AbsoluteEpisodeNumber.HasValue))
+                if (series.SeriesType != SeriesTypes.Anime || episodes.Any(e => !e.AbsoluteEditionNumber.HasValue))
                 {
                     pattern = pattern.Replace(absoluteEpisodeFormat.AbsoluteEpisodePattern, "");
                     continue;
@@ -622,7 +622,7 @@ namespace NzbDrone.Core.Organizer
             tokenHandlers["{Episode CleanTitle}"] = m => GetEpisodeTitle(GetEpisodeTitles(episodes).Select(CleanTitle).ToList(), "and", maxLength, m.CustomFormat);
         }
 
-        private void AddEpisodeFileTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, EpisodeFile episodeFile, bool useCurrentFilenameAsFallback)
+        private void AddEditionFileTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, EditionFile episodeFile, bool useCurrentFilenameAsFallback)
         {
             tokenHandlers["{Original Title}"] = m => GetOriginalTitle(episodeFile, useCurrentFilenameAsFallback);
             tokenHandlers["{Original Filename}"] = m => GetOriginalFileName(episodeFile, useCurrentFilenameAsFallback);
@@ -630,7 +630,7 @@ namespace NzbDrone.Core.Organizer
             tokenHandlers["{Release Hash}"] = m => episodeFile.ReleaseHash ?? string.Empty;
         }
 
-        private void AddQualityTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series, EpisodeFile episodeFile)
+        private void AddQualityTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series, EditionFile episodeFile)
         {
             var qualityTitle = _qualityDefinitionService.Get(episodeFile.Quality.Quality).Title;
             var qualityProper = GetQualityProper(series, episodeFile.Quality);
@@ -649,7 +649,7 @@ namespace NzbDrone.Core.Organizer
             { MediaInfoVideoDynamicRangeTypeToken, 11 }
         };
 
-        private void AddMediaInfoTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, EpisodeFile episodeFile)
+        private void AddMediaInfoTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, EditionFile episodeFile)
         {
             if (episodeFile.MediaInfo == null)
             {
@@ -694,7 +694,7 @@ namespace NzbDrone.Core.Organizer
                 m => MediaInfoFormatter.FormatVideoDynamicRangeType(episodeFile.MediaInfo);
         }
 
-        private void AddCustomFormats(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series, EpisodeFile episodeFile, List<CustomFormat> customFormats = null)
+        private void AddCustomFormats(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series, EditionFile episodeFile, List<CustomFormat> customFormats = null)
         {
             if (customFormats == null)
             {
@@ -814,7 +814,7 @@ namespace NzbDrone.Core.Organizer
             }
         }
 
-        private void UpdateMediaInfoIfNeeded(string pattern, EpisodeFile episodeFile, Series series)
+        private void UpdateMediaInfoIfNeeded(string pattern, EditionFile episodeFile, Series series)
         {
             if (series.Path.IsNullOrWhiteSpace())
             {
@@ -921,10 +921,10 @@ namespace NzbDrone.Core.Organizer
             {
                 var patternToReplace = i == 0 ? basePattern : formatPattern;
 
-                pattern += EpisodeRegex.Replace(patternToReplace, match => ReplaceNumberToken(match.Groups["episode"].Value, episodes[i].EpisodeNumber));
+                pattern += EpisodeRegex.Replace(patternToReplace, match => ReplaceNumberToken(match.Groups["episode"].Value, episodes[i].EditionNumber));
             }
 
-            return ReplaceSeasonTokens(pattern, episodes.First().SeasonNumber);
+            return ReplaceSeasonTokens(pattern, episodes.First().BookNumber);
         }
 
         private string FormatAbsoluteNumberTokens(string basePattern, string formatPattern, List<Episode> episodes)
@@ -935,10 +935,10 @@ namespace NzbDrone.Core.Organizer
             {
                 var patternToReplace = i == 0 ? basePattern : formatPattern;
 
-                pattern += AbsoluteEpisodeRegex.Replace(patternToReplace, match => ReplaceNumberToken(match.Groups["absolute"].Value, episodes[i].AbsoluteEpisodeNumber.Value));
+                pattern += AbsoluteEpisodeRegex.Replace(patternToReplace, match => ReplaceNumberToken(match.Groups["absolute"].Value, episodes[i].AbsoluteEditionNumber.Value));
             }
 
-            return ReplaceSeasonTokens(pattern, episodes.First().SeasonNumber);
+            return ReplaceSeasonTokens(pattern, episodes.First().BookNumber);
         }
 
         private string FormatRangeNumberTokens(string seasonEpisodePattern, string formatPattern, List<Episode> episodes)
@@ -1114,7 +1114,7 @@ namespace NzbDrone.Core.Organizer
             return string.Empty;
         }
 
-        private string GetOriginalTitle(EpisodeFile episodeFile, bool useCurrentFilenameAsFallback)
+        private string GetOriginalTitle(EditionFile episodeFile, bool useCurrentFilenameAsFallback)
         {
             if (episodeFile.SceneName.IsNullOrWhiteSpace())
             {
@@ -1124,7 +1124,7 @@ namespace NzbDrone.Core.Organizer
             return CleanFileName(episodeFile.SceneName);
         }
 
-        private string GetOriginalFileName(EpisodeFile episodeFile, bool useCurrentFilenameAsFallback)
+        private string GetOriginalFileName(EditionFile episodeFile, bool useCurrentFilenameAsFallback)
         {
             if (!useCurrentFilenameAsFallback)
             {

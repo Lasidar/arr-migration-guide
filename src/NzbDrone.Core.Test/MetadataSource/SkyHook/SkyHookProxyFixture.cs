@@ -73,10 +73,10 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
         {
             episodes.Should().NotBeEmpty();
 
-            var episodeGroup = episodes.GroupBy(e => e.SeasonNumber.ToString("000") + e.EpisodeNumber.ToString("000"));
+            var episodeGroup = episodes.GroupBy(e => e.BookNumber.ToString("000") + e.EditionNumber.ToString("000"));
             episodeGroup.Should().OnlyContain(c => c.Count() == 1);
 
-            episodes.Should().Contain(c => c.SeasonNumber > 0);
+            episodes.Should().Contain(c => c.BookNumber > 0);
             episodes.Should().Contain(c => !string.IsNullOrWhiteSpace(c.Overview));
 
             foreach (var episode in episodes)
@@ -93,7 +93,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             episode.Should().NotBeNull();
 
             // TODO: Is there a better way to validate that episode number or season number is greater than zero?
-            (episode.EpisodeNumber + episode.SeasonNumber).Should().NotBe(0);
+            (episode.EditionNumber + episode.BookNumber).Should().NotBe(0);
 
             episode.Should().NotBeNull();
 

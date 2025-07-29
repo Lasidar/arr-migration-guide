@@ -6,12 +6,12 @@ using Readarr.Http;
 namespace Readarr.Api.V5.Series;
 
 [V5ApiController("series")]
-public class SeriesFolderController : Controller
+public class AuthorFolderController : Controller
 {
-    private readonly ISeriesService _seriesService;
+    private readonly IAuthorService _seriesService;
     private readonly IBuildFileNames _fileNameBuilder;
 
-    public SeriesFolderController(ISeriesService seriesService, IBuildFileNames fileNameBuilder)
+    public SeriesFolderController(IAuthorService seriesService, IBuildFileNames fileNameBuilder)
     {
         _seriesService = seriesService;
         _fileNameBuilder = fileNameBuilder;

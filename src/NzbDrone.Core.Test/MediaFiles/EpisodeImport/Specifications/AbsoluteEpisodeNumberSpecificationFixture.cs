@@ -13,7 +13,7 @@ using NzbDrone.Test.Common;
 namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
 {
     [TestFixture]
-    public class AbsoluteEpisodeNumberSpecificationFixture : CoreTest<AbsoluteEpisodeNumberSpecification>
+    public class AbsoluteEditionNumberSpecificationFixture : CoreTest<AbsoluteEditionNumberSpecification>
     {
         private Series _series;
         private LocalEpisode _localEpisode;
@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
 
             var episodes = Builder<Episode>.CreateListOfSize(1)
                                            .All()
-                                           .With(e => e.SeasonNumber = 1)
+                                           .With(e => e.BookNumber = 1)
                                            .With(e => e.AirDateUtc = DateTime.UtcNow)
                                            .Build()
                                            .ToList();
@@ -41,14 +41,14 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
                                 };
 
             Mocker.GetMock<IBuildFileNames>()
-                  .Setup(s => s.RequiresAbsoluteEpisodeNumber())
+                  .Setup(s => s.RequiresAbsoluteEditionNumber())
                   .Returns(true);
         }
 
         [Test]
         public void should_reject_when_absolute_episode_number_is_null()
         {
-            _localEpisode.Episodes.First().AbsoluteEpisodeNumber = null;
+            _localEpisode.Episodes.First().AbsoluteEditionNumber = null;
 
             Subject.IsSatisfiedBy(_localEpisode, null).Accepted.Should().BeFalse();
         }
@@ -57,7 +57,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         public void should_accept_when_did_not_air_recently_but_absolute_episode_number_is_null()
         {
             _localEpisode.Episodes.First().AirDateUtc = DateTime.UtcNow.AddDays(-7);
-            _localEpisode.Episodes.First().AbsoluteEpisodeNumber = null;
+            _localEpisode.Episodes.First().AbsoluteEditionNumber = null;
 
             Subject.IsSatisfiedBy(_localEpisode, null).Accepted.Should().BeTrue();
         }
@@ -65,10 +65,10 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         [Test]
         public void should_accept_when_absolute_episode_number_is_not_required()
         {
-            _localEpisode.Episodes.First().AbsoluteEpisodeNumber = null;
+            _localEpisode.Episodes.First().AbsoluteEditionNumber = null;
 
             Mocker.GetMock<IBuildFileNames>()
-                  .Setup(s => s.RequiresAbsoluteEpisodeNumber())
+                  .Setup(s => s.RequiresAbsoluteEditionNumber())
                   .Returns(false);
 
             Subject.IsSatisfiedBy(_localEpisode, null).Accepted.Should().BeTrue();

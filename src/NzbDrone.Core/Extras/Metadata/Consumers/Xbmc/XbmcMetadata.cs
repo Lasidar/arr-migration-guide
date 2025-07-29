@@ -48,7 +48,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
         public override string Name => "Kodi (XBMC) / Emby";
 
-        public override string GetFilenameAfterMove(Series series, EpisodeFile episodeFile, MetadataFile metadataFile)
+        public override string GetFilenameAfterMove(Series series, EditionFile episodeFile, MetadataFile metadataFile)
         {
             var episodeFilePath = Path.Combine(series.Path, episodeFile.RelativePath);
 
@@ -77,7 +77,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
             var metadata = new MetadataFile
             {
-                SeriesId = series.Id,
+                AuthorId = series.Id,
                 Consumer = GetType().Name,
                 RelativePath = series.Path.GetRelativePath(path)
             };
@@ -98,11 +98,11 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
                 if (seasonNumberMatch.Contains("specials"))
                 {
-                    metadata.SeasonNumber = 0;
+                    metadata.BookNumber = 0;
                 }
                 else if (int.TryParse(seasonNumberMatch, out var seasonNumber))
                 {
-                    metadata.SeasonNumber = seasonNumber;
+                    metadata.BookNumber = seasonNumber;
                 }
                 else
                 {
@@ -275,7 +275,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
             return xmlResult.IsNullOrWhiteSpace() ? null : new MetadataFileResult("tvshow.nfo", xmlResult);
         }
 
-        public override MetadataFileResult EpisodeMetadata(Series series, EpisodeFile episodeFile)
+        public override MetadataFileResult EpisodeMetadata(Series series, EditionFile episodeFile)
         {
             if (!Settings.EpisodeMetadata)
             {
@@ -304,19 +304,19 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
                 var details = new XElement("episodedetails");
                 details.Add(new XElement("title", episode.Title));
-                details.Add(new XElement("season", episode.SeasonNumber));
-                details.Add(new XElement("episode", episode.EpisodeNumber));
+                details.Add(new XElement("season", episode.BookNumber));
+                details.Add(new XElement("episode", episode.EditionNumber));
                 details.Add(new XElement("aired", episode.AirDate));
                 details.Add(new XElement("plot", episode.Overview));
 
-                if (episode.SeasonNumber == 0 && episode.AiredAfterSeasonNumber.HasValue)
+                if (episode.BookNumber == 0 && episode.AiredAfterBookNumber.HasValue)
                 {
-                    details.Add(new XElement("displayafterseason", episode.AiredAfterSeasonNumber));
+                    details.Add(new XElement("displayafterseason", episode.AiredAfterBookNumber));
                 }
-                else if (episode.SeasonNumber == 0 && episode.AiredBeforeSeasonNumber.HasValue)
+                else if (episode.BookNumber == 0 && episode.AiredBeforeBookNumber.HasValue)
                 {
-                    details.Add(new XElement("displayseason", episode.AiredBeforeSeasonNumber));
-                    details.Add(new XElement("displayepisode", episode.AiredBeforeEpisodeNumber ?? -1));
+                    details.Add(new XElement("displayseason", episode.AiredBeforeBookNumber));
+                    details.Add(new XElement("displayepisode", episode.AiredBeforeEditionNumber ?? -1));
                 }
 
                 var tvdbId = new XElement("uniqueid", episode.TvdbId);
@@ -442,7 +442,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
             return ProcessSeasonImages(series, season).ToList();
         }
 
-        public override List<ImageFileResult> EpisodeImages(Series series, EpisodeFile episodeFile)
+        public override List<ImageFileResult> EpisodeImages(Series series, EditionFile episodeFile)
         {
             if (!Settings.EpisodeImages)
             {
@@ -495,9 +495,9 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
         {
             foreach (var image in season.Images)
             {
-                var filename = string.Format("season{0:00}-{1}.jpg", season.SeasonNumber, image.CoverType.ToString().ToLower());
+                var filename = string.Format("season{0:00}-{1}.jpg", season.BookNumber, image.CoverType.ToString().ToLower());
 
-                if (season.SeasonNumber == 0)
+                if (season.BookNumber == 0)
                 {
                     filename = string.Format("season-specials-{0}.jpg", image.CoverType.ToString().ToLower());
                 }

@@ -14,7 +14,7 @@ using NzbDrone.Core.Books;
 namespace NzbDrone.Core.Test.IndexerSearchTests
 {
     [TestFixture]
-    public class SeriesSearchServiceFixture : CoreTest<SeriesSearchService>
+    public class AuthorSearchServiceFixture : CoreTest<SeriesSearchService>
     {
         private Series _series;
 
@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                           Seasons = new List<Season>()
                       };
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Setup(s => s.GetSeries(It.IsAny<int>()))
                   .Returns(_series);
 
@@ -46,11 +46,11 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         {
             _series.Seasons = new List<Season>
                               {
-                                  new Season { SeasonNumber = 0, Monitored = false },
-                                  new Season { SeasonNumber = 1, Monitored = true }
+                                  new Season { BookNumber = 0, Monitored = false },
+                                  new Season { BookNumber = 1, Monitored = true }
                               };
 
-            Subject.Execute(new SeriesSearchCommand { SeriesId = _series.Id, Trigger = CommandTrigger.Manual });
+            Subject.Execute(new SeriesSearchCommand { AuthorId = _series.Id, Trigger = CommandTrigger.Manual });
 
             Mocker.GetMock<ISearchForReleases>()
                 .Verify(v => v.SeasonSearch(_series.Id, It.IsAny<int>(), false, true, true, false), Times.Exactly(_series.Seasons.Count(s => s.Monitored)));
@@ -63,9 +63,9 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             _series.Seasons = new List<Season>
                               {
-                                  new Season { SeasonNumber = 3, Monitored = true },
-                                  new Season { SeasonNumber = 1, Monitored = true },
-                                  new Season { SeasonNumber = 2, Monitored = true }
+                                  new Season { BookNumber = 3, Monitored = true },
+                                  new Season { BookNumber = 1, Monitored = true },
+                                  new Season { BookNumber = 2, Monitored = true }
                               };
 
             Mocker.GetMock<ISearchForReleases>()
@@ -73,9 +73,9 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                   .Returns(Task.FromResult(new List<DownloadDecision>()))
                   .Callback<int, int, bool, bool, bool, bool>((seriesId, seasonNumber, missingOnly, monitoredOnly, userInvokedSearch, interactiveSearch) => seasonOrder.Add(seasonNumber));
 
-            Subject.Execute(new SeriesSearchCommand { SeriesId = _series.Id, Trigger = CommandTrigger.Manual });
+            Subject.Execute(new SeriesSearchCommand { AuthorId = _series.Id, Trigger = CommandTrigger.Manual });
 
-            seasonOrder.First().Should().Be(_series.Seasons.OrderBy(s => s.SeasonNumber).First().SeasonNumber);
+            seasonOrder.First().Should().Be(_series.Seasons.OrderBy(s => s.BookNumber).First().BookNumber);
         }
     }
 }

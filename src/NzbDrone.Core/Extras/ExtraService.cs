@@ -18,8 +18,8 @@ namespace NzbDrone.Core.Extras
 {
     public interface IExtraService
     {
-        void MoveFilesAfterRename(Series series, EpisodeFile episodeFile);
-        void ImportEpisode(LocalEpisode localEpisode, EpisodeFile episodeFile, bool isReadOnly);
+        void MoveFilesAfterRename(Series series, EditionFile episodeFile);
+        void ImportEpisode(LocalEpisode localEpisode, EditionFile episodeFile, bool isReadOnly);
     }
 
     public class ExtraService : IExtraService,
@@ -30,14 +30,14 @@ namespace NzbDrone.Core.Extras
                                 IHandle<DownloadsProcessedEvent>
     {
         private readonly IMediaFileService _mediaFileService;
-        private readonly IEpisodeService _episodeService;
+        private readonly IEditionService _episodeService;
         private readonly IDiskProvider _diskProvider;
         private readonly IConfigService _configService;
         private readonly List<IManageExtraFiles> _extraFileManagers;
         private readonly Dictionary<int, Series> _seriesWithImportedFiles;
 
         public ExtraService(IMediaFileService mediaFileService,
-                            IEpisodeService episodeService,
+                            IEditionService episodeService,
                             IDiskProvider diskProvider,
                             IConfigService configService,
                             IEnumerable<IManageExtraFiles> extraFileManagers,
@@ -51,14 +51,14 @@ namespace NzbDrone.Core.Extras
             _seriesWithImportedFiles = new Dictionary<int, Series>();
         }
 
-        public void ImportEpisode(LocalEpisode localEpisode, EpisodeFile episodeFile, bool isReadOnly)
+        public void ImportEpisode(LocalEpisode localEpisode, EditionFile episodeFile, bool isReadOnly)
         {
             ImportExtraFiles(localEpisode, episodeFile, isReadOnly);
 
             CreateAfterEpisodeImport(localEpisode.Series, episodeFile);
         }
 
-        private void ImportExtraFiles(LocalEpisode localEpisode, EpisodeFile episodeFile, bool isReadOnly)
+        private void ImportExtraFiles(LocalEpisode localEpisode, EditionFile episodeFile, bool isReadOnly)
         {
             if (!_configService.ImportExtraFiles)
             {
@@ -102,7 +102,7 @@ namespace NzbDrone.Core.Extras
             }
         }
 
-        private void CreateAfterEpisodeImport(Series series, EpisodeFile episodeFile)
+        private void CreateAfterEpisodeImport(Series series, EditionFile episodeFile)
         {
             lock (_seriesWithImportedFiles)
             {
@@ -131,7 +131,7 @@ namespace NzbDrone.Core.Extras
         public void Handle(SeriesScannedEvent message)
         {
             var series = message.Series;
-            var episodeFiles = GetEpisodeFiles(series.Id);
+            var episodeFiles = GetEditionFiles(series.Id);
 
             foreach (var extraFileManager in _extraFileManagers)
             {
@@ -149,9 +149,9 @@ namespace NzbDrone.Core.Extras
             }
         }
 
-        public void MoveFilesAfterRename(Series series, EpisodeFile episodeFile)
+        public void MoveFilesAfterRename(Series series, EditionFile episodeFile)
         {
-            var episodeFiles = new List<EpisodeFile> { episodeFile };
+            var episodeFiles = new List<EditionFile> { episodeFile };
 
             foreach (var extraFileManager in _extraFileManagers)
             {
@@ -162,7 +162,7 @@ namespace NzbDrone.Core.Extras
         public void Handle(SeriesRenamedEvent message)
         {
             var series = message.Series;
-            var episodeFiles = GetEpisodeFiles(series.Id);
+            var episodeFiles = GetEditionFiles(series.Id);
 
             foreach (var extraFileManager in _extraFileManagers)
             {
@@ -190,15 +190,15 @@ namespace NzbDrone.Core.Extras
             }
         }
 
-        private List<EpisodeFile> GetEpisodeFiles(int seriesId)
+        private List<EditionFile> GetEditionFiles(int seriesId)
         {
             var episodeFiles = _mediaFileService.GetFilesBySeries(seriesId);
             var episodes = _episodeService.GetEpisodeBySeries(seriesId);
 
             foreach (var episodeFile in episodeFiles)
             {
-                var localEpisodeFile = episodeFile;
-                episodeFile.Episodes = new List<Episode>(episodes.Where(e => e.EpisodeFileId == localEpisodeFile.Id));
+                var localEditionFile = episodeFile;
+                episodeFile.Episodes = new List<Episode>(episodes.Where(e => e.EditionFileId == localEditionFile.Id));
             }
 
             return episodeFiles;

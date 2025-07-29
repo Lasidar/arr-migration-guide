@@ -14,19 +14,19 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Alter.Table("EpisodeFiles").AddColumn("ReleaseHash").AsString().Nullable();
+            Alter.Table("EditionFiles").AddColumn("ReleaseHash").AsString().Nullable();
 
-            Execute.WithConnection(UpdateEpisodeFiles);
+            Execute.WithConnection(UpdateEditionFiles);
         }
 
-        private void UpdateEpisodeFiles(IDbConnection conn, IDbTransaction tran)
+        private void UpdateEditionFiles(IDbConnection conn, IDbTransaction tran)
         {
             var updates = new List<object>();
 
             using (var cmd = conn.CreateCommand())
             {
                 cmd.Transaction = tran;
-                cmd.CommandText = "SELECT \"Id\", \"SceneName\", \"RelativePath\", \"OriginalFilePath\" FROM \"EpisodeFiles\"";
+                cmd.CommandText = "SELECT \"Id\", \"SceneName\", \"RelativePath\", \"OriginalFilePath\" FROM \"EditionFiles\"";
 
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -68,8 +68,8 @@ namespace NzbDrone.Core.Datastore.Migration
 
             if (updates.Count > 0)
             {
-                var updateEpisodeFilesSql = "UPDATE \"EpisodeFiles\" SET \"ReleaseHash\" = @ReleaseHash WHERE \"Id\" = @Id";
-                conn.Execute(updateEpisodeFilesSql, updates, transaction: tran);
+                var updateEditionFilesSql = "UPDATE \"EditionFiles\" SET \"ReleaseHash\" = @ReleaseHash WHERE \"Id\" = @Id";
+                conn.Execute(updateEditionFilesSql, updates, transaction: tran);
             }
         }
     }

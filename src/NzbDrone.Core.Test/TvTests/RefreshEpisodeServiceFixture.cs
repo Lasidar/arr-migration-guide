@@ -14,7 +14,7 @@ using NzbDrone.Test.Common;
 namespace NzbDrone.Core.Test.TvTests
 {
     [TestFixture]
-    public class RefreshEpisodeServiceFixture : CoreTest<RefreshEpisodeService>
+    public class RefreshEditionServiceFixture : CoreTest<RefreshEditionService>
     {
         private List<Episode> _insertedEpisodes;
         private List<Episode> _updatedEpisodes;
@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Test.TvTests
             _gameOfThrones = Mocker.Resolve<SkyHookProxy>().GetSeriesInfo(121361); // Game of thrones
 
             // Remove specials.
-            _gameOfThrones.Item2.RemoveAll(v => v.SeasonNumber == 0);
+            _gameOfThrones.Item2.RemoveAll(v => v.BookNumber == 0);
         }
 
         private List<Episode> GetEpisodes()
@@ -59,20 +59,20 @@ namespace NzbDrone.Core.Test.TvTests
             _updatedEpisodes = new List<Episode>();
             _deletedEpisodes = new List<Episode>();
 
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.InsertMany(It.IsAny<List<Episode>>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.InsertMany(It.IsAny<List<Episode>>()))
                 .Callback<List<Episode>>(e => _insertedEpisodes = e);
 
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.UpdateMany(It.IsAny<List<Episode>>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.UpdateMany(It.IsAny<List<Episode>>()))
                 .Callback<List<Episode>>(e => _updatedEpisodes = e);
 
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.DeleteMany(It.IsAny<List<Episode>>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.DeleteMany(It.IsAny<List<Episode>>()))
                 .Callback<List<Episode>>(e => _deletedEpisodes = e);
         }
 
         [Test]
         public void should_create_all_when_no_existing_episodes()
         {
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(new List<Episode>());
 
             Subject.RefreshEpisodeInfo(GetSeries(), GetEpisodes());
@@ -87,7 +87,7 @@ namespace NzbDrone.Core.Test.TvTests
         [Test]
         public void should_update_all_when_all_existing_episodes()
         {
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(GetEpisodes());
 
             Subject.RefreshEpisodeInfo(GetSeries(), GetEpisodes());
@@ -100,7 +100,7 @@ namespace NzbDrone.Core.Test.TvTests
         [Test]
         public void should_delete_all_when_all_existing_episodes_are_gone_from_datasource()
         {
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(GetEpisodes());
 
             Subject.RefreshEpisodeInfo(GetSeries(), new List<Episode>());
@@ -115,7 +115,7 @@ namespace NzbDrone.Core.Test.TvTests
         {
             var duplicateEpisodes = GetEpisodes().Skip(5).Take(2).ToList();
 
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(GetEpisodes().Union(duplicateEpisodes).ToList());
 
             Subject.RefreshEpisodeInfo(GetSeries(), GetEpisodes());
@@ -130,13 +130,13 @@ namespace NzbDrone.Core.Test.TvTests
         {
             var series = GetSeries();
             series.Seasons = new List<Season>();
-            series.Seasons.Add(new Season { SeasonNumber = 1, Monitored = false });
+            series.Seasons.Add(new Season { BookNumber = 1, Monitored = false });
 
             var episodes = GetEpisodes();
 
             episodes.ForEach(e => e.Monitored = true);
 
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(episodes);
 
             Subject.RefreshEpisodeInfo(series, GetEpisodes());
@@ -150,9 +150,9 @@ namespace NzbDrone.Core.Test.TvTests
         {
             var series = GetSeries();
             series.Seasons = new List<Season>();
-            series.Seasons.Add(new Season { SeasonNumber = 1, Monitored = true });
+            series.Seasons.Add(new Season { BookNumber = 1, Monitored = true });
 
-            var episodes = GetEpisodes().OrderBy(v => v.SeasonNumber).ThenBy(v => v.EpisodeNumber).Take(5).ToList();
+            var episodes = GetEpisodes().OrderBy(v => v.BookNumber).ThenBy(v => v.EditionNumber).Take(5).ToList();
 
             episodes[1].AirDateUtc = DateTime.UtcNow.AddDays(-15);
             episodes[2].AirDateUtc = DateTime.UtcNow.AddDays(-10);
@@ -160,12 +160,12 @@ namespace NzbDrone.Core.Test.TvTests
 
             var existingEpisodes = episodes.Skip(4).ToList();
 
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(existingEpisodes);
 
             Subject.RefreshEpisodeInfo(series, episodes);
 
-            _insertedEpisodes = _insertedEpisodes.OrderBy(v => v.EpisodeNumber).ToList();
+            _insertedEpisodes = _insertedEpisodes.OrderBy(v => v.EditionNumber).ToList();
 
             _insertedEpisodes.Should().HaveCount(4);
             _insertedEpisodes[0].Monitored.Should().Be(true);
@@ -179,13 +179,13 @@ namespace NzbDrone.Core.Test.TvTests
         [Test]
         public void should_remove_duplicate_remote_episodes_before_processing()
         {
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(new List<Episode>());
 
             var episodes = Builder<Episode>.CreateListOfSize(5)
                                            .TheFirst(2)
-                                           .With(e => e.SeasonNumber = 1)
-                                           .With(e => e.EpisodeNumber = 1)
+                                           .With(e => e.BookNumber = 1)
+                                           .With(e => e.EditionNumber = 1)
                                            .Build()
                                            .ToList();
 
@@ -201,12 +201,12 @@ namespace NzbDrone.Core.Test.TvTests
         {
             var episodes = Builder<Episode>.CreateListOfSize(3).Build().ToList();
 
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(new List<Episode>());
 
             Subject.RefreshEpisodeInfo(GetAnimeSeries(), episodes);
 
-            _insertedEpisodes.All(e => e.AbsoluteEpisodeNumber.HasValue).Should().BeTrue();
+            _insertedEpisodes.All(e => e.AbsoluteEditionNumber.HasValue).Should().BeTrue();
             _updatedEpisodes.Should().BeEmpty();
             _deletedEpisodes.Should().BeEmpty();
         }
@@ -217,15 +217,15 @@ namespace NzbDrone.Core.Test.TvTests
             var episodes = Builder<Episode>.CreateListOfSize(3).Build().ToList();
 
             var existingEpisodes = episodes.JsonClone();
-            existingEpisodes.ForEach(e => e.AbsoluteEpisodeNumber = null);
+            existingEpisodes.ForEach(e => e.AbsoluteEditionNumber = null);
 
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(existingEpisodes);
 
             Subject.RefreshEpisodeInfo(GetAnimeSeries(), episodes);
 
             _insertedEpisodes.Should().BeEmpty();
-            _updatedEpisodes.All(e => e.AbsoluteEpisodeNumber.HasValue).Should().BeTrue();
+            _updatedEpisodes.All(e => e.AbsoluteEditionNumber.HasValue).Should().BeTrue();
             _deletedEpisodes.Should().BeEmpty();
         }
 
@@ -236,13 +236,13 @@ namespace NzbDrone.Core.Test.TvTests
                                            .Build()
                                            .ToList();
 
-            episodes[0].AbsoluteEpisodeNumber = null;
-            episodes[1].AbsoluteEpisodeNumber = null;
-            episodes[2].AbsoluteEpisodeNumber = null;
-            episodes[3].AbsoluteEpisodeNumber = null;
-            episodes[4].AbsoluteEpisodeNumber = null;
+            episodes[0].AbsoluteEditionNumber = null;
+            episodes[1].AbsoluteEditionNumber = null;
+            episodes[2].AbsoluteEditionNumber = null;
+            episodes[3].AbsoluteEditionNumber = null;
+            episodes[4].AbsoluteEditionNumber = null;
 
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(new List<Episode>());
 
             Subject.RefreshEpisodeInfo(GetAnimeSeries(), episodes);
@@ -261,11 +261,11 @@ namespace NzbDrone.Core.Test.TvTests
                                            .With(v => v.AirDateUtc = null)
                                            .BuildListOfNew();
 
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(new List<Episode>());
 
             List<Episode> updateEpisodes = null;
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.InsertMany(It.IsAny<List<Episode>>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.InsertMany(It.IsAny<List<Episode>>()))
                 .Callback<List<Episode>>(c => updateEpisodes = c);
 
             Subject.RefreshEpisodeInfo(series, episodes);
@@ -278,7 +278,7 @@ namespace NzbDrone.Core.Test.TvTests
         [Test]
         public void should_use_tba_for_episode_title_when_null()
         {
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(new List<Episode>());
 
             var episodes = Builder<Episode>.CreateListOfSize(1)
@@ -295,7 +295,7 @@ namespace NzbDrone.Core.Test.TvTests
         [Test]
         public void should_update_air_date_when_multiple_episodes_air_on_the_same_day()
         {
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(new List<Episode>());
 
             var now = DateTime.UtcNow;
@@ -303,7 +303,7 @@ namespace NzbDrone.Core.Test.TvTests
 
             var episodes = Builder<Episode>.CreateListOfSize(2)
                                            .All()
-                                           .With(e => e.SeasonNumber = 1)
+                                           .With(e => e.BookNumber = 1)
                                            .With(e => e.AirDate = now.ToShortDateString())
                                            .With(e => e.AirDateUtc = now)
                                            .Build()
@@ -318,7 +318,7 @@ namespace NzbDrone.Core.Test.TvTests
         [Test]
         public void should_not_update_air_date_when_more_than_three_episodes_air_on_the_same_day()
         {
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(new List<Episode>());
 
             var now = DateTime.UtcNow;
@@ -326,7 +326,7 @@ namespace NzbDrone.Core.Test.TvTests
 
             var episodes = Builder<Episode>.CreateListOfSize(4)
                                            .All()
-                                           .With(e => e.SeasonNumber = 1)
+                                           .With(e => e.BookNumber = 1)
                                            .With(e => e.AirDate = now.ToShortDateString())
                                            .With(e => e.AirDateUtc = now)
                                            .Build()
@@ -344,29 +344,29 @@ namespace NzbDrone.Core.Test.TvTests
                 .Build()
                 .ToList();
 
-            episodes[0].AbsoluteEpisodeNumber = null;
-            episodes[0].SeasonNumber.Should().NotBe(episodes[1].SeasonNumber);
-            episodes[0].EpisodeNumber.Should().NotBe(episodes[1].EpisodeNumber);
+            episodes[0].AbsoluteEditionNumber = null;
+            episodes[0].BookNumber.Should().NotBe(episodes[1].BookNumber);
+            episodes[0].EditionNumber.Should().NotBe(episodes[1].EditionNumber);
 
             var existingEpisode = new Episode
             {
-                SeasonNumber = episodes[0].SeasonNumber,
-                EpisodeNumber = episodes[0].EpisodeNumber,
-                AbsoluteEpisodeNumber = episodes[1].AbsoluteEpisodeNumber
+                BookNumber = episodes[0].BookNumber,
+                EditionNumber = episodes[0].EditionNumber,
+                AbsoluteEditionNumber = episodes[1].AbsoluteEditionNumber
             };
 
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(new List<Episode> { existingEpisode });
 
             Subject.RefreshEpisodeInfo(GetAnimeSeries(), episodes);
 
-            _updatedEpisodes.First().SeasonNumber.Should().Be(episodes[0].SeasonNumber);
-            _updatedEpisodes.First().EpisodeNumber.Should().Be(episodes[0].EpisodeNumber);
-            _updatedEpisodes.First().AbsoluteEpisodeNumber.Should().Be(episodes[0].AbsoluteEpisodeNumber);
+            _updatedEpisodes.First().BookNumber.Should().Be(episodes[0].BookNumber);
+            _updatedEpisodes.First().EditionNumber.Should().Be(episodes[0].EditionNumber);
+            _updatedEpisodes.First().AbsoluteEditionNumber.Should().Be(episodes[0].AbsoluteEditionNumber);
 
-            _insertedEpisodes.First().SeasonNumber.Should().Be(episodes[1].SeasonNumber);
-            _insertedEpisodes.First().EpisodeNumber.Should().Be(episodes[1].EpisodeNumber);
-            _insertedEpisodes.First().AbsoluteEpisodeNumber.Should().Be(episodes[1].AbsoluteEpisodeNumber);
+            _insertedEpisodes.First().BookNumber.Should().Be(episodes[1].BookNumber);
+            _insertedEpisodes.First().EditionNumber.Should().Be(episodes[1].EditionNumber);
+            _insertedEpisodes.First().AbsoluteEditionNumber.Should().Be(episodes[1].AbsoluteEditionNumber);
         }
 
         [Test]
@@ -382,19 +382,19 @@ namespace NzbDrone.Core.Test.TvTests
                 episodes[1]
             };
 
-            existingEpisodes[0].AbsoluteEpisodeNumber = null;
+            existingEpisodes[0].AbsoluteEditionNumber = null;
 
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(existingEpisodes);
 
             Subject.RefreshEpisodeInfo(GetAnimeSeries(), episodes);
 
-            _updatedEpisodes.First().SeasonNumber.Should().Be(episodes[1].SeasonNumber);
-            _updatedEpisodes.First().EpisodeNumber.Should().Be(episodes[1].EpisodeNumber);
-            _updatedEpisodes.First().AbsoluteEpisodeNumber.Should().NotBeNull();
-            _updatedEpisodes.First().AbsoluteEpisodeNumberAdded.Should().BeTrue();
+            _updatedEpisodes.First().BookNumber.Should().Be(episodes[1].BookNumber);
+            _updatedEpisodes.First().EditionNumber.Should().Be(episodes[1].EditionNumber);
+            _updatedEpisodes.First().AbsoluteEditionNumber.Should().NotBeNull();
+            _updatedEpisodes.First().AbsoluteEditionNumberAdded.Should().BeTrue();
 
-            _insertedEpisodes.Any(e => e.AbsoluteEpisodeNumberAdded).Should().BeFalse();
+            _insertedEpisodes.Any(e => e.AbsoluteEditionNumberAdded).Should().BeFalse();
         }
 
         [Test]
@@ -402,22 +402,22 @@ namespace NzbDrone.Core.Test.TvTests
         {
             var series = GetSeries();
             series.Seasons = new List<Season>();
-            series.Seasons.Add(new Season { SeasonNumber = 1, Monitored = true });
+            series.Seasons.Add(new Season { BookNumber = 1, Monitored = true });
 
             var episodes = Builder<Episode>.CreateListOfSize(2)
                 .All()
-                .With(e => e.SeasonNumber = 1)
+                .With(e => e.BookNumber = 1)
                 .Build()
                 .ToList();
 
             var existingEpisode = new Episode
             {
-                SeasonNumber = episodes[0].SeasonNumber,
-                EpisodeNumber = episodes[0].EpisodeNumber,
+                BookNumber = episodes[0].BookNumber,
+                EditionNumber = episodes[0].EditionNumber,
                 Monitored = true
             };
 
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(new List<Episode> { existingEpisode });
 
             Subject.RefreshEpisodeInfo(series, episodes);
@@ -432,22 +432,22 @@ namespace NzbDrone.Core.Test.TvTests
         {
             var series = GetSeries();
             series.Seasons = new List<Season>();
-            series.Seasons.Add(new Season { SeasonNumber = 1, Monitored = false });
+            series.Seasons.Add(new Season { BookNumber = 1, Monitored = false });
 
             var episodes = Builder<Episode>.CreateListOfSize(2)
                 .All()
-                .With(e => e.SeasonNumber = 1)
+                .With(e => e.BookNumber = 1)
                 .Build()
                 .ToList();
 
             var existingEpisode = new Episode
             {
-                SeasonNumber = episodes[0].SeasonNumber,
-                EpisodeNumber = episodes[0].EpisodeNumber,
+                BookNumber = episodes[0].BookNumber,
+                EditionNumber = episodes[0].EditionNumber,
                 Monitored = true
             };
 
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+            Mocker.GetMock<IEditionService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(new List<Episode> { existingEpisode });
 
             Subject.RefreshEpisodeInfo(series, episodes);

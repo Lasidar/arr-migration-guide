@@ -5,7 +5,7 @@ using NzbDrone.Core.Test.Framework;
 namespace NzbDrone.Core.Test.ParserTests
 {
     [TestFixture]
-    public class SeriesTitleInfoFixture : CoreTest
+    public class AuthorTitleInfoFixture : CoreTest
     {
         [Test]
         public void should_have_year_zero_when_title_doesnt_have_a_year()

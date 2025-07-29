@@ -39,7 +39,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
                 .With(h => h.Languages = new List<Language> { Language.English })
                 .With(h => h.EpisodeIds = new List<int>())
                 .With(h => h.Quality = new QualityModel())
-                .With(b => b.SeriesId = series.Id)
+                .With(b => b.AuthorId = series.Id)
                 .BuildNew();
 
             Db.Insert(blocklist);

@@ -11,7 +11,7 @@ using NzbDrone.Test.Common;
 namespace NzbDrone.Core.Test.DecisionEngineTests.Search
 {
     [TestFixture]
-    public class SeriesSpecificationFixture : TestBase<SeriesSpecification>
+    public class AuthorSpecificationFixture : TestBase<SeriesSpecification>
     {
         private Series _series1;
         private Series _series2;

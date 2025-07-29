@@ -23,13 +23,13 @@ namespace Readarr.Api.V3.History
         private readonly ICustomFormatCalculationService _formatCalculator;
         private readonly IUpgradableSpecification _upgradableSpecification;
         private readonly IFailedDownloadService _failedDownloadService;
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
 
         public HistoryController(IHistoryService historyService,
                              ICustomFormatCalculationService formatCalculator,
                              IUpgradableSpecification upgradableSpecification,
                              IFailedDownloadService failedDownloadService,
-                             ISeriesService seriesService)
+                             IAuthorService seriesService)
         {
             _historyService = historyService;
             _formatCalculator = formatCalculator;
@@ -91,7 +91,7 @@ namespace Readarr.Api.V3.History
 
             if (seriesIds != null && seriesIds.Any())
             {
-                pagingSpec.FilterExpressions.Add(h => seriesIds.Contains(h.SeriesId));
+                pagingSpec.FilterExpressions.Add(h => seriesIds.Contains(h.AuthorId));
             }
 
             return pagingSpec.ApplyToPage(h => _historyService.Paged(pagingSpec, languages, quality), h => MapToResource(h, includeSeries, includeEpisode));

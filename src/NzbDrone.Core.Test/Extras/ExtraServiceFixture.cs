@@ -21,7 +21,7 @@ namespace NzbDrone.Core.Test.Extras
     public class ExtraServiceFixture : CoreTest<ExtraService>
     {
         private Series _series;
-        private EpisodeFile _episodeFile;
+        private EditionFile _episodeFile;
         private LocalEpisode _localEpisode;
 
         private string _seriesFolder;
@@ -42,11 +42,11 @@ namespace NzbDrone.Core.Test.Extras
 
             var episodes = Builder<Episode>.CreateListOfSize(1)
                                            .All()
-                                           .With(e => e.SeasonNumber = 1)
+                                           .With(e => e.BookNumber = 1)
                                            .Build()
                                            .ToList();
 
-            _episodeFile = Builder<EpisodeFile>.CreateNew()
+            _episodeFile = Builder<EditionFile>.CreateNew()
                                                .With(f => f.Path = Path.Combine(_series.Path, "Season 1", "Series Title - S01E01.mkv").AsOsAgnostic())
                                                .With(f => f.RelativePath = @"Season 1\Series Title - S01E01.mkv".AsOsAgnostic())
                                                .Build();
@@ -59,14 +59,14 @@ namespace NzbDrone.Core.Test.Extras
 
             _subtitleService = new Mock<IManageExtraFiles>();
             _subtitleService.SetupGet(s => s.Order).Returns(0);
-            _subtitleService.Setup(s => s.CanImportFile(It.IsAny<LocalEpisode>(), It.IsAny<EpisodeFile>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
+            _subtitleService.Setup(s => s.CanImportFile(It.IsAny<LocalEpisode>(), It.IsAny<EditionFile>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
                 .Returns(false);
-            _subtitleService.Setup(s => s.CanImportFile(It.IsAny<LocalEpisode>(), It.IsAny<EpisodeFile>(), It.IsAny<string>(), ".srt", It.IsAny<bool>()))
+            _subtitleService.Setup(s => s.CanImportFile(It.IsAny<LocalEpisode>(), It.IsAny<EditionFile>(), It.IsAny<string>(), ".srt", It.IsAny<bool>()))
                 .Returns(true);
 
             _otherExtraService = new Mock<IManageExtraFiles>();
             _otherExtraService.SetupGet(s => s.Order).Returns(1);
-            _otherExtraService.Setup(s => s.CanImportFile(It.IsAny<LocalEpisode>(), It.IsAny<EpisodeFile>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
+            _otherExtraService.Setup(s => s.CanImportFile(It.IsAny<LocalEpisode>(), It.IsAny<EditionFile>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
                 .Returns(true);
 
             Mocker.SetConstant<IEnumerable<IManageExtraFiles>>(new[]

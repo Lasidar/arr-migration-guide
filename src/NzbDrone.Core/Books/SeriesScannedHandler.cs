@@ -7,11 +7,11 @@ using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.Books
 {
-    public class SeriesScannedHandler : IHandle<SeriesScannedEvent>,
+    public class AuthorScannedHandler : IHandle<SeriesScannedEvent>,
                                         IHandle<SeriesScanSkippedEvent>
     {
         private readonly IEpisodeMonitoredService _episodeMonitoredService;
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
         private readonly IManageCommandQueue _commandQueueManager;
         private readonly IEpisodeRefreshedService _episodeRefreshedService;
         private readonly IEventAggregator _eventAggregator;
@@ -19,7 +19,7 @@ namespace NzbDrone.Core.Books
         private readonly Logger _logger;
 
         public SeriesScannedHandler(IEpisodeMonitoredService episodeMonitoredService,
-                                    ISeriesService seriesService,
+                                    IAuthorService seriesService,
                                     IManageCommandQueue commandQueueManager,
                                     IEpisodeRefreshedService episodeRefreshedService,
                                     IEventAggregator eventAggregator,

@@ -11,10 +11,10 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Plex
 {
     public class PlexMetadata : MetadataBase<PlexMetadataSettings>
     {
-        private readonly IEpisodeService _episodeService;
+        private readonly IEditionService _episodeService;
         private readonly IMediaFileService _mediaFileService;
 
-        public PlexMetadata(IEpisodeService episodeService, IMediaFileService mediaFileService)
+        public PlexMetadata(IEditionService episodeService, IMediaFileService mediaFileService)
         {
             _episodeService = episodeService;
             _mediaFileService = mediaFileService;
@@ -37,7 +37,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Plex
             {
                 return new MetadataFile
                 {
-                    SeriesId = series.Id,
+                    AuthorId = series.Id,
                     Consumer = GetType().Name,
                     RelativePath = series.Path.GetRelativePath(path),
                     Type = MetadataType.SeriesMetadata
@@ -68,10 +68,10 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Plex
 
                 foreach (var episodeFile in episodeFiles)
                 {
-                    var episodesInFile = episodes.Where(e => e.EpisodeFileId == episodeFile.Id);
-                    var episodeFormat = $"S{episodeFile.SeasonNumber:00}{string.Join("-", episodesInFile.Select(e => $"E{e.EpisodeNumber:00}"))}";
+                    var episodesInFile = episodes.Where(e => e.EditionFileId == episodeFile.Id);
+                    var episodeFormat = $"S{episodeFile.BookNumber:00}{string.Join("-", episodesInFile.Select(e => $"E{e.EditionNumber:00}"))}";
 
-                    if (episodeFile.SeasonNumber == 0)
+                    if (episodeFile.BookNumber == 0)
                     {
                         episodeFormat = $"SP{episodesInFile.First():00}";
                     }
@@ -83,7 +83,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Plex
             return new MetadataFileResult(".plexmatch", content.ToString());
         }
 
-        public override MetadataFileResult EpisodeMetadata(Series series, EpisodeFile episodeFile)
+        public override MetadataFileResult EpisodeMetadata(Series series, EditionFile episodeFile)
         {
             return null;
         }
@@ -98,7 +98,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Plex
             return new List<ImageFileResult>();
         }
 
-        public override List<ImageFileResult> EpisodeImages(Series series, EpisodeFile episodeFile)
+        public override List<ImageFileResult> EpisodeImages(Series series, EditionFile episodeFile)
         {
             return new List<ImageFileResult>();
         }

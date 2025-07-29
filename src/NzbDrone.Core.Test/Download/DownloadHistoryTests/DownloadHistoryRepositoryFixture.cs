@@ -33,18 +33,18 @@ namespace NzbDrone.Core.Test.Download.DownloadHistoryTests
             var items = Builder<DownloadHistory>.CreateListOfSize(5)
                 .TheFirst(1)
                 .With(c => c.Id = 0)
-                .With(c => c.SeriesId = _series2.Id)
+                .With(c => c.AuthorId = _series2.Id)
                 .TheRest()
                 .With(c => c.Id = 0)
-                .With(c => c.SeriesId = _series1.Id)
+                .With(c => c.AuthorId = _series1.Id)
                 .BuildListOfNew();
 
             Db.InsertMany(items);
 
-            Subject.DeleteBySeriesIds(new List<int> { _series1.Id });
+            Subject.DeleteByAuthorIds(new List<int> { _series1.Id });
 
-            var removedItems = Subject.All().Where(h => h.SeriesId == _series1.Id);
-            var nonRemovedItems = Subject.All().Where(h => h.SeriesId == _series2.Id);
+            var removedItems = Subject.All().Where(h => h.AuthorId == _series1.Id);
+            var nonRemovedItems = Subject.All().Where(h => h.AuthorId == _series2.Id);
 
             removedItems.Should().HaveCount(0);
             nonRemovedItems.Should().HaveCount(1);

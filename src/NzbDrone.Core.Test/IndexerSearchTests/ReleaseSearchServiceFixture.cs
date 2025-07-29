@@ -45,13 +45,13 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             _xemEpisodes = new List<Episode>();
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                 .Setup(v => v.GetSeries(_xemSeries.Id))
                 .Returns(_xemSeries);
 
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                 .Setup(v => v.GetEpisodesBySeason(_xemSeries.Id, It.IsAny<int>()))
-                .Returns<int, int>((i, j) => _xemEpisodes.Where(d => d.SeasonNumber == j).ToList());
+                .Returns<int, int>((i, j) => _xemEpisodes.Where(d => d.BookNumber == j).ToList());
 
             Mocker.GetMock<ISceneMappingService>()
                   .Setup(s => s.FindByTvdbId(It.IsAny<int>()))
@@ -62,15 +62,15 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                   .Returns(new List<string>());
         }
 
-        private void WithEpisode(int seasonNumber, int episodeNumber, int? sceneSeasonNumber, int? sceneEpisodeNumber, string airDate = null)
+        private void WithEpisode(int seasonNumber, int episodeNumber, int? sceneBookNumber, int? sceneEditionNumber, string airDate = null)
         {
             var episode = Builder<Episode>.CreateNew()
-                .With(v => v.SeriesId == _xemSeries.Id)
+                .With(v => v.AuthorId == _xemSeries.Id)
                 .With(v => v.Series == _xemSeries)
-                .With(v => v.SeasonNumber, seasonNumber)
-                .With(v => v.EpisodeNumber, episodeNumber)
-                .With(v => v.SceneSeasonNumber, sceneSeasonNumber)
-                .With(v => v.SceneEpisodeNumber, sceneEpisodeNumber)
+                .With(v => v.BookNumber, seasonNumber)
+                .With(v => v.EditionNumber, episodeNumber)
+                .With(v => v.SceneBookNumber, sceneBookNumber)
+                .With(v => v.SceneEditionNumber, sceneEditionNumber)
                 .With(v => v.AirDate = airDate ?? $"{2000 + seasonNumber}-{(episodeNumber % 12) + 1:00}-05")
                 .With(v => v.AirDateUtc = DateTime.ParseExact(v.AirDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal).ToUniversalTime())
                 .With(v => v.Monitored = true)
@@ -174,7 +174,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                 .With(v => v.Tags = new HashSet<int> { 3 })
                 .Build();
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                 .Setup(v => v.GetSeries(_xemSeries.Id))
                 .Returns(_xemSeries);
 
@@ -204,7 +204,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                 .With(v => v.Tags = new HashSet<int> { 3, 4, 5 })
                 .Build();
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                 .Setup(v => v.GetSeries(_xemSeries.Id))
                 .Returns(_xemSeries);
 
@@ -234,7 +234,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                 .With(v => v.Tags = new HashSet<int> { 4, 5, 6 })
                 .Build();
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                 .Setup(v => v.GetSeries(_xemSeries.Id))
                 .Returns(_xemSeries);
 
@@ -261,8 +261,8 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             var criteria = allCriteria.OfType<SingleEpisodeSearchCriteria>().ToList();
 
             criteria.Count.Should().Be(1);
-            criteria[0].SeasonNumber.Should().Be(2);
-            criteria[0].EpisodeNumber.Should().Be(3);
+            criteria[0].BookNumber.Should().Be(2);
+            criteria[0].EditionNumber.Should().Be(3);
         }
 
         [Test]
@@ -277,7 +277,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             var criteria = allCriteria.OfType<SeasonSearchCriteria>().ToList();
 
             criteria.Count.Should().Be(1);
-            criteria[0].SeasonNumber.Should().Be(2);
+            criteria[0].BookNumber.Should().Be(2);
         }
 
         [Test]
@@ -292,8 +292,8 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             var criteria = allCriteria.OfType<SeasonSearchCriteria>().ToList();
 
             criteria.Count.Should().Be(2);
-            criteria[0].SeasonNumber.Should().Be(3);
-            criteria[1].SeasonNumber.Should().Be(4);
+            criteria[0].BookNumber.Should().Be(3);
+            criteria[1].BookNumber.Should().Be(4);
         }
 
         [Test]
@@ -309,11 +309,11 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             var criteria2 = allCriteria.OfType<SingleEpisodeSearchCriteria>().ToList();
 
             criteria1.Count.Should().Be(1);
-            criteria1[0].SeasonNumber.Should().Be(5);
+            criteria1[0].BookNumber.Should().Be(5);
 
             criteria2.Count.Should().Be(1);
-            criteria2[0].SeasonNumber.Should().Be(6);
-            criteria2[0].EpisodeNumber.Should().Be(11);
+            criteria2[0].BookNumber.Should().Be(6);
+            criteria2[0].EditionNumber.Should().Be(11);
         }
 
         [Test]
@@ -328,7 +328,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             var criteria = allCriteria.OfType<SeasonSearchCriteria>().ToList();
 
             criteria.Count.Should().Be(1);
-            criteria[0].SeasonNumber.Should().Be(7);
+            criteria[0].BookNumber.Should().Be(7);
         }
 
         [Test]
@@ -336,7 +336,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         {
             WithEpisodes();
             _xemSeries.SeriesType = SeriesTypes.Anime;
-            _xemEpisodes.ForEach(e => e.EpisodeFileId = 0);
+            _xemEpisodes.ForEach(e => e.EditionFileId = 0);
 
             var seasonNumber = 1;
             var allCriteria = WatchForSearchCriteria();
@@ -345,7 +345,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             var criteria = allCriteria.OfType<AnimeEpisodeSearchCriteria>().ToList();
 
-            criteria.Count.Should().Be(_xemEpisodes.Count(e => e.SeasonNumber == seasonNumber));
+            criteria.Count.Should().Be(_xemEpisodes.Count(e => e.BookNumber == seasonNumber));
         }
 
         [Test]
@@ -354,7 +354,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             WithEpisodes();
             _xemSeries.SeriesType = SeriesTypes.Anime;
             _xemEpisodes.ForEach(e => e.Monitored = false);
-            _xemEpisodes.ForEach(e => e.EpisodeFileId = 0);
+            _xemEpisodes.ForEach(e => e.EditionFileId = 0);
 
             var seasonNumber = 1;
             var allCriteria = WatchForSearchCriteria();
@@ -372,7 +372,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             WithEpisodes();
             _xemSeries.SeriesType = SeriesTypes.Anime;
             _xemEpisodes.ForEach(e => e.AirDateUtc = DateTime.UtcNow.AddDays(5));
-            _xemEpisodes.ForEach(e => e.EpisodeFileId = 0);
+            _xemEpisodes.ForEach(e => e.EditionFileId = 0);
 
             var seasonNumber = 1;
             var allCriteria = WatchForSearchCriteria();
@@ -389,7 +389,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         {
             WithEpisodes();
             _xemSeries.SeriesType = SeriesTypes.Anime;
-            _xemEpisodes.ForEach(e => e.EpisodeFileId = 1);
+            _xemEpisodes.ForEach(e => e.EditionFileId = 1);
 
             var seasonNumber = 1;
             var allCriteria = WatchForSearchCriteria();
@@ -406,7 +406,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         {
             WithEpisodes();
             _xemSeries.SeriesType = SeriesTypes.Anime;
-            _xemEpisodes.ForEach(e => e.EpisodeFileId = 0);
+            _xemEpisodes.ForEach(e => e.EditionFileId = 0);
 
             var seasonNumber = 1;
             var allCriteria = WatchForSearchCriteria();
@@ -415,7 +415,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             var criteria = allCriteria.OfType<AnimeEpisodeSearchCriteria>().ToList();
 
-            criteria.Count.Should().Be(_xemEpisodes.Count(e => e.SeasonNumber == seasonNumber));
+            criteria.Count.Should().Be(_xemEpisodes.Count(e => e.BookNumber == seasonNumber));
             criteria.ForEach(c => c.IsSeasonSearch.Should().BeTrue());
         }
 
@@ -424,7 +424,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         {
             WithEpisodes();
             _xemSeries.SeriesType = SeriesTypes.Anime;
-            _xemEpisodes.ForEach(e => e.EpisodeFileId = 0);
+            _xemEpisodes.ForEach(e => e.EditionFileId = 0);
 
             var seasonNumber = 1;
             var allCriteria = WatchForSearchCriteria();
@@ -433,8 +433,8 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             var criteria = allCriteria.OfType<AnimeSeasonSearchCriteria>().ToList();
 
-            var episodesForSeason1 = _xemEpisodes.Where(e => e.SeasonNumber == seasonNumber);
-            criteria.Count.Should().Be(episodesForSeason1.Select(e => e.SeasonNumber).Distinct().Count());
+            var episodesForSeason1 = _xemEpisodes.Where(e => e.BookNumber == seasonNumber);
+            criteria.Count.Should().Be(episodesForSeason1.Select(e => e.BookNumber).Distinct().Count());
         }
 
         [Test]
@@ -443,7 +443,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             WithEpisodes();
             _xemSeries.SeriesType = SeriesTypes.Anime;
             _xemEpisodes.ForEach(e => e.Monitored = false);
-            _xemEpisodes.ForEach(e => e.EpisodeFileId = 0);
+            _xemEpisodes.ForEach(e => e.EditionFileId = 0);
 
             var seasonNumber = 1;
             var allCriteria = WatchForSearchCriteria();
@@ -461,7 +461,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             WithEpisodes();
             _xemSeries.SeriesType = SeriesTypes.Anime;
             _xemEpisodes.ForEach(e => e.AirDateUtc = DateTime.UtcNow.AddDays(5));
-            _xemEpisodes.ForEach(e => e.EpisodeFileId = 0);
+            _xemEpisodes.ForEach(e => e.EditionFileId = 0);
 
             var seasonNumber = 1;
             var allCriteria = WatchForSearchCriteria();
@@ -478,7 +478,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         {
             WithEpisodes();
             _xemSeries.SeriesType = SeriesTypes.Anime;
-            _xemEpisodes.ForEach(e => e.EpisodeFileId = 1);
+            _xemEpisodes.ForEach(e => e.EditionFileId = 1);
 
             var seasonNumber = 1;
             var allCriteria = WatchForSearchCriteria();
@@ -566,7 +566,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             allCriteria.Should().HaveCount(1);
             allCriteria.First().Should().BeOfType<SeasonSearchCriteria>();
-            allCriteria.First().As<SeasonSearchCriteria>().SeasonNumber.Should().Be(7);
+            allCriteria.First().As<SeasonSearchCriteria>().BookNumber.Should().Be(7);
         }
 
         [Test]
@@ -584,8 +584,8 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                         SearchTerm = _xemSeries.Title,
                         ParseTerm = _xemSeries.Title,
                         FilterRegex = "(?i)-(BTN)$",
-                        SeasonNumber = 1,
-                        SceneSeasonNumber = 1,
+                        BookNumber = 1,
+                        SceneBookNumber = 1,
                         SceneOrigin = "tvdb",
                         Type = "ServicesProvider"
                     }
@@ -601,12 +601,12 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             allCriteria.Should().HaveCount(2);
 
             allCriteria.First().Should().BeOfType<SingleEpisodeSearchCriteria>();
-            allCriteria.First().As<SingleEpisodeSearchCriteria>().SeasonNumber.Should().Be(1);
-            allCriteria.First().As<SingleEpisodeSearchCriteria>().EpisodeNumber.Should().Be(12);
+            allCriteria.First().As<SingleEpisodeSearchCriteria>().BookNumber.Should().Be(1);
+            allCriteria.First().As<SingleEpisodeSearchCriteria>().EditionNumber.Should().Be(12);
 
             allCriteria.Last().Should().BeOfType<SingleEpisodeSearchCriteria>();
-            allCriteria.Last().As<SingleEpisodeSearchCriteria>().SeasonNumber.Should().Be(2);
-            allCriteria.Last().As<SingleEpisodeSearchCriteria>().EpisodeNumber.Should().Be(3);
+            allCriteria.Last().As<SingleEpisodeSearchCriteria>().BookNumber.Should().Be(2);
+            allCriteria.Last().As<SingleEpisodeSearchCriteria>().EditionNumber.Should().Be(3);
         }
 
         [Test]
@@ -626,8 +626,8 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                         TvdbId = _xemSeries.TvdbId,
                         SearchTerm = "Sonarrs Title",
                         ParseTerm = _xemSeries.CleanTitle,
-                        SeasonNumber = 1,
-                        SceneSeasonNumber = 1,
+                        BookNumber = 1,
+                        SceneBookNumber = 1,
                         SceneOrigin = "tvdb",
                         Type = "ServicesProvider"
                     }
@@ -643,12 +643,12 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             allCriteria.Should().HaveCount(2);
 
             allCriteria.First().Should().BeOfType<SingleEpisodeSearchCriteria>();
-            allCriteria.First().As<SingleEpisodeSearchCriteria>().SeasonNumber.Should().Be(1);
-            allCriteria.First().As<SingleEpisodeSearchCriteria>().EpisodeNumber.Should().Be(12);
+            allCriteria.First().As<SingleEpisodeSearchCriteria>().BookNumber.Should().Be(1);
+            allCriteria.First().As<SingleEpisodeSearchCriteria>().EditionNumber.Should().Be(12);
 
             allCriteria.Last().Should().BeOfType<SingleEpisodeSearchCriteria>();
-            allCriteria.Last().As<SingleEpisodeSearchCriteria>().SeasonNumber.Should().Be(2);
-            allCriteria.Last().As<SingleEpisodeSearchCriteria>().EpisodeNumber.Should().Be(3);
+            allCriteria.Last().As<SingleEpisodeSearchCriteria>().BookNumber.Should().Be(2);
+            allCriteria.Last().As<SingleEpisodeSearchCriteria>().EditionNumber.Should().Be(3);
         }
     }
 }

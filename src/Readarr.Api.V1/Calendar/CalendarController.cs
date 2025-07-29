@@ -19,8 +19,8 @@ namespace Readarr.Api.V3.Calendar
         private readonly ITagService _tagService;
 
         public CalendarController(IBroadcastSignalRMessage signalR,
-                            IEpisodeService episodeService,
-                            ISeriesService seriesService,
+                            IEditionService episodeService,
+                            IAuthorService seriesService,
                             IUpgradableSpecification qualityUpgradableSpecification,
                             ITagService tagService,
                             ICustomFormatCalculationService formatCalculator)
@@ -31,7 +31,7 @@ namespace Readarr.Api.V3.Calendar
 
         [HttpGet]
         [Produces("application/json")]
-        public List<EpisodeResource> GetCalendar(DateTime? start, DateTime? end, bool unmonitored = false, bool includeSeries = false, bool includeEpisodeFile = false, bool includeEpisodeImages = false, string tags = "")
+        public List<EpisodeResource> GetCalendar(DateTime? start, DateTime? end, bool unmonitored = false, bool includeSeries = false, bool includeEditionFile = false, bool includeEpisodeImages = false, string tags = "")
         {
             var startUse = start ?? DateTime.Today;
             var endUse = end ?? DateTime.Today.AddDays(2);
@@ -47,7 +47,7 @@ namespace Readarr.Api.V3.Calendar
 
             foreach (var episode in episodes)
             {
-                var series = allSeries.SingleOrDefault(s => s.Id == episode.SeriesId);
+                var series = allSeries.SingleOrDefault(s => s.Id == episode.AuthorId);
 
                 if (series == null)
                 {
@@ -62,7 +62,7 @@ namespace Readarr.Api.V3.Calendar
                 result.Add(episode);
             }
 
-            var resources = MapToResource(result, includeSeries, includeEpisodeFile, includeEpisodeImages);
+            var resources = MapToResource(result, includeSeries, includeEditionFile, includeEpisodeImages);
 
             return resources.OrderBy(e => e.AirDateUtc).ToList();
         }

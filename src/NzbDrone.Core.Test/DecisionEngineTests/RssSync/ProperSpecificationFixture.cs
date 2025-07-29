@@ -23,19 +23,19 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
     {
         private RemoteEpisode _parseResultMulti;
         private RemoteEpisode _parseResultSingle;
-        private EpisodeFile _firstFile;
-        private EpisodeFile _secondFile;
+        private EditionFile _firstFile;
+        private EditionFile _secondFile;
 
         [SetUp]
         public void Setup()
         {
             Mocker.Resolve<UpgradableSpecification>();
 
-            _firstFile = new EpisodeFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 1)), DateAdded = DateTime.Now };
-            _secondFile = new EpisodeFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 1)), DateAdded = DateTime.Now };
+            _firstFile = new EditionFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 1)), DateAdded = DateTime.Now };
+            _secondFile = new EditionFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 1)), DateAdded = DateTime.Now };
 
-            var singleEpisodeList = new List<Episode> { new Episode { EpisodeFile = _firstFile, EpisodeFileId = 1 }, new Episode { EpisodeFile = null } };
-            var doubleEpisodeList = new List<Episode> { new Episode { EpisodeFile = _firstFile, EpisodeFileId = 1 }, new Episode { EpisodeFile = _secondFile, EpisodeFileId = 1 }, new Episode { EpisodeFile = null } };
+            var singleEpisodeList = new List<Episode> { new Episode { EditionFile = _firstFile, EditionFileId = 1 }, new Episode { EditionFile = null } };
+            var doubleEpisodeList = new List<Episode> { new Episode { EditionFile = _firstFile, EditionFileId = 1 }, new Episode { EditionFile = _secondFile, EditionFileId = 1 }, new Episode { EditionFile = null } };
 
             var fakeSeries = Builder<Series>.CreateNew()
                          .With(c => c.QualityProfile = new QualityProfile { Cutoff = Quality.Bluray1080p.Id })

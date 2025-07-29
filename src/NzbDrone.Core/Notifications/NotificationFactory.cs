@@ -17,8 +17,8 @@ namespace NzbDrone.Core.Notifications
         List<INotification> OnRenameEnabled(bool filterBlockedNotifications = true);
         List<INotification> OnSeriesAddEnabled(bool filterBlockedNotifications = true);
         List<INotification> OnSeriesDeleteEnabled(bool filterBlockedNotifications = true);
-        List<INotification> OnEpisodeFileDeleteEnabled(bool filterBlockedNotifications = true);
-        List<INotification> OnEpisodeFileDeleteForUpgradeEnabled(bool filterBlockedNotifications = true);
+        List<INotification> OnEditionFileDeleteEnabled(bool filterBlockedNotifications = true);
+        List<INotification> OnEditionFileDeleteForUpgradeEnabled(bool filterBlockedNotifications = true);
         List<INotification> OnHealthIssueEnabled(bool filterBlockedNotifications = true);
         List<INotification> OnHealthRestoredEnabled(bool filterBlockedNotifications = true);
         List<INotification> OnApplicationUpdateEnabled(bool filterBlockedNotifications = true);
@@ -112,24 +112,24 @@ namespace NzbDrone.Core.Notifications
             return GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnSeriesDelete).ToList();
         }
 
-        public List<INotification> OnEpisodeFileDeleteEnabled(bool filterBlockedNotifications = true)
+        public List<INotification> OnEditionFileDeleteEnabled(bool filterBlockedNotifications = true)
         {
             if (filterBlockedNotifications)
             {
-                return FilterBlockedNotifications(GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnEpisodeFileDelete)).ToList();
+                return FilterBlockedNotifications(GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnEditionFileDelete)).ToList();
             }
 
-            return GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnEpisodeFileDelete).ToList();
+            return GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnEditionFileDelete).ToList();
         }
 
-        public List<INotification> OnEpisodeFileDeleteForUpgradeEnabled(bool filterBlockedNotifications = true)
+        public List<INotification> OnEditionFileDeleteForUpgradeEnabled(bool filterBlockedNotifications = true)
         {
             if (filterBlockedNotifications)
             {
-                return FilterBlockedNotifications(GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnEpisodeFileDeleteForUpgrade)).ToList();
+                return FilterBlockedNotifications(GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnEditionFileDeleteForUpgrade)).ToList();
             }
 
-            return GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnEpisodeFileDeleteForUpgrade).ToList();
+            return GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnEditionFileDeleteForUpgrade).ToList();
         }
 
         public List<INotification> OnHealthIssueEnabled(bool filterBlockedNotifications = true)
@@ -199,8 +199,8 @@ namespace NzbDrone.Core.Notifications
             definition.SupportsOnRename = provider.SupportsOnRename;
             definition.SupportsOnSeriesAdd = provider.SupportsOnSeriesAdd;
             definition.SupportsOnSeriesDelete = provider.SupportsOnSeriesDelete;
-            definition.SupportsOnEpisodeFileDelete = provider.SupportsOnEpisodeFileDelete;
-            definition.SupportsOnEpisodeFileDeleteForUpgrade = provider.SupportsOnEpisodeFileDeleteForUpgrade;
+            definition.SupportsOnEditionFileDelete = provider.SupportsOnEditionFileDelete;
+            definition.SupportsOnEditionFileDeleteForUpgrade = provider.SupportsOnEditionFileDeleteForUpgrade;
             definition.SupportsOnHealthIssue = provider.SupportsOnHealthIssue;
             definition.SupportsOnHealthRestored = provider.SupportsOnHealthRestored;
             definition.SupportsOnApplicationUpdate = provider.SupportsOnApplicationUpdate;

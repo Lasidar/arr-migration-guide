@@ -71,16 +71,16 @@ namespace NzbDrone.Core.Datastore.Migration
             deleteCmd.CommandText = string.Format("DELETE FROM \"Series\" WHERE \"Id\" = {0}", seriesId.ToString());
             deleteCmd.ExecuteNonQuery();
 
-            deleteCmd.CommandText = string.Format("DELETE FROM \"Episodes\" WHERE \"SeriesId\" = {0}", seriesId.ToString());
+            deleteCmd.CommandText = string.Format("DELETE FROM \"Episodes\" WHERE \"AuthorId\" = {0}", seriesId.ToString());
             deleteCmd.ExecuteNonQuery();
 
-            deleteCmd.CommandText = string.Format("DELETE FROM \"Seasons\" WHERE \"SeriesId\" = {0}", seriesId.ToString());
+            deleteCmd.CommandText = string.Format("DELETE FROM \"Seasons\" WHERE \"AuthorId\" = {0}", seriesId.ToString());
             deleteCmd.ExecuteNonQuery();
 
-            deleteCmd.CommandText = string.Format("DELETE FROM \"History\" WHERE \"SeriesId\" = {0}", seriesId.ToString());
+            deleteCmd.CommandText = string.Format("DELETE FROM \"History\" WHERE \"AuthorId\" = {0}", seriesId.ToString());
             deleteCmd.ExecuteNonQuery();
 
-            deleteCmd.CommandText = string.Format("DELETE FROM \"EpisodeFiles\" WHERE \"SeriesId\" = {0}", seriesId.ToString());
+            deleteCmd.CommandText = string.Format("DELETE FROM \"EditionFiles\" WHERE \"AuthorId\" = {0}", seriesId.ToString());
             deleteCmd.ExecuteNonQuery();
         }
 

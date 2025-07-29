@@ -19,11 +19,11 @@ namespace NzbDrone.Core.Test.ParserTests
         {
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
-            result.EpisodeNumbers.Should().HaveCount(1);
-            result.SeasonNumber.Should().Be(1);
-            result.EpisodeNumbers.First().Should().Be(episodeNumber);
+            result.EditionNumbers.Should().HaveCount(1);
+            result.BookNumber.Should().Be(1);
+            result.EditionNumbers.First().Should().Be(episodeNumber);
             result.SeriesTitle.Should().Be(title);
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeFalse();
         }
 
@@ -37,11 +37,11 @@ namespace NzbDrone.Core.Test.ParserTests
         {
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
-            result.EpisodeNumbers.Should().HaveCount(1);
-            result.SeasonNumber.Should().Be(1);
-            result.EpisodeNumbers.First().Should().Be(episodeNumber);
+            result.EditionNumbers.Should().HaveCount(1);
+            result.BookNumber.Should().Be(1);
+            result.EditionNumbers.First().Should().Be(episodeNumber);
             result.SeriesTitle.Should().Be(title);
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeFalse();
 
             // We don't support both SxxExx and airdate yet

@@ -3,7 +3,7 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.MediaFiles.Events
 {
-    public class SeriesScanSkippedEvent : IEvent
+    public class AuthorScanSkippedEvent : IEvent
     {
         public Series Series { get; private set; }
         public SeriesScanSkippedReason Reason { get; set; }

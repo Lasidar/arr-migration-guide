@@ -15,8 +15,8 @@ namespace NzbDrone.Core.CustomFormats
     public interface ICustomFormatCalculationService
     {
         List<CustomFormat> ParseCustomFormat(RemoteEpisode remoteEpisode, long size);
-        List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile, Series series);
-        List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile);
+        List<CustomFormat> ParseCustomFormat(EditionFile episodeFile, Series series);
+        List<CustomFormat> ParseCustomFormat(EditionFile episodeFile);
         List<CustomFormat> ParseCustomFormat(Blocklist blocklist, Series series);
         List<CustomFormat> ParseCustomFormat(EpisodeHistory history, Series series);
         List<CustomFormat> ParseCustomFormat(LocalEpisode localEpisode);
@@ -48,12 +48,12 @@ namespace NzbDrone.Core.CustomFormats
             return ParseCustomFormat(input);
         }
 
-        public List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile, Series series)
+        public List<CustomFormat> ParseCustomFormat(EditionFile episodeFile, Series series)
         {
             return ParseCustomFormat(episodeFile, series, _formatService.All());
         }
 
-        public List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile)
+        public List<CustomFormat> ParseCustomFormat(EditionFile episodeFile)
         {
             return ParseCustomFormat(episodeFile, episodeFile.Series.Value, _formatService.All());
         }
@@ -167,7 +167,7 @@ namespace NzbDrone.Core.CustomFormats
             return matches.OrderBy(x => x.Name).ToList();
         }
 
-        private List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile, Series series, List<CustomFormat> allCustomFormats)
+        private List<CustomFormat> ParseCustomFormat(EditionFile episodeFile, Series series, List<CustomFormat> allCustomFormats)
         {
             var releaseTitle = string.Empty;
 

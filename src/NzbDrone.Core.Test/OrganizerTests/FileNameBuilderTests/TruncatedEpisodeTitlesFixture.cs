@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
     {
         private Series _series;
         private List<Episode> _episodes;
-        private EpisodeFile _episodeFile;
+        private EditionFile _episodeFile;
         private NamingConfig _namingConfig;
 
         [SetUp]
@@ -40,48 +40,48 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
                         {
                             Builder<Episode>.CreateNew()
                                             .With(e => e.Title = "Episode Title 1")
-                                            .With(e => e.SeasonNumber = 1)
-                                            .With(e => e.EpisodeNumber = 1)
+                                            .With(e => e.BookNumber = 1)
+                                            .With(e => e.EditionNumber = 1)
                                             .Build(),
 
                             Builder<Episode>.CreateNew()
                                             .With(e => e.Title = "Another Episode Title")
-                                            .With(e => e.SeasonNumber = 1)
-                                            .With(e => e.EpisodeNumber = 2)
+                                            .With(e => e.BookNumber = 1)
+                                            .With(e => e.EditionNumber = 2)
                                             .Build(),
 
                             Builder<Episode>.CreateNew()
                                             .With(e => e.Title = "Yet Another Episode Title")
-                                            .With(e => e.SeasonNumber = 1)
-                                            .With(e => e.EpisodeNumber = 3)
+                                            .With(e => e.BookNumber = 1)
+                                            .With(e => e.EditionNumber = 3)
                                             .Build(),
 
                             Builder<Episode>.CreateNew()
                                             .With(e => e.Title = "Yet Another Episode Title Take 2")
-                                            .With(e => e.SeasonNumber = 1)
-                                            .With(e => e.EpisodeNumber = 4)
+                                            .With(e => e.BookNumber = 1)
+                                            .With(e => e.EditionNumber = 4)
                                             .Build(),
 
                             Builder<Episode>.CreateNew()
                                             .With(e => e.Title = "Yet Another Episode Title Take 3")
-                                            .With(e => e.SeasonNumber = 1)
-                                            .With(e => e.EpisodeNumber = 5)
+                                            .With(e => e.BookNumber = 1)
+                                            .With(e => e.EditionNumber = 5)
                                             .Build(),
 
                             Builder<Episode>.CreateNew()
                                             .With(e => e.Title = "Yet Another Episode Title Take 4")
-                                            .With(e => e.SeasonNumber = 1)
-                                            .With(e => e.EpisodeNumber = 6)
+                                            .With(e => e.BookNumber = 1)
+                                            .With(e => e.EditionNumber = 6)
                                             .Build(),
 
                             Builder<Episode>.CreateNew()
                                             .With(e => e.Title = "A Really Really Really Really Long Episode Title")
-                                            .With(e => e.SeasonNumber = 1)
-                                            .With(e => e.EpisodeNumber = 7)
+                                            .With(e => e.BookNumber = 1)
+                                            .With(e => e.EditionNumber = 7)
                                             .Build()
                         };
 
-            _episodeFile = new EpisodeFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
+            _episodeFile = new EditionFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
 
             Mocker.GetMock<IQualityDefinitionService>()
                 .Setup(v => v.Get(Moq.It.IsAny<Quality>()))
@@ -102,8 +102,8 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         {
             _series.Title = "The Fantastic Life of Mr. Sisko";
 
-            _episodes[0].SeasonNumber = 2;
-            _episodes[0].EpisodeNumber = 18;
+            _episodes[0].BookNumber = 2;
+            _episodes[0].EditionNumber = 18;
             _episodes[0].Title = "This title has to be 197 characters in length, combined with the series title, quality and episode number it becomes 254ish and the extension puts it above the 255 limit and triggers the truncation";
             _episodeFile.Quality.Quality = Quality.Bluray1080p;
             _episodes = _episodes.Take(1).ToList();

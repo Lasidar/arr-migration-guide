@@ -35,7 +35,7 @@ namespace NzbDrone.Core.Notifications.Apprise
             _proxy.SendNotification(IMPORT_COMPLETE_TITLE, message.Message, GetPosterUrl(message.Series), Settings);
         }
 
-        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        public override void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             _proxy.SendNotification(EPISODE_DELETED_TITLE, deleteMessage.Message, GetPosterUrl(deleteMessage.Series), Settings);
         }

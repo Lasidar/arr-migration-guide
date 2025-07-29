@@ -16,16 +16,16 @@ namespace NzbDrone.Core.Books
         void Search(int seriesId);
     }
 
-    public class EpisodeRefreshedService : IEpisodeRefreshedService, IHandle<EpisodeInfoRefreshedEvent>
+    public class EditionRefreshedService : IEpisodeRefreshedService, IHandle<EpisodeInfoRefreshedEvent>
     {
         private readonly IManageCommandQueue _commandQueueManager;
-        private readonly IEpisodeService _episodeService;
+        private readonly IEditionService _episodeService;
         private readonly Logger _logger;
         private readonly ICached<List<int>> _searchCache;
 
         public EpisodeRefreshedService(ICacheManager cacheManager,
                                    IManageCommandQueue commandQueueManager,
-                                   IEpisodeService episodeService,
+                                   IEditionService episodeService,
                                    Logger logger)
         {
             _commandQueueManager = commandQueueManager;
@@ -77,20 +77,20 @@ namespace NzbDrone.Core.Books
 
                 toSearch.AddRange(previouslyAired);
 
-                var absoluteEpisodeNumberAdded = message.Updated.Where(a =>
-                        a.AbsoluteEpisodeNumberAdded &&
+                var absoluteEditionNumberAdded = message.Updated.Where(a =>
+                        a.AbsoluteEditionNumberAdded &&
                         a.AirDateUtc.HasValue &&
                         a.AirDateUtc.Value.Between(DateTime.UtcNow.AddDays(-14), DateTime.UtcNow.AddDays(1)) &&
                         a.Monitored)
                     .Select(e => e.Id)
                     .ToList();
 
-                if (absoluteEpisodeNumberAdded.Empty())
+                if (absoluteEditionNumberAdded.Empty())
                 {
                     _logger.Debug("No updated episodes recently aired and had absolute episode number added");
                 }
 
-                toSearch.AddRange(absoluteEpisodeNumberAdded);
+                toSearch.AddRange(absoluteEditionNumberAdded);
 
                 if (toSearch.Any())
                 {

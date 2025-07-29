@@ -21,10 +21,10 @@ namespace NzbDrone.Core.Test.Datastore.Migration
         {
             var db = WithMigrationTestDb(c =>
             {
-                c.Insert.IntoTable("EpisodeFiles").Row(new
+                c.Insert.IntoTable("EditionFiles").Row(new
                 {
-                    SeriesId = 1,
-                    SeasonNumber = 1,
+                    AuthorId = 1,
+                    BookNumber = 1,
                     RelativePath = "Season 01/S01E05.mkv",
                     Size = 125.Megabytes(),
                     DateAdded = DateTime.UtcNow.AddDays(-5),
@@ -35,7 +35,7 @@ namespace NzbDrone.Core.Test.Datastore.Migration
                 });
             });
 
-            var items = db.Query<EpisodeFile203>("SELECT * FROM \"EpisodeFiles\"");
+            var items = db.Query<EditionFile203>("SELECT * FROM \"EditionFiles\"");
 
             items.Should().HaveCount(1);
 
@@ -47,10 +47,10 @@ namespace NzbDrone.Core.Test.Datastore.Migration
         {
             var db = WithMigrationTestDb(c =>
             {
-                c.Insert.IntoTable("EpisodeFiles").Row(new
+                c.Insert.IntoTable("EditionFiles").Row(new
                 {
-                    SeriesId = 1,
-                    SeasonNumber = 1,
+                    AuthorId = 1,
+                    BookNumber = 1,
                     RelativePath = "Season 01/S01E05.mkv",
                     Size = 125.Megabytes(),
                     DateAdded = DateTime.UtcNow.AddDays(-5),
@@ -61,7 +61,7 @@ namespace NzbDrone.Core.Test.Datastore.Migration
                 });
             });
 
-            var items = db.Query<EpisodeFile203>("SELECT * FROM \"EpisodeFiles\"");
+            var items = db.Query<EditionFile203>("SELECT * FROM \"EditionFiles\"");
 
             items.Should().HaveCount(1);
 
@@ -73,10 +73,10 @@ namespace NzbDrone.Core.Test.Datastore.Migration
         {
             var db = WithMigrationTestDb(c =>
             {
-                c.Insert.IntoTable("EpisodeFiles").Row(new
+                c.Insert.IntoTable("EditionFiles").Row(new
                 {
-                    SeriesId = 1,
-                    SeasonNumber = 1,
+                    AuthorId = 1,
+                    BookNumber = 1,
                     RelativePath = "Season 01/S01E05.mkv",
                     Size = 125.Megabytes(),
                     DateAdded = DateTime.UtcNow.AddDays(-5),
@@ -87,7 +87,7 @@ namespace NzbDrone.Core.Test.Datastore.Migration
                 });
             });
 
-            var items = db.Query<EpisodeFile203>("SELECT * FROM \"EpisodeFiles\"");
+            var items = db.Query<EditionFile203>("SELECT * FROM \"EditionFiles\"");
 
             items.Should().HaveCount(1);
 
@@ -99,10 +99,10 @@ namespace NzbDrone.Core.Test.Datastore.Migration
         {
             var db = WithMigrationTestDb(c =>
             {
-                c.Insert.IntoTable("EpisodeFiles").Row(new
+                c.Insert.IntoTable("EditionFiles").Row(new
                 {
-                    SeriesId = 1,
-                    SeasonNumber = 1,
+                    AuthorId = 1,
+                    BookNumber = 1,
                     RelativePath = "Season 01/S01E05.mkv",
                     Size = 125.Megabytes(),
                     DateAdded = DateTime.UtcNow.AddDays(-5),
@@ -113,7 +113,7 @@ namespace NzbDrone.Core.Test.Datastore.Migration
                 });
             });
 
-            var items = db.Query<EpisodeFile203>("SELECT * FROM \"EpisodeFiles\"");
+            var items = db.Query<EditionFile203>("SELECT * FROM \"EditionFiles\"");
 
             items.Should().HaveCount(1);
 
@@ -125,10 +125,10 @@ namespace NzbDrone.Core.Test.Datastore.Migration
         {
             var db = WithMigrationTestDb(c =>
             {
-                c.Insert.IntoTable("EpisodeFiles").Row(new
+                c.Insert.IntoTable("EditionFiles").Row(new
                 {
-                    SeriesId = 1,
-                    SeasonNumber = 1,
+                    AuthorId = 1,
+                    BookNumber = 1,
                     RelativePath = "Season 01/S01E05.mkv",
                     Size = 125.Megabytes(),
                     DateAdded = DateTime.UtcNow.AddDays(-5),
@@ -139,7 +139,7 @@ namespace NzbDrone.Core.Test.Datastore.Migration
                 });
             });
 
-            var items = db.Query<EpisodeFile203>("SELECT * FROM \"EpisodeFiles\"");
+            var items = db.Query<EditionFile203>("SELECT * FROM \"EditionFiles\"");
 
             items.Should().HaveCount(1);
 
@@ -151,10 +151,10 @@ namespace NzbDrone.Core.Test.Datastore.Migration
         {
             var db = WithMigrationTestDb(c =>
             {
-                c.Insert.IntoTable("EpisodeFiles").Row(new
+                c.Insert.IntoTable("EditionFiles").Row(new
                 {
-                    SeriesId = 1,
-                    SeasonNumber = 1,
+                    AuthorId = 1,
+                    BookNumber = 1,
                     RelativePath = "Season 01/S01E05.mkv",
                     Size = 125.Megabytes(),
                     DateAdded = DateTime.UtcNow.AddDays(-5),
@@ -164,18 +164,18 @@ namespace NzbDrone.Core.Test.Datastore.Migration
                 });
             });
 
-            var items = db.Query<EpisodeFile203>("SELECT * FROM \"EpisodeFiles\"");
+            var items = db.Query<EditionFile203>("SELECT * FROM \"EditionFiles\"");
 
             items.Should().HaveCount(1);
 
             items.First().ReleaseType.Should().Be((int)ReleaseType.Unknown);
         }
 
-        public class EpisodeFile203
+        public class EditionFile203
         {
             public int Id { get; set; }
-            public int SeriesId { get; set; }
-            public int SeasonNumber { get; set; }
+            public int AuthorId { get; set; }
+            public int BookNumber { get; set; }
             public string RelativePath { get; set; }
             public long Size { get; set; }
             public DateTime DateAdded { get; set; }

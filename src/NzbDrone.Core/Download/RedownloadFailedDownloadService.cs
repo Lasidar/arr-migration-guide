@@ -13,12 +13,12 @@ namespace NzbDrone.Core.Download
     public class RedownloadFailedDownloadService : IHandle<DownloadFailedEvent>
     {
         private readonly IConfigService _configService;
-        private readonly IEpisodeService _episodeService;
+        private readonly IEditionService _episodeService;
         private readonly IManageCommandQueue _commandQueueManager;
         private readonly Logger _logger;
 
         public RedownloadFailedDownloadService(IConfigService configService,
-                                               IEpisodeService episodeService,
+                                               IEditionService episodeService,
                                                IManageCommandQueue commandQueueManager,
                                                Logger logger)
         {
@@ -58,8 +58,8 @@ namespace NzbDrone.Core.Download
                 return;
             }
 
-            var seasonNumber = _episodeService.GetEpisode(message.EpisodeIds.First()).SeasonNumber;
-            var episodesInSeason = _episodeService.GetEpisodesBySeason(message.SeriesId, seasonNumber);
+            var seasonNumber = _episodeService.GetEpisode(message.EpisodeIds.First()).BookNumber;
+            var episodesInSeason = _episodeService.GetEpisodesBySeason(message.AuthorId, seasonNumber);
 
             if (message.EpisodeIds.Count == episodesInSeason.Count)
             {
@@ -67,8 +67,8 @@ namespace NzbDrone.Core.Download
 
                 _commandQueueManager.Push(new SeasonSearchCommand
                 {
-                    SeriesId = message.SeriesId,
-                    SeasonNumber = seasonNumber
+                    AuthorId = message.AuthorId,
+                    BookNumber = seasonNumber
                 });
 
                 return;

@@ -20,24 +20,24 @@ using NzbDrone.Test.Common;
 namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
 {
     [TestFixture]
-    public class DeletedEpisodeFileSpecificationFixture : CoreTest<DeletedEpisodeFileSpecification>
+    public class DeletedEditionFileSpecificationFixture : CoreTest<DeletedEditionFileSpecification>
     {
         private RemoteEpisode _parseResultMulti;
         private RemoteEpisode _parseResultSingle;
-        private EpisodeFile _firstFile;
-        private EpisodeFile _secondFile;
+        private EditionFile _firstFile;
+        private EditionFile _secondFile;
 
         [SetUp]
         public void Setup()
         {
-            _firstFile = new EpisodeFile
+            _firstFile = new EditionFile
             {
                 Id = 1,
                 RelativePath = "My.Series.S01E01.mkv",
                 Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 1)),
                 DateAdded = DateTime.Now
             };
-            _secondFile = new EpisodeFile
+            _secondFile = new EditionFile
             {
                 Id = 2,
                 RelativePath = "My.Series.S01E02.mkv",
@@ -45,11 +45,11 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
                 DateAdded = DateTime.Now
             };
 
-            var singleEpisodeList = new List<Episode> { new Episode { EpisodeFile = _firstFile, EpisodeFileId = 1 } };
+            var singleEpisodeList = new List<Episode> { new Episode { EditionFile = _firstFile, EditionFileId = 1 } };
             var doubleEpisodeList = new List<Episode>
             {
-                new Episode { EpisodeFile = _firstFile, EpisodeFileId = 1 },
-                new Episode { EpisodeFile = _secondFile, EpisodeFileId = 2 }
+                new Episode { EditionFile = _firstFile, EditionFileId = 1 },
+                new Episode { EditionFile = _secondFile, EditionFileId = 2 }
             };
 
             var fakeSeries = Builder<Series>.CreateNew()
@@ -81,7 +81,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
                   .Returns(enabled);
         }
 
-        private void WithExistingFile(EpisodeFile episodeFile)
+        private void WithExistingFile(EditionFile episodeFile)
         {
             var path = Path.Combine(@"C:\Series\My.Series".AsOsAgnostic(), episodeFile.RelativePath);
 

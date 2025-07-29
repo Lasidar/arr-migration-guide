@@ -67,11 +67,11 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
 
             var importResults = new List<ImportResult>();
 
-            foreach (var importDecision in qualifiedImports.OrderBy(e => e.LocalEpisode.Episodes.Select(episode => episode.EpisodeNumber).MinOrDefault())
+            foreach (var importDecision in qualifiedImports.OrderBy(e => e.LocalEpisode.Episodes.Select(episode => episode.EditionNumber).MinOrDefault())
                                                            .ThenByDescending(e => e.LocalEpisode.Size))
             {
                 var localEpisode = importDecision.LocalEpisode;
-                var oldFiles = new List<DeletedEpisodeFile>();
+                var oldFiles = new List<DeletedEditionFile>();
 
                 try
                 {
@@ -85,15 +85,15 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
                         continue;
                     }
 
-                    var episodeFile = new EpisodeFile();
+                    var episodeFile = new EditionFile();
                     episodeFile.DateAdded = DateTime.UtcNow;
-                    episodeFile.SeriesId = localEpisode.Series.Id;
+                    episodeFile.AuthorId = localEpisode.Series.Id;
                     episodeFile.Path = localEpisode.Path.CleanFilePath();
                     episodeFile.Size = _diskProvider.GetFileSize(localEpisode.Path);
                     episodeFile.Quality = localEpisode.Quality;
                     episodeFile.MediaInfo = localEpisode.MediaInfo;
                     episodeFile.Series = localEpisode.Series;
-                    episodeFile.SeasonNumber = localEpisode.SeasonNumber;
+                    episodeFile.BookNumber = localEpisode.BookNumber;
                     episodeFile.Episodes = localEpisode.Episodes;
                     episodeFile.ReleaseGroup = localEpisode.ReleaseGroup;
                     episodeFile.ReleaseHash = localEpisode.ReleaseHash;
@@ -156,7 +156,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
                         episodeFile.SceneName = localEpisode.SceneName;
                         episodeFile.OriginalFilePath = GetOriginalFilePath(downloadClientItem, localEpisode);
 
-                        oldFiles = _episodeFileUpgrader.UpgradeEpisodeFile(episodeFile, localEpisode, copyOnly).OldFiles;
+                        oldFiles = _episodeFileUpgrader.UpgradeEditionFile(episodeFile, localEpisode, copyOnly).OldFiles;
                     }
                     else
                     {

@@ -66,8 +66,8 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
             }
 
             Mocker.GetMock<IUpgradeMediaFiles>()
-                  .Setup(s => s.UpgradeEpisodeFile(It.IsAny<EpisodeFile>(), It.IsAny<LocalEpisode>(), It.IsAny<bool>()))
-                  .Returns(new EpisodeFileMoveResult());
+                  .Setup(s => s.UpgradeEditionFile(It.IsAny<EditionFile>(), It.IsAny<LocalEpisode>(), It.IsAny<bool>()))
+                  .Returns(new EditionFileMoveResult());
 
             Mocker.GetMock<IHistoryService>()
                 .Setup(x => x.FindByDownloadId(It.IsAny<string>()))
@@ -87,7 +87,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
         {
             Mocker.GetMock<IMediaFileService>()
                   .Setup(s => s.GetFilesWithRelativePath(It.IsAny<int>(), It.IsAny<string>()))
-                  .Returns(new List<EpisodeFile>());
+                  .Returns(new List<EditionFile>());
         }
 
         [Test]
@@ -95,7 +95,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
         {
             Subject.Import(_rejectedDecisions, false).Where(i => i.Result == ImportResultType.Imported).Should().BeEmpty();
 
-            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.IsAny<EpisodeFile>()), Times.Never());
+            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.IsAny<EditionFile>()), Times.Never());
         }
 
         [Test]
@@ -141,7 +141,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, true);
 
             Mocker.GetMock<IUpgradeMediaFiles>()
-                  .Verify(v => v.UpgradeEpisodeFile(It.IsAny<EpisodeFile>(), _approvedDecisions.First().LocalEpisode, false),
+                  .Verify(v => v.UpgradeEditionFile(It.IsAny<EditionFile>(), _approvedDecisions.First().LocalEpisode, false),
                           Times.Once());
         }
 
@@ -162,7 +162,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, false);
 
             Mocker.GetMock<IUpgradeMediaFiles>()
-                  .Verify(v => v.UpgradeEpisodeFile(It.IsAny<EpisodeFile>(), _approvedDecisions.First().LocalEpisode, false),
+                  .Verify(v => v.UpgradeEditionFile(It.IsAny<EditionFile>(), _approvedDecisions.First().LocalEpisode, false),
                           Times.Never());
         }
 
@@ -205,7 +205,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, true, _downloadClientItem);
 
             Mocker.GetMock<IUpgradeMediaFiles>()
-                  .Verify(v => v.UpgradeEpisodeFile(It.IsAny<EpisodeFile>(), _approvedDecisions.First().LocalEpisode, true), Times.Once());
+                  .Verify(v => v.UpgradeEditionFile(It.IsAny<EditionFile>(), _approvedDecisions.First().LocalEpisode, true), Times.Once());
         }
 
         [Test]
@@ -218,7 +218,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, true, _downloadClientItem, ImportMode.Move);
 
             Mocker.GetMock<IUpgradeMediaFiles>()
-                  .Verify(v => v.UpgradeEpisodeFile(It.IsAny<EpisodeFile>(), _approvedDecisions.First().LocalEpisode, false), Times.Once());
+                  .Verify(v => v.UpgradeEditionFile(It.IsAny<EditionFile>(), _approvedDecisions.First().LocalEpisode, false), Times.Once());
         }
 
         [Test]
@@ -232,7 +232,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, true, _downloadClientItem);
 
-            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EpisodeFile>(c => c.OriginalFilePath == fileName)));
+            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EditionFile>(c => c.OriginalFilePath == fileName)));
         }
 
         [Test]
@@ -246,7 +246,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, true, _downloadClientItem);
 
-            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EpisodeFile>(c => c.OriginalFilePath == $"{name}\\{name}.mkv".AsOsAgnostic())));
+            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EditionFile>(c => c.OriginalFilePath == $"{name}\\{name}.mkv".AsOsAgnostic())));
         }
 
         [Test]
@@ -260,7 +260,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, true, _downloadClientItem);
 
-            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EpisodeFile>(c => c.OriginalFilePath == $"{name}\\subfolder\\{name}.mkv".AsOsAgnostic())));
+            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EditionFile>(c => c.OriginalFilePath == $"{name}\\subfolder\\{name}.mkv".AsOsAgnostic())));
         }
 
         [Test]
@@ -275,7 +275,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, true, null);
 
-            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EpisodeFile>(c => c.OriginalFilePath == $"{name}\\subfolder\\{name}.mkv".AsOsAgnostic())));
+            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EditionFile>(c => c.OriginalFilePath == $"{name}\\subfolder\\{name}.mkv".AsOsAgnostic())));
         }
 
         [Test]
@@ -292,7 +292,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, true, null);
 
-            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EpisodeFile>(c => c.OriginalFilePath == $"{name}.mkv".AsOsAgnostic())));
+            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EditionFile>(c => c.OriginalFilePath == $"{name}.mkv".AsOsAgnostic())));
         }
 
         [Test]
@@ -309,7 +309,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, true, null);
 
-            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EpisodeFile>(c => c.OriginalFilePath == $"{name}.mkv".AsOsAgnostic())));
+            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EditionFile>(c => c.OriginalFilePath == $"{name}.mkv".AsOsAgnostic())));
         }
 
         [Test]
@@ -326,7 +326,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, true, null);
 
-            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EpisodeFile>(c => c.OriginalFilePath == $"{name}.mkv")));
+            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EditionFile>(c => c.OriginalFilePath == $"{name}.mkv")));
         }
 
         [Test]
@@ -342,7 +342,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, true, _downloadClientItem);
 
-            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EpisodeFile>(c => c.OriginalFilePath == $"{name}\\subfolder\\{name}.mkv".AsOsAgnostic())));
+            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EditionFile>(c => c.OriginalFilePath == $"{name}\\subfolder\\{name}.mkv".AsOsAgnostic())));
         }
 
         [Test]
@@ -350,12 +350,12 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
         {
             Mocker.GetMock<IMediaFileService>()
                   .Setup(s => s.GetFilesWithRelativePath(It.IsAny<int>(), It.IsAny<string>()))
-                  .Returns(Builder<EpisodeFile>.CreateListOfSize(1).BuildList());
+                  .Returns(Builder<EditionFile>.CreateListOfSize(1).BuildList());
 
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, false);
 
             Mocker.GetMock<IMediaFileService>()
-                  .Verify(v => v.Delete(It.IsAny<EpisodeFile>(), DeleteMediaFileReason.ManualOverride), Times.Once());
+                  .Verify(v => v.Delete(It.IsAny<EditionFile>(), DeleteMediaFileReason.ManualOverride), Times.Once());
         }
 
         [Test]
@@ -371,7 +371,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, true, _downloadClientItem);
 
-            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EpisodeFile>(c => c.OriginalFilePath == $"{name}\\subfolder\\{name}.mkv".AsOsAgnostic())));
+            Mocker.GetMock<IMediaFileService>().Verify(v => v.Add(It.Is<EditionFile>(c => c.OriginalFilePath == $"{name}\\subfolder\\{name}.mkv".AsOsAgnostic())));
         }
 
         [Test]
@@ -383,7 +383,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, true);
 
             Mocker.GetMock<IUpgradeMediaFiles>()
-                  .Verify(v => v.UpgradeEpisodeFile(It.Is<EpisodeFile>(e => e.SceneName == firstDecision.LocalEpisode.SceneName), _approvedDecisions.First().LocalEpisode, false),
+                  .Verify(v => v.UpgradeEditionFile(It.Is<EditionFile>(e => e.SceneName == firstDecision.LocalEpisode.SceneName), _approvedDecisions.First().LocalEpisode, false),
                       Times.Once());
         }
     }

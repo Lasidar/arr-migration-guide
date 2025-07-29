@@ -73,14 +73,14 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
                   .Returns(_heldReleases);
 
             Mocker.GetMock<IPendingReleaseRepository>()
-                  .Setup(s => s.AllBySeriesId(It.IsAny<int>()))
-                  .Returns<int>(i => _heldReleases.Where(v => v.SeriesId == i).ToList());
+                  .Setup(s => s.AllByAuthorId(It.IsAny<int>()))
+                  .Returns<int>(i => _heldReleases.Where(v => v.AuthorId == i).ToList());
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Setup(s => s.GetSeries(It.IsAny<int>()))
                   .Returns(_series);
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Setup(s => s.GetSeries(It.IsAny<IEnumerable<int>>()))
                   .Returns(new List<Series> { _series });
 
@@ -104,7 +104,7 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
 
             var heldReleases = Builder<PendingRelease>.CreateListOfSize(1)
                                                    .All()
-                                                   .With(h => h.SeriesId = _series.Id)
+                                                   .With(h => h.AuthorId = _series.Id)
                                                    .With(h => h.Release = _release.JsonClone())
                                                    .With(h => h.ParsedEpisodeInfo = parsedEpisodeInfo)
                                                    .Build();

@@ -5,7 +5,7 @@ using Readarr.Api.V3.Series;
 
 namespace NzbDrone.Integration.Test.Client
 {
-    public class SeriesClient : ClientBase<SeriesResource>
+    public class AuthorClient : ClientBase<SeriesResource>
     {
         public SeriesClient(IRestClient restClient, string apiKey)
             : base(restClient, apiKey)

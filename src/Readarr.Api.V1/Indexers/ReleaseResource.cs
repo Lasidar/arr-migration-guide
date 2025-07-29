@@ -31,17 +31,17 @@ namespace Readarr.Api.V3.Indexers
         public string Title { get; set; }
         public bool FullSeason { get; set; }
         public bool SceneSource { get; set; }
-        public int SeasonNumber { get; set; }
+        public int BookNumber { get; set; }
         public List<Language> Languages { get; set; }
         public int LanguageWeight { get; set; }
         public string AirDate { get; set; }
         public string SeriesTitle { get; set; }
-        public int[] EpisodeNumbers { get; set; }
-        public int[] AbsoluteEpisodeNumbers { get; set; }
-        public int? MappedSeasonNumber { get; set; }
-        public int[] MappedEpisodeNumbers { get; set; }
-        public int[] MappedAbsoluteEpisodeNumbers { get; set; }
-        public int? MappedSeriesId { get; set; }
+        public int[] EditionNumbers { get; set; }
+        public int[] AbsoluteEditionNumbers { get; set; }
+        public int? MappedBookNumber { get; set; }
+        public int[] MappedEditionNumbers { get; set; }
+        public int[] MappedAbsoluteEditionNumbers { get; set; }
+        public int? MappedAuthorId { get; set; }
         public IEnumerable<ReleaseEpisodeResource> MappedEpisodeInfo { get; set; }
         public bool Approved { get; set; }
         public bool TemporarilyRejected { get; set; }
@@ -76,7 +76,7 @@ namespace Readarr.Api.V3.Indexers
         // Sent when queuing an unknown release
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public int? SeriesId { get; set; }
+        public int? AuthorId { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int? EpisodeId { get; set; }
@@ -121,16 +121,16 @@ namespace Readarr.Api.V3.Indexers
                 ReleaseHash = parsedEpisodeInfo.ReleaseHash,
                 Title = releaseInfo.Title,
                 FullSeason = parsedEpisodeInfo.FullSeason,
-                SeasonNumber = parsedEpisodeInfo.SeasonNumber,
+                BookNumber = parsedEpisodeInfo.BookNumber,
                 Languages = remoteEpisode.Languages,
                 AirDate = parsedEpisodeInfo.AirDate,
                 SeriesTitle = parsedEpisodeInfo.SeriesTitle,
-                EpisodeNumbers = parsedEpisodeInfo.EpisodeNumbers,
-                AbsoluteEpisodeNumbers = parsedEpisodeInfo.AbsoluteEpisodeNumbers,
-                MappedSeriesId = remoteEpisode.Series?.Id,
-                MappedSeasonNumber = remoteEpisode.Episodes.FirstOrDefault()?.SeasonNumber,
-                MappedEpisodeNumbers = remoteEpisode.Episodes.Select(v => v.EpisodeNumber).ToArray(),
-                MappedAbsoluteEpisodeNumbers = remoteEpisode.Episodes.Where(v => v.AbsoluteEpisodeNumber.HasValue).Select(v => v.AbsoluteEpisodeNumber.Value).ToArray(),
+                EditionNumbers = parsedEpisodeInfo.EditionNumbers,
+                AbsoluteEditionNumbers = parsedEpisodeInfo.AbsoluteEditionNumbers,
+                MappedAuthorId = remoteEpisode.Series?.Id,
+                MappedBookNumber = remoteEpisode.Episodes.FirstOrDefault()?.BookNumber,
+                MappedEditionNumbers = remoteEpisode.Episodes.Select(v => v.EditionNumber).ToArray(),
+                MappedAbsoluteEditionNumbers = remoteEpisode.Episodes.Where(v => v.AbsoluteEditionNumber.HasValue).Select(v => v.AbsoluteEditionNumber.Value).ToArray(),
                 MappedEpisodeInfo = remoteEpisode.Episodes.Select(v => new ReleaseEpisodeResource(v)),
                 Approved = model.Approved,
                 TemporarilyRejected = model.TemporarilyRejected,
@@ -206,9 +206,9 @@ namespace Readarr.Api.V3.Indexers
     public class ReleaseEpisodeResource
     {
         public int Id { get; set; }
-        public int SeasonNumber { get; set; }
-        public int EpisodeNumber { get; set; }
-        public int? AbsoluteEpisodeNumber { get; set; }
+        public int BookNumber { get; set; }
+        public int EditionNumber { get; set; }
+        public int? AbsoluteEditionNumber { get; set; }
         public string Title { get; set; }
 
         public ReleaseEpisodeResource()
@@ -218,9 +218,9 @@ namespace Readarr.Api.V3.Indexers
         public ReleaseEpisodeResource(Episode episode)
         {
             Id = episode.Id;
-            SeasonNumber = episode.SeasonNumber;
-            EpisodeNumber = episode.EpisodeNumber;
-            AbsoluteEpisodeNumber = episode.AbsoluteEpisodeNumber;
+            BookNumber = episode.BookNumber;
+            EditionNumber = episode.EditionNumber;
+            AbsoluteEditionNumber = episode.AbsoluteEditionNumber;
             Title = episode.Title;
         }
     }

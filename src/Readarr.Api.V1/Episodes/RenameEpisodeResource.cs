@@ -6,17 +6,17 @@ namespace Readarr.Api.V3.Episodes
 {
     public class RenameEpisodeResource : RestResource
     {
-        public int SeriesId { get; set; }
-        public int SeasonNumber { get; set; }
-        public List<int> EpisodeNumbers { get; set; }
-        public int EpisodeFileId { get; set; }
+        public int AuthorId { get; set; }
+        public int BookNumber { get; set; }
+        public List<int> EditionNumbers { get; set; }
+        public int EditionFileId { get; set; }
         public string ExistingPath { get; set; }
         public string NewPath { get; set; }
     }
 
     public static class RenameEpisodeResourceMapper
     {
-        public static RenameEpisodeResource ToResource(this NzbDrone.Core.MediaFiles.RenameEpisodeFilePreview model)
+        public static RenameEpisodeResource ToResource(this NzbDrone.Core.MediaFiles.RenameEditionFilePreview model)
         {
             if (model == null)
             {
@@ -25,16 +25,16 @@ namespace Readarr.Api.V3.Episodes
 
             return new RenameEpisodeResource
             {
-                SeriesId = model.SeriesId,
-                SeasonNumber = model.SeasonNumber,
-                EpisodeNumbers = model.EpisodeNumbers.ToList(),
-                EpisodeFileId = model.EpisodeFileId,
+                AuthorId = model.AuthorId,
+                BookNumber = model.BookNumber,
+                EditionNumbers = model.EditionNumbers.ToList(),
+                EditionFileId = model.EditionFileId,
                 ExistingPath = model.ExistingPath,
                 NewPath = model.NewPath
             };
         }
 
-        public static List<RenameEpisodeResource> ToResource(this IEnumerable<NzbDrone.Core.MediaFiles.RenameEpisodeFilePreview> models)
+        public static List<RenameEpisodeResource> ToResource(this IEnumerable<NzbDrone.Core.MediaFiles.RenameEditionFilePreview> models)
         {
             return models.Select(ToResource).ToList();
         }

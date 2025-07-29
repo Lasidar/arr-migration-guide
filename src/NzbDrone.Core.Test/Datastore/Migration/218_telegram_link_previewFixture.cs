@@ -173,8 +173,8 @@ namespace NzbDrone.Core.Test.Datastore.Migration
         public bool OnUpgrade { get; set; }
         public bool OnRename { get; set; }
         public bool OnSeriesDelete { get; set; }
-        public bool OnEpisodeFileDelete { get; set; }
-        public bool OnEpisodeFileDeleteForUpgrade { get; set; }
+        public bool OnEditionFileDelete { get; set; }
+        public bool OnEditionFileDeleteForUpgrade { get; set; }
         public bool OnHealthIssue { get; set; }
         public bool OnApplicationUpdate { get; set; }
         public bool OnManualInteractionRequired { get; set; }
@@ -186,8 +186,8 @@ namespace NzbDrone.Core.Test.Datastore.Migration
         public bool SupportsOnUpgrade { get; set; }
         public bool SupportsOnRename { get; set; }
         public bool SupportsOnSeriesDelete { get; set; }
-        public bool SupportsOnEpisodeFileDelete { get; set; }
-        public bool SupportsOnEpisodeFileDeleteForUpgrade { get; set; }
+        public bool SupportsOnEditionFileDelete { get; set; }
+        public bool SupportsOnEditionFileDeleteForUpgrade { get; set; }
         public bool SupportsOnHealthIssue { get; set; }
         public bool IncludeHealthWarnings { get; set; }
         public List<int> Tags { get; set; }

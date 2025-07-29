@@ -6,7 +6,7 @@ using Readarr.Http.REST;
 
 namespace Readarr.Api.V5.Series;
 
-public class SeriesResource : RestResource
+public class AuthorResource : RestResource
 {
     public string? Title { get; set; }
     public List<AlternateTitleResource>? AlternateTitles { get; set; }
@@ -53,7 +53,7 @@ public class SeriesResource : RestResource
     public bool? EpisodesChanged { get; set; }
 }
 
-public static class SeriesResourceMapper
+public static class AuthorResourceMapper
 {
     public static SeriesResource ToResource(this NzbDrone.Core.Tv.Series model, bool includeSeasonImages = false)
     {

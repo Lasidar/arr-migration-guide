@@ -8,8 +8,8 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Alter.Table("SceneMappings").AlterColumn("SeasonNumber").AsInt32().Nullable();
-            Alter.Table("SceneMappings").AddColumn("SceneSeasonNumber").AsInt32().Nullable();
+            Alter.Table("SceneMappings").AlterColumn("BookNumber").AsInt32().Nullable();
+            Alter.Table("SceneMappings").AddColumn("SceneBookNumber").AsInt32().Nullable();
         }
     }
 }

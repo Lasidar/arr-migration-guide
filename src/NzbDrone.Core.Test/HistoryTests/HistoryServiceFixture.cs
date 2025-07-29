@@ -44,7 +44,7 @@ namespace NzbDrone.Core.Test.HistoryTests
         {
             var series = Builder<Series>.CreateNew().Build();
             var episodes = Builder<Episode>.CreateListOfSize(1).Build().ToList();
-            var episodeFile = Builder<EpisodeFile>.CreateNew()
+            var episodeFile = Builder<EditionFile>.CreateNew()
                                                   .With(f => f.SceneName = null)
                                                   .Build();
 
@@ -66,7 +66,7 @@ namespace NzbDrone.Core.Test.HistoryTests
                                          DownloadId = "abcd"
                                      };
 
-            Subject.Handle(new EpisodeImportedEvent(localEpisode, episodeFile, new List<DeletedEpisodeFile>(), true, downloadClientItem));
+            Subject.Handle(new EpisodeImportedEvent(localEpisode, episodeFile, new List<DeletedEditionFile>(), true, downloadClientItem));
 
             Mocker.GetMock<IHistoryRepository>()
                 .Verify(v => v.Insert(It.Is<EpisodeHistory>(h => h.SourceTitle == Path.GetFileNameWithoutExtension(localEpisode.Path))));

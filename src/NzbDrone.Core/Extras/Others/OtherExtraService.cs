@@ -41,7 +41,7 @@ namespace NzbDrone.Core.Extras.Others
             return Enumerable.Empty<ExtraFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EpisodeFile> episodeFiles)
+        public override IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EditionFile> episodeFiles)
         {
             return Enumerable.Empty<ExtraFile>();
         }
@@ -51,7 +51,7 @@ namespace NzbDrone.Core.Extras.Others
             return Enumerable.Empty<ExtraFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EpisodeFile episodeFile)
+        public override IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EditionFile episodeFile)
         {
             return Enumerable.Empty<ExtraFile>();
         }
@@ -61,16 +61,16 @@ namespace NzbDrone.Core.Extras.Others
             return Enumerable.Empty<ExtraFile>();
         }
 
-        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EpisodeFile> episodeFiles)
+        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EditionFile> episodeFiles)
         {
             var extraFiles = _otherExtraFileService.GetFilesBySeries(series.Id);
             var movedFiles = new List<OtherExtraFile>();
 
             foreach (var episodeFile in episodeFiles)
             {
-                var extraFilesForEpisodeFile = extraFiles.Where(m => m.EpisodeFileId == episodeFile.Id).ToList();
+                var extraFilesForEditionFile = extraFiles.Where(m => m.EditionFileId == episodeFile.Id).ToList();
 
-                foreach (var extraFile in extraFilesForEpisodeFile)
+                foreach (var extraFile in extraFilesForEditionFile)
                 {
                     movedFiles.AddIfNotNull(MoveFile(series, episodeFile, extraFile));
                 }
@@ -81,12 +81,12 @@ namespace NzbDrone.Core.Extras.Others
             return movedFiles;
         }
 
-        public override bool CanImportFile(LocalEpisode localEpisode, EpisodeFile episodeFile, string path, string extension, bool readOnly)
+        public override bool CanImportFile(LocalEpisode localEpisode, EditionFile episodeFile, string path, string extension, bool readOnly)
         {
             return true;
         }
 
-        public override IEnumerable<ExtraFile> ImportFiles(LocalEpisode localEpisode, EpisodeFile episodeFile, List<string> files, bool isReadOnly)
+        public override IEnumerable<ExtraFile> ImportFiles(LocalEpisode localEpisode, EditionFile episodeFile, List<string> files, bool isReadOnly)
         {
             var importedFiles = new List<ExtraFile>();
             var filteredFiles = files.Where(f => CanImportFile(localEpisode, episodeFile, f, Path.GetExtension(f), isReadOnly)).ToList();
@@ -121,13 +121,13 @@ namespace NzbDrone.Core.Extras.Others
                     // Season and episode match
                     var fileEpisodeInfo = Parser.Parser.ParsePath(file) ?? new ParsedEpisodeInfo();
 
-                    if (fileEpisodeInfo.EpisodeNumbers.Length == 0)
+                    if (fileEpisodeInfo.EditionNumbers.Length == 0)
                     {
                         continue;
                     }
 
-                    if (fileEpisodeInfo.SeasonNumber == localEpisode.FileEpisodeInfo.SeasonNumber &&
-                        fileEpisodeInfo.EpisodeNumbers.SequenceEqual(localEpisode.FileEpisodeInfo.EpisodeNumbers))
+                    if (fileEpisodeInfo.BookNumber == localEpisode.FileEpisodeInfo.BookNumber &&
+                        fileEpisodeInfo.EditionNumbers.SequenceEqual(localEpisode.FileEpisodeInfo.EditionNumbers))
                     {
                         matchingFiles.Add(file);
                     }

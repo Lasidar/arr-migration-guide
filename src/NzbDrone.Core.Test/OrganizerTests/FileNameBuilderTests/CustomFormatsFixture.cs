@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
     {
         private Series _series;
         private Episode _episode1;
-        private EpisodeFile _episodeFile;
+        private EditionFile _episodeFile;
         private NamingConfig _namingConfig;
 
         private List<CustomFormat> _customFormats;
@@ -39,12 +39,12 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             _episode1 = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
-                            .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 6)
-                            .With(e => e.AbsoluteEpisodeNumber = 100)
+                            .With(e => e.BookNumber = 15)
+                            .With(e => e.EditionNumber = 6)
+                            .With(e => e.AbsoluteEditionNumber = 100)
                             .Build();
 
-            _episodeFile = new EpisodeFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
+            _episodeFile = new EditionFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
 
             _customFormats = new List<CustomFormat>()
             {

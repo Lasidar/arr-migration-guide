@@ -7,10 +7,10 @@ using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Core.Books;
 
-namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
+namespace NzbDrone.Core.Test.TvTests.EditionRepositoryTests
 {
     [TestFixture]
-    public class EpisodesWithoutFilesFixture : DbTest<EpisodeRepository, Episode>
+    public class EditionsWithoutFilesFixture : DbTest<EditionRepository, Episode>
     {
         private Series _monitoredSeries;
         private Series _unmonitoredSeries;
@@ -49,34 +49,34 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
             var monitoredSeriesEpisodes = Builder<Episode>.CreateListOfSize(3)
                                            .All()
                                            .With(e => e.Id = 0)
-                                           .With(e => e.SeriesId = _monitoredSeries.Id)
-                                           .With(e => e.EpisodeFileId = 0)
+                                           .With(e => e.AuthorId = _monitoredSeries.Id)
+                                           .With(e => e.EditionFileId = 0)
                                            .With(e => e.AirDateUtc = DateTime.Now.AddDays(-5))
                                            .With(e => e.Monitored = true)
                                            .TheFirst(1)
                                            .With(e => e.Monitored = false)
                                            .TheLast(1)
-                                           .With(e => e.SeasonNumber = 0)
+                                           .With(e => e.BookNumber = 0)
                                            .Build();
 
             var unmonitoredSeriesEpisodes = Builder<Episode>.CreateListOfSize(3)
                                            .All()
                                            .With(e => e.Id = 0)
-                                           .With(e => e.SeriesId = _unmonitoredSeries.Id)
-                                           .With(e => e.EpisodeFileId = 0)
+                                           .With(e => e.AuthorId = _unmonitoredSeries.Id)
+                                           .With(e => e.EditionFileId = 0)
                                            .With(e => e.AirDateUtc = DateTime.Now.AddDays(-5))
                                            .With(e => e.Monitored = true)
                                            .TheFirst(1)
                                            .With(e => e.Monitored = false)
                                            .TheLast(1)
-                                           .With(e => e.SeasonNumber = 0)
+                                           .With(e => e.BookNumber = 0)
                                            .Build();
 
             var unairedEpisodes           = Builder<Episode>.CreateListOfSize(1)
                                            .All()
                                            .With(e => e.Id = 0)
-                                           .With(e => e.SeriesId = _monitoredSeries.Id)
-                                           .With(e => e.EpisodeFileId = 0)
+                                           .With(e => e.AuthorId = _monitoredSeries.Id)
+                                           .With(e => e.EditionFileId = 0)
                                            .With(e => e.AirDateUtc = DateTime.Now.AddDays(5))
                                            .With(e => e.Monitored = true)
                                            .Build();
@@ -132,7 +132,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
 
             var episodes = Subject.EpisodesWithoutFiles(_pagingSpec, false);
 
-            episodes.Records.Should().NotContain(e => e.SeriesId == _unmonitoredSeries.Id);
+            episodes.Records.Should().NotContain(e => e.AuthorId == _unmonitoredSeries.Id);
         }
 
         [Test]
@@ -148,8 +148,8 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
         {
             var onAirEpisode = Builder<Episode>.CreateNew()
                                                .With(e => e.Id = 0)
-                                               .With(e => e.SeriesId = _monitoredSeries.Id)
-                                               .With(e => e.EpisodeFileId = 0)
+                                               .With(e => e.AuthorId = _monitoredSeries.Id)
+                                               .With(e => e.EditionFileId = 0)
                                                .With(e => e.AirDateUtc = DateTime.Now.AddMinutes(-15))
                                                .With(e => e.Monitored = true)
                                                .Build();

@@ -26,14 +26,14 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
                                                  .With(l => l.Path = @"C:\Test\Unsorted\Series.Title.S01E01.720p.HDTV-Sonarr\S01E05.mkv".AsOsAgnostic())
                                                  .With(l => l.FileEpisodeInfo =
                                                      Builder<ParsedEpisodeInfo>.CreateNew()
-                                                                               .With(p => p.EpisodeNumbers = new[] { 5 })
-                                                                               .With(p => p.SeasonNumber == 1)
+                                                                               .With(p => p.EditionNumbers = new[] { 5 })
+                                                                               .With(p => p.BookNumber == 1)
                                                                                .With(p => p.FullSeason = false)
                                                                                .Build())
                                                  .With(l => l.FolderEpisodeInfo =
                                                      Builder<ParsedEpisodeInfo>.CreateNew()
-                                                                               .With(p => p.EpisodeNumbers = new[] { 1 })
-                                                                               .With(p => p.SeasonNumber == 1)
+                                                                               .With(p => p.EditionNumbers = new[] { 1 })
+                                                                               .With(p => p.BookNumber == 1)
                                                                                .With(p => p.FullSeason = false)
                                                                                .Build())
                                                  .Build();
@@ -41,13 +41,13 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
 
         private void GivenEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, int[] episodeNumbers)
         {
-            var seasonNumber = parsedEpisodeInfo.SeasonNumber;
+            var seasonNumber = parsedEpisodeInfo.BookNumber;
 
             var episodes = episodeNumbers.Select(n =>
                 Builder<Episode>.CreateNew()
                                 .With(e => e.Id = (seasonNumber * 10) + n)
-                                .With(e => e.SeasonNumber = seasonNumber)
-                                .With(e => e.EpisodeNumber = n)
+                                .With(e => e.BookNumber = seasonNumber)
+                                .With(e => e.EditionNumber = n)
                                 .Build())
             .ToList();
 
@@ -86,10 +86,10 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         public void should_should_be_accepted_for_full_season()
         {
             _localEpisode.Path = @"C:\Test\Unsorted\Series.Title.S01\S01E01.mkv".AsOsAgnostic();
-            _localEpisode.FolderEpisodeInfo.EpisodeNumbers = Array.Empty<int>();
+            _localEpisode.FolderEpisodeInfo.EditionNumbers = Array.Empty<int>();
             _localEpisode.FolderEpisodeInfo.FullSeason = true;
 
-            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EpisodeNumbers);
+            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EditionNumbers);
             GivenEpisodes(_localEpisode.FolderEpisodeInfo, new[] { 1, 2, 3, 4, 5 });
 
             Subject.IsSatisfiedBy(_localEpisode, null).Accepted.Should().BeTrue();
@@ -98,12 +98,12 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         [Test]
         public void should_be_accepted_if_file_and_folder_have_the_same_episode()
         {
-            _localEpisode.FileEpisodeInfo.EpisodeNumbers = new[] { 1 };
-            _localEpisode.FolderEpisodeInfo.EpisodeNumbers = new[] { 1 };
+            _localEpisode.FileEpisodeInfo.EditionNumbers = new[] { 1 };
+            _localEpisode.FolderEpisodeInfo.EditionNumbers = new[] { 1 };
             _localEpisode.Path = @"C:\Test\Unsorted\Series.Title.S01E01.720p.HDTV-Sonarr\S01E01.mkv".AsOsAgnostic();
 
-            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EpisodeNumbers);
-            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EpisodeNumbers);
+            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EditionNumbers);
+            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EditionNumbers);
 
             Subject.IsSatisfiedBy(_localEpisode, null).Accepted.Should().BeTrue();
         }
@@ -111,12 +111,12 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         [Test]
         public void should_be_accepted_if_file_is_one_episode_in_folder()
         {
-            _localEpisode.FileEpisodeInfo.EpisodeNumbers = new[] { 1 };
-            _localEpisode.FolderEpisodeInfo.EpisodeNumbers = new[] { 1 };
+            _localEpisode.FileEpisodeInfo.EditionNumbers = new[] { 1 };
+            _localEpisode.FolderEpisodeInfo.EditionNumbers = new[] { 1 };
             _localEpisode.Path = @"C:\Test\Unsorted\Series.Title.S01E01E02.720p.HDTV-Sonarr\S01E01.mkv".AsOsAgnostic();
 
-            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EpisodeNumbers);
-            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EpisodeNumbers);
+            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EditionNumbers);
+            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EditionNumbers);
 
             Subject.IsSatisfiedBy(_localEpisode, null).Accepted.Should().BeTrue();
         }
@@ -124,12 +124,12 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         [Test]
         public void should_disregard_subfolder()
         {
-            _localEpisode.FileEpisodeInfo.EpisodeNumbers = new[] { 5, 6 };
-            _localEpisode.FolderEpisodeInfo.EpisodeNumbers = new[] { 1, 2 };
+            _localEpisode.FileEpisodeInfo.EditionNumbers = new[] { 5, 6 };
+            _localEpisode.FolderEpisodeInfo.EditionNumbers = new[] { 1, 2 };
             _localEpisode.Path = @"C:\Test\Unsorted\Series.Title.S01E01E02.720p.HDTV-Sonarr\S01E05E06.mkv".AsOsAgnostic();
 
-            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EpisodeNumbers);
-            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EpisodeNumbers);
+            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EditionNumbers);
+            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EditionNumbers);
 
             Subject.IsSatisfiedBy(_localEpisode, null).Accepted.Should().BeFalse();
         }
@@ -139,8 +139,8 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         {
             _localEpisode.Path = @"C:\Test\Unsorted\Series.Title.S01E01.720p.HDTV-Sonarr\S01E05.mkv".AsOsAgnostic();
 
-            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EpisodeNumbers);
-            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EpisodeNumbers);
+            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EditionNumbers);
+            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EditionNumbers);
 
             Subject.IsSatisfiedBy(_localEpisode, null).Accepted.Should().BeFalse();
         }
@@ -148,12 +148,12 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         [Test]
         public void should_be_rejected_if_file_and_folder_do_not_have_the_same_episodes()
         {
-            _localEpisode.FileEpisodeInfo.EpisodeNumbers = new[] { 5, 6 };
-            _localEpisode.FolderEpisodeInfo.EpisodeNumbers = new[] { 1, 2 };
+            _localEpisode.FileEpisodeInfo.EditionNumbers = new[] { 5, 6 };
+            _localEpisode.FolderEpisodeInfo.EditionNumbers = new[] { 1, 2 };
             _localEpisode.Path = @"C:\Test\Unsorted\Series.Title.S01E01E02.720p.HDTV-Sonarr\S01E05E06.mkv".AsOsAgnostic();
 
-            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EpisodeNumbers);
-            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EpisodeNumbers);
+            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EditionNumbers);
+            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EditionNumbers);
 
             Subject.IsSatisfiedBy(_localEpisode, null).Accepted.Should().BeFalse();
         }
@@ -161,15 +161,15 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         [Test]
         public void should_be_rejected_if_file_and_folder_do_not_have_episodes_from_the_same_season()
         {
-            _localEpisode.FileEpisodeInfo.SeasonNumber = 2;
-            _localEpisode.FileEpisodeInfo.EpisodeNumbers = new[] { 1 };
+            _localEpisode.FileEpisodeInfo.BookNumber = 2;
+            _localEpisode.FileEpisodeInfo.EditionNumbers = new[] { 1 };
 
             _localEpisode.FolderEpisodeInfo.FullSeason = true;
-            _localEpisode.FolderEpisodeInfo.SeasonNumber = 1;
-            _localEpisode.FolderEpisodeInfo.EpisodeNumbers = new[] { 1, 2 };
+            _localEpisode.FolderEpisodeInfo.BookNumber = 1;
+            _localEpisode.FolderEpisodeInfo.EditionNumbers = new[] { 1, 2 };
 
-            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EpisodeNumbers);
-            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EpisodeNumbers);
+            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EditionNumbers);
+            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EditionNumbers);
 
             _localEpisode.Path = @"C:\Test\Unsorted\Series.Title.S01.720p.HDTV-Sonarr\S02E01.mkv".AsOsAgnostic();
 
@@ -179,14 +179,14 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         [Test]
         public void should_be_rejected_if_file_and_folder_do_not_have_episodes_from_the_same_partial_season()
         {
-            _localEpisode.FileEpisodeInfo.SeasonNumber = 2;
-            _localEpisode.FileEpisodeInfo.EpisodeNumbers = new[] { 1 };
+            _localEpisode.FileEpisodeInfo.BookNumber = 2;
+            _localEpisode.FileEpisodeInfo.EditionNumbers = new[] { 1 };
 
-            _localEpisode.FolderEpisodeInfo.SeasonNumber = 1;
-            _localEpisode.FolderEpisodeInfo.EpisodeNumbers = new[] { 1, 2 };
+            _localEpisode.FolderEpisodeInfo.BookNumber = 1;
+            _localEpisode.FolderEpisodeInfo.EditionNumbers = new[] { 1, 2 };
 
-            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EpisodeNumbers);
-            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EpisodeNumbers);
+            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EditionNumbers);
+            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EditionNumbers);
 
             _localEpisode.Path = @"C:\Test\Unsorted\Series.Title.S01.720p.HDTV-Sonarr\S02E01.mkv".AsOsAgnostic();
 
@@ -196,15 +196,15 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         [Test]
         public void should_be_accepted_if_file_and_folder_have_episodes_from_the_same_season()
         {
-            _localEpisode.FileEpisodeInfo.SeasonNumber = 1;
-            _localEpisode.FileEpisodeInfo.EpisodeNumbers = new[] { 1 };
+            _localEpisode.FileEpisodeInfo.BookNumber = 1;
+            _localEpisode.FileEpisodeInfo.EditionNumbers = new[] { 1 };
 
             _localEpisode.FolderEpisodeInfo.FullSeason = true;
-            _localEpisode.FolderEpisodeInfo.SeasonNumber = 1;
-            _localEpisode.FolderEpisodeInfo.EpisodeNumbers = new[] { 1, 2 };
+            _localEpisode.FolderEpisodeInfo.BookNumber = 1;
+            _localEpisode.FolderEpisodeInfo.EditionNumbers = new[] { 1, 2 };
 
-            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EpisodeNumbers);
-            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EpisodeNumbers);
+            GivenEpisodes(_localEpisode.FileEpisodeInfo, _localEpisode.FileEpisodeInfo.EditionNumbers);
+            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EditionNumbers);
 
             _localEpisode.Path = @"C:\Test\Unsorted\Series.Title.S01.720p.HDTV-Sonarr\S01E01.mkv".AsOsAgnostic();
 
@@ -230,7 +230,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
                 }
             };
 
-            GivenEpisodes(actualInfo, actualInfo.EpisodeNumbers);
+            GivenEpisodes(actualInfo, actualInfo.EditionNumbers);
 
             Mocker.GetMock<IParsingService>()
                 .Setup(v => v.ParseSpecialEpisodeTitle(fileInfo, It.IsAny<string>(), 0, 0, null, null))
@@ -246,14 +246,14 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         [Test]
         public void should_be_accepted_if_file_has_absolute_episode_number_and_folder_uses_standard()
         {
-            _localEpisode.FileEpisodeInfo.SeasonNumber = 1;
-            _localEpisode.FileEpisodeInfo.AbsoluteEpisodeNumbers = new[] { 1 };
+            _localEpisode.FileEpisodeInfo.BookNumber = 1;
+            _localEpisode.FileEpisodeInfo.AbsoluteEditionNumbers = new[] { 1 };
 
-            _localEpisode.FolderEpisodeInfo.SeasonNumber = 1;
-            _localEpisode.FolderEpisodeInfo.EpisodeNumbers = new[] { 1, 2 };
+            _localEpisode.FolderEpisodeInfo.BookNumber = 1;
+            _localEpisode.FolderEpisodeInfo.EditionNumbers = new[] { 1, 2 };
 
             GivenEpisodes(_localEpisode.FileEpisodeInfo, new[] { 1 });
-            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EpisodeNumbers);
+            GivenEpisodes(_localEpisode.FolderEpisodeInfo, _localEpisode.FolderEpisodeInfo.EditionNumbers);
 
             _localEpisode.Path = @"C:\Test\Unsorted\Series.Title.S01.720p.HDTV-Sonarr\S02E01.mkv".AsOsAgnostic();
 
@@ -264,14 +264,14 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         public void should_be_accepted_if_scene_season_number_matches_but_season_number_does_not()
         {
             _localEpisode.Path = @"C:\Test\Unsorted\Series.Title.S01\S01E01.mkv".AsOsAgnostic();
-            _localEpisode.FolderEpisodeInfo.EpisodeNumbers = Array.Empty<int>();
+            _localEpisode.FolderEpisodeInfo.EditionNumbers = Array.Empty<int>();
             _localEpisode.FolderEpisodeInfo.FullSeason = true;
 
             var episode = Builder<Episode>.CreateNew()
                 .With(e => e.Id = (1 * 10) + 5)
-                .With(e => e.SeasonNumber = 5)
-                .With(e => e.SceneSeasonNumber = 1)
-                .With(e => e.EpisodeNumber = 5)
+                .With(e => e.BookNumber = 5)
+                .With(e => e.SceneBookNumber = 1)
+                .With(e => e.EditionNumber = 5)
                 .Build();
 
             Mocker.GetMock<IParsingService>()

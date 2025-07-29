@@ -2,7 +2,7 @@
 
 namespace NzbDrone.Core.Books.Events
 {
-    public class SeriesUpdatedEvent : IEvent
+    public class AuthorUpdatedEvent : IEvent
     {
         public Series Series { get; private set; }
 

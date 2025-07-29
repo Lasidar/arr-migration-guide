@@ -126,7 +126,7 @@ namespace NzbDrone.Core.Download
 
             var downloadFailedEvent = new DownloadFailedEvent
             {
-                SeriesId = historyItem.SeriesId,
+                AuthorId = historyItem.AuthorId,
                 EpisodeIds = episodeIds,
                 Quality = historyItem.Quality,
                 SourceTitle = historyItem.SourceTitle,

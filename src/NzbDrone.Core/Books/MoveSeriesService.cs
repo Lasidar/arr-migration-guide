@@ -11,16 +11,16 @@ using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.Books
 {
-    public class MoveSeriesService : IExecute<MoveSeriesCommand>, IExecute<BulkMoveSeriesCommand>
+    public class MoveAuthorService : IExecute<MoveSeriesCommand>, IExecute<BulkMoveSeriesCommand>
     {
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
         private readonly IBuildFileNames _filenameBuilder;
         private readonly IDiskProvider _diskProvider;
         private readonly IDiskTransferService _diskTransferService;
         private readonly IEventAggregator _eventAggregator;
         private readonly Logger _logger;
 
-        public MoveSeriesService(ISeriesService seriesService,
+        public MoveAuthorService(IAuthorService seriesService,
                                  IBuildFileNames filenameBuilder,
                                  IDiskProvider diskProvider,
                                  IDiskTransferService diskTransferService,
@@ -93,7 +93,7 @@ namespace NzbDrone.Core.Books
 
         public void Execute(MoveSeriesCommand message)
         {
-            var series = _seriesService.GetSeries(message.SeriesId);
+            var series = _seriesService.GetSeries(message.AuthorId);
             MoveSingleSeries(series, message.SourcePath, message.DestinationPath);
         }
 
@@ -107,7 +107,7 @@ namespace NzbDrone.Core.Books
             for (var index = 0; index < seriesToMove.Count; index++)
             {
                 var s = seriesToMove[index];
-                var series = _seriesService.GetSeries(s.SeriesId);
+                var series = _seriesService.GetSeries(s.AuthorId);
                 var destinationPath = Path.Combine(destinationRootFolder, _filenameBuilder.GetSeriesFolder(series));
 
                 MoveSingleSeries(series, s.SourcePath, destinationPath, index, seriesToMove.Count);

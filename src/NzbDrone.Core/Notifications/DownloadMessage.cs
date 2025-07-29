@@ -11,8 +11,8 @@ namespace NzbDrone.Core.Notifications
         public string Message { get; set; }
         public Series Series { get; set; }
         public LocalEpisode EpisodeInfo { get; set; }
-        public EpisodeFile EpisodeFile { get; set; }
-        public List<DeletedEpisodeFile> OldFiles { get; set; }
+        public EditionFile EditionFile { get; set; }
+        public List<DeletedEditionFile> OldFiles { get; set; }
         public string SourcePath { get; set; }
         public DownloadClientItemClientInfo DownloadClientInfo { get; set; }
         public string DownloadId { get; set; }

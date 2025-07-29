@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace NzbDrone.Integration.Test.ApiTests
 {
     [TestFixture]
-    public class SeriesFixture : IntegrationTest
+    public class AuthorFixture : IntegrationTest
     {
         [Test]
         [Order(0)]

@@ -7,7 +7,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
     public class ImportResult
     {
         public ImportDecision ImportDecision { get; private set; }
-        public EpisodeFile EpisodeFile { get; private set; }
+        public EditionFile EditionFile { get; private set; }
         public List<string> Errors { get; private set; }
 
         public ImportResultType Result
@@ -36,12 +36,12 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
             Errors = errors.ToList();
         }
 
-        public ImportResult(ImportDecision importDecision, EpisodeFile episodeFile)
+        public ImportResult(ImportDecision importDecision, EditionFile episodeFile)
         {
             Ensure.That(importDecision, () => importDecision).IsNotNull();
 
             ImportDecision = importDecision;
-            EpisodeFile = episodeFile;
+            EditionFile = episodeFile;
             Errors = new List<string>();
         }
     }

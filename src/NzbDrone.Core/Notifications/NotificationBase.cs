@@ -57,11 +57,11 @@ namespace NzbDrone.Core.Notifications
         {
         }
 
-        public virtual void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public virtual void OnRename(Series series, List<RenamedEditionFile> renamedFiles)
         {
         }
 
-        public virtual void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        public virtual void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
         }
 
@@ -100,8 +100,8 @@ namespace NzbDrone.Core.Notifications
         public bool SupportsOnImportComplete => HasConcreteImplementation("OnImportComplete");
         public bool SupportsOnSeriesAdd => HasConcreteImplementation("OnSeriesAdd");
         public bool SupportsOnSeriesDelete => HasConcreteImplementation("OnSeriesDelete");
-        public bool SupportsOnEpisodeFileDelete => HasConcreteImplementation("OnEpisodeFileDelete");
-        public bool SupportsOnEpisodeFileDeleteForUpgrade => SupportsOnEpisodeFileDelete;
+        public bool SupportsOnEditionFileDelete => HasConcreteImplementation("OnEditionFileDelete");
+        public bool SupportsOnEditionFileDeleteForUpgrade => SupportsOnEditionFileDelete;
         public bool SupportsOnHealthIssue => HasConcreteImplementation("OnHealthIssue");
         public bool SupportsOnHealthRestored => HasConcreteImplementation("OnHealthRestored");
         public bool SupportsOnApplicationUpdate => HasConcreteImplementation("OnApplicationUpdate");

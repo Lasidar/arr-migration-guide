@@ -29,8 +29,8 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
         private RemoteEpisode _parseResultMulti;
         private RemoteEpisode _parseResultSingle;
-        private EpisodeFile _firstFile;
-        private EpisodeFile _secondFile;
+        private EditionFile _firstFile;
+        private EditionFile _secondFile;
 
         [SetUp]
         public void Setup()
@@ -40,11 +40,11 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             CustomFormatsTestHelpers.GivenCustomFormats();
 
-            _firstFile = new EpisodeFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 2)), DateAdded = DateTime.Now, Languages = new List<Language> { Language.English } };
-            _secondFile = new EpisodeFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 2)), DateAdded = DateTime.Now, Languages = new List<Language> { Language.English } };
+            _firstFile = new EditionFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 2)), DateAdded = DateTime.Now, Languages = new List<Language> { Language.English } };
+            _secondFile = new EditionFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 2)), DateAdded = DateTime.Now, Languages = new List<Language> { Language.English } };
 
-            var singleEpisodeList = new List<Episode> { new Episode { EpisodeFile = _firstFile, EpisodeFileId = 1 }, new Episode { EpisodeFile = null } };
-            var doubleEpisodeList = new List<Episode> { new Episode { EpisodeFile = _firstFile, EpisodeFileId = 1 }, new Episode { EpisodeFile = _secondFile, EpisodeFileId = 1 }, new Episode { EpisodeFile = null } };
+            var singleEpisodeList = new List<Episode> { new Episode { EditionFile = _firstFile, EditionFileId = 1 }, new Episode { EditionFile = null } };
+            var doubleEpisodeList = new List<Episode> { new Episode { EditionFile = _firstFile, EditionFileId = 1 }, new Episode { EditionFile = _secondFile, EditionFileId = 1 }, new Episode { EditionFile = null } };
 
             var fakeSeries = Builder<Series>.CreateNew()
                 .With(c => c.QualityProfile = new QualityProfile
@@ -74,7 +74,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             };
 
             Mocker.GetMock<ICustomFormatCalculationService>()
-                  .Setup(x => x.ParseCustomFormat(It.IsAny<EpisodeFile>()))
+                  .Setup(x => x.ParseCustomFormat(It.IsAny<EditionFile>()))
                   .Returns(new List<CustomFormat>());
         }
 
@@ -104,7 +104,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         private void GivenOldCustomFormats(List<CustomFormat> formats)
         {
             Mocker.GetMock<ICustomFormatCalculationService>()
-                .Setup(x => x.ParseCustomFormat(It.IsAny<EpisodeFile>()))
+                .Setup(x => x.ParseCustomFormat(It.IsAny<EditionFile>()))
                 .Returns(formats);
         }
 
@@ -127,7 +127,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         [Test]
         public void should_return_true_if_episode_has_no_existing_file()
         {
-            _parseResultSingle.Episodes.ForEach(c => c.EpisodeFileId = 0);
+            _parseResultSingle.Episodes.ForEach(c => c.EditionFileId = 0);
             _upgradeDisk.IsSatisfiedBy(_parseResultSingle, new()).Accepted.Should().BeTrue();
         }
 
@@ -186,7 +186,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         public void should_not_be_upgradable_if_revision_downgrade_and_preferred_word_upgrade_if_propers_are_preferred()
         {
             Mocker.GetMock<ICustomFormatCalculationService>()
-                  .Setup(s => s.ParseCustomFormat(It.IsAny<EpisodeFile>()))
+                  .Setup(s => s.ParseCustomFormat(It.IsAny<EditionFile>()))
                   .Returns(new List<CustomFormat>());
 
             _parseResultSingle.CustomFormatScore = 10;

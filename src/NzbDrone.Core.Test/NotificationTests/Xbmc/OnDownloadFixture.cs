@@ -22,13 +22,13 @@ namespace NzbDrone.Core.Test.NotificationTests.Xbmc
             var series = Builder<Series>.CreateNew()
                                         .Build();
 
-            var episodeFile = Builder<EpisodeFile>.CreateNew()
+            var episodeFile = Builder<EditionFile>.CreateNew()
                                                    .Build();
 
             _downloadMessage = Builder<DownloadMessage>.CreateNew()
                                                        .With(d => d.Series = series)
-                                                       .With(d => d.EpisodeFile = episodeFile)
-                                                       .With(d => d.OldFiles = new List<DeletedEpisodeFile>())
+                                                       .With(d => d.EditionFile = episodeFile)
+                                                       .With(d => d.OldFiles = new List<DeletedEditionFile>())
                                                        .Build();
 
             Subject.Definition = new NotificationDefinition();
@@ -41,10 +41,10 @@ namespace NzbDrone.Core.Test.NotificationTests.Xbmc
 
         private void GivenOldFiles()
         {
-            _downloadMessage.OldFiles = Builder<DeletedEpisodeFile>
+            _downloadMessage.OldFiles = Builder<DeletedEditionFile>
                 .CreateListOfSize(1)
                 .All()
-                .WithFactory(() => new DeletedEpisodeFile(Builder<EpisodeFile>.CreateNew().Build(), null))
+                .WithFactory(() => new DeletedEditionFile(Builder<EditionFile>.CreateNew().Build(), null))
                 .Build()
                 .ToList();
 

@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Test.HealthCheck.Checks
                                         .Build()
                                         .ToList();
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Setup(s => s.GetAllSeriesPaths())
                   .Returns(series.ToDictionary(s => s.Id, s => s.Path));
 
@@ -46,7 +46,7 @@ namespace NzbDrone.Core.Test.HealthCheck.Checks
         [Test]
         public void should_not_return_error_when_no_series()
         {
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Setup(s => s.GetAllSeriesPaths())
                   .Returns(new Dictionary<int, string>());
 

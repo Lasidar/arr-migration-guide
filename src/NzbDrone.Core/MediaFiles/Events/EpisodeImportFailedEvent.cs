@@ -5,7 +5,7 @@ using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.MediaFiles.Events
 {
-    public class EpisodeImportFailedEvent : IEvent
+    public class EditionImportFailedEvent : IEvent
     {
         public Exception Exception { get; set; }
         public LocalEpisode EpisodeInfo { get; }

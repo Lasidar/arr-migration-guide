@@ -37,20 +37,20 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
             }
 
             var firstEpisode = localEpisode.Episodes.First();
-            var episodeFile = firstEpisode.EpisodeFile.Value;
+            var episodeFile = firstEpisode.EditionFile.Value;
             localEpisode.SubtitleInfo = CleanSubtitleTitleInfo(episodeFile, path, localEpisode.FileNameBeforeRename);
 
             return localEpisode;
         }
 
-        public SubtitleTitleInfo CleanSubtitleTitleInfo(EpisodeFile episodeFile, string path, string fileNameBeforeRename)
+        public SubtitleTitleInfo CleanSubtitleTitleInfo(EditionFile episodeFile, string path, string fileNameBeforeRename)
         {
             var subtitleTitleInfo = LanguageParser.ParseSubtitleLanguageInformation(path);
 
             var episodeFileTitle = Path.GetFileNameWithoutExtension(fileNameBeforeRename ?? episodeFile.RelativePath);
-            var originalEpisodeFileTitle = Path.GetFileNameWithoutExtension(episodeFile.OriginalFilePath) ?? string.Empty;
+            var originalEditionFileTitle = Path.GetFileNameWithoutExtension(episodeFile.OriginalFilePath) ?? string.Empty;
 
-            if (subtitleTitleInfo.TitleFirst && (episodeFileTitle.Contains(subtitleTitleInfo.RawTitle, StringComparison.OrdinalIgnoreCase) || originalEpisodeFileTitle.Contains(subtitleTitleInfo.RawTitle, StringComparison.OrdinalIgnoreCase)))
+            if (subtitleTitleInfo.TitleFirst && (episodeFileTitle.Contains(subtitleTitleInfo.RawTitle, StringComparison.OrdinalIgnoreCase) || originalEditionFileTitle.Contains(subtitleTitleInfo.RawTitle, StringComparison.OrdinalIgnoreCase)))
             {
                 _logger.Debug("Subtitle title '{0}' is in episode file title '{1}'. Removing from subtitle title.", subtitleTitleInfo.RawTitle, episodeFileTitle);
 

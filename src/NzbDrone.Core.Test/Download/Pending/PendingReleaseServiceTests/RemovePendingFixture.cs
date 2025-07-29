@@ -27,18 +27,18 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
                                        .Build();
 
             Mocker.GetMock<IPendingReleaseRepository>()
-                 .Setup(s => s.AllBySeriesId(It.IsAny<int>()))
+                 .Setup(s => s.AllByAuthorId(It.IsAny<int>()))
                  .Returns(_pending);
 
             Mocker.GetMock<IPendingReleaseRepository>()
                   .Setup(s => s.All())
                   .Returns(_pending);
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Setup(s => s.GetSeries(It.IsAny<int>()))
                   .Returns(new Series());
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Setup(s => s.GetSeries(It.IsAny<IEnumerable<int>>()))
                   .Returns(new List<Series> { new Series() });
 
@@ -57,7 +57,7 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
              {
                  Id = id,
                  Title = "Series.Title.S01E05.abc-Sonarr",
-                 ParsedEpisodeInfo = new ParsedEpisodeInfo { SeasonNumber = seasonNumber, EpisodeNumbers = episodes },
+                 ParsedEpisodeInfo = new ParsedEpisodeInfo { BookNumber = seasonNumber, EditionNumbers = episodes },
                  Release = Builder<ReleaseInfo>.CreateNew().Build()
              });
         }

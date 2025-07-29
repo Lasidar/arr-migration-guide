@@ -17,9 +17,9 @@ namespace NzbDrone.Core.Test.Datastore.Migration
             {
                 c.Insert.IntoTable("ExtraFiles").Row(new
                 {
-                    SeriesId = 1,
-                    SeasonNumber = 1,
-                    EpisodeFileId = 1,
+                    AuthorId = 1,
+                    BookNumber = 1,
+                    EditionFileId = 1,
                     RelativePath = "Series.Title.S01E01",
                     Added = "2016-05-30 20:23:02.3725923",
                     LastUpdated = "2016-05-30 20:23:02.3725923",
@@ -39,9 +39,9 @@ namespace NzbDrone.Core.Test.Datastore.Migration
             {
                 c.Insert.IntoTable("SubtitleFiles").Row(new
                 {
-                    SeriesId = 1,
-                    SeasonNumber = 1,
-                    EpisodeFileId = 1,
+                    AuthorId = 1,
+                    BookNumber = 1,
+                    EditionFileId = 1,
                     RelativePath = "Series.Title.S01E01.en.srt",
                     Added = "2016-05-30 20:23:02.3725923",
                     LastUpdated = "2016-05-30 20:23:02.3725923",
@@ -63,9 +63,9 @@ namespace NzbDrone.Core.Test.Datastore.Migration
             {
                 c.Insert.IntoTable("ExtraFiles").Row(new
                 {
-                    SeriesId = 1,
-                    SeasonNumber = 1,
-                    EpisodeFileId = 1,
+                    AuthorId = 1,
+                    BookNumber = 1,
+                    EditionFileId = 1,
                     RelativePath = "Series.Title.S01E01.nfo-orig",
                     Added = "2016-05-30 20:23:02.3725923",
                     LastUpdated = "2016-05-30 20:23:02.3725923",

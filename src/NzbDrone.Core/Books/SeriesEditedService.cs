@@ -6,7 +6,7 @@ using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.Books
 {
-    public class SeriesEditedService : IHandle<SeriesEditedEvent>
+    public class AuthorEditedService : IHandle<SeriesEditedEvent>
     {
         private readonly IManageCommandQueue _commandQueueManager;
 

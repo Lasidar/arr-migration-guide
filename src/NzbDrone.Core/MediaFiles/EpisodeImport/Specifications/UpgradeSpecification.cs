@@ -30,13 +30,13 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Specifications
             var qualityProfile = localEpisode.Series.QualityProfile.Value;
             var qualityComparer = new QualityModelComparer(qualityProfile);
 
-            foreach (var episode in localEpisode.Episodes.Where(e => e.EpisodeFileId > 0))
+            foreach (var episode in localEpisode.Episodes.Where(e => e.EditionFileId > 0))
             {
-                var episodeFile = episode.EpisodeFile.Value;
+                var episodeFile = episode.EditionFile.Value;
 
                 if (episodeFile == null)
                 {
-                    _logger.Trace("Unable to get episode file details from the DB. EpisodeId: {0} EpisodeFileId: {1}", episode.Id, episode.EpisodeFileId);
+                    _logger.Trace("Unable to get episode file details from the DB. EpisodeId: {0} EditionFileId: {1}", episode.Id, episode.EditionFileId);
                     continue;
                 }
 

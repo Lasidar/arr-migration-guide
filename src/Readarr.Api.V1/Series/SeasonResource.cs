@@ -5,15 +5,15 @@ using NzbDrone.Core.Books;
 
 namespace Readarr.Api.V3.Series
 {
-    public class SeasonResource
+    public class BookResource
     {
-        public int SeasonNumber { get; set; }
+        public int BookNumber { get; set; }
         public bool Monitored { get; set; }
         public SeasonStatisticsResource Statistics { get; set; }
         public List<MediaCover> Images { get; set; }
     }
 
-    public static class SeasonResourceMapper
+    public static class BookResourceMapper
     {
         public static SeasonResource ToResource(this Season model, bool includeImages = false)
         {
@@ -24,7 +24,7 @@ namespace Readarr.Api.V3.Series
 
             return new SeasonResource
             {
-                SeasonNumber = model.SeasonNumber,
+                BookNumber = model.BookNumber,
                 Monitored = model.Monitored,
                 Images = includeImages ? model.Images : null
             };
@@ -39,7 +39,7 @@ namespace Readarr.Api.V3.Series
 
             return new Season
             {
-                SeasonNumber = resource.SeasonNumber,
+                BookNumber = resource.BookNumber,
                 Monitored = resource.Monitored
             };
         }

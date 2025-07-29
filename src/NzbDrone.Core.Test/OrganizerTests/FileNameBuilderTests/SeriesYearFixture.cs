@@ -10,7 +10,7 @@ using NzbDrone.Core.Books;
 namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 {
     [TestFixture]
-    public class SeriesYearFixture : CoreTest<FileNameBuilder>
+    public class AuthorYearFixture : CoreTest<FileNameBuilder>
     {
         private Series _series;
         private NamingConfig _namingConfig;

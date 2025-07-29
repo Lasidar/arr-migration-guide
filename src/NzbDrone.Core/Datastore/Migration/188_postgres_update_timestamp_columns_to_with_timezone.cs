@@ -19,7 +19,7 @@ namespace NzbDrone.Core.Datastore.Migration
             Alter.Table("DownloadClientStatus").AlterColumn("MostRecentFailure").AsDateTimeOffset().Nullable();
             Alter.Table("DownloadClientStatus").AlterColumn("DisabledTill").AsDateTimeOffset().Nullable();
             Alter.Table("DownloadHistory").AlterColumn("Date").AsDateTimeOffset().NotNullable();
-            Alter.Table("EpisodeFiles").AlterColumn("DateAdded").AsDateTimeOffset().NotNullable();
+            Alter.Table("EditionFiles").AlterColumn("DateAdded").AsDateTimeOffset().NotNullable();
             Alter.Table("Episodes").AlterColumn("AirDateUtc").AsDateTimeOffset().Nullable();
             Alter.Table("Episodes").AlterColumn("LastSearchTime").AsDateTimeOffset().Nullable();
             Alter.Table("ExtraFiles").AlterColumn("Added").AsDateTimeOffset().NotNullable();

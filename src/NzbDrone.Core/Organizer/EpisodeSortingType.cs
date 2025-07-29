@@ -1,6 +1,6 @@
 ﻿namespace NzbDrone.Core.Organizer
 {
-    public class EpisodeSortingType
+    public class EditionSortingType
     {
         public int Id { get; set; }
         public string Name { get; set; }

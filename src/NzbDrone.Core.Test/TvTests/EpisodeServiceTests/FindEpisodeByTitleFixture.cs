@@ -7,10 +7,10 @@ using NUnit.Framework;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Core.Books;
 
-namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
+namespace NzbDrone.Core.Test.TvTests.EditionServiceTests
 {
     [TestFixture]
-    public class FindEpisodeByTitleFixture : CoreTest<EpisodeService>
+    public class FindEpisodeByTitleFixture : CoreTest<EditionService>
     {
         private List<Episode> _episodes;
 
@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
                 _episodes[i].Title = titles[i];
             }
 
-            Mocker.GetMock<IEpisodeRepository>()
+            Mocker.GetMock<IEditionRepository>()
                   .Setup(s => s.GetEpisodes(It.IsAny<int>(), It.IsAny<int>()))
                   .Returns(_episodes);
         }

@@ -5,52 +5,52 @@ using NzbDrone.Core.Messaging.Events;
 
 namespace NzbDrone.Core.MediaFiles
 {
-    public interface IMediaFileRepository : IBasicRepository<EpisodeFile>
+    public interface IMediaFileRepository : IBasicRepository<EditionFile>
     {
-        List<EpisodeFile> GetFilesBySeries(int seriesId);
-        List<EpisodeFile> GetFilesBySeriesIds(List<int> seriesIds);
-        List<EpisodeFile> GetFilesBySeason(int seriesId, int seasonNumber);
-        List<EpisodeFile> GetFilesWithoutMediaInfo();
-        List<EpisodeFile> GetFilesWithRelativePath(int seriesId, string relativePath);
+        List<EditionFile> GetFilesBySeries(int seriesId);
+        List<EditionFile> GetFilesByAuthorIds(List<int> seriesIds);
+        List<EditionFile> GetFilesBySeason(int seriesId, int seasonNumber);
+        List<EditionFile> GetFilesWithoutMediaInfo();
+        List<EditionFile> GetFilesWithRelativePath(int seriesId, string relativePath);
         void DeleteForSeries(List<int> seriesIds);
     }
 
-    public class MediaFileRepository : BasicRepository<EpisodeFile>, IMediaFileRepository
+    public class MediaFileRepository : BasicRepository<EditionFile>, IMediaFileRepository
     {
         public MediaFileRepository(IMainDatabase database, IEventAggregator eventAggregator)
             : base(database, eventAggregator)
         {
         }
 
-        public List<EpisodeFile> GetFilesBySeries(int seriesId)
+        public List<EditionFile> GetFilesBySeries(int seriesId)
         {
-            return Query(c => c.SeriesId == seriesId).ToList();
+            return Query(c => c.AuthorId == seriesId).ToList();
         }
 
-        public List<EpisodeFile> GetFilesBySeriesIds(List<int> seriesIds)
+        public List<EditionFile> GetFilesByAuthorIds(List<int> seriesIds)
         {
-            return Query(c => seriesIds.Contains(c.SeriesId)).ToList();
+            return Query(c => seriesIds.Contains(c.AuthorId)).ToList();
         }
 
-        public List<EpisodeFile> GetFilesBySeason(int seriesId, int seasonNumber)
+        public List<EditionFile> GetFilesBySeason(int seriesId, int seasonNumber)
         {
-            return Query(c => c.SeriesId == seriesId && c.SeasonNumber == seasonNumber).ToList();
+            return Query(c => c.AuthorId == seriesId && c.BookNumber == seasonNumber).ToList();
         }
 
-        public List<EpisodeFile> GetFilesWithoutMediaInfo()
+        public List<EditionFile> GetFilesWithoutMediaInfo()
         {
             return Query(c => c.MediaInfo == null).ToList();
         }
 
-        public List<EpisodeFile> GetFilesWithRelativePath(int seriesId, string relativePath)
+        public List<EditionFile> GetFilesWithRelativePath(int seriesId, string relativePath)
         {
-            return Query(c => c.SeriesId == seriesId && c.RelativePath == relativePath)
+            return Query(c => c.AuthorId == seriesId && c.RelativePath == relativePath)
                         .ToList();
         }
 
         public void DeleteForSeries(List<int> seriesIds)
         {
-            Delete(x => seriesIds.Contains(x.SeriesId));
+            Delete(x => seriesIds.Contains(x.AuthorId));
         }
     }
 }

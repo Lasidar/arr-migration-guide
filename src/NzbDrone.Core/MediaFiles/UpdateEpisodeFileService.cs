@@ -14,23 +14,23 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.MediaFiles
 {
-    public interface IUpdateEpisodeFileService
+    public interface IUpdateEditionFileService
     {
-        void ChangeFileDateForFile(EpisodeFile episodeFile, Series series, List<Episode> episodes);
+        void ChangeFileDateForFile(EditionFile episodeFile, Series series, List<Episode> episodes);
     }
 
-    public class UpdateEpisodeFileService : IUpdateEpisodeFileService,
+    public class UpdateEditionFileService : IUpdateEditionFileService,
                                             IHandle<SeriesScannedEvent>
     {
         private readonly IDiskProvider _diskProvider;
         private readonly IConfigService _configService;
-        private readonly IEpisodeService _episodeService;
+        private readonly IEditionService _episodeService;
         private readonly Logger _logger;
         private static readonly DateTime EpochTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        public UpdateEpisodeFileService(IDiskProvider diskProvider,
+        public UpdateEditionFileService(IDiskProvider diskProvider,
                                         IConfigService configService,
-                                        IEpisodeService episodeService,
+                                        IEditionService episodeService,
                                         Logger logger)
         {
             _diskProvider = diskProvider;
@@ -39,12 +39,12 @@ namespace NzbDrone.Core.MediaFiles
             _logger = logger;
         }
 
-        public void ChangeFileDateForFile(EpisodeFile episodeFile, Series series, List<Episode> episodes)
+        public void ChangeFileDateForFile(EditionFile episodeFile, Series series, List<Episode> episodes)
         {
             ChangeFileDate(episodeFile, series, episodes);
         }
 
-        private bool ChangeFileDate(EpisodeFile episodeFile, Series series, List<Episode> episodes)
+        private bool ChangeFileDate(EditionFile episodeFile, Series series, List<Episode> episodes)
         {
             var episodeFilePath = Path.Combine(series.Path, episodeFile.RelativePath);
 
@@ -152,13 +152,13 @@ namespace NzbDrone.Core.MediaFiles
 
             var episodes = _episodeService.EpisodesWithFiles(message.Series.Id);
 
-            var episodeFiles = new List<EpisodeFile>();
-            var updated = new List<EpisodeFile>();
+            var episodeFiles = new List<EditionFile>();
+            var updated = new List<EditionFile>();
 
-            foreach (var group in episodes.GroupBy(e => e.EpisodeFileId))
+            foreach (var group in episodes.GroupBy(e => e.EditionFileId))
             {
                 var episodesInFile = group.Select(e => e).ToList();
-                var episodeFile = episodesInFile.First().EpisodeFile;
+                var episodeFile = episodesInFile.First().EditionFile;
 
                 episodeFiles.Add(episodeFile);
 

@@ -3,7 +3,7 @@ using NzbDrone.Common.Messaging;
 
 namespace NzbDrone.Core.Books.Events
 {
-    public class SeriesBulkEditedEvent : IEvent
+    public class AuthorBulkEditedEvent : IEvent
     {
         public List<Series> Series { get; private set; }
 

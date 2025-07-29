@@ -13,10 +13,10 @@ namespace NzbDrone.Core.Parser.Model
         public string SeriesTitle { get; set; }
         public SeriesTitleInfo SeriesTitleInfo { get; set; }
         public QualityModel Quality { get; set; }
-        public int SeasonNumber { get; set; }
-        public int[] EpisodeNumbers { get; set; }
-        public int[] AbsoluteEpisodeNumbers { get; set; }
-        public decimal[] SpecialAbsoluteEpisodeNumbers { get; set; }
+        public int BookNumber { get; set; }
+        public int[] EditionNumbers { get; set; }
+        public int[] AbsoluteEditionNumbers { get; set; }
+        public decimal[] SpecialAbsoluteEditionNumbers { get; set; }
         public string AirDate { get; set; }
         public List<Language> Languages { get; set; }
         public bool FullSeason { get; set; }
@@ -34,9 +34,9 @@ namespace NzbDrone.Core.Parser.Model
 
         public ParsedEpisodeInfo()
         {
-            EpisodeNumbers = Array.Empty<int>();
-            AbsoluteEpisodeNumbers = Array.Empty<int>();
-            SpecialAbsoluteEpisodeNumbers = Array.Empty<decimal>();
+            EditionNumbers = Array.Empty<int>();
+            AbsoluteEditionNumbers = Array.Empty<int>();
+            SpecialAbsoluteEditionNumbers = Array.Empty<decimal>();
             Languages = new List<Language>();
         }
 
@@ -56,7 +56,7 @@ namespace NzbDrone.Core.Parser.Model
         {
             get
             {
-                return AbsoluteEpisodeNumbers.Any();
+                return AbsoluteEditionNumbers.Any();
             }
 
             private set
@@ -70,8 +70,8 @@ namespace NzbDrone.Core.Parser.Model
             {
                 return ((AirDate.IsNullOrWhiteSpace() &&
                        SeriesTitle.IsNullOrWhiteSpace() &&
-                       (EpisodeNumbers.Length == 0 || SeasonNumber == 0)) || (!SeriesTitle.IsNullOrWhiteSpace() && Special)) ||
-                       (EpisodeNumbers.Length == 1 && EpisodeNumbers[0] == 0);
+                       (EditionNumbers.Length == 0 || BookNumber == 0)) || (!SeriesTitle.IsNullOrWhiteSpace() && Special)) ||
+                       (EditionNumbers.Length == 1 && EditionNumbers[0] == 0);
             }
 
             private set
@@ -83,7 +83,7 @@ namespace NzbDrone.Core.Parser.Model
         {
             get
             {
-                return SeasonNumber != 0 && EpisodeNumbers.Length == 1 && EpisodeNumbers[0] == 0;
+                return BookNumber != 0 && EditionNumbers.Length == 1 && EditionNumbers[0] == 0;
             }
 
             private set
@@ -95,12 +95,12 @@ namespace NzbDrone.Core.Parser.Model
         {
             get
             {
-                if (EpisodeNumbers.Length > 1 || AbsoluteEpisodeNumbers.Length > 1)
+                if (EditionNumbers.Length > 1 || AbsoluteEditionNumbers.Length > 1)
                 {
                     return Model.ReleaseType.MultiEpisode;
                 }
 
-                if (EpisodeNumbers.Length == 1 || AbsoluteEpisodeNumbers.Length == 1)
+                if (EditionNumbers.Length == 1 || AbsoluteEditionNumbers.Length == 1)
                 {
                     return Model.ReleaseType.SingleEpisode;
                 }
@@ -118,27 +118,27 @@ namespace NzbDrone.Core.Parser.Model
         {
             var episodeString = "[Unknown Episode]";
 
-            if (IsDaily && EpisodeNumbers.Empty())
+            if (IsDaily && EditionNumbers.Empty())
             {
                 episodeString = string.Format("{0}", AirDate);
             }
             else if (FullSeason)
             {
-                episodeString = string.Format("Season {0:00}", SeasonNumber);
+                episodeString = string.Format("Season {0:00}", BookNumber);
             }
-            else if (EpisodeNumbers != null && EpisodeNumbers.Any())
+            else if (EditionNumbers != null && EditionNumbers.Any())
             {
-                episodeString = string.Format("S{0:00}E{1}", SeasonNumber, string.Join("-", EpisodeNumbers.Select(c => c.ToString("00"))));
+                episodeString = string.Format("S{0:00}E{1}", BookNumber, string.Join("-", EditionNumbers.Select(c => c.ToString("00"))));
             }
-            else if (AbsoluteEpisodeNumbers != null && AbsoluteEpisodeNumbers.Any())
+            else if (AbsoluteEditionNumbers != null && AbsoluteEditionNumbers.Any())
             {
-                episodeString = string.Format("{0}", string.Join("-", AbsoluteEpisodeNumbers.Select(c => c.ToString("000"))));
+                episodeString = string.Format("{0}", string.Join("-", AbsoluteEditionNumbers.Select(c => c.ToString("000"))));
             }
             else if (Special)
             {
-                if (SeasonNumber != 0)
+                if (BookNumber != 0)
                 {
-                    episodeString = string.Format("[Unknown Season {0:00} Special]", SeasonNumber);
+                    episodeString = string.Format("[Unknown Season {0:00} Special]", BookNumber);
                 }
                 else
                 {

@@ -11,7 +11,7 @@ using NzbDrone.Test.Common;
 namespace NzbDrone.Core.Test.TvTests
 {
     [TestFixture]
-    public class SeriesTitleSlugValidatorFixture : CoreTest<SeriesTitleSlugValidator>
+    public class AuthorTitleSlugValidatorFixture : CoreTest<SeriesTitleSlugValidator>
     {
         private List<Series> _series;
         private TestValidator<Series> _validator;
@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Test.TvTests
                                 v => v.RuleFor(s => s.TitleSlug).SetValidator(Subject)
                             };
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Setup(s => s.GetAllSeries())
                   .Returns(_series);
         }

@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace NzbDrone.Integration.Test.ApiTests
 {
     [TestFixture]
-    public class SeriesLookupFixture : IntegrationTest
+    public class AuthorLookupFixture : IntegrationTest
     {
         [TestCase("archer", "Archer (2009)")]
         [TestCase("90210", "90210")]

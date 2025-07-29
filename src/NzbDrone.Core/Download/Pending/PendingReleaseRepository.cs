@@ -7,8 +7,8 @@ namespace NzbDrone.Core.Download.Pending
 {
     public interface IPendingReleaseRepository : IBasicRepository<PendingRelease>
     {
-        void DeleteBySeriesIds(List<int> seriesIds);
-        List<PendingRelease> AllBySeriesId(int seriesId);
+        void DeleteByAuthorIds(List<int> seriesIds);
+        List<PendingRelease> AllByAuthorId(int seriesId);
         List<PendingRelease> WithoutFallback();
     }
 
@@ -19,20 +19,20 @@ namespace NzbDrone.Core.Download.Pending
         {
         }
 
-        public void DeleteBySeriesIds(List<int> seriesIds)
+        public void DeleteByAuthorIds(List<int> seriesIds)
         {
-            Delete(r => seriesIds.Contains(r.SeriesId));
+            Delete(r => seriesIds.Contains(r.AuthorId));
         }
 
-        public List<PendingRelease> AllBySeriesId(int seriesId)
+        public List<PendingRelease> AllByAuthorId(int seriesId)
         {
-            return Query(p => p.SeriesId == seriesId);
+            return Query(p => p.AuthorId == seriesId);
         }
 
         public List<PendingRelease> WithoutFallback()
         {
             var builder = new SqlBuilder(_database.DatabaseType)
-                .InnerJoin<PendingRelease, Series>((p, s) => p.SeriesId == s.Id)
+                .InnerJoin<PendingRelease, Series>((p, s) => p.AuthorId == s.Id)
                 .Where<PendingRelease>(p => p.Reason != PendingReleaseReason.Fallback);
 
             return Query(builder);

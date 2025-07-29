@@ -4,7 +4,7 @@ namespace NzbDrone.Core.MediaFiles.Commands
 {
     public class RescanSeriesCommand : Command
     {
-        public int? SeriesId { get; set; }
+        public int? AuthorId { get; set; }
 
         public override bool SendUpdatesToClient => true;
 
@@ -14,7 +14,7 @@ namespace NzbDrone.Core.MediaFiles.Commands
 
         public RescanSeriesCommand(int seriesId)
         {
-            SeriesId = seriesId;
+            AuthorId = seriesId;
         }
     }
 }

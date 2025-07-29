@@ -12,20 +12,20 @@ using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.Books
 {
-    public interface IEpisodeService
+    public interface IEditionService
     {
         Episode GetEpisode(int id);
         List<Episode> GetEpisodes(IEnumerable<int> ids);
         Episode FindEpisode(int seriesId, int seasonNumber, int episodeNumber);
-        Episode FindEpisode(int seriesId, int absoluteEpisodeNumber);
+        Episode FindEpisode(int seriesId, int absoluteEditionNumber);
         Episode FindEpisodeByTitle(int seriesId, int seasonNumber, string releaseTitle);
         List<Episode> FindEpisodesBySceneNumbering(int seriesId, int seasonNumber, int episodeNumber);
-        List<Episode> FindEpisodesBySceneNumbering(int seriesId, int sceneAbsoluteEpisodeNumber);
+        List<Episode> FindEpisodesBySceneNumbering(int seriesId, int sceneAbsoluteEditionNumber);
         Episode FindEpisode(int seriesId, string date, int? part);
         List<Episode> GetEpisodeBySeries(int seriesId);
         List<Episode> GetEpisodesBySeries(List<int> seriesIds);
         List<Episode> GetEpisodesBySeason(int seriesId, int seasonNumber);
-        List<Episode> GetEpisodesBySceneSeason(int seriesId, int sceneSeasonNumber);
+        List<Episode> GetEpisodesBySceneSeason(int seriesId, int sceneBookNumber);
         List<Episode> EpisodesWithFiles(int seriesId);
         PagingSpec<Episode> EpisodesWithoutFiles(PagingSpec<Episode> pagingSpec);
         List<Episode> GetEpisodesByFileId(int episodeFileId);
@@ -41,18 +41,18 @@ namespace NzbDrone.Core.Books
         void SetEpisodeMonitoredBySeason(int seriesId, int seasonNumber, bool monitored);
     }
 
-    public class EpisodeService : IEpisodeService,
-                                  IHandle<EpisodeFileDeletedEvent>,
-                                  IHandle<EpisodeFileAddedEvent>,
+    public class EditionService : IEditionService,
+                                  IHandle<EditionFileDeletedEvent>,
+                                  IHandle<EditionFileAddedEvent>,
                                   IHandleAsync<SeriesDeletedEvent>,
                                   IHandleAsync<SeriesScannedEvent>
     {
-        private readonly IEpisodeRepository _episodeRepository;
+        private readonly IEditionRepository _episodeRepository;
         private readonly IConfigService _configService;
         private readonly ICached<HashSet<int>> _cache;
         private readonly Logger _logger;
 
-        public EpisodeService(IEpisodeRepository episodeRepository, IConfigService configService, ICacheManager cacheManager, Logger logger)
+        public EditionService(IEditionRepository episodeRepository, IConfigService configService, ICacheManager cacheManager, Logger logger)
         {
             _episodeRepository = episodeRepository;
             _configService = configService;
@@ -75,9 +75,9 @@ namespace NzbDrone.Core.Books
             return _episodeRepository.Find(seriesId, seasonNumber, episodeNumber);
         }
 
-        public Episode FindEpisode(int seriesId, int absoluteEpisodeNumber)
+        public Episode FindEpisode(int seriesId, int absoluteEditionNumber)
         {
-            return _episodeRepository.Find(seriesId, absoluteEpisodeNumber);
+            return _episodeRepository.Find(seriesId, absoluteEditionNumber);
         }
 
         public List<Episode> FindEpisodesBySceneNumbering(int seriesId, int seasonNumber, int episodeNumber)
@@ -85,9 +85,9 @@ namespace NzbDrone.Core.Books
             return _episodeRepository.FindEpisodesBySceneNumbering(seriesId, seasonNumber, episodeNumber);
         }
 
-        public List<Episode> FindEpisodesBySceneNumbering(int seriesId, int sceneAbsoluteEpisodeNumber)
+        public List<Episode> FindEpisodesBySceneNumbering(int seriesId, int sceneAbsoluteEditionNumber)
         {
-            return _episodeRepository.FindEpisodesBySceneNumbering(seriesId, sceneAbsoluteEpisodeNumber);
+            return _episodeRepository.FindEpisodesBySceneNumbering(seriesId, sceneAbsoluteEditionNumber);
         }
 
         public Episode FindEpisode(int seriesId, string date, int? part)
@@ -102,7 +102,7 @@ namespace NzbDrone.Core.Books
 
         public List<Episode> GetEpisodesBySeries(List<int> seriesIds)
         {
-            return _episodeRepository.GetEpisodesBySeriesIds(seriesIds).ToList();
+            return _episodeRepository.GetEpisodesByAuthorIds(seriesIds).ToList();
         }
 
         public List<Episode> GetEpisodesBySeason(int seriesId, int seasonNumber)
@@ -110,9 +110,9 @@ namespace NzbDrone.Core.Books
             return _episodeRepository.GetEpisodes(seriesId, seasonNumber);
         }
 
-        public List<Episode> GetEpisodesBySceneSeason(int seriesId, int sceneSeasonNumber)
+        public List<Episode> GetEpisodesBySceneSeason(int seriesId, int sceneBookNumber)
         {
-            return _episodeRepository.GetEpisodesBySceneSeason(seriesId, sceneSeasonNumber);
+            return _episodeRepository.GetEpisodesBySceneSeason(seriesId, sceneBookNumber);
         }
 
         public Episode FindEpisodeByTitle(int seriesId, int seasonNumber, string releaseTitle)
@@ -241,7 +241,7 @@ namespace NzbDrone.Core.Books
 
             _logger.Debug("Multiple episodes with the same air date were found, will exclude specials");
 
-            var regularEpisodes = episodes.Where(e => e.SeasonNumber > 0).ToList();
+            var regularEpisodes = episodes.Where(e => e.BookNumber > 0).ToList();
 
             if (regularEpisodes.Count == 1 && !part.HasValue)
             {
@@ -250,8 +250,8 @@ namespace NzbDrone.Core.Books
             }
             else if (part.HasValue && part.Value <= regularEpisodes.Count)
             {
-                var sortedEpisodes = regularEpisodes.OrderBy(e => e.SeasonNumber)
-                                                               .ThenBy(e => e.EpisodeNumber)
+                var sortedEpisodes = regularEpisodes.OrderBy(e => e.BookNumber)
+                                                               .ThenBy(e => e.EditionNumber)
                                                                 .ToList();
 
                 return sortedEpisodes[part.Value - 1];
@@ -260,9 +260,9 @@ namespace NzbDrone.Core.Books
             throw new InvalidOperationException($"Multiple episodes with the same air date found. Date: {date}");
         }
 
-        public void Handle(EpisodeFileDeletedEvent message)
+        public void Handle(EditionFileDeletedEvent message)
         {
-            foreach (var episode in GetEpisodesByFileId(message.EpisodeFile.Id))
+            foreach (var episode in GetEpisodesByFileId(message.EditionFile.Id))
             {
                 _logger.Debug("Detaching episode {0} from file.", episode.Id);
 
@@ -277,7 +277,7 @@ namespace NzbDrone.Core.Books
                 {
                     lock (_cache)
                     {
-                        var ids = _cache.Get(episode.SeriesId.ToString(), () => new HashSet<int>());
+                        var ids = _cache.Get(episode.AuthorId.ToString(), () => new HashSet<int>());
 
                         ids.Add(episode.Id);
                     }
@@ -287,15 +287,15 @@ namespace NzbDrone.Core.Books
             }
         }
 
-        public void Handle(EpisodeFileAddedEvent message)
+        public void Handle(EditionFileAddedEvent message)
         {
-            foreach (var episode in message.EpisodeFile.Episodes.Value)
+            foreach (var episode in message.EditionFile.Episodes.Value)
             {
-                _episodeRepository.SetFileId(episode, message.EpisodeFile.Id);
+                _episodeRepository.SetFileId(episode, message.EditionFile.Id);
 
                 lock (_cache)
                 {
-                    var ids = _cache.Find(episode.SeriesId.ToString());
+                    var ids = _cache.Find(episode.AuthorId.ToString());
 
                     if (ids?.Contains(episode.Id) == true)
                     {
@@ -303,13 +303,13 @@ namespace NzbDrone.Core.Books
                     }
                 }
 
-                _logger.Debug("Linking [{0}] > [{1}]", message.EpisodeFile.RelativePath, episode);
+                _logger.Debug("Linking [{0}] > [{1}]", message.EditionFile.RelativePath, episode);
             }
         }
 
         public void HandleAsync(SeriesDeletedEvent message)
         {
-            var episodes = _episodeRepository.GetEpisodesBySeriesIds(message.Series.Select(s => s.Id).ToList());
+            var episodes = _episodeRepository.GetEpisodesByAuthorIds(message.Series.Select(s => s.Id).ToList());
             _episodeRepository.DeleteMany(episodes);
         }
 

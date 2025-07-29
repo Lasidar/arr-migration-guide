@@ -15,9 +15,9 @@ namespace Readarr.Api.V3.Queue
 {
     public class QueueResource : RestResource
     {
-        public int? SeriesId { get; set; }
+        public int? AuthorId { get; set; }
         public int? EpisodeId { get; set; }
-        public int? SeasonNumber { get; set; }
+        public int? BookNumber { get; set; }
         public SeriesResource Series { get; set; }
         public EpisodeResource Episode { get; set; }
         public List<Language> Languages { get; set; }
@@ -68,9 +68,9 @@ namespace Readarr.Api.V3.Queue
             return new QueueResource
             {
                 Id = model.Id,
-                SeriesId = model.Series?.Id,
+                AuthorId = model.Series?.Id,
                 EpisodeId = model.Episode?.Id,
-                SeasonNumber = model.Episode?.SeasonNumber,
+                BookNumber = model.Episode?.BookNumber,
                 Series = includeSeries && model.Series != null ? model.Series.ToResource() : null,
                 Episode = includeEpisode && model.Episode != null ? model.Episode.ToResource() : null,
                 Languages = model.Languages,

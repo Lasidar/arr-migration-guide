@@ -17,7 +17,7 @@ namespace NzbDrone.Core.Datastore.Migration
 
         private void ConvertQualityModels(IDbConnection conn, IDbTransaction tran)
         {
-            ConvertQualityModelsOnTable(conn, tran, "EpisodeFiles");
+            ConvertQualityModelsOnTable(conn, tran, "EditionFiles");
             ConvertQualityModelsOnTable(conn, tran, "Blacklist");
             ConvertQualityModelsOnTable(conn, tran, "History");
         }

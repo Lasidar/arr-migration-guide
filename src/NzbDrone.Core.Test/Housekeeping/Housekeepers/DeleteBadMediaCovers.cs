@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             _metadata = Builder<MetadataFile>.CreateListOfSize(1)
                .Build().ToList();
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                 .Setup(c => c.GetAllSeriesPaths())
                 .Returns(_series);
 
@@ -73,7 +73,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             Subject.Clean();
 
             Mocker.GetMock<IConfigService>().VerifySet(c => c.CleanupMetadataImages = true, Times.Never());
-            Mocker.GetMock<ISeriesService>().Verify(c => c.GetAllSeries(), Times.Never());
+            Mocker.GetMock<IAuthorService>().Verify(c => c.GetAllSeries(), Times.Never());
 
             AssertImageWasNotRemoved();
         }

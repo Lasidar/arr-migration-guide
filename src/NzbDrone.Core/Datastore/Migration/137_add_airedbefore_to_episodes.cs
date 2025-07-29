@@ -8,9 +8,9 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Alter.Table("Episodes").AddColumn("AiredAfterSeasonNumber").AsInt32().Nullable()
-                                   .AddColumn("AiredBeforeSeasonNumber").AsInt32().Nullable()
-                                   .AddColumn("AiredBeforeEpisodeNumber").AsInt32().Nullable();
+            Alter.Table("Episodes").AddColumn("AiredAfterBookNumber").AsInt32().Nullable()
+                                   .AddColumn("AiredBeforeBookNumber").AsInt32().Nullable()
+                                   .AddColumn("AiredBeforeEditionNumber").AsInt32().Nullable();
         }
     }
 }

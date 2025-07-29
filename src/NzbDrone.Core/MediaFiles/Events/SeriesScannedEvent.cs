@@ -4,7 +4,7 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.MediaFiles.Events
 {
-    public class SeriesScannedEvent : IEvent
+    public class AuthorScannedEvent : IEvent
     {
         public Series Series { get; private set; }
         public List<string> PossibleExtraFiles { get; set; }

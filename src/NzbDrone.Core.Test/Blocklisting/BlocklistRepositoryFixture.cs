@@ -24,7 +24,7 @@ namespace NzbDrone.Core.Test.Blocklisting
         {
             _blocklist = new Blocklist
                      {
-                         SeriesId = 12345,
+                         AuthorId = 12345,
                          EpisodeIds = new List<int> { 1 },
                          Quality = new QualityModel(Quality.Bluray720p),
                          Languages = new List<Language> { Language.English },
@@ -61,7 +61,7 @@ namespace NzbDrone.Core.Test.Blocklisting
         {
             Subject.Insert(_blocklist);
 
-            Subject.BlocklistedByTitle(_blocklist.SeriesId, _blocklist.SourceTitle.ToUpperInvariant()).Should().HaveCount(1);
+            Subject.BlocklistedByTitle(_blocklist.AuthorId, _blocklist.SourceTitle.ToUpperInvariant()).Should().HaveCount(1);
         }
 
         [Test]
@@ -69,9 +69,9 @@ namespace NzbDrone.Core.Test.Blocklisting
         {
             var blocklistItems = Builder<Blocklist>.CreateListOfSize(5)
                 .TheFirst(1)
-                .With(c => c.SeriesId = _series2.Id)
+                .With(c => c.AuthorId = _series2.Id)
                 .TheRest()
-                .With(c => c.SeriesId = _series1.Id)
+                .With(c => c.AuthorId = _series1.Id)
                 .All()
                 .With(c => c.Quality = new QualityModel())
                 .With(c => c.Languages = new List<Language>())
@@ -80,7 +80,7 @@ namespace NzbDrone.Core.Test.Blocklisting
 
             Db.InsertMany(blocklistItems);
 
-            Subject.DeleteForSeriesIds(new List<int> { _series1.Id });
+            Subject.DeleteForAuthorIds(new List<int> { _series1.Id });
 
             var removedSeriesBlocklists = Subject.BlocklistedBySeries(_series1.Id);
             var nonRemovedSeriesBlocklists = Subject.BlocklistedBySeries(_series2.Id);

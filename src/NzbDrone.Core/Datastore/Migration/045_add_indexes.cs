@@ -8,12 +8,12 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Create.Index().OnTable("Blacklist").OnColumn("SeriesId");
+            Create.Index().OnTable("Blacklist").OnColumn("AuthorId");
 
-            Create.Index().OnTable("EpisodeFiles").OnColumn("SeriesId");
+            Create.Index().OnTable("EditionFiles").OnColumn("AuthorId");
 
-            Create.Index().OnTable("Episodes").OnColumn("EpisodeFileId");
-            Create.Index().OnTable("Episodes").OnColumn("SeriesId");
+            Create.Index().OnTable("Episodes").OnColumn("EditionFileId");
+            Create.Index().OnTable("Episodes").OnColumn("AuthorId");
 
             Create.Index().OnTable("History").OnColumn("EpisodeId");
             Create.Index().OnTable("History").OnColumn("Date");

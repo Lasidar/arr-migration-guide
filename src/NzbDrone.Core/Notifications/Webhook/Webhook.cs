@@ -38,14 +38,14 @@ namespace NzbDrone.Core.Notifications.Webhook
             _proxy.SendWebhook(BuildOnImportCompletePayload(message), Settings);
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedEditionFile> renamedFiles)
         {
             _proxy.SendWebhook(BuildOnRenamePayload(series, renamedFiles), Settings);
         }
 
-        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        public override void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
-            _proxy.SendWebhook(BuildOnEpisodeFileDelete(deleteMessage), Settings);
+            _proxy.SendWebhook(BuildOnEditionFileDelete(deleteMessage), Settings);
         }
 
         public override void OnSeriesAdd(SeriesAddMessage message)

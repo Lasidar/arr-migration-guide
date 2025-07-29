@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Alter.Table("EpisodeFiles").AddColumn("MediaInfo").AsString().Nullable();
+            Alter.Table("EditionFiles").AddColumn("MediaInfo").AsString().Nullable();
         }
     }
 }

@@ -35,7 +35,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
 
         public override string Name => "WDTV";
 
-        public override string GetFilenameAfterMove(Series series, EpisodeFile episodeFile, MetadataFile metadataFile)
+        public override string GetFilenameAfterMove(Series series, EditionFile episodeFile, MetadataFile metadataFile)
         {
             var episodeFilePath = Path.Combine(series.Path, episodeFile.RelativePath);
 
@@ -64,7 +64,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
 
             var metadata = new MetadataFile
                            {
-                               SeriesId = series.Id,
+                               AuthorId = series.Id,
                                Consumer = GetType().Name,
                                RelativePath = series.Path.GetRelativePath(path)
                            };
@@ -80,11 +80,11 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
 
                     if (seasonMatch.Groups["specials"].Success)
                     {
-                        metadata.SeasonNumber = 0;
+                        metadata.BookNumber = 0;
                     }
                     else
                     {
-                        metadata.SeasonNumber = Convert.ToInt32(seasonMatch.Groups["season"].Value);
+                        metadata.BookNumber = Convert.ToInt32(seasonMatch.Groups["season"].Value);
                     }
 
                     return metadata;
@@ -119,7 +119,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
             return null;
         }
 
-        public override MetadataFileResult EpisodeMetadata(Series series, EpisodeFile episodeFile)
+        public override MetadataFileResult EpisodeMetadata(Series series, EditionFile episodeFile)
         {
             if (!Settings.EpisodeMetadata)
             {
@@ -142,11 +142,11 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
 
                     var details = new XElement("details");
                     details.Add(new XElement("id", series.Id));
-                    details.Add(new XElement("title", string.Format("{0} - {1}x{2:00} - {3}", series.Title, episode.SeasonNumber, episode.EpisodeNumber, episode.Title)));
+                    details.Add(new XElement("title", string.Format("{0} - {1}x{2:00} - {3}", series.Title, episode.BookNumber, episode.EditionNumber, episode.Title)));
                     details.Add(new XElement("series_name", series.Title));
                     details.Add(new XElement("episode_name", episode.Title));
-                    details.Add(new XElement("season_number", episode.SeasonNumber.ToString("00")));
-                    details.Add(new XElement("episode_number", episode.EpisodeNumber.ToString("00")));
+                    details.Add(new XElement("season_number", episode.BookNumber.ToString("00")));
+                    details.Add(new XElement("episode_number", episode.EditionNumber.ToString("00")));
                     details.Add(new XElement("firstaired", episode.AirDate));
                     details.Add(new XElement("genre", string.Join(" / ", series.Genres)));
                     details.Add(new XElement("actor", string.Join(" / ", series.Actors.ConvertAll(c => c.Name + " - " + c.Character))));
@@ -203,9 +203,9 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
             var seasonFolders = GetSeasonFolders(series);
 
             // Work out the path to this season - if we don't have a matching path then skip this season.
-            if (!seasonFolders.TryGetValue(season.SeasonNumber, out var seasonFolder))
+            if (!seasonFolders.TryGetValue(season.BookNumber, out var seasonFolder))
             {
-                _logger.Trace("Failed to find season folder for series {0}, season {1}.", series.Title, season.SeasonNumber);
+                _logger.Trace("Failed to find season folder for series {0}, season {1}.", series.Title, season.BookNumber);
                 return new List<ImageFileResult>();
             }
 
@@ -213,7 +213,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
             var image = season.Images.SingleOrDefault(c => c.CoverType == MediaCoverTypes.Poster) ?? season.Images.FirstOrDefault();
             if (image == null)
             {
-                _logger.Trace("Failed to find suitable season image for series {0}, season {1}.", series.Title, season.SeasonNumber);
+                _logger.Trace("Failed to find suitable season image for series {0}, season {1}.", series.Title, season.BookNumber);
                 return new List<ImageFileResult>();
             }
 
@@ -222,7 +222,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
             return new List<ImageFileResult> { new ImageFileResult(path, image.RemoteUrl) };
         }
 
-        public override List<ImageFileResult> EpisodeImages(Series series, EpisodeFile episodeFile)
+        public override List<ImageFileResult> EpisodeImages(Series series, EditionFile episodeFile)
         {
             if (!Settings.EpisodeImages)
             {

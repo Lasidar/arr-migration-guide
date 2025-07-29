@@ -19,7 +19,7 @@ public enum ImportRejectionReason
     Error,
     DecisionError,
     NoEpisodes,
-    MissingAbsoluteEpisodeNumber,
+    MissingAbsoluteEditionNumber,
     EpisodeAlreadyImported,
     TitleMissing,
     TitleTba,

@@ -136,7 +136,7 @@ namespace NzbDrone.Core.Notifications.Discord
         public override void OnDownload(DownloadMessage message)
         {
             var series = message.Series;
-            var episodes = message.EpisodeFile.Episodes.Value;
+            var episodes = message.EditionFile.Episodes.Value;
             var isUpgrade = message.OldFiles.Count > 0;
 
             var embed = new Embed
@@ -192,36 +192,36 @@ namespace NzbDrone.Core.Notifications.Discord
                     case DiscordImportFieldType.Quality:
                         discordField.Name = "Quality";
                         discordField.Inline = true;
-                        discordField.Value = message.EpisodeFile.Quality.Quality.Name;
+                        discordField.Value = message.EditionFile.Quality.Quality.Name;
                         break;
                     case DiscordImportFieldType.Codecs:
                         discordField.Name = "Codecs";
                         discordField.Inline = true;
                         discordField.Value = string.Format("{0} / {1} {2}",
-                            MediaInfoFormatter.FormatVideoCodec(message.EpisodeFile.MediaInfo, null),
-                            MediaInfoFormatter.FormatAudioCodec(message.EpisodeFile.MediaInfo, null),
-                            MediaInfoFormatter.FormatAudioChannels(message.EpisodeFile.MediaInfo));
+                            MediaInfoFormatter.FormatVideoCodec(message.EditionFile.MediaInfo, null),
+                            MediaInfoFormatter.FormatAudioCodec(message.EditionFile.MediaInfo, null),
+                            MediaInfoFormatter.FormatAudioChannels(message.EditionFile.MediaInfo));
                         break;
                     case DiscordImportFieldType.Group:
                         discordField.Name = "Group";
-                        discordField.Value = message.EpisodeFile.ReleaseGroup;
+                        discordField.Value = message.EditionFile.ReleaseGroup;
                         break;
                     case DiscordImportFieldType.Size:
                         discordField.Name = "Size";
-                        discordField.Value = BytesToString(message.EpisodeFile.Size);
+                        discordField.Value = BytesToString(message.EditionFile.Size);
                         discordField.Inline = true;
                         break;
                     case DiscordImportFieldType.Languages:
                         discordField.Name = "Languages";
-                        discordField.Value = message.EpisodeFile.MediaInfo.AudioLanguages.ConcatToString("/");
+                        discordField.Value = message.EditionFile.MediaInfo.AudioLanguages.ConcatToString("/");
                         break;
                     case DiscordImportFieldType.Subtitles:
                         discordField.Name = "Subtitles";
-                        discordField.Value = message.EpisodeFile.MediaInfo.Subtitles.ConcatToString("/");
+                        discordField.Value = message.EditionFile.MediaInfo.Subtitles.ConcatToString("/");
                         break;
                     case DiscordImportFieldType.Release:
                         discordField.Name = "Release";
-                        discordField.Value = string.Format("```{0}```", message.EpisodeFile.SceneName);
+                        discordField.Value = string.Format("```{0}```", message.EditionFile.SceneName);
                         break;
                     case DiscordImportFieldType.Links:
                         discordField.Name = "Links";
@@ -314,7 +314,7 @@ namespace NzbDrone.Core.Notifications.Discord
                         break;
                     case DiscordImportFieldType.Size:
                         discordField.Name = "Size";
-                        discordField.Value = BytesToString(message.Release?.Size ?? message.EpisodeFiles.Sum(f => f.Size));
+                        discordField.Value = BytesToString(message.Release?.Size ?? message.EditionFiles.Sum(f => f.Size));
                         discordField.Inline = true;
                         break;
                     case DiscordImportFieldType.Release:
@@ -338,7 +338,7 @@ namespace NzbDrone.Core.Notifications.Discord
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedEditionFile> renamedFiles)
         {
             var attachments = new List<Embed>
             {
@@ -353,11 +353,11 @@ namespace NzbDrone.Core.Notifications.Discord
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        public override void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             var series = deleteMessage.Series;
-            var episodes = deleteMessage.EpisodeFile.Episodes;
-            var deletedFile = deleteMessage.EpisodeFile.Path;
+            var episodes = deleteMessage.EditionFile.Episodes;
+            var deletedFile = deleteMessage.EditionFile.Path;
             var reason = deleteMessage.Reason;
 
             var embed = new Embed
@@ -722,12 +722,12 @@ namespace NzbDrone.Core.Notifications.Discord
                 return $"{series.Title} - {episode.AirDate} - {episode.Title}".Replace("`", "\\`");
             }
 
-            var episodeNumbers = string.Concat(episodes.Select(e => e.EpisodeNumber)
+            var episodeNumbers = string.Concat(episodes.Select(e => e.EditionNumber)
                                                        .Select(i => string.Format("x{0:00}", i)));
 
             var episodeTitles = string.Join(" + ", episodes.Select(e => e.Title));
 
-            var title = $"{series.Title} - {episodes.First().SeasonNumber}{episodeNumbers} - {episodeTitles}".Replace("`", "\\`");
+            var title = $"{series.Title} - {episodes.First().BookNumber}{episodeNumbers} - {episodeTitles}".Replace("`", "\\`");
 
             return title.Length > 256 ? $"{title.AsSpan(0, 253).TrimEnd('\\')}..." : title;
         }

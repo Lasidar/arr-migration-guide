@@ -11,13 +11,13 @@ namespace NzbDrone.Core.Books
         void SetEpisodeMonitoredStatus(Series series, MonitoringOptions monitoringOptions);
     }
 
-    public class EpisodeMonitoredService : IEpisodeMonitoredService
+    public class EditionMonitoredService : IEpisodeMonitoredService
     {
-        private readonly ISeriesService _seriesService;
-        private readonly IEpisodeService _episodeService;
+        private readonly IAuthorService _seriesService;
+        private readonly IEditionService _episodeService;
         private readonly Logger _logger;
 
-        public EpisodeMonitoredService(ISeriesService seriesService, IEpisodeService episodeService, Logger logger)
+        public EpisodeMonitoredService(IAuthorService seriesService, IEditionService episodeService, Logger logger)
         {
             _seriesService = seriesService;
             _episodeService = episodeService;
@@ -46,46 +46,46 @@ namespace NzbDrone.Core.Books
                 return;
             }
 
-            var firstSeason = series.Seasons.Select(s => s.SeasonNumber).Where(s => s > 0).MinOrDefault();
-            var lastSeason = series.Seasons.Select(s => s.SeasonNumber).MaxOrDefault();
+            var firstSeason = series.Seasons.Select(s => s.BookNumber).Where(s => s > 0).MinOrDefault();
+            var lastSeason = series.Seasons.Select(s => s.BookNumber).MaxOrDefault();
             var episodes = _episodeService.GetEpisodeBySeries(series.Id);
 
             switch (monitoringOptions.Monitor)
             {
                 case MonitorTypes.All:
                     _logger.Debug("[{0}] Monitoring all episodes", series.Title);
-                    ToggleEpisodesMonitoredState(episodes, e => e.SeasonNumber > 0);
+                    ToggleEpisodesMonitoredState(episodes, e => e.BookNumber > 0);
 
                     break;
 
                 case MonitorTypes.Future:
                     _logger.Debug("[{0}] Monitoring future episodes", series.Title);
-                    ToggleEpisodesMonitoredState(episodes, e => e.SeasonNumber > 0 && (!e.AirDateUtc.HasValue || e.AirDateUtc >= DateTime.UtcNow));
+                    ToggleEpisodesMonitoredState(episodes, e => e.BookNumber > 0 && (!e.AirDateUtc.HasValue || e.AirDateUtc >= DateTime.UtcNow));
 
                     break;
 
                 case MonitorTypes.Missing:
                     _logger.Debug("[{0}] Monitoring missing episodes", series.Title);
-                    ToggleEpisodesMonitoredState(episodes, e => e.SeasonNumber > 0 && !e.HasFile);
+                    ToggleEpisodesMonitoredState(episodes, e => e.BookNumber > 0 && !e.HasFile);
 
                     break;
 
                 case MonitorTypes.Existing:
                     _logger.Debug("[{0}] Monitoring existing episodes", series.Title);
-                    ToggleEpisodesMonitoredState(episodes, e => e.SeasonNumber > 0 && e.HasFile);
+                    ToggleEpisodesMonitoredState(episodes, e => e.BookNumber > 0 && e.HasFile);
 
                     break;
 
                 case MonitorTypes.Pilot:
                     _logger.Debug("[{0}] Monitoring first episode episodes", series.Title);
                     ToggleEpisodesMonitoredState(episodes,
-                        e => e.SeasonNumber > 0 && e.SeasonNumber == firstSeason && e.EpisodeNumber == 1);
+                        e => e.BookNumber > 0 && e.BookNumber == firstSeason && e.EditionNumber == 1);
 
                     break;
 
                 case MonitorTypes.FirstSeason:
                     _logger.Debug("[{0}] Monitoring first season episodes", series.Title);
-                    ToggleEpisodesMonitoredState(episodes, e => e.SeasonNumber > 0 && e.SeasonNumber == firstSeason);
+                    ToggleEpisodesMonitoredState(episodes, e => e.BookNumber > 0 && e.BookNumber == firstSeason);
 
                     break;
 
@@ -95,14 +95,14 @@ namespace NzbDrone.Core.Books
                 #pragma warning restore CS0612
                     _logger.Debug("[{0}] Monitoring latest season episodes", series.Title);
 
-                    ToggleEpisodesMonitoredState(episodes, e => e.SeasonNumber > 0 && e.SeasonNumber == lastSeason);
+                    ToggleEpisodesMonitoredState(episodes, e => e.BookNumber > 0 && e.BookNumber == lastSeason);
 
                     break;
 
                 case MonitorTypes.Recent:
                     _logger.Debug("[{0}] Monitoring recent and future episodes", series.Title);
 
-                    ToggleEpisodesMonitoredState(episodes, e => e.SeasonNumber > 0 &&
+                    ToggleEpisodesMonitoredState(episodes, e => e.BookNumber > 0 &&
                                                                 (!e.AirDateUtc.HasValue || (
                                                                         e.AirDateUtc.Value.Before(DateTime.UtcNow) &&
                                                                         e.AirDateUtc.Value.InLastDays(90))
@@ -112,13 +112,13 @@ namespace NzbDrone.Core.Books
 
                 case MonitorTypes.MonitorSpecials:
                     _logger.Debug("[{0}] Monitoring special episodes", series.Title);
-                    ToggleEpisodesMonitoredState(episodes.Where(e => e.SeasonNumber == 0), true);
+                    ToggleEpisodesMonitoredState(episodes.Where(e => e.BookNumber == 0), true);
 
                     break;
 
                 case MonitorTypes.UnmonitorSpecials:
                     _logger.Debug("[{0}] Unmonitoring special episodes", series.Title);
-                    ToggleEpisodesMonitoredState(episodes.Where(e => e.SeasonNumber == 0), false);
+                    ToggleEpisodesMonitoredState(episodes.Where(e => e.BookNumber == 0), false);
 
                     break;
 
@@ -130,13 +130,13 @@ namespace NzbDrone.Core.Books
             }
 
             var monitoredSeasons = episodes.Where(e => e.Monitored)
-                                           .Select(e => e.SeasonNumber)
+                                           .Select(e => e.BookNumber)
                                            .Distinct()
                                            .ToList();
 
             foreach (var season in series.Seasons)
             {
-                var seasonNumber = season.SeasonNumber;
+                var seasonNumber = season.BookNumber;
 
                 // Monitor the last season when:
                 // - Not specials
@@ -200,7 +200,7 @@ namespace NzbDrone.Core.Books
                 ToggleEpisodesMonitoredState(episodes.Where(e => !e.HasFile && e.AirDateUtc.HasValue && e.AirDateUtc.Value.Before(DateTime.UtcNow)), true);
             }
 
-            var lastSeason = series.Seasons.Select(s => s.SeasonNumber).MaxOrDefault();
+            var lastSeason = series.Seasons.Select(s => s.BookNumber).MaxOrDefault();
 
             foreach (var s in series.Seasons)
             {
@@ -210,17 +210,17 @@ namespace NzbDrone.Core.Books
 
                 if (!season.Monitored)
                 {
-                    _logger.Debug("Unmonitoring all episodes in season {0}", season.SeasonNumber);
-                    ToggleEpisodesMonitoredState(episodes.Where(e => e.SeasonNumber == season.SeasonNumber), false);
+                    _logger.Debug("Unmonitoring all episodes in season {0}", season.BookNumber);
+                    ToggleEpisodesMonitoredState(episodes.Where(e => e.BookNumber == season.BookNumber), false);
                 }
 
                 // If the season is not the latest season and all it's episodes are unmonitored the season will be unmonitored
 
-                if (season.SeasonNumber < lastSeason)
+                if (season.BookNumber < lastSeason)
                 {
-                    if (episodes.Where(e => e.SeasonNumber == season.SeasonNumber).All(e => !e.Monitored))
+                    if (episodes.Where(e => e.BookNumber == season.BookNumber).All(e => !e.Monitored))
                     {
-                        _logger.Debug("Unmonitoring season {0} because all episodes are not monitored", season.SeasonNumber);
+                        _logger.Debug("Unmonitoring season {0} because all episodes are not monitored", season.BookNumber);
                         season.Monitored = false;
                     }
                 }

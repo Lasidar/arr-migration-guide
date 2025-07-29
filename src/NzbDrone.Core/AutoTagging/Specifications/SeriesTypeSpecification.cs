@@ -5,7 +5,7 @@ using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.AutoTagging.Specifications
 {
-    public class SeriesTypeSpecificationValidator : AbstractValidator<SeriesTypeSpecification>
+    public class AuthorTypeSpecificationValidator : AbstractValidator<SeriesTypeSpecification>
     {
         public SeriesTypeSpecificationValidator()
         {
@@ -13,7 +13,7 @@ namespace NzbDrone.Core.AutoTagging.Specifications
         }
     }
 
-    public class SeriesTypeSpecification : AutoTaggingSpecificationBase
+    public class AuthorTypeSpecification : AutoTaggingSpecificationBase
     {
         private static readonly SeriesTypeSpecificationValidator Validator = new SeriesTypeSpecificationValidator();
 

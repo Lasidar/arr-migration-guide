@@ -27,9 +27,9 @@ using Readarr.Http.REST.Attributes;
 namespace Readarr.Api.V3.Series
 {
     [V3ApiController]
-    public class SeriesController : RestControllerWithSignalR<SeriesResource, NzbDrone.Core.Tv.Series>,
+    public class AuthorController : RestControllerWithSignalR<SeriesResource, NzbDrone.Core.Tv.Series>,
                                 IHandle<EpisodeImportedEvent>,
-                                IHandle<EpisodeFileDeletedEvent>,
+                                IHandle<EditionFileDeletedEvent>,
                                 IHandle<SeriesUpdatedEvent>,
                                 IHandle<SeriesEditedEvent>,
                                 IHandle<SeriesDeletedEvent>,
@@ -37,8 +37,8 @@ namespace Readarr.Api.V3.Series
                                 IHandle<SeriesBulkEditedEvent>,
                                 IHandle<MediaCoversUpdatedEvent>
     {
-        private readonly ISeriesService _seriesService;
-        private readonly IAddSeriesService _addSeriesService;
+        private readonly IAuthorService _seriesService;
+        private readonly IAddAuthorService _addAuthorService;
         private readonly ISeriesStatisticsService _seriesStatisticsService;
         private readonly ISceneMappingService _sceneMappingService;
         private readonly IMapCoversToLocal _coverMapper;
@@ -46,8 +46,8 @@ namespace Readarr.Api.V3.Series
         private readonly IRootFolderService _rootFolderService;
 
         public SeriesController(IBroadcastSignalRMessage signalRBroadcaster,
-                            ISeriesService seriesService,
-                            IAddSeriesService addSeriesService,
+                            IAuthorService seriesService,
+                            IAddAuthorService addAuthorService,
                             ISeriesStatisticsService seriesStatisticsService,
                             ISceneMappingService sceneMappingService,
                             IMapCoversToLocal coverMapper,
@@ -65,7 +65,7 @@ namespace Readarr.Api.V3.Series
             : base(signalRBroadcaster)
         {
             _seriesService = seriesService;
-            _addSeriesService = addSeriesService;
+            _addAuthorService = addAuthorService;
             _seriesStatisticsService = seriesStatisticsService;
             _sceneMappingService = sceneMappingService;
 
@@ -122,7 +122,7 @@ namespace Readarr.Api.V3.Series
             }
 
             MapCoversToLocal(seriesResources.ToArray());
-            LinkSeriesStatistics(seriesResources, seriesStats.ToDictionary(x => x.SeriesId));
+            LinkSeriesStatistics(seriesResources, seriesStats.ToDictionary(x => x.AuthorId));
             PopulateAlternateTitles(seriesResources);
             seriesResources.ForEach(LinkRootFolderPath);
 
@@ -170,7 +170,7 @@ namespace Readarr.Api.V3.Series
         [Produces("application/json")]
         public ActionResult<SeriesResource> AddSeries([FromBody] SeriesResource seriesResource)
         {
-            var series = _addSeriesService.AddSeries(seriesResource.ToModel());
+            var series = _addAuthorService.AddSeries(seriesResource.ToModel());
 
             return Created(series.Id);
         }
@@ -189,7 +189,7 @@ namespace Readarr.Api.V3.Series
 
                 _commandQueueManager.Push(new MoveSeriesCommand
                 {
-                    SeriesId = series.Id,
+                    AuthorId = series.Id,
                     SourcePath = sourcePath,
                     DestinationPath = destinationPath
                 },
@@ -264,7 +264,7 @@ namespace Readarr.Api.V3.Series
             {
                 foreach (var season in resource.Seasons)
                 {
-                    season.Statistics = seriesStatistics.SeasonStatistics.SingleOrDefault(s => s.SeasonNumber == season.SeasonNumber).ToResource();
+                    season.Statistics = seriesStatistics.SeasonStatistics.SingleOrDefault(s => s.BookNumber == season.BookNumber).ToResource();
                 }
             }
         }
@@ -297,18 +297,18 @@ namespace Readarr.Api.V3.Series
         [NonAction]
         public void Handle(EpisodeImportedEvent message)
         {
-            BroadcastResourceChange(ModelAction.Updated, message.ImportedEpisode.SeriesId);
+            BroadcastResourceChange(ModelAction.Updated, message.ImportedEpisode.AuthorId);
         }
 
         [NonAction]
-        public void Handle(EpisodeFileDeletedEvent message)
+        public void Handle(EditionFileDeletedEvent message)
         {
             if (message.Reason == DeleteMediaFileReason.Upgrade)
             {
                 return;
             }
 
-            BroadcastResourceChange(ModelAction.Updated, message.EpisodeFile.SeriesId);
+            BroadcastResourceChange(ModelAction.Updated, message.EditionFile.AuthorId);
         }
 
         [NonAction]

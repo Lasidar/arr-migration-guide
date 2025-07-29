@@ -8,10 +8,10 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
 {
     public class AcceptableSizeSpecification : IDownloadDecisionEngineSpecification
     {
-        private readonly IEpisodeService _episodeService;
+        private readonly IEditionService _episodeService;
         private readonly Logger _logger;
 
-        public AcceptableSizeSpecification(IEpisodeService episodeService, Logger logger)
+        public AcceptableSizeSpecification(IEditionService episodeService, Logger logger)
         {
             _episodeService = episodeService;
             _logger = logger;
@@ -43,10 +43,10 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
 
             if (seriesRuntime == 0)
             {
-                var firstSeasonNumber = subject.Series.Seasons.Where(s => s.SeasonNumber > 0).Min(s => s.SeasonNumber);
-                var pilotEpisode = _episodeService.GetEpisodesBySeason(subject.Series.Id, firstSeasonNumber).First();
+                var firstBookNumber = subject.Series.Seasons.Where(s => s.BookNumber > 0).Min(s => s.BookNumber);
+                var pilotEpisode = _episodeService.GetEpisodesBySeason(subject.Series.Id, firstBookNumber).First();
 
-                if (subject.Episodes.First().SeasonNumber == pilotEpisode.SeasonNumber)
+                if (subject.Episodes.First().BookNumber == pilotEpisode.BookNumber)
                 {
                     // If the first episode has an air date use it, otherwise use the release's publish date because like runtime it may not have updated yet.
                     var gracePeriodEnd = (pilotEpisode.AirDateUtc ?? subject.Release.PublishDate).AddHours(24);

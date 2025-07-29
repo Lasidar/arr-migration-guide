@@ -47,9 +47,9 @@ namespace NzbDrone.Core.Test.Datastore.Migration
             {
                 c.Insert.IntoTable("SubtitleFiles").Row(new
                 {
-                    SeriesId = 1,
-                    SeasonNumber = 1,
-                    EpisodeFileId = 1,
+                    AuthorId = 1,
+                    BookNumber = 1,
+                    EditionFileId = 1,
                     RelativePath = subtitlePath,
                     Added = now,
                     LastUpdated = now,
@@ -58,15 +58,15 @@ namespace NzbDrone.Core.Test.Datastore.Migration
                     LanguageTags = new List<string> { "sdh" }.ToJson()
                 });
 
-                c.Insert.IntoTable("EpisodeFiles").Row(new
+                c.Insert.IntoTable("EditionFiles").Row(new
                 {
                     Id = 1,
-                    SeriesId = 1,
+                    AuthorId = 1,
                     RelativePath = episodePath,
                     Quality = new { }.ToJson(),
                     Size = 0,
                     DateAdded = now,
-                    SeasonNumber = 1,
+                    BookNumber = 1,
                     Languages = new List<int> { 1 }.ToJson()
                 });
             });
@@ -85,9 +85,9 @@ namespace NzbDrone.Core.Test.Datastore.Migration
     public class SubtitleFile198
     {
         public int Id { get; set; }
-        public int SeriesId { get; set; }
-        public int? EpisodeFileId { get; set; }
-        public int? SeasonNumber { get; set; }
+        public int AuthorId { get; set; }
+        public int? EditionFileId { get; set; }
+        public int? BookNumber { get; set; }
         public string RelativePath { get; set; }
         public DateTime Added { get; set; }
         public DateTime LastUpdated { get; set; }

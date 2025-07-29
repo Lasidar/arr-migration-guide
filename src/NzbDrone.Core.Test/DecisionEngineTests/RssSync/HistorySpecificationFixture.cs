@@ -43,12 +43,12 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
 
             CustomFormatsTestHelpers.GivenCustomFormats();
 
-            var singleEpisodeList = new List<Episode> { new Episode { Id = FIRST_EPISODE_ID, SeasonNumber = 12, EpisodeNumber = 3 } };
+            var singleEpisodeList = new List<Episode> { new Episode { Id = FIRST_EPISODE_ID, BookNumber = 12, EditionNumber = 3 } };
             var doubleEpisodeList = new List<Episode>
             {
-                                                            new Episode { Id = FIRST_EPISODE_ID, SeasonNumber = 12, EpisodeNumber = 3 },
-                                                            new Episode { Id = SECOND_EPISODE_ID, SeasonNumber = 12, EpisodeNumber = 4 },
-                                                            new Episode { Id = 3, SeasonNumber = 12, EpisodeNumber = 5 }
+                                                            new Episode { Id = FIRST_EPISODE_ID, BookNumber = 12, EditionNumber = 3 },
+                                                            new Episode { Id = SECOND_EPISODE_ID, BookNumber = 12, EditionNumber = 4 },
+                                                            new Episode { Id = 3, BookNumber = 12, EditionNumber = 5 }
             };
 
             _fakeSeries = Builder<Series>.CreateNew()

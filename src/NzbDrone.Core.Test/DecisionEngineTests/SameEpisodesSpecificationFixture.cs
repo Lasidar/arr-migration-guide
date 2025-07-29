@@ -20,13 +20,13 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         {
             _episodes = Builder<Episode>.CreateListOfSize(2)
                                         .All()
-                                        .With(e => e.EpisodeFileId = 1)
+                                        .With(e => e.EditionFileId = 1)
                                         .BuildList();
         }
 
         private void GivenEpisodesInFile(List<Episode> episodes)
         {
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                   .Setup(s => s.GetEpisodesByFileId(It.IsAny<int>()))
                   .Returns(episodes);
         }
@@ -61,12 +61,12 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             var episodes = Builder<Episode>.CreateListOfSize(2)
                                            .BuildList();
 
-            Mocker.GetMock<IEpisodeService>()
-                  .Setup(s => s.GetEpisodesByFileId(episodes.First().EpisodeFileId))
+            Mocker.GetMock<IEditionService>()
+                  .Setup(s => s.GetEpisodesByFileId(episodes.First().EditionFileId))
                   .Returns(new List<Episode> { episodes.First() });
 
-            Mocker.GetMock<IEpisodeService>()
-                  .Setup(s => s.GetEpisodesByFileId(episodes.Last().EpisodeFileId))
+            Mocker.GetMock<IEditionService>()
+                  .Setup(s => s.GetEpisodesByFileId(episodes.Last().EditionFileId))
                   .Returns(new List<Episode> { episodes.Last() });
 
             Subject.IsSatisfiedBy(episodes).Should().BeTrue();

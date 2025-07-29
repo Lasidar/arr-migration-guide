@@ -15,7 +15,7 @@ namespace Readarr.Api.V3.Tags
         public List<int> IndexerIds { get; set; }
         public List<int> DownloadClientIds { get; set; }
         public List<int> AutoTagIds { get; set; }
-        public List<int> SeriesIds { get; set; }
+        public List<int> AuthorIds { get; set; }
     }
 
     public static class TagDetailsResourceMapper
@@ -38,7 +38,7 @@ namespace Readarr.Api.V3.Tags
                 IndexerIds = model.IndexerIds,
                 DownloadClientIds = model.DownloadClientIds,
                 AutoTagIds = model.AutoTagIds,
-                SeriesIds = model.SeriesIds
+                AuthorIds = model.AuthorIds
             };
         }
 

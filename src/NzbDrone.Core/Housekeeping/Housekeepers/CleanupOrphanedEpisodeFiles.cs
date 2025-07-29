@@ -3,11 +3,11 @@ using NzbDrone.Core.Datastore;
 
 namespace NzbDrone.Core.Housekeeping.Housekeepers
 {
-    public class CleanupOrphanedEpisodeFiles : IHousekeepingTask
+    public class CleanupOrphanedEditionFiles : IHousekeepingTask
     {
         private readonly IMainDatabase _database;
 
-        public CleanupOrphanedEpisodeFiles(IMainDatabase database)
+        public CleanupOrphanedEditionFiles(IMainDatabase database)
         {
             _database = database;
         }
@@ -15,11 +15,11 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
         public void Clean()
         {
             using var mapper = _database.OpenConnection();
-            mapper.Execute(@"DELETE FROM ""EpisodeFiles""
+            mapper.Execute(@"DELETE FROM ""EditionFiles""
                                      WHERE ""Id"" IN (
-                                     SELECT ""EpisodeFiles"".""Id"" FROM ""EpisodeFiles""
+                                     SELECT ""EditionFiles"".""Id"" FROM ""EditionFiles""
                                      LEFT OUTER JOIN ""Episodes""
-                                     ON ""EpisodeFiles"".""Id"" = ""Episodes"".""EpisodeFileId""
+                                     ON ""EditionFiles"".""Id"" = ""Episodes"".""EditionFileId""
                                      WHERE ""Episodes"".""Id"" IS NULL)");
         }
     }

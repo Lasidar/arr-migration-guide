@@ -6,11 +6,11 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Validation.Paths
 {
-    public class SeriesPathValidator : PropertyValidator
+    public class AuthorPathValidator : PropertyValidator
     {
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
 
-        public SeriesPathValidator(ISeriesService seriesService)
+        public SeriesPathValidator(IAuthorService seriesService)
         {
             _seriesService = seriesService;
         }

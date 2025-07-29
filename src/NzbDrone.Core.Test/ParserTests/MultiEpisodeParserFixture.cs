@@ -86,10 +86,10 @@ namespace NzbDrone.Core.Test.ParserTests
         public void should_parse_multiple_episodes(string postTitle, string title, int season, int[] episodes)
         {
             var result = Parser.Parser.ParseTitle(postTitle);
-            result.SeasonNumber.Should().Be(season);
-            result.EpisodeNumbers.Should().BeEquivalentTo(episodes);
+            result.BookNumber.Should().Be(season);
+            result.EditionNumbers.Should().BeEquivalentTo(episodes);
             result.SeriesTitle.Should().Be(title);
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeFalse();
         }
     }

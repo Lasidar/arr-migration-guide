@@ -5,7 +5,7 @@ using NzbDrone.Core.Test.Framework;
 namespace NzbDrone.Core.Test.ParserTests
 {
     [TestFixture]
-    public class SeasonParserFixture : CoreTest
+    public class BookParserFixture : CoreTest
     {
         [TestCase("30.Series.Season.04.HDTV.XviD-DIMENSION", "30 Series", 4)]
         [TestCase("Sonarr.and.Series.S02.720p.x264-DIMENSION", "Sonarr and Series", 2)]
@@ -43,10 +43,10 @@ namespace NzbDrone.Core.Test.ParserTests
         public void should_parse_full_season_release(string postTitle, string title, int season)
         {
             var result = Parser.Parser.ParseTitle(postTitle);
-            result.SeasonNumber.Should().Be(season);
+            result.BookNumber.Should().Be(season);
             result.SeriesTitle.Should().Be(title);
-            result.EpisodeNumbers.Should().BeEmpty();
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.EditionNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeTrue();
         }
 
@@ -58,10 +58,10 @@ namespace NzbDrone.Core.Test.ParserTests
         public void should_parse_season_extras(string postTitle, string title, int season)
         {
             var result = Parser.Parser.ParseTitle(postTitle);
-            result.SeasonNumber.Should().Be(season);
+            result.BookNumber.Should().Be(season);
             result.SeriesTitle.Should().Be(title);
-            result.EpisodeNumbers.Should().BeEmpty();
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.EditionNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeTrue();
             result.IsSeasonExtra.Should().BeTrue();
         }
@@ -72,10 +72,10 @@ namespace NzbDrone.Core.Test.ParserTests
         public void should_parse_season_subpack(string postTitle, string title, int season)
         {
             var result = Parser.Parser.ParseTitle(postTitle);
-            result.SeasonNumber.Should().Be(season);
+            result.BookNumber.Should().Be(season);
             result.SeriesTitle.Should().Be(title);
-            result.EpisodeNumbers.Should().BeEmpty();
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.EditionNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeTrue();
             result.IsSeasonExtra.Should().BeTrue();
         }
@@ -86,10 +86,10 @@ namespace NzbDrone.Core.Test.ParserTests
         public void should_parse_partial_season_release(string postTitle, string title, int season, int seasonPart)
         {
             var result = Parser.Parser.ParseTitle(postTitle);
-            result.SeasonNumber.Should().Be(season);
+            result.BookNumber.Should().Be(season);
             result.SeriesTitle.Should().Be(title);
-            result.EpisodeNumbers.Should().BeEmpty();
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.EditionNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeFalse();
             result.IsPartialSeason.Should().BeTrue();
             result.SeasonPart.Should().Be(seasonPart);
@@ -106,10 +106,10 @@ namespace NzbDrone.Core.Test.ParserTests
         public void should_parse_multi_season_release(string postTitle, string title, int firstSeason)
         {
             var result = Parser.Parser.ParseTitle(postTitle);
-            result.SeasonNumber.Should().Be(firstSeason);
+            result.BookNumber.Should().Be(firstSeason);
             result.SeriesTitle.Should().Be(title);
-            result.EpisodeNumbers.Should().BeEmpty();
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.EditionNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeTrue();
             result.IsPartialSeason.Should().BeFalse();
             result.IsMultiSeason.Should().BeTrue();

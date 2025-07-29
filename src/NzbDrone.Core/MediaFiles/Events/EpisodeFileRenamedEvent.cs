@@ -3,16 +3,16 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.MediaFiles.Events
 {
-    public class EpisodeFileRenamedEvent : IEvent
+    public class EditionFileRenamedEvent : IEvent
     {
         public Series Series { get; private set; }
-        public EpisodeFile EpisodeFile { get; private set; }
+        public EditionFile EditionFile { get; private set; }
         public string OriginalPath { get; private set; }
 
-        public EpisodeFileRenamedEvent(Series series, EpisodeFile episodeFile, string originalPath)
+        public EditionFileRenamedEvent(Series series, EditionFile episodeFile, string originalPath)
         {
             Series = series;
-            EpisodeFile = episodeFile;
+            EditionFile = episodeFile;
             OriginalPath = originalPath;
         }
     }

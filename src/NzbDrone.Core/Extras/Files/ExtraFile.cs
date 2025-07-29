@@ -5,9 +5,9 @@ namespace NzbDrone.Core.Extras.Files
 {
     public abstract class ExtraFile : ModelBase
     {
-        public int SeriesId { get; set; }
-        public int? EpisodeFileId { get; set; }
-        public int? SeasonNumber { get; set; }
+        public int AuthorId { get; set; }
+        public int? EditionFileId { get; set; }
+        public int? BookNumber { get; set; }
         public string RelativePath { get; set; }
         public DateTime Added { get; set; }
         public DateTime LastUpdated { get; set; }

@@ -8,7 +8,7 @@ using Readarr.Api.V3.Series;
 namespace NzbDrone.Integration.Test.ApiTests
 {
     [TestFixture]
-    public class EpisodeFixture : IntegrationTest
+    public class EditionFixture : IntegrationTest
     {
         private SeriesResource _series;
 

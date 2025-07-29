@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
 
             Subject.GetSeries(title);
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Verify(s => s.FindByTitle(title), Times.Once());
         }
 
@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
 
             Subject.GetSeries(title);
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Verify(s => s.FindByTitle(Parser.Parser.ParseTitle(title).SeriesTitle), Times.Once());
         }
 
@@ -41,7 +41,7 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
 
             Subject.GetSeries(title);
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Verify(s => s.FindByTitle(parsedEpisodeInfo.SeriesTitleInfo.TitleWithoutYear,
                                              parsedEpisodeInfo.SeriesTitleInfo.Year),
                       Times.Once());
@@ -51,7 +51,7 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
         public void should_parse_concatenated_title()
         {
             var series = new Series { TvdbId = 100 };
-            Mocker.GetMock<ISeriesService>().Setup(v => v.FindByTitle("Welcome")).Returns(series);
+            Mocker.GetMock<IAuthorService>().Setup(v => v.FindByTitle("Welcome")).Returns(series);
             Mocker.GetMock<ISceneMappingService>().Setup(v => v.FindTvdbId("Mairimashita", It.IsAny<string>(), It.IsAny<int>())).Returns(100);
 
             var result = Subject.GetSeries("Welcome (Mairimashita).S01E01.720p.WEB-DL-Viva");

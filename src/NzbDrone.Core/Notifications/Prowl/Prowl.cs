@@ -31,7 +31,7 @@ namespace NzbDrone.Core.Notifications.Prowl
             _prowlProxy.SendNotification(IMPORT_COMPLETE_TITLE, message.Message, Settings);
         }
 
-        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        public override void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             _prowlProxy.SendNotification(EPISODE_DELETED_TITLE, deleteMessage.Message, Settings);
         }

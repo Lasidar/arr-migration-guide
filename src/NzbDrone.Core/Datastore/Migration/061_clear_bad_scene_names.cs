@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Execute.Sql("UPDATE \"EpisodeFiles\" " +
+            Execute.Sql("UPDATE \"EditionFiles\" " +
                         "SET \"ReleaseGroup\" = NULL , \"SceneName\" = NULL " +
                         "WHERE " +
                         "   \"ReleaseGroup\" IS NULL " +

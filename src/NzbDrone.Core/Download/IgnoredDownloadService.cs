@@ -36,7 +36,7 @@ namespace NzbDrone.Core.Download
 
             var downloadIgnoredEvent = new DownloadIgnoredEvent
                                       {
-                                          SeriesId = series.Id,
+                                          AuthorId = series.Id,
                                           EpisodeIds = episodes.Select(e => e.Id).ToList(),
                                           Languages = trackedDownload.RemoteEpisode.Languages,
                                           Quality = trackedDownload.RemoteEpisode.ParsedEpisodeInfo.Quality,

@@ -17,7 +17,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
     {
         private AnimeVersionUpgradeSpecification _subject;
         private RemoteEpisode _remoteEpisode;
-        private EpisodeFile _episodeFile;
+        private EditionFile _episodeFile;
 
         [SetUp]
         public void Setup()
@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             Mocker.Resolve<UpgradableSpecification>();
             _subject = Mocker.Resolve<AnimeVersionUpgradeSpecification>();
 
-            _episodeFile = new EpisodeFile
+            _episodeFile = new EditionFile
                            {
                                Quality = new QualityModel(Quality.HDTV720p, new Revision()),
                                ReleaseGroup = "DRONE2"
@@ -45,7 +45,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             _remoteEpisode.Episodes = Builder<Episode>.CreateListOfSize(1)
                                                       .All()
-                                                      .With(e => e.EpisodeFile = _episodeFile)
+                                                      .With(e => e.EditionFile = _episodeFile)
                                                       .Build()
                                                       .ToList();
         }
@@ -63,7 +63,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         [Test]
         public void should_be_true_when_no_existing_file()
         {
-            _remoteEpisode.Episodes.First().EpisodeFileId = 0;
+            _remoteEpisode.Episodes.First().EditionFileId = 0;
 
             _subject.IsSatisfiedBy(_remoteEpisode, new()).Accepted.Should().BeTrue();
         }

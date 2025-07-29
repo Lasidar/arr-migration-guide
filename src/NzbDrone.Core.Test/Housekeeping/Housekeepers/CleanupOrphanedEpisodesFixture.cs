@@ -31,13 +31,13 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
 
             var episodes = Builder<Episode>.CreateListOfSize(2)
                                           .TheFirst(1)
-                                          .With(e => e.SeriesId = series.Id)
+                                          .With(e => e.AuthorId = series.Id)
                                           .BuildListOfNew();
 
             Db.InsertMany(episodes);
             Subject.Clean();
             AllStoredModels.Should().HaveCount(1);
-            AllStoredModels.Should().Contain(e => e.SeriesId == series.Id);
+            AllStoredModels.Should().Contain(e => e.AuthorId == series.Id);
         }
     }
 }

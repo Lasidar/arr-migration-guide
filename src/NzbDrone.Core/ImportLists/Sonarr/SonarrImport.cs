@@ -72,7 +72,7 @@ namespace NzbDrone.Core.ImportLists.Sonarr
                     {
                         info.Seasons = item.Seasons.Select(s => new Season
                         {
-                            SeasonNumber = s.SeasonNumber,
+                            BookNumber = s.BookNumber,
                             Monitored = s.Monitored
                         }).ToList();
                     }

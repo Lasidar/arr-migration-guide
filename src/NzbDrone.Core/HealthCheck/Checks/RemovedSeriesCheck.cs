@@ -12,9 +12,9 @@ namespace NzbDrone.Core.HealthCheck.Checks
     [CheckOn(typeof(SeriesRefreshCompleteEvent))]
     public class RemovedSeriesCheck : HealthCheckBase, ICheckOnCondition<SeriesUpdatedEvent>, ICheckOnCondition<SeriesDeletedEvent>
     {
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
 
-        public RemovedSeriesCheck(ISeriesService seriesService, ILocalizationService localizationService)
+        public RemovedSeriesCheck(IAuthorService seriesService, ILocalizationService localizationService)
             : base(localizationService)
         {
             _seriesService = seriesService;

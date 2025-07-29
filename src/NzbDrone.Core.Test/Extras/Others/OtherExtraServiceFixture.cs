@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Test.Extras.Others
     public class OtherExtraServiceFixture : CoreTest<OtherExtraService>
     {
         private Series _series;
-        private EpisodeFile _episodeFile;
+        private EditionFile _episodeFile;
         private LocalEpisode _localEpisode;
 
         private string _seriesFolder;
@@ -36,11 +36,11 @@ namespace NzbDrone.Core.Test.Extras.Others
 
             var episodes = Builder<Episode>.CreateListOfSize(1)
                                            .All()
-                                           .With(e => e.SeasonNumber = 1)
+                                           .With(e => e.BookNumber = 1)
                                            .Build()
                                            .ToList();
 
-            _episodeFile = Builder<EpisodeFile>.CreateNew()
+            _episodeFile = Builder<EditionFile>.CreateNew()
                                                .With(f => f.Path = Path.Combine(_series.Path, "Season 1", "Series Title - S01E01.mkv").AsOsAgnostic())
                                                .With(f => f.RelativePath = @"Season 1\Series Title - S01E01.mkv")
                                                .Build();
@@ -51,8 +51,8 @@ namespace NzbDrone.Core.Test.Extras.Others
                                                  .With(l => l.Path = Path.Combine(_episodeFolder, "Series.Title.S01E01.mkv").AsOsAgnostic())
                                                  .With(l => l.FileEpisodeInfo = new ParsedEpisodeInfo
                                                  {
-                                                     SeasonNumber = 1,
-                                                     EpisodeNumbers = new[] { 1 }
+                                                     BookNumber = 1,
+                                                     EditionNumbers = new[] { 1 }
                                                  })
                                                  .Build();
         }

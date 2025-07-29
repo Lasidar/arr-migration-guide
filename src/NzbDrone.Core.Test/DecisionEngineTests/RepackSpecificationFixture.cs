@@ -32,7 +32,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             _episodes = Builder<Episode>.CreateListOfSize(1)
                                         .All()
-                                        .With(e => e.EpisodeFileId = 0)
+                                        .With(e => e.EditionFileId = 0)
                                         .BuildList();
         }
 
@@ -70,8 +70,8 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         public void should_return_true_if_is_a_repack_for_a_different_quality()
         {
             _parsedEpisodeInfo.Quality.Revision.IsRepack = true;
-            _episodes.First().EpisodeFileId = 1;
-            _episodes.First().EpisodeFile = Builder<EpisodeFile>.CreateNew()
+            _episodes.First().EditionFileId = 1;
+            _episodes.First().EditionFile = Builder<EditionFile>.CreateNew()
                                                                 .With(e => e.Quality = new QualityModel(Quality.DVD))
                                                                 .With(e => e.ReleaseGroup = "Sonarr")
                                                                 .Build();
@@ -91,8 +91,8 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         public void should_return_true_if_is_a_repack_for_existing_file()
         {
             _parsedEpisodeInfo.Quality.Revision.IsRepack = true;
-            _episodes.First().EpisodeFileId = 1;
-            _episodes.First().EpisodeFile = Builder<EpisodeFile>.CreateNew()
+            _episodes.First().EditionFileId = 1;
+            _episodes.First().EditionFile = Builder<EditionFile>.CreateNew()
                                                                 .With(e => e.Quality = new QualityModel(Quality.SDTV))
                                                                 .With(e => e.ReleaseGroup = "Sonarr")
                                                                 .Build();
@@ -112,8 +112,8 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         public void should_return_false_if_is_a_repack_for_a_different_file()
         {
             _parsedEpisodeInfo.Quality.Revision.IsRepack = true;
-            _episodes.First().EpisodeFileId = 1;
-            _episodes.First().EpisodeFile = Builder<EpisodeFile>.CreateNew()
+            _episodes.First().EditionFileId = 1;
+            _episodes.First().EditionFile = Builder<EditionFile>.CreateNew()
                                                                 .With(e => e.Quality = new QualityModel(Quality.SDTV))
                                                                 .With(e => e.ReleaseGroup = "NotSonarr")
                                                                 .Build();
@@ -133,8 +133,8 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         public void should_return_false_if_release_group_for_existing_file_is_unknown()
         {
             _parsedEpisodeInfo.Quality.Revision.IsRepack = true;
-            _episodes.First().EpisodeFileId = 1;
-            _episodes.First().EpisodeFile = Builder<EpisodeFile>.CreateNew()
+            _episodes.First().EditionFileId = 1;
+            _episodes.First().EditionFile = Builder<EditionFile>.CreateNew()
                                                                 .With(e => e.Quality = new QualityModel(Quality.SDTV))
                                                                 .With(e => e.ReleaseGroup = "")
                                                                 .Build();
@@ -156,8 +156,8 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             _parsedEpisodeInfo.Quality.Revision.IsRepack = true;
             _parsedEpisodeInfo.ReleaseGroup = null;
 
-            _episodes.First().EpisodeFileId = 1;
-            _episodes.First().EpisodeFile = Builder<EpisodeFile>.CreateNew()
+            _episodes.First().EditionFileId = 1;
+            _episodes.First().EditionFile = Builder<EditionFile>.CreateNew()
                                                                 .With(e => e.Quality = new QualityModel(Quality.SDTV))
                                                                 .With(e => e.ReleaseGroup = "Sonarr")
                                                                 .Build();
@@ -181,8 +181,8 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             .Returns(ProperDownloadTypes.DoNotPrefer);
 
             _parsedEpisodeInfo.Quality.Revision.IsRepack = true;
-            _episodes.First().EpisodeFileId = 1;
-            _episodes.First().EpisodeFile = Builder<EpisodeFile>.CreateNew()
+            _episodes.First().EditionFileId = 1;
+            _episodes.First().EditionFile = Builder<EditionFile>.CreateNew()
                                                                 .With(e => e.Quality = new QualityModel(Quality.SDTV))
                                                                 .With(e => e.ReleaseGroup = "Sonarr")
                                                                 .Build();
@@ -203,8 +203,8 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             .Returns(ProperDownloadTypes.PreferAndUpgrade);
 
             _parsedEpisodeInfo.Quality.Revision.IsRepack = true;
-            _episodes.First().EpisodeFileId = 1;
-            _episodes.First().EpisodeFile = Builder<EpisodeFile>.CreateNew()
+            _episodes.First().EditionFileId = 1;
+            _episodes.First().EditionFile = Builder<EditionFile>.CreateNew()
                                                                 .With(e => e.Quality = new QualityModel(Quality.SDTV))
                                                                 .With(e => e.ReleaseGroup = "Sonarr")
                                                                 .Build();
@@ -225,8 +225,8 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             .Returns(ProperDownloadTypes.DoNotUpgrade);
 
             _parsedEpisodeInfo.Quality.Revision.IsRepack = true;
-            _episodes.First().EpisodeFileId = 1;
-            _episodes.First().EpisodeFile = Builder<EpisodeFile>.CreateNew()
+            _episodes.First().EditionFileId = 1;
+            _episodes.First().EditionFile = Builder<EditionFile>.CreateNew()
                                                                 .With(e => e.Quality = new QualityModel(Quality.SDTV))
                                                                 .With(e => e.ReleaseGroup = "Sonarr")
                                                                 .Build();

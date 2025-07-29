@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             Db.Insert(series);
 
             var pendingRelease = Builder<PendingRelease>.CreateNew()
-                .With(h => h.SeriesId = series.Id)
+                .With(h => h.AuthorId = series.Id)
                 .With(h => h.ParsedEpisodeInfo = new ParsedEpisodeInfo())
                 .With(h => h.Release = new ReleaseInfo())
                 .BuildNew();

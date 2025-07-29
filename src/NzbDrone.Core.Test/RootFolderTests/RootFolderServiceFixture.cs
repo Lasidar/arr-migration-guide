@@ -53,7 +53,7 @@ namespace NzbDrone.Core.Test.RootFolderTests
         [TestCase("//server//folder")]
         public void should_be_able_to_add_root_dir(string path)
         {
-            Mocker.GetMock<ISeriesRepository>()
+            Mocker.GetMock<IAuthorRepository>()
                   .Setup(s => s.AllSeriesPaths())
                   .Returns(new Dictionary<int, string>());
 
@@ -136,7 +136,7 @@ namespace NzbDrone.Core.Test.RootFolderTests
                   .Setup(s => s.Get(It.IsAny<int>()))
                   .Returns(rootFolder);
 
-            Mocker.GetMock<ISeriesRepository>()
+            Mocker.GetMock<IAuthorRepository>()
                   .Setup(s => s.AllSeriesPaths())
                   .Returns(new Dictionary<int, string>());
 
@@ -175,7 +175,7 @@ namespace NzbDrone.Core.Test.RootFolderTests
                 .Setup(s => s.Get(It.IsAny<int>()))
                 .Returns(rootFolder);
 
-            Mocker.GetMock<ISeriesRepository>()
+            Mocker.GetMock<IAuthorRepository>()
                 .Setup(s => s.AllSeriesPaths())
                 .Returns(new Dictionary<int, string>());
 

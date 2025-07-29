@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Test.Datastore
         [Test]
         public void one_to_one()
         {
-            var episodeFile = Builder<EpisodeFile>.CreateNew()
+            var episodeFile = Builder<EditionFile>.CreateNew()
                 .With(c => c.Languages = new List<Language> { Language.English })
                 .With(c => c.Quality = new QualityModel())
                 .BuildNew();
@@ -38,15 +38,15 @@ namespace NzbDrone.Core.Test.Datastore
             Db.Insert(episodeFile);
 
             var episode = Builder<Episode>.CreateNew()
-                                          .With(c => c.EpisodeFileId = episodeFile.Id)
+                                          .With(c => c.EditionFileId = episodeFile.Id)
                                           .BuildNew();
 
             Db.Insert(episode);
 
-            var loadedEpisodeFile = Db.Single<Episode>().EpisodeFile.Value;
+            var loadedEditionFile = Db.Single<Episode>().EditionFile.Value;
 
-            loadedEpisodeFile.Should().NotBeNull();
-            loadedEpisodeFile.Should().BeEquivalentTo(episodeFile,
+            loadedEditionFile.Should().NotBeNull();
+            loadedEditionFile.Should().BeEquivalentTo(episodeFile,
                 options => options
                     .IncludingAllRuntimeProperties()
                     .Excluding(c => c.DateAdded)
@@ -59,12 +59,12 @@ namespace NzbDrone.Core.Test.Datastore
         public void one_to_one_should_not_query_db_if_foreign_key_is_zero()
         {
             var episode = Builder<Episode>.CreateNew()
-                                          .With(c => c.EpisodeFileId = 0)
+                                          .With(c => c.EditionFileId = 0)
                                           .BuildNew();
 
             Db.Insert(episode);
 
-            Db.Single<Episode>().EpisodeFile.Value.Should().BeNull();
+            Db.Single<Episode>().EditionFile.Value.Should().BeNull();
         }
 
         [Test]

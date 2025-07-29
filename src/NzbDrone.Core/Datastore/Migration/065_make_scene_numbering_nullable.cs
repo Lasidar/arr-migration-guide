@@ -9,9 +9,9 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Update.Table("Episodes").Set(new { AbsoluteEpisodeNumber = DBNull.Value }).Where(new { AbsoluteEpisodeNumber = 0 });
-            Update.Table("Episodes").Set(new { SceneAbsoluteEpisodeNumber = DBNull.Value }).Where(new { SceneAbsoluteEpisodeNumber = 0 });
-            Update.Table("Episodes").Set(new { SceneSeasonNumber = DBNull.Value, SceneEpisodeNumber = DBNull.Value }).Where(new { SceneSeasonNumber = 0, SceneEpisodeNumber = 0 });
+            Update.Table("Episodes").Set(new { AbsoluteEditionNumber = DBNull.Value }).Where(new { AbsoluteEditionNumber = 0 });
+            Update.Table("Episodes").Set(new { SceneAbsoluteEditionNumber = DBNull.Value }).Where(new { SceneAbsoluteEditionNumber = 0 });
+            Update.Table("Episodes").Set(new { SceneBookNumber = DBNull.Value, SceneEditionNumber = DBNull.Value }).Where(new { SceneBookNumber = 0, SceneEditionNumber = 0 });
         }
     }
 }

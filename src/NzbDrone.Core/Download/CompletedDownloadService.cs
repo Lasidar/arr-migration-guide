@@ -31,9 +31,9 @@ namespace NzbDrone.Core.Download
         private readonly IProvideImportItemService _provideImportItemService;
         private readonly IDownloadedEpisodesImportService _downloadedEpisodesImportService;
         private readonly IParsingService _parsingService;
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
         private readonly ITrackedDownloadAlreadyImported _trackedDownloadAlreadyImported;
-        private readonly IEpisodeService _episodeService;
+        private readonly IEditionService _episodeService;
         private readonly IMediaFileService _mediaFileService;
         private readonly IRejectedImportService _rejectedImportService;
         private readonly Logger _logger;
@@ -43,9 +43,9 @@ namespace NzbDrone.Core.Download
                                         IProvideImportItemService provideImportItemService,
                                         IDownloadedEpisodesImportService downloadedEpisodesImportService,
                                         IParsingService parsingService,
-                                        ISeriesService seriesService,
+                                        IAuthorService seriesService,
                                         ITrackedDownloadAlreadyImported trackedDownloadAlreadyImported,
-                                        IEpisodeService episodeService,
+                                        IEditionService episodeService,
                                         IMediaFileService mediaFileService,
                                         IRejectedImportService rejectedImportService,
                                         Logger logger)
@@ -98,7 +98,7 @@ namespace NzbDrone.Core.Download
             {
                 if (historyItem != null)
                 {
-                    series = _seriesService.GetSeries(historyItem.SeriesId);
+                    series = _seriesService.GetSeries(historyItem.AuthorId);
                 }
 
                 if (series == null)
@@ -218,7 +218,7 @@ namespace NzbDrone.Core.Download
 
                 _eventAggregator.PublishEvent(new DownloadCompletedEvent(trackedDownload,
                     trackedDownload.RemoteEpisode.Series.Id,
-                    importResults.Where(c => c.Result == ImportResultType.Imported).Select(c => c.EpisodeFile).ToList(),
+                    importResults.Where(c => c.Result == ImportResultType.Imported).Select(c => c.EditionFile).ToList(),
                     releaseInfo));
 
                 return true;
@@ -249,7 +249,7 @@ namespace NzbDrone.Core.Download
                 {
                     _logger.ForDebugEvent()
                            .Message("No Episodes were just imported, but all episodes were previously imported, possible issue with download history.")
-                           .Property("SeriesId", trackedDownload.RemoteEpisode.Series.Id)
+                           .Property("AuthorId", trackedDownload.RemoteEpisode.Series.Id)
                            .Property("DownloadId", trackedDownload.DownloadItem.DownloadId)
                            .Property("Title", trackedDownload.DownloadItem.Title)
                            .Property("Path", trackedDownload.ImportItem.OutputPath.ToString())
@@ -258,7 +258,7 @@ namespace NzbDrone.Core.Download
                 }
 
                 var episodes = _episodeService.GetEpisodes(trackedDownload.RemoteEpisode.Episodes.Select(e => e.Id));
-                var files = _mediaFileService.GetFiles(episodes.Select(e => e.EpisodeFileId).Where(i => i > 0).Distinct());
+                var files = _mediaFileService.GetFiles(episodes.Select(e => e.EditionFileId).Where(i => i > 0).Distinct());
 
                 trackedDownload.State = TrackedDownloadState.Imported;
                 _eventAggregator.PublishEvent(new DownloadCompletedEvent(trackedDownload, trackedDownload.RemoteEpisode.Series.Id, files, releaseInfo));

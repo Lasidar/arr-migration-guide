@@ -8,18 +8,18 @@ using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.Books
 {
-    public interface IRefreshEpisodeService
+    public interface IRefreshEditionService
     {
         void RefreshEpisodeInfo(Series series, IEnumerable<Episode> remoteEpisodes);
     }
 
-    public class RefreshEpisodeService : IRefreshEpisodeService
+    public class RefreshEditionService : IRefreshEditionService
     {
-        private readonly IEpisodeService _episodeService;
+        private readonly IEditionService _episodeService;
         private readonly IEventAggregator _eventAggregator;
         private readonly Logger _logger;
 
-        public RefreshEpisodeService(IEpisodeService episodeService, IEventAggregator eventAggregator, Logger logger)
+        public RefreshEditionService(IEditionService episodeService, IEventAggregator eventAggregator, Logger logger)
         {
             _episodeService = episodeService;
             _eventAggregator = eventAggregator;
@@ -38,22 +38,22 @@ namespace NzbDrone.Core.Books
 
             var updateList = new List<Episode>();
             var newList = new List<Episode>();
-            var dupeFreeRemoteEpisodes = remoteEpisodes.DistinctBy(m => new { m.SeasonNumber, m.EpisodeNumber }).ToList();
+            var dupeFreeRemoteEpisodes = remoteEpisodes.DistinctBy(m => new { m.BookNumber, m.EditionNumber }).ToList();
 
             if (series.SeriesType == SeriesTypes.Anime)
             {
-                dupeFreeRemoteEpisodes = MapAbsoluteEpisodeNumbers(dupeFreeRemoteEpisodes);
+                dupeFreeRemoteEpisodes = MapAbsoluteEditionNumbers(dupeFreeRemoteEpisodes);
             }
 
             var orderedEpisodes = OrderEpisodes(series, dupeFreeRemoteEpisodes).ToList();
-            var episodesPerSeason = orderedEpisodes.GroupBy(s => s.SeasonNumber).ToDictionary(g => g.Key, g => g.Count());
-            var latestSeason = seasons.MaxBy(s => s.SeasonNumber);
+            var episodesPerSeason = orderedEpisodes.GroupBy(s => s.BookNumber).ToDictionary(g => g.Key, g => g.Count());
+            var latestSeason = seasons.MaxBy(s => s.BookNumber);
 
             foreach (var episode in orderedEpisodes)
             {
                 try
                 {
-                    var episodeToUpdate = existingEpisodes.FirstOrDefault(e => e.SeasonNumber == episode.SeasonNumber && e.EpisodeNumber == episode.EpisodeNumber);
+                    var episodeToUpdate = existingEpisodes.FirstOrDefault(e => e.BookNumber == episode.BookNumber && e.EditionNumber == episode.EditionNumber);
 
                     if (episodeToUpdate != null)
                     {
@@ -62,10 +62,10 @@ namespace NzbDrone.Core.Books
 
                         // Anime series with newly added absolute episode number
                         if (series.SeriesType == SeriesTypes.Anime &&
-                            !episodeToUpdate.AbsoluteEpisodeNumber.HasValue &&
-                            episode.AbsoluteEpisodeNumber.HasValue)
+                            !episodeToUpdate.AbsoluteEditionNumber.HasValue &&
+                            episode.AbsoluteEditionNumber.HasValue)
                         {
-                            episodeToUpdate.AbsoluteEpisodeNumberAdded = true;
+                            episodeToUpdate.AbsoluteEditionNumberAdded = true;
                         }
                     }
                     else
@@ -75,14 +75,14 @@ namespace NzbDrone.Core.Books
                         newList.Add(episodeToUpdate);
                     }
 
-                    episodeToUpdate.SeriesId = series.Id;
+                    episodeToUpdate.AuthorId = series.Id;
                     episodeToUpdate.TvdbId = episode.TvdbId;
-                    episodeToUpdate.EpisodeNumber = episode.EpisodeNumber;
-                    episodeToUpdate.SeasonNumber = episode.SeasonNumber;
-                    episodeToUpdate.AbsoluteEpisodeNumber = episode.AbsoluteEpisodeNumber;
-                    episodeToUpdate.AiredAfterSeasonNumber = episode.AiredAfterSeasonNumber;
-                    episodeToUpdate.AiredBeforeSeasonNumber = episode.AiredBeforeSeasonNumber;
-                    episodeToUpdate.AiredBeforeEpisodeNumber = episode.AiredBeforeEpisodeNumber;
+                    episodeToUpdate.EditionNumber = episode.EditionNumber;
+                    episodeToUpdate.BookNumber = episode.BookNumber;
+                    episodeToUpdate.AbsoluteEditionNumber = episode.AbsoluteEditionNumber;
+                    episodeToUpdate.AiredAfterBookNumber = episode.AiredAfterBookNumber;
+                    episodeToUpdate.AiredBeforeBookNumber = episode.AiredBeforeBookNumber;
+                    episodeToUpdate.AiredBeforeEditionNumber = episode.AiredBeforeEditionNumber;
                     episodeToUpdate.Title = episode.Title ?? "TBA";
                     episodeToUpdate.Overview = episode.Overview;
                     episodeToUpdate.AirDate = episode.AirDate;
@@ -95,13 +95,13 @@ namespace NzbDrone.Core.Books
                     // TheTVDB has a severe lack of season/series finales, this helps smooth out that limitation so they can be displayed in the UI
                     if (series.Status == SeriesStatusType.Ended &&
                         episodeToUpdate.FinaleType == null &&
-                        episodeToUpdate.SeasonNumber > 0 &&
-                        episodeToUpdate.SeasonNumber == latestSeason.SeasonNumber &&
-                        episodeToUpdate.EpisodeNumber > 1 &&
-                        episodeToUpdate.EpisodeNumber == episodesPerSeason[episodeToUpdate.SeasonNumber] &&
+                        episodeToUpdate.BookNumber > 0 &&
+                        episodeToUpdate.BookNumber == latestSeason.BookNumber &&
+                        episodeToUpdate.EditionNumber > 1 &&
+                        episodeToUpdate.EditionNumber == episodesPerSeason[episodeToUpdate.BookNumber] &&
                         episodeToUpdate.AirDateUtc.HasValue &&
                         episodeToUpdate.AirDateUtc.Value.After(DateTime.UtcNow.AddDays(-14)) &&
-                        orderedEpisodes.None(e => e.SeasonNumber == latestSeason.SeasonNumber && e.FinaleType != null))
+                        orderedEpisodes.None(e => e.BookNumber == latestSeason.BookNumber && e.FinaleType != null))
                     {
                         episodeToUpdate.FinaleType = "series";
                     }
@@ -145,12 +145,12 @@ namespace NzbDrone.Core.Books
 
         private bool GetMonitoredStatus(Episode episode, IEnumerable<Season> seasons, Series series)
         {
-            if (episode.EpisodeNumber == 0 && episode.SeasonNumber != 1)
+            if (episode.EditionNumber == 0 && episode.BookNumber != 1)
             {
                 return false;
             }
 
-            var season = seasons.SingleOrDefault(c => c.SeasonNumber == episode.SeasonNumber);
+            var season = seasons.SingleOrDefault(c => c.BookNumber == episode.BookNumber);
             return season == null || season.Monitored;
         }
 
@@ -191,21 +191,21 @@ namespace NzbDrone.Core.Books
         private void AdjustMultiEpisodeAirTime(Series series, IEnumerable<Episode> allEpisodes)
         {
             var groups = allEpisodes.Where(c => c.AirDateUtc.HasValue)
-                                    .GroupBy(e => new { e.SeasonNumber, e.AirDate })
+                                    .GroupBy(e => new { e.BookNumber, e.AirDate })
                                     .Where(g => g.Count() > 1)
                                     .ToList();
 
             foreach (var group in groups)
             {
-                if (group.Key.SeasonNumber != 0 && group.Count() > 3)
+                if (group.Key.BookNumber != 0 && group.Count() > 3)
                 {
-                    _logger.Debug("Not adjusting multi-episode air times for series {0} season {1} since more than 3 episodes 'aired' on the same day", series.Title, group.Key.SeasonNumber);
+                    _logger.Debug("Not adjusting multi-episode air times for series {0} season {1} since more than 3 episodes 'aired' on the same day", series.Title, group.Key.BookNumber);
                     continue;
                 }
 
                 var episodeCount = 0;
 
-                foreach (var episode in group.OrderBy(e => e.SeasonNumber).ThenBy(e => e.EpisodeNumber))
+                foreach (var episode in group.OrderBy(e => e.BookNumber).ThenBy(e => e.EditionNumber))
                 {
                     episode.AirDateUtc = episode.AirDateUtc.Value.AddMinutes(series.Runtime * episodeCount);
                     episodeCount++;
@@ -225,13 +225,13 @@ namespace NzbDrone.Core.Books
             }
         }
 
-        private List<Episode> MapAbsoluteEpisodeNumbers(List<Episode> remoteEpisodes)
+        private List<Episode> MapAbsoluteEditionNumbers(List<Episode> remoteEpisodes)
         {
             // Return all episodes with no abs number, but distinct for those with abs number
-            return remoteEpisodes.Where(e => e.AbsoluteEpisodeNumber.HasValue)
-                                 .OrderByDescending(e => e.SeasonNumber)
-                                 .DistinctBy(e => e.AbsoluteEpisodeNumber.Value)
-                                 .Concat(remoteEpisodes.Where(e => !e.AbsoluteEpisodeNumber.HasValue))
+            return remoteEpisodes.Where(e => e.AbsoluteEditionNumber.HasValue)
+                                 .OrderByDescending(e => e.BookNumber)
+                                 .DistinctBy(e => e.AbsoluteEditionNumber.Value)
+                                 .Concat(remoteEpisodes.Where(e => !e.AbsoluteEditionNumber.HasValue))
                                  .ToList();
         }
 
@@ -239,17 +239,17 @@ namespace NzbDrone.Core.Books
         {
             if (series.SeriesType == SeriesTypes.Anime)
             {
-                var withAbs = episodes.Where(e => e.AbsoluteEpisodeNumber.HasValue)
-                                      .OrderBy(e => e.AbsoluteEpisodeNumber);
+                var withAbs = episodes.Where(e => e.AbsoluteEditionNumber.HasValue)
+                                      .OrderBy(e => e.AbsoluteEditionNumber);
 
-                var withoutAbs = episodes.Where(e => !e.AbsoluteEpisodeNumber.HasValue)
-                                         .OrderBy(e => e.SeasonNumber)
-                                         .ThenBy(e => e.EpisodeNumber);
+                var withoutAbs = episodes.Where(e => !e.AbsoluteEditionNumber.HasValue)
+                                         .OrderBy(e => e.BookNumber)
+                                         .ThenBy(e => e.EditionNumber);
 
                 return withAbs.Concat(withoutAbs);
             }
 
-            return episodes.OrderBy(e => e.SeasonNumber).ThenBy(e => e.EpisodeNumber);
+            return episodes.OrderBy(e => e.BookNumber).ThenBy(e => e.EditionNumber);
         }
     }
 }

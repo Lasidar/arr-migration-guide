@@ -6,13 +6,13 @@ using Readarr.Http;
 namespace Readarr.Api.V3.Series
 {
     [V3ApiController("series/import")]
-    public class SeriesImportController : Controller
+    public class AuthorImportController : Controller
     {
-        private readonly IAddSeriesService _addSeriesService;
+        private readonly IAddAuthorService _addAuthorService;
 
-        public SeriesImportController(IAddSeriesService addSeriesService)
+        public SeriesImportController(IAddAuthorService addAuthorService)
         {
-            _addSeriesService = addSeriesService;
+            _addAuthorService = addAuthorService;
         }
 
         [HttpPost]
@@ -20,7 +20,7 @@ namespace Readarr.Api.V3.Series
         {
             var newSeries = resource.ToModel();
 
-            return _addSeriesService.AddSeries(newSeries).ToResource();
+            return _addAuthorService.AddSeries(newSeries).ToResource();
         }
     }
 }

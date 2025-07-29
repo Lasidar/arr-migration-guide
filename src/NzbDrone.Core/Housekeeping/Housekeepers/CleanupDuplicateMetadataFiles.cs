@@ -26,8 +26,8 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
                                      WHERE ""Id"" IN (
                                          SELECT MIN(""Id"") FROM ""MetadataFiles""
                                          WHERE ""Type"" = 1
-                                         GROUP BY ""SeriesId"", ""Consumer""
-                                         HAVING COUNT(""SeriesId"") > 1
+                                         GROUP BY ""AuthorId"", ""Consumer""
+                                         HAVING COUNT(""AuthorId"") > 1
                                      )");
         }
 
@@ -38,8 +38,8 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
                                      WHERE ""Id"" IN (
                                          SELECT MIN(""Id"") FROM ""MetadataFiles""
                                          WHERE ""Type"" = 2
-                                         GROUP BY ""EpisodeFileId"", ""Consumer""
-                                         HAVING COUNT(""EpisodeFileId"") > 1
+                                         GROUP BY ""EditionFileId"", ""Consumer""
+                                         HAVING COUNT(""EditionFileId"") > 1
                                      )");
         }
 
@@ -50,8 +50,8 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
                                      WHERE ""Id"" IN (
                                          SELECT MIN(""Id"") FROM ""MetadataFiles""
                                          WHERE ""Type"" = 5
-                                         GROUP BY ""EpisodeFileId"", ""Consumer""
-                                         HAVING COUNT(""EpisodeFileId"") > 1
+                                         GROUP BY ""EditionFileId"", ""Consumer""
+                                         HAVING COUNT(""EditionFileId"") > 1
                                      )");
         }
     }

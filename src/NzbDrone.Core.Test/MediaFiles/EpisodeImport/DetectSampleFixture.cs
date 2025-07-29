@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             var episodes = Builder<Episode>.CreateListOfSize(1)
                                            .All()
-                                           .With(e => e.SeasonNumber = 1)
+                                           .With(e => e.BookNumber = 1)
                                            .Build()
                                            .ToList();
 
@@ -57,7 +57,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
         [Test]
         public void should_return_false_if_season_zero()
         {
-            _localEpisode.Episodes[0].SeasonNumber = 0;
+            _localEpisode.Episodes[0].BookNumber = 0;
 
             Subject.IsSample(_localEpisode.Series,
                 _localEpisode.Path,
@@ -172,7 +172,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
         {
             GivenRuntime(600);
             _series.SeriesType = SeriesTypes.Daily;
-            _localEpisode.Episodes[0].SeasonNumber = 0;
+            _localEpisode.Episodes[0].BookNumber = 0;
 
             Subject.IsSample(_localEpisode.Series,
                 _localEpisode.Path,
@@ -183,7 +183,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
         public void should_return_false_for_anime_special()
         {
             _series.SeriesType = SeriesTypes.Anime;
-            _localEpisode.Episodes[0].SeasonNumber = 0;
+            _localEpisode.Episodes[0].BookNumber = 0;
 
             Subject.IsSample(_localEpisode.Series,
                 _localEpisode.Path,

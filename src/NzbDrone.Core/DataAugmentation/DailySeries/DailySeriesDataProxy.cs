@@ -9,7 +9,7 @@ namespace NzbDrone.Core.DataAugmentation.DailySeries
 {
     public interface IDailySeriesDataProxy
     {
-        IEnumerable<int> GetDailySeriesIds();
+        IEnumerable<int> GetDailyAuthorIds();
     }
 
     public class DailySeriesDataProxy : IDailySeriesDataProxy
@@ -25,7 +25,7 @@ namespace NzbDrone.Core.DataAugmentation.DailySeries
             _logger = logger;
         }
 
-        public IEnumerable<int> GetDailySeriesIds()
+        public IEnumerable<int> GetDailyAuthorIds()
         {
             try
             {

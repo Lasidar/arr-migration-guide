@@ -4,11 +4,11 @@ using NzbDrone.Common.Extensions;
 
 namespace NzbDrone.Core.Books
 {
-    public class SeriesTitleSlugValidator : PropertyValidator
+    public class AuthorTitleSlugValidator : PropertyValidator
     {
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
 
-        public SeriesTitleSlugValidator(ISeriesService seriesService)
+        public SeriesTitleSlugValidator(IAuthorService seriesService)
         {
             _seriesService = seriesService;
         }

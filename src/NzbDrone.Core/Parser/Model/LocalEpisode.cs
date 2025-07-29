@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Parser.Model
         public ParsedEpisodeInfo FolderEpisodeInfo { get; set; }
         public Series Series { get; set; }
         public List<Episode> Episodes { get; set; }
-        public List<DeletedEpisodeFile> OldFiles { get; set; }
+        public List<DeletedEditionFile> OldFiles { get; set; }
         public QualityModel Quality { get; set; }
         public List<Language> Languages { get; set; }
         public IndexerFlags IndexerFlags { get; set; }
@@ -49,11 +49,11 @@ namespace NzbDrone.Core.Parser.Model
         public List<string> PossibleExtraFiles { get; set; }
         public SubtitleTitleInfo SubtitleInfo { get; set; }
 
-        public int SeasonNumber
+        public int BookNumber
         {
             get
             {
-                var seasons = Episodes.Select(c => c.SeasonNumber).Distinct().ToList();
+                var seasons = Episodes.Select(c => c.BookNumber).Distinct().ToList();
 
                 if (seasons.Empty())
                 {
@@ -69,7 +69,7 @@ namespace NzbDrone.Core.Parser.Model
             }
         }
 
-        public bool IsSpecial => SeasonNumber == 0;
+        public bool IsSpecial => BookNumber == 0;
 
         public override string ToString()
         {

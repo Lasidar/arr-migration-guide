@@ -10,12 +10,12 @@ using NzbDrone.Core.Qualities;
 using Readarr.Api.V3.CustomFormats;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.EpisodeFiles
+namespace Readarr.Api.V3.EditionFiles
 {
-    public class EpisodeFileResource : RestResource
+    public class EditionFileResource : RestResource
     {
-        public int SeriesId { get; set; }
-        public int SeasonNumber { get; set; }
+        public int AuthorId { get; set; }
+        public int BookNumber { get; set; }
         public string RelativePath { get; set; }
         public string Path { get; set; }
         public long Size { get; set; }
@@ -33,9 +33,9 @@ namespace Readarr.Api.V3.EpisodeFiles
         public bool QualityCutoffNotMet { get; set; }
     }
 
-    public static class EpisodeFileResourceMapper
+    public static class EditionFileResourceMapper
     {
-        public static EpisodeFileResource ToResource(this EpisodeFile model, NzbDrone.Core.Tv.Series series, IUpgradableSpecification upgradableSpecification, ICustomFormatCalculationService formatCalculationService)
+        public static EditionFileResource ToResource(this EditionFile model, NzbDrone.Core.Tv.Series series, IUpgradableSpecification upgradableSpecification, ICustomFormatCalculationService formatCalculationService)
         {
             if (model == null)
             {
@@ -46,12 +46,12 @@ namespace Readarr.Api.V3.EpisodeFiles
             var customFormats = formatCalculationService?.ParseCustomFormat(model, model.Series);
             var customFormatScore = series?.QualityProfile?.Value?.CalculateCustomFormatScore(customFormats) ?? 0;
 
-            return new EpisodeFileResource
+            return new EditionFileResource
             {
                 Id = model.Id,
 
-                SeriesId = model.SeriesId,
-                SeasonNumber = model.SeasonNumber,
+                AuthorId = model.AuthorId,
+                BookNumber = model.BookNumber,
                 RelativePath = model.RelativePath,
                 Path = Path.Combine(series.Path, model.RelativePath),
                 Size = model.Size,

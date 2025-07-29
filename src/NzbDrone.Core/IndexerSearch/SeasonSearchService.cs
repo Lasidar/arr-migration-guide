@@ -5,7 +5,7 @@ using NzbDrone.Core.Messaging.Commands;
 
 namespace NzbDrone.Core.IndexerSearch
 {
-    public class SeasonSearchService : IExecute<SeasonSearchCommand>
+    public class BookSearchService : IExecute<SeasonSearchCommand>
     {
         private readonly ISearchForReleases _releaseSearchService;
         private readonly IProcessDownloadDecisions _processDownloadDecisions;
@@ -22,7 +22,7 @@ namespace NzbDrone.Core.IndexerSearch
 
         public void Execute(SeasonSearchCommand message)
         {
-            var decisions = _releaseSearchService.SeasonSearch(message.SeriesId, message.SeasonNumber, false, true, message.Trigger == CommandTrigger.Manual, false).GetAwaiter().GetResult();
+            var decisions = _releaseSearchService.SeasonSearch(message.AuthorId, message.BookNumber, false, true, message.Trigger == CommandTrigger.Manual, false).GetAwaiter().GetResult();
             var processed = _processDownloadDecisions.ProcessDecisions(decisions).GetAwaiter().GetResult();
 
             _logger.ProgressInfo("Season search completed. {0} reports downloaded.", processed.Grabbed.Count);

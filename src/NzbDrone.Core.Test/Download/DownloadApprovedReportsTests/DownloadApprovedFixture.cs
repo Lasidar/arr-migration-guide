@@ -35,7 +35,7 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
         {
             return Builder<Episode>.CreateNew()
                             .With(e => e.Id = id)
-                            .With(e => e.EpisodeNumber = id)
+                            .With(e => e.EditionNumber = id)
                             .Build();
         }
 

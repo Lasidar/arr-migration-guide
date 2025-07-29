@@ -18,11 +18,11 @@ using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.Books
 {
-    public class RefreshSeriesService : IExecute<RefreshSeriesCommand>
+    public class RefreshAuthorService : IExecute<RefreshSeriesCommand>
     {
         private readonly IProvideSeriesInfo _seriesInfo;
-        private readonly ISeriesService _seriesService;
-        private readonly IRefreshEpisodeService _refreshEpisodeService;
+        private readonly IAuthorService _seriesService;
+        private readonly IRefreshEditionService _refreshEditionService;
         private readonly IEventAggregator _eventAggregator;
         private readonly IDiskScanService _diskScanService;
         private readonly ICheckIfSeriesShouldBeRefreshed _checkIfSeriesShouldBeRefreshed;
@@ -30,9 +30,9 @@ namespace NzbDrone.Core.Books
         private readonly IAutoTaggingService _autoTaggingService;
         private readonly Logger _logger;
 
-        public RefreshSeriesService(IProvideSeriesInfo seriesInfo,
-                                    ISeriesService seriesService,
-                                    IRefreshEpisodeService refreshEpisodeService,
+        public RefreshAuthorService(IProvideSeriesInfo seriesInfo,
+                                    IAuthorService seriesService,
+                                    IRefreshEditionService refreshEditionService,
                                     IEventAggregator eventAggregator,
                                     IDiskScanService diskScanService,
                                     ICheckIfSeriesShouldBeRefreshed checkIfSeriesShouldBeRefreshed,
@@ -42,7 +42,7 @@ namespace NzbDrone.Core.Books
         {
             _seriesInfo = seriesInfo;
             _seriesService = seriesService;
-            _refreshEpisodeService = refreshEpisodeService;
+            _refreshEditionService = refreshEditionService;
             _eventAggregator = eventAggregator;
             _diskScanService = diskScanService;
             _checkIfSeriesShouldBeRefreshed = checkIfSeriesShouldBeRefreshed;
@@ -126,7 +126,7 @@ namespace NzbDrone.Core.Books
             series.Seasons = UpdateSeasons(series, seriesInfo);
 
             _seriesService.UpdateSeries(series, publishUpdatedEvent: false);
-            _refreshEpisodeService.RefreshEpisodeInfo(series, episodes);
+            _refreshEditionService.RefreshEpisodeInfo(series, episodes);
 
             _logger.Debug("Finished series refresh for {0}", series.Title);
             _eventAggregator.PublishEvent(new SeriesUpdatedEvent(series));
@@ -136,15 +136,15 @@ namespace NzbDrone.Core.Books
 
         private List<Season> UpdateSeasons(Series series, Series seriesInfo)
         {
-            var seasons = seriesInfo.Seasons.DistinctBy(s => s.SeasonNumber).ToList();
+            var seasons = seriesInfo.Seasons.DistinctBy(s => s.BookNumber).ToList();
 
             foreach (var season in seasons)
             {
-                var existingSeason = series.Seasons.FirstOrDefault(s => s.SeasonNumber == season.SeasonNumber);
+                var existingSeason = series.Seasons.FirstOrDefault(s => s.BookNumber == season.BookNumber);
 
                 if (existingSeason == null)
                 {
-                    if (season.SeasonNumber == 0)
+                    if (season.BookNumber == 0)
                     {
                         _logger.Debug("Ignoring season 0 for series [{0}] {1} by default", series.TvdbId, series.Title);
                         season.Monitored = false;
@@ -153,7 +153,7 @@ namespace NzbDrone.Core.Books
 
                     var monitorNewSeasons = series.MonitorNewItems == NewItemMonitorTypes.All;
 
-                    _logger.Debug("New season ({0}) for series: [{1}] {2}, setting monitored to {3}", season.SeasonNumber, series.TvdbId, series.Title, monitorNewSeasons.ToString().ToLowerInvariant());
+                    _logger.Debug("New season ({0}) for series: [{1}] {2}, setting monitored to {3}", season.BookNumber, series.TvdbId, series.Title, monitorNewSeasons.ToString().ToLowerInvariant());
                     season.Monitored = monitorNewSeasons;
                 }
                 else
@@ -214,9 +214,9 @@ namespace NzbDrone.Core.Books
             var isNew = message.IsNewSeries;
             _eventAggregator.PublishEvent(new SeriesRefreshStartingEvent(trigger == CommandTrigger.Manual));
 
-            if (message.SeriesIds.Any())
+            if (message.AuthorIds.Any())
             {
-                foreach (var seriesId in message.SeriesIds)
+                foreach (var seriesId in message.AuthorIds)
                 {
                     var series = _seriesService.GetSeries(seriesId);
 

@@ -8,12 +8,12 @@ namespace NzbDrone.Core.Extras.Files
     public interface IExtraFileRepository<TExtraFile> : IBasicRepository<TExtraFile>
         where TExtraFile : ExtraFile, new()
     {
-        void DeleteForSeriesIds(List<int> seriesIds);
+        void DeleteForAuthorIds(List<int> seriesIds);
         void DeleteForSeason(int seriesId, int seasonNumber);
-        void DeleteForEpisodeFile(int episodeFileId);
+        void DeleteForEditionFile(int episodeFileId);
         List<TExtraFile> GetFilesBySeries(int seriesId);
         List<TExtraFile> GetFilesBySeason(int seriesId, int seasonNumber);
-        List<TExtraFile> GetFilesByEpisodeFile(int episodeFileId);
+        List<TExtraFile> GetFilesByEditionFile(int episodeFileId);
         TExtraFile FindByPath(int seriesId, string path);
     }
 
@@ -25,39 +25,39 @@ namespace NzbDrone.Core.Extras.Files
         {
         }
 
-        public void DeleteForSeriesIds(List<int> seriesIds)
+        public void DeleteForAuthorIds(List<int> seriesIds)
         {
-            Delete(c => seriesIds.Contains(c.SeriesId));
+            Delete(c => seriesIds.Contains(c.AuthorId));
         }
 
         public void DeleteForSeason(int seriesId, int seasonNumber)
         {
-            Delete(c => c.SeriesId == seriesId && c.SeasonNumber == seasonNumber);
+            Delete(c => c.AuthorId == seriesId && c.BookNumber == seasonNumber);
         }
 
-        public void DeleteForEpisodeFile(int episodeFileId)
+        public void DeleteForEditionFile(int episodeFileId)
         {
-            Delete(c => c.EpisodeFileId == episodeFileId);
+            Delete(c => c.EditionFileId == episodeFileId);
         }
 
         public List<TExtraFile> GetFilesBySeries(int seriesId)
         {
-            return Query(c => c.SeriesId == seriesId);
+            return Query(c => c.AuthorId == seriesId);
         }
 
         public List<TExtraFile> GetFilesBySeason(int seriesId, int seasonNumber)
         {
-            return Query(c => c.SeriesId == seriesId && c.SeasonNumber == seasonNumber);
+            return Query(c => c.AuthorId == seriesId && c.BookNumber == seasonNumber);
         }
 
-        public List<TExtraFile> GetFilesByEpisodeFile(int episodeFileId)
+        public List<TExtraFile> GetFilesByEditionFile(int episodeFileId)
         {
-            return Query(c => c.EpisodeFileId == episodeFileId);
+            return Query(c => c.EditionFileId == episodeFileId);
         }
 
         public TExtraFile FindByPath(int seriesId, string path)
         {
-            return Query(c => c.SeriesId == seriesId && c.RelativePath == path).SingleOrDefault();
+            return Query(c => c.AuthorId == seriesId && c.RelativePath == path).SingleOrDefault();
         }
     }
 }

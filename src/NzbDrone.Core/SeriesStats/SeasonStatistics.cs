@@ -7,14 +7,14 @@ using NzbDrone.Core.Datastore;
 
 namespace NzbDrone.Core.SeriesStats
 {
-    public class SeasonStatistics : ResultSet
+    public class BookStatistics : ResultSet
     {
-        public int SeriesId { get; set; }
-        public int SeasonNumber { get; set; }
+        public int AuthorId { get; set; }
+        public int BookNumber { get; set; }
         public string NextAiringString { get; set; }
         public string PreviousAiringString { get; set; }
         public string LastAiredString { get; set; }
-        public int EpisodeFileCount { get; set; }
+        public int EditionFileCount { get; set; }
         public int EpisodeCount { get; set; }
         public int AvailableEpisodeCount { get; set; }
         public int TotalEpisodeCount { get; set; }

@@ -103,7 +103,7 @@ namespace NzbDrone.Core.Download.History
             var history = new DownloadHistory
             {
                 EventType = DownloadHistoryEventType.DownloadGrabbed,
-                SeriesId = message.Episode.Series.Id,
+                AuthorId = message.Episode.Series.Id,
                 DownloadId = message.DownloadId,
                 SourceTitle = message.Episode.Release.Title,
                 Date = DateTime.UtcNow,
@@ -146,7 +146,7 @@ namespace NzbDrone.Core.Download.History
             var history = new DownloadHistory
             {
                 EventType = DownloadHistoryEventType.FileImported,
-                SeriesId = message.ImportedEpisode.SeriesId,
+                AuthorId = message.ImportedEpisode.AuthorId,
                 DownloadId = downloadId,
                 SourceTitle = message.EpisodeInfo.Path,
                 Date = DateTime.UtcNow,
@@ -169,7 +169,7 @@ namespace NzbDrone.Core.Download.History
             var history = new DownloadHistory
             {
                 EventType = DownloadHistoryEventType.DownloadImported,
-                SeriesId = message.SeriesId,
+                AuthorId = message.AuthorId,
                 DownloadId = downloadItem.DownloadId,
                 SourceTitle = downloadItem.Title,
                 Date = DateTime.UtcNow,
@@ -194,7 +194,7 @@ namespace NzbDrone.Core.Download.History
             var history = new DownloadHistory
             {
                 EventType = DownloadHistoryEventType.DownloadFailed,
-                SeriesId = message.SeriesId,
+                AuthorId = message.AuthorId,
                 DownloadId = message.DownloadId,
                 SourceTitle = message.SourceTitle,
                 Date = DateTime.UtcNow,
@@ -213,7 +213,7 @@ namespace NzbDrone.Core.Download.History
             var history = new DownloadHistory
             {
                 EventType = DownloadHistoryEventType.DownloadIgnored,
-                SeriesId = message.SeriesId,
+                AuthorId = message.AuthorId,
                 DownloadId = message.DownloadId,
                 SourceTitle = message.SourceTitle,
                 Date = DateTime.UtcNow,
@@ -229,7 +229,7 @@ namespace NzbDrone.Core.Download.History
 
         public void Handle(SeriesDeletedEvent message)
         {
-            _repository.DeleteBySeriesIds(message.Series.Select(m => m.Id).ToList());
+            _repository.DeleteByAuthorIds(message.Series.Select(m => m.Id).ToList());
         }
     }
 }

@@ -4,7 +4,7 @@ namespace NzbDrone.Core.IndexerSearch
 {
     public class MissingEpisodeSearchCommand : Command
     {
-        public int? SeriesId { get; set; }
+        public int? AuthorId { get; set; }
         public bool Monitored { get; set; }
 
         public override bool SendUpdatesToClient => true;
@@ -16,7 +16,7 @@ namespace NzbDrone.Core.IndexerSearch
 
         public MissingEpisodeSearchCommand(int seriesId)
         {
-            SeriesId = seriesId;
+            AuthorId = seriesId;
             Monitored = true;
         }
     }

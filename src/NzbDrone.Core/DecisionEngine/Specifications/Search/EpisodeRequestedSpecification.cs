@@ -4,7 +4,7 @@ using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications.Search
 {
-    public class EpisodeRequestedSpecification : IDownloadDecisionEngineSpecification
+    public class EditionRequestedSpecification : IDownloadDecisionEngineSpecification
     {
         private readonly Logger _logger;
 
@@ -32,15 +32,15 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
 
                 if (remoteEpisodes.Any())
                 {
-                    var episodes = remoteEpisode.Episodes.OrderBy(v => v.SeasonNumber).ThenBy(v => v.EpisodeNumber).ToList();
+                    var episodes = remoteEpisode.Episodes.OrderBy(v => v.BookNumber).ThenBy(v => v.EditionNumber).ToList();
 
                     if (episodes.Count > 1)
                     {
-                        return DownloadSpecDecision.Reject(DownloadRejectionReason.WrongEpisode, $"Episode wasn't requested: {episodes.First().SeasonNumber}x{episodes.First().EpisodeNumber}-{episodes.Last().EpisodeNumber}");
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.WrongEpisode, $"Episode wasn't requested: {episodes.First().BookNumber}x{episodes.First().EditionNumber}-{episodes.Last().EditionNumber}");
                     }
                     else
                     {
-                        return DownloadSpecDecision.Reject(DownloadRejectionReason.WrongEpisode, $"Episode wasn't requested: {episodes.First().SeasonNumber}x{episodes.First().EpisodeNumber}");
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.WrongEpisode, $"Episode wasn't requested: {episodes.First().BookNumber}x{episodes.First().EditionNumber}");
                     }
                 }
                 else

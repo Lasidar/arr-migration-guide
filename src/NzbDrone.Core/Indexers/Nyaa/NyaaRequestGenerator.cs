@@ -22,11 +22,11 @@ namespace NzbDrone.Core.Indexers.Nyaa
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            if (Settings.AnimeStandardFormatSearch && searchCriteria.SeasonNumber > 0 && searchCriteria.EpisodeNumber > 0)
+            if (Settings.AnimeStandardFormatSearch && searchCriteria.BookNumber > 0 && searchCriteria.EditionNumber > 0)
             {
                 foreach (var searchTitle in searchCriteria.SceneTitles.Select(PrepareQuery))
                 {
-                    pageableRequests.Add(GetPagedRequests($"{searchTitle}+s{searchCriteria.SeasonNumber:00}e{searchCriteria.EpisodeNumber:00}"));
+                    pageableRequests.Add(GetPagedRequests($"{searchTitle}+s{searchCriteria.BookNumber:00}e{searchCriteria.EditionNumber:00}"));
                 }
             }
 
@@ -37,11 +37,11 @@ namespace NzbDrone.Core.Indexers.Nyaa
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            if (Settings.AnimeStandardFormatSearch && searchCriteria.SeasonNumber > 0)
+            if (Settings.AnimeStandardFormatSearch && searchCriteria.BookNumber > 0)
             {
                 foreach (var searchTitle in searchCriteria.SceneTitles.Select(PrepareQuery))
                 {
-                    pageableRequests.Add(GetPagedRequests($"{searchTitle}+s{searchCriteria.SeasonNumber:00}"));
+                    pageableRequests.Add(GetPagedRequests($"{searchTitle}+s{searchCriteria.BookNumber:00}"));
                 }
             }
 
@@ -64,19 +64,19 @@ namespace NzbDrone.Core.Indexers.Nyaa
 
             foreach (var searchTitle in searchCriteria.SceneTitles.Select(PrepareQuery))
             {
-                if (searchCriteria.AbsoluteEpisodeNumber > 0)
+                if (searchCriteria.AbsoluteEditionNumber > 0)
                 {
-                    pageableRequests.Add(GetPagedRequests($"{searchTitle}+{searchCriteria.AbsoluteEpisodeNumber:0}"));
+                    pageableRequests.Add(GetPagedRequests($"{searchTitle}+{searchCriteria.AbsoluteEditionNumber:0}"));
 
-                    if (searchCriteria.AbsoluteEpisodeNumber < 10)
+                    if (searchCriteria.AbsoluteEditionNumber < 10)
                     {
-                        pageableRequests.Add(GetPagedRequests($"{searchTitle}+{searchCriteria.AbsoluteEpisodeNumber:00}"));
+                        pageableRequests.Add(GetPagedRequests($"{searchTitle}+{searchCriteria.AbsoluteEditionNumber:00}"));
                     }
                 }
 
-                if (Settings.AnimeStandardFormatSearch && searchCriteria.SeasonNumber > 0 && searchCriteria.EpisodeNumber > 0)
+                if (Settings.AnimeStandardFormatSearch && searchCriteria.BookNumber > 0 && searchCriteria.EditionNumber > 0)
                 {
-                    pageableRequests.Add(GetPagedRequests($"{searchTitle}+s{searchCriteria.SeasonNumber:00}e{searchCriteria.EpisodeNumber:00}"));
+                    pageableRequests.Add(GetPagedRequests($"{searchTitle}+s{searchCriteria.BookNumber:00}e{searchCriteria.EditionNumber:00}"));
                 }
             }
 
@@ -89,9 +89,9 @@ namespace NzbDrone.Core.Indexers.Nyaa
 
             foreach (var searchTitle in searchCriteria.SceneTitles.Select(PrepareQuery))
             {
-                if (Settings.AnimeStandardFormatSearch && searchCriteria.SeasonNumber > 0)
+                if (Settings.AnimeStandardFormatSearch && searchCriteria.BookNumber > 0)
                 {
-                    pageableRequests.Add(GetPagedRequests($"{searchTitle}+s{searchCriteria.SeasonNumber:00}"));
+                    pageableRequests.Add(GetPagedRequests($"{searchTitle}+s{searchCriteria.BookNumber:00}"));
                 }
             }
 

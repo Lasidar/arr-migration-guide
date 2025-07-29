@@ -7,7 +7,7 @@ using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.Books
 {
-    public class SeriesAddedHandler : IHandle<SeriesAddedEvent>,
+    public class AuthorAddedHandler : IHandle<SeriesAddedEvent>,
                                       IHandle<SeriesImportedEvent>
     {
         private readonly IManageCommandQueue _commandQueueManager;
@@ -24,7 +24,7 @@ namespace NzbDrone.Core.Books
 
         public void Handle(SeriesImportedEvent message)
         {
-            _commandQueueManager.PushMany(message.SeriesIds.Select(s => new RefreshSeriesCommand(new List<int> { s }, true)).ToList());
+            _commandQueueManager.PushMany(message.AuthorIds.Select(s => new RefreshSeriesCommand(new List<int> { s }, true)).ToList());
         }
     }
 }

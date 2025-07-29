@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Test.QueueTests
 
             var episodes = Builder<Episode>.CreateListOfSize(3)
                                           .All()
-                                          .With(e => e.SeriesId = series.Id)
+                                          .With(e => e.AuthorId = series.Id)
                                           .Build();
 
             var remoteEpisode = Builder<RemoteEpisode>.CreateNew()

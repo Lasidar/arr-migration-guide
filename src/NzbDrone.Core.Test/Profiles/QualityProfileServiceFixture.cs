@@ -64,7 +64,7 @@ namespace NzbDrone.Core.Test.Profiles
                                             .With(c => c.QualityProfileId = profile.Id)
                                             .Build().ToList();
 
-            Mocker.GetMock<ISeriesService>().Setup(c => c.GetAllSeries()).Returns(seriesList);
+            Mocker.GetMock<IAuthorService>().Setup(c => c.GetAllSeries()).Returns(seriesList);
             Mocker.GetMock<IQualityProfileRepository>().Setup(c => c.Get(profile.Id)).Returns(profile);
 
             Assert.Throws<QualityProfileInUseException>(() => Subject.Delete(profile.Id));
@@ -80,7 +80,7 @@ namespace NzbDrone.Core.Test.Profiles
                                             .With(c => c.QualityProfileId = 2)
                                             .Build().ToList();
 
-            Mocker.GetMock<ISeriesService>().Setup(c => c.GetAllSeries()).Returns(seriesList);
+            Mocker.GetMock<IAuthorService>().Setup(c => c.GetAllSeries()).Returns(seriesList);
 
             Subject.Delete(1);
 
@@ -104,7 +104,7 @@ namespace NzbDrone.Core.Test.Profiles
                                                            .Build().ToList();
 
             Mocker.GetMock<IQualityProfileRepository>().Setup(c => c.Get(profile.Id)).Returns(profile);
-            Mocker.GetMock<ISeriesService>().Setup(c => c.GetAllSeries()).Returns(seriesList);
+            Mocker.GetMock<IAuthorService>().Setup(c => c.GetAllSeries()).Returns(seriesList);
 
             Mocker.GetMock<IImportListFactory>()
                   .Setup(s => s.All())

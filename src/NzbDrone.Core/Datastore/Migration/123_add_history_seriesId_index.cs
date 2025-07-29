@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Create.Index().OnTable("History").OnColumn("SeriesId");
+            Create.Index().OnTable("History").OnColumn("AuthorId");
         }
     }
 }

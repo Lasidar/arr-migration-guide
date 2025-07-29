@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                 {
                      DownloadId = "35238",
                      SourceTitle = "TV Series S01",
-                     SeriesId = 5,
+                     AuthorId = 5,
                      EpisodeId = 4
                 }
                 });
@@ -48,13 +48,13 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                 ParsedEpisodeInfo = new ParsedEpisodeInfo()
                 {
                     SeriesTitle = "TV Series",
-                    SeasonNumber = 1
+                    BookNumber = 1
                 },
-                MappedSeasonNumber = 1
+                MappedBookNumber = 1
             };
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.Is<ParsedEpisodeInfo>(i => i.SeasonNumber == 1 && i.SeriesTitle == "TV Series"), It.IsAny<int>(), It.IsAny<IEnumerable<int>>()))
+                  .Setup(s => s.Map(It.Is<ParsedEpisodeInfo>(i => i.BookNumber == 1 && i.SeriesTitle == "TV Series"), It.IsAny<int>(), It.IsAny<IEnumerable<int>>()))
                   .Returns(remoteEpisode);
 
             var client = new DownloadClientDefinition()
@@ -82,8 +82,8 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             trackedDownload.RemoteEpisode.Series.Should().NotBeNull();
             trackedDownload.RemoteEpisode.Series.Id.Should().Be(5);
             trackedDownload.RemoteEpisode.Episodes.First().Id.Should().Be(4);
-            trackedDownload.RemoteEpisode.ParsedEpisodeInfo.SeasonNumber.Should().Be(1);
-            trackedDownload.RemoteEpisode.MappedSeasonNumber.Should().Be(1);
+            trackedDownload.RemoteEpisode.ParsedEpisodeInfo.BookNumber.Should().Be(1);
+            trackedDownload.RemoteEpisode.MappedBookNumber.Should().Be(1);
         }
 
         [Test]
@@ -93,7 +93,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             {
                 DownloadId = "35238",
                 SourceTitle = "TV Series S01",
-                SeriesId = 5,
+                AuthorId = 5,
                 EpisodeId = 4,
                 EventType = EpisodeHistoryEventType.Grabbed,
             };
@@ -125,9 +125,9 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                 ParsedEpisodeInfo = new ParsedEpisodeInfo()
                 {
                     SeriesTitle = "TV Series",
-                    SeasonNumber = 1
+                    BookNumber = 1
                 },
-                MappedSeasonNumber = 1
+                MappedBookNumber = 1
             };
 
             Mocker.GetMock<IParsingService>()
@@ -170,10 +170,10 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                 ParsedEpisodeInfo = new ParsedEpisodeInfo()
                 {
                     SeriesTitle = "TV Series",
-                    SeasonNumber = 0,
-                    EpisodeNumbers = new[] { 1 }
+                    BookNumber = 0,
+                    EditionNumbers = new[] { 1 }
                 },
-                MappedSeasonNumber = 0
+                MappedBookNumber = 0
             };
 
             Mocker.GetMock<IHistoryService>()
@@ -184,13 +184,13 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                 {
                      DownloadId = "35238",
                      SourceTitle = "TV Series Special",
-                     SeriesId = 5,
+                     AuthorId = 5,
                      EpisodeId = 4
                 }
                 });
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.Is<ParsedEpisodeInfo>(i => i.SeasonNumber == 0 && i.SeriesTitle == "TV Series"), It.IsAny<int>(), It.IsAny<IEnumerable<int>>()))
+                  .Setup(s => s.Map(It.Is<ParsedEpisodeInfo>(i => i.BookNumber == 0 && i.SeriesTitle == "TV Series"), It.IsAny<int>(), It.IsAny<IEnumerable<int>>()))
                   .Returns(remoteEpisode);
 
             Mocker.GetMock<IParsingService>()
@@ -222,8 +222,8 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             trackedDownload.RemoteEpisode.Series.Should().NotBeNull();
             trackedDownload.RemoteEpisode.Series.Id.Should().Be(5);
             trackedDownload.RemoteEpisode.Episodes.First().Id.Should().Be(4);
-            trackedDownload.RemoteEpisode.ParsedEpisodeInfo.SeasonNumber.Should().Be(0);
-            trackedDownload.RemoteEpisode.MappedSeasonNumber.Should().Be(0);
+            trackedDownload.RemoteEpisode.ParsedEpisodeInfo.BookNumber.Should().Be(0);
+            trackedDownload.RemoteEpisode.MappedBookNumber.Should().Be(0);
         }
 
         [Test]
@@ -238,10 +238,10 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                                     ParsedEpisodeInfo = new ParsedEpisodeInfo()
                                                         {
                                                             SeriesTitle = "TV Series",
-                                                            SeasonNumber = 1,
-                                                            EpisodeNumbers = new[] { 1 }
+                                                            BookNumber = 1,
+                                                            EditionNumbers = new[] { 1 }
                                                         },
-                                    MappedSeasonNumber = 0
+                                    MappedBookNumber = 0
                                 };
 
             Mocker.GetMock<IParsingService>()
@@ -297,10 +297,10 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                 ParsedEpisodeInfo = new ParsedEpisodeInfo()
                 {
                     SeriesTitle = "TV Series",
-                    SeasonNumber = 1,
-                    EpisodeNumbers = new[] { 1 }
+                    BookNumber = 1,
+                    EditionNumbers = new[] { 1 }
                 },
-                MappedSeasonNumber = 0
+                MappedBookNumber = 0
             };
 
             Mocker.GetMock<IParsingService>()
@@ -356,10 +356,10 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                 ParsedEpisodeInfo = new ParsedEpisodeInfo()
                 {
                     SeriesTitle = "TV Series",
-                    SeasonNumber = 1,
-                    EpisodeNumbers = new[] { 1 }
+                    BookNumber = 1,
+                    EditionNumbers = new[] { 1 }
                 },
-                MappedSeasonNumber = 0
+                MappedBookNumber = 0
             };
 
             Mocker.GetMock<IParsingService>()

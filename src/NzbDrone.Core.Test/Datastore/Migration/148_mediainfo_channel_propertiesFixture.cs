@@ -11,18 +11,18 @@ namespace NzbDrone.Core.Test.Datastore.Migration
     [TestFixture]
     public class mediainfo_channel_propertiesFixture : MigrationTest<mediainfo_channels>
     {
-        private void AddEpisodeFile(mediainfo_channels m, int id)
+        private void AddEditionFile(mediainfo_channels m, int id)
         {
             var episode = new
             {
                 Id = id,
-                SeriesId = id,
+                AuthorId = id,
                 Quality = new { }.ToJson(),
                 Size = 0,
                 DateAdded = DateTime.UtcNow,
                 RelativePath = "SomeFile.mkv",
                 Language = 1,
-                SeasonNumber = 1,
+                BookNumber = 1,
                 MediaInfo = new
                 {
                     ContainerFormat = "Matroska",
@@ -56,7 +56,7 @@ namespace NzbDrone.Core.Test.Datastore.Migration
                 }.ToJson()
             };
 
-            m.Insert.IntoTable("EpisodeFiles").Row(episode);
+            m.Insert.IntoTable("EditionFiles").Row(episode);
         }
 
         [Test]
@@ -64,10 +64,10 @@ namespace NzbDrone.Core.Test.Datastore.Migration
         {
             var db = WithMigrationTestDb(c =>
             {
-                AddEpisodeFile(c, 1);
+                AddEditionFile(c, 1);
             });
 
-            var items = db.Query<EpisodeFile148>("SELECT \"MediaInfo\" FROM \"EpisodeFiles\"");
+            var items = db.Query<EditionFile148>("SELECT \"MediaInfo\" FROM \"EditionFiles\"");
 
             items.Should().HaveCount(1);
 
@@ -87,7 +87,7 @@ namespace NzbDrone.Core.Test.Datastore.Migration
             mediainfo.AudioChannelPositions.Should().Be("3/2/0.1");
         }
 
-        public class EpisodeFile148
+        public class EditionFile148
         {
             public int Id { get; set; }
             public MediaInfo148 MediaInfo { get; set; }

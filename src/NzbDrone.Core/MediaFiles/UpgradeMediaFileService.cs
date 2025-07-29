@@ -10,20 +10,20 @@ namespace NzbDrone.Core.MediaFiles
 {
     public interface IUpgradeMediaFiles
     {
-        EpisodeFileMoveResult UpgradeEpisodeFile(EpisodeFile episodeFile, LocalEpisode localEpisode, bool copyOnly = false);
+        EditionFileMoveResult UpgradeEditionFile(EditionFile episodeFile, LocalEpisode localEpisode, bool copyOnly = false);
     }
 
     public class UpgradeMediaFileService : IUpgradeMediaFiles
     {
         private readonly IRecycleBinProvider _recycleBinProvider;
         private readonly IMediaFileService _mediaFileService;
-        private readonly IMoveEpisodeFiles _episodeFileMover;
+        private readonly IMoveEditionFiles _episodeFileMover;
         private readonly IDiskProvider _diskProvider;
         private readonly Logger _logger;
 
         public UpgradeMediaFileService(IRecycleBinProvider recycleBinProvider,
                                        IMediaFileService mediaFileService,
-                                       IMoveEpisodeFiles episodeFileMover,
+                                       IMoveEditionFiles episodeFileMover,
                                        IDiskProvider diskProvider,
                                        Logger logger)
         {
@@ -34,12 +34,12 @@ namespace NzbDrone.Core.MediaFiles
             _logger = logger;
         }
 
-        public EpisodeFileMoveResult UpgradeEpisodeFile(EpisodeFile episodeFile, LocalEpisode localEpisode, bool copyOnly = false)
+        public EditionFileMoveResult UpgradeEditionFile(EditionFile episodeFile, LocalEpisode localEpisode, bool copyOnly = false)
         {
-            var moveFileResult = new EpisodeFileMoveResult();
+            var moveFileResult = new EditionFileMoveResult();
             var existingFiles = localEpisode.Episodes
-                                            .Where(e => e.EpisodeFileId > 0)
-                                            .Select(e => e.EpisodeFile.Value)
+                                            .Where(e => e.EditionFileId > 0)
+                                            .Select(e => e.EditionFile.Value)
                                             .Where(e => e != null)
                                             .GroupBy(e => e.Id)
                                             .ToList();
@@ -69,7 +69,7 @@ namespace NzbDrone.Core.MediaFiles
                     _logger.Warn("Existing episode file missing from disk: {0}", episodeFilePath);
                 }
 
-                moveFileResult.OldFiles.Add(new DeletedEpisodeFile(file, recycleBinPath));
+                moveFileResult.OldFiles.Add(new DeletedEditionFile(file, recycleBinPath));
                 _mediaFileService.Delete(file, DeleteMediaFileReason.Upgrade);
             }
 
@@ -77,11 +77,11 @@ namespace NzbDrone.Core.MediaFiles
 
             if (copyOnly)
             {
-                moveFileResult.EpisodeFile = _episodeFileMover.CopyEpisodeFile(episodeFile, localEpisode);
+                moveFileResult.EditionFile = _episodeFileMover.CopyEditionFile(episodeFile, localEpisode);
             }
             else
             {
-                moveFileResult.EpisodeFile = _episodeFileMover.MoveEpisodeFile(episodeFile, localEpisode);
+                moveFileResult.EditionFile = _episodeFileMover.MoveEditionFile(episodeFile, localEpisode);
             }
 
             return moveFileResult;

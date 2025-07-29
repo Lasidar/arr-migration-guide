@@ -11,7 +11,7 @@ namespace NzbDrone.Core.Blocklisting
 {
     public class Blocklist : ModelBase
     {
-        public int SeriesId { get; set; }
+        public int AuthorId { get; set; }
         public Series Series { get; set; }
         public List<int> EpisodeIds { get; set; }
         public string SourceTitle { get; set; }

@@ -20,23 +20,23 @@ using Readarr.Http.REST;
 using Readarr.Http.REST.Attributes;
 using BadRequestException = Sonarr.Http.REST.BadRequestException;
 
-namespace Readarr.Api.V3.EpisodeFiles
+namespace Readarr.Api.V3.EditionFiles
 {
     [V3ApiController]
-    public class EpisodeFileController : RestControllerWithSignalR<EpisodeFileResource, EpisodeFile>,
-                                 IHandle<EpisodeFileAddedEvent>,
-                                 IHandle<EpisodeFileDeletedEvent>
+    public class EditionFileController : RestControllerWithSignalR<EditionFileResource, EditionFile>,
+                                 IHandle<EditionFileAddedEvent>,
+                                 IHandle<EditionFileDeletedEvent>
     {
         private readonly IMediaFileService _mediaFileService;
         private readonly IDeleteMediaFiles _mediaFileDeletionService;
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
         private readonly ICustomFormatCalculationService _formatCalculator;
         private readonly IUpgradableSpecification _upgradableSpecification;
 
-        public EpisodeFileController(IBroadcastSignalRMessage signalRBroadcaster,
+        public EditionFileController(IBroadcastSignalRMessage signalRBroadcaster,
                              IMediaFileService mediaFileService,
                              IDeleteMediaFiles mediaFileDeletionService,
-                             ISeriesService seriesService,
+                             IAuthorService seriesService,
                              ICustomFormatCalculationService formatCalculator,
                              IUpgradableSpecification upgradableSpecification)
             : base(signalRBroadcaster)
@@ -48,10 +48,10 @@ namespace Readarr.Api.V3.EpisodeFiles
             _upgradableSpecification = upgradableSpecification;
         }
 
-        protected override EpisodeFileResource GetResourceById(int id)
+        protected override EditionFileResource GetResourceById(int id)
         {
             var episodeFile = _mediaFileService.Get(id);
-            var series = _seriesService.GetSeries(episodeFile.SeriesId);
+            var series = _seriesService.GetSeries(episodeFile.AuthorId);
 
             var resource = episodeFile.ToResource(series, _upgradableSpecification, _formatCalculator);
 
@@ -60,7 +60,7 @@ namespace Readarr.Api.V3.EpisodeFiles
 
         [HttpGet]
         [Produces("application/json")]
-        public List<EpisodeFileResource> GetEpisodeFiles(int? seriesId, [FromQuery] List<int> episodeFileIds)
+        public List<EditionFileResource> GetEditionFiles(int? seriesId, [FromQuery] List<int> episodeFileIds)
         {
             if (!seriesId.HasValue && !episodeFileIds.Any())
             {
@@ -74,7 +74,7 @@ namespace Readarr.Api.V3.EpisodeFiles
 
                 if (files == null)
                 {
-                    return new List<EpisodeFileResource>();
+                    return new List<EditionFileResource>();
                 }
 
                 return files.ConvertAll(e => e.ToResource(series, _upgradableSpecification, _formatCalculator))
@@ -84,7 +84,7 @@ namespace Readarr.Api.V3.EpisodeFiles
             {
                 var episodeFiles = _mediaFileService.Get(episodeFileIds);
 
-                return episodeFiles.GroupBy(e => e.SeriesId)
+                return episodeFiles.GroupBy(e => e.AuthorId)
                                    .SelectMany(f => f.ToList()
                                                      .ConvertAll(e => e.ToResource(_seriesService.GetSeries(f.Key), _upgradableSpecification, _formatCalculator)))
                                    .ToList();
@@ -93,7 +93,7 @@ namespace Readarr.Api.V3.EpisodeFiles
 
         [RestPutById]
         [Consumes("application/json")]
-        public ActionResult<EpisodeFileResource> SetQuality([FromBody] EpisodeFileResource episodeFileResource)
+        public ActionResult<EditionFileResource> SetQuality([FromBody] EditionFileResource episodeFileResource)
         {
             var episodeFile = _mediaFileService.Get(episodeFileResource.Id);
             episodeFile.Quality = episodeFileResource.Quality;
@@ -115,9 +115,9 @@ namespace Readarr.Api.V3.EpisodeFiles
         [Obsolete("Use bulk endpoint instead")]
         [HttpPut("editor")]
         [Consumes("application/json")]
-        public object SetQuality([FromBody] EpisodeFileListResource resource)
+        public object SetQuality([FromBody] EditionFileListResource resource)
         {
-            var episodeFiles = _mediaFileService.GetFiles(resource.EpisodeFileIds);
+            var episodeFiles = _mediaFileService.GetFiles(resource.EditionFileIds);
 
             foreach (var episodeFile in episodeFiles)
             {
@@ -144,13 +144,13 @@ namespace Readarr.Api.V3.EpisodeFiles
 
             _mediaFileService.Update(episodeFiles);
 
-            var series = _seriesService.GetSeries(episodeFiles.First().SeriesId);
+            var series = _seriesService.GetSeries(episodeFiles.First().AuthorId);
 
             return Accepted(episodeFiles.ConvertAll(f => f.ToResource(series, _upgradableSpecification, _formatCalculator)));
         }
 
         [RestDeleteById]
-        public void DeleteEpisodeFile(int id)
+        public void DeleteEditionFile(int id)
         {
             var episodeFile = _mediaFileService.Get(id);
 
@@ -159,21 +159,21 @@ namespace Readarr.Api.V3.EpisodeFiles
                 throw new NzbDroneClientException(HttpStatusCode.NotFound, "Episode file not found");
             }
 
-            var series = _seriesService.GetSeries(episodeFile.SeriesId);
+            var series = _seriesService.GetSeries(episodeFile.AuthorId);
 
-            _mediaFileDeletionService.DeleteEpisodeFile(series, episodeFile);
+            _mediaFileDeletionService.DeleteEditionFile(series, episodeFile);
         }
 
         [HttpDelete("bulk")]
         [Consumes("application/json")]
-        public object DeleteEpisodeFiles([FromBody] EpisodeFileListResource resource)
+        public object DeleteEditionFiles([FromBody] EditionFileListResource resource)
         {
-            var episodeFiles = _mediaFileService.GetFiles(resource.EpisodeFileIds);
-            var series = _seriesService.GetSeries(episodeFiles.First().SeriesId);
+            var episodeFiles = _mediaFileService.GetFiles(resource.EditionFileIds);
+            var series = _seriesService.GetSeries(episodeFiles.First().AuthorId);
 
             foreach (var episodeFile in episodeFiles)
             {
-                _mediaFileDeletionService.DeleteEpisodeFile(series, episodeFile);
+                _mediaFileDeletionService.DeleteEditionFile(series, episodeFile);
             }
 
             return new { };
@@ -181,63 +181,63 @@ namespace Readarr.Api.V3.EpisodeFiles
 
         [HttpPut("bulk")]
         [Consumes("application/json")]
-        public object SetPropertiesBulk([FromBody] List<EpisodeFileResource> resources)
+        public object SetPropertiesBulk([FromBody] List<EditionFileResource> resources)
         {
             var episodeFiles = _mediaFileService.GetFiles(resources.Select(r => r.Id));
 
             foreach (var episodeFile in episodeFiles)
             {
-                var resourceEpisodeFile = resources.Single(r => r.Id == episodeFile.Id);
+                var resourceEditionFile = resources.Single(r => r.Id == episodeFile.Id);
 
-                if (resourceEpisodeFile.Languages != null)
+                if (resourceEditionFile.Languages != null)
                 {
                     // Don't allow user to set files with 'Original' language
-                    episodeFile.Languages = resourceEpisodeFile.Languages.Where(l => l != null && l != Language.Original).ToList();
+                    episodeFile.Languages = resourceEditionFile.Languages.Where(l => l != null && l != Language.Original).ToList();
                 }
 
-                if (resourceEpisodeFile.Quality != null)
+                if (resourceEditionFile.Quality != null)
                 {
-                    episodeFile.Quality = resourceEpisodeFile.Quality;
+                    episodeFile.Quality = resourceEditionFile.Quality;
                 }
 
-                if (resourceEpisodeFile.SceneName != null && SceneChecker.IsSceneTitle(resourceEpisodeFile.SceneName))
+                if (resourceEditionFile.SceneName != null && SceneChecker.IsSceneTitle(resourceEditionFile.SceneName))
                 {
-                    episodeFile.SceneName = resourceEpisodeFile.SceneName;
+                    episodeFile.SceneName = resourceEditionFile.SceneName;
                 }
 
-                if (resourceEpisodeFile.ReleaseGroup != null)
+                if (resourceEditionFile.ReleaseGroup != null)
                 {
-                    episodeFile.ReleaseGroup = resourceEpisodeFile.ReleaseGroup;
+                    episodeFile.ReleaseGroup = resourceEditionFile.ReleaseGroup;
                 }
 
-                if (resourceEpisodeFile.IndexerFlags.HasValue)
+                if (resourceEditionFile.IndexerFlags.HasValue)
                 {
-                    episodeFile.IndexerFlags = (IndexerFlags)resourceEpisodeFile.IndexerFlags;
+                    episodeFile.IndexerFlags = (IndexerFlags)resourceEditionFile.IndexerFlags;
                 }
 
-                if (resourceEpisodeFile.ReleaseType != null)
+                if (resourceEditionFile.ReleaseType != null)
                 {
-                    episodeFile.ReleaseType = (ReleaseType)resourceEpisodeFile.ReleaseType;
+                    episodeFile.ReleaseType = (ReleaseType)resourceEditionFile.ReleaseType;
                 }
             }
 
             _mediaFileService.Update(episodeFiles);
 
-            var series = _seriesService.GetSeries(episodeFiles.First().SeriesId);
+            var series = _seriesService.GetSeries(episodeFiles.First().AuthorId);
 
             return Accepted(episodeFiles.ConvertAll(f => f.ToResource(series, _upgradableSpecification, _formatCalculator)));
         }
 
         [NonAction]
-        public void Handle(EpisodeFileAddedEvent message)
+        public void Handle(EditionFileAddedEvent message)
         {
-            BroadcastResourceChange(ModelAction.Updated, message.EpisodeFile.Id);
+            BroadcastResourceChange(ModelAction.Updated, message.EditionFile.Id);
         }
 
         [NonAction]
-        public void Handle(EpisodeFileDeletedEvent message)
+        public void Handle(EditionFileDeletedEvent message)
         {
-            BroadcastResourceChange(ModelAction.Deleted, message.EpisodeFile.Id);
+            BroadcastResourceChange(ModelAction.Deleted, message.EditionFile.Id);
         }
     }
 }

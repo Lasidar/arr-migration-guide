@@ -7,7 +7,7 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications
 {
-    public class SeasonPackOnlySpecification : IDownloadDecisionEngineSpecification
+    public class BookPackOnlySpecification : IDownloadDecisionEngineSpecification
     {
         private readonly Logger _logger;
 
@@ -33,7 +33,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
                 if (subject.Series.SeriesType == SeriesTypes.Standard && !subject.ParsedEpisodeInfo.FullSeason && subject.Episodes.Count >= 1)
                 {
                     // test against episodes of the same season in the current search, and make sure they have an air date
-                    var subset = searchCriteria.Episodes.Where(e => e.AirDateUtc.HasValue && e.SeasonNumber == subject.Episodes.First().SeasonNumber).ToList();
+                    var subset = searchCriteria.Episodes.Where(e => e.AirDateUtc.HasValue && e.BookNumber == subject.Episodes.First().BookNumber).ToList();
 
                     if (subset.Count > 0 && subset.Max(e => e.AirDateUtc).Value.Before(DateTime.UtcNow - TimeSpan.FromDays(subject.Release.SeasonSearchMaximumSingleEpisodeAge)))
                     {

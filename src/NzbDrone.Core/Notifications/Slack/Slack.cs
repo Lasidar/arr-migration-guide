@@ -76,7 +76,7 @@ namespace NzbDrone.Core.Notifications.Slack
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedEditionFile> renamedFiles)
         {
             var attachments = new List<Attachment>
             {
@@ -91,13 +91,13 @@ namespace NzbDrone.Core.Notifications.Slack
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        public override void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             var attachments = new List<Attachment>
             {
                 new()
                 {
-                    Title = GetTitle(deleteMessage.Series, deleteMessage.EpisodeFile.Episodes),
+                    Title = GetTitle(deleteMessage.Series, deleteMessage.EditionFile.Episodes),
                 }
             };
 
@@ -273,12 +273,12 @@ namespace NzbDrone.Core.Notifications.Slack
                 return $"{series.Title} - {episode.AirDate} - {episode.Title}";
             }
 
-            var episodeNumbers = string.Concat(episodes.Select(e => e.EpisodeNumber)
+            var episodeNumbers = string.Concat(episodes.Select(e => e.EditionNumber)
                                                        .Select(i => string.Format("x{0:00}", i)));
 
             var episodeTitles = string.Join(" + ", episodes.Select(e => e.Title));
 
-            return $"{series.Title} - {episodes.First().SeasonNumber}{episodeNumbers} - {episodeTitles}";
+            return $"{series.Title} - {episodes.First().BookNumber}{episodeNumbers} - {episodeTitles}";
         }
     }
 }

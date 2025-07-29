@@ -12,10 +12,10 @@ using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Core.Books;
 
-namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
+namespace NzbDrone.Core.Test.TvTests.EditionRepositoryTests
 {
     [TestFixture]
-    public class EpisodesWhereCutoffUnmetFixture : DbTest<EpisodeRepository, Episode>
+    public class EditionsWhereCutoffUnmetFixture : DbTest<EditionRepository, Episode>
     {
         private Series _monitoredSeries;
         private Series _unmonitoredSeries;
@@ -70,15 +70,15 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
                                         new QualitiesBelowCutoff(profile.Id, new[] { Quality.SDTV.Id })
                                     };
 
-            var qualityMetLanguageUnmet = new EpisodeFile { RelativePath = "a", Quality = new QualityModel { Quality = Quality.WEBDL480p }, Languages = new List<Language> { Language.English } };
-            var qualityMetLanguageMet = new EpisodeFile { RelativePath = "b", Quality = new QualityModel { Quality = Quality.WEBDL480p }, Languages = new List<Language> { Language.Spanish } };
-            var qualityMetLanguageExceed = new EpisodeFile { RelativePath = "c", Quality = new QualityModel { Quality = Quality.WEBDL480p }, Languages = new List<Language> { Language.French } };
-            var qualityUnmetLanguageUnmet = new EpisodeFile { RelativePath = "d", Quality = new QualityModel { Quality = Quality.SDTV }, Languages = new List<Language> { Language.English } };
-            var qualityUnmetLanguageMet = new EpisodeFile { RelativePath = "e", Quality = new QualityModel { Quality = Quality.SDTV }, Languages = new List<Language> { Language.Spanish } };
-            var qualityUnmetLanguageExceed = new EpisodeFile { RelativePath = "f", Quality = new QualityModel { Quality = Quality.SDTV }, Languages = new List<Language> { Language.French } };
-            var qualityRawHDLanguageUnmet = new EpisodeFile { RelativePath = "g", Quality = new QualityModel { Quality = Quality.RAWHD }, Languages = new List<Language> { Language.English } };
-            var qualityRawHDLanguageMet = new EpisodeFile { RelativePath = "h", Quality = new QualityModel { Quality = Quality.RAWHD }, Languages = new List<Language> { Language.Spanish } };
-            var qualityRawHDLanguageExceed = new EpisodeFile { RelativePath = "i", Quality = new QualityModel { Quality = Quality.RAWHD }, Languages = new List<Language> { Language.French } };
+            var qualityMetLanguageUnmet = new EditionFile { RelativePath = "a", Quality = new QualityModel { Quality = Quality.WEBDL480p }, Languages = new List<Language> { Language.English } };
+            var qualityMetLanguageMet = new EditionFile { RelativePath = "b", Quality = new QualityModel { Quality = Quality.WEBDL480p }, Languages = new List<Language> { Language.Spanish } };
+            var qualityMetLanguageExceed = new EditionFile { RelativePath = "c", Quality = new QualityModel { Quality = Quality.WEBDL480p }, Languages = new List<Language> { Language.French } };
+            var qualityUnmetLanguageUnmet = new EditionFile { RelativePath = "d", Quality = new QualityModel { Quality = Quality.SDTV }, Languages = new List<Language> { Language.English } };
+            var qualityUnmetLanguageMet = new EditionFile { RelativePath = "e", Quality = new QualityModel { Quality = Quality.SDTV }, Languages = new List<Language> { Language.Spanish } };
+            var qualityUnmetLanguageExceed = new EditionFile { RelativePath = "f", Quality = new QualityModel { Quality = Quality.SDTV }, Languages = new List<Language> { Language.French } };
+            var qualityRawHDLanguageUnmet = new EditionFile { RelativePath = "g", Quality = new QualityModel { Quality = Quality.RAWHD }, Languages = new List<Language> { Language.English } };
+            var qualityRawHDLanguageMet = new EditionFile { RelativePath = "h", Quality = new QualityModel { Quality = Quality.RAWHD }, Languages = new List<Language> { Language.Spanish } };
+            var qualityRawHDLanguageExceed = new EditionFile { RelativePath = "i", Quality = new QualityModel { Quality = Quality.RAWHD }, Languages = new List<Language> { Language.French } };
 
             var fileRepository = Mocker.Resolve<MediaFileRepository>();
 
@@ -95,40 +95,40 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
             var monitoredSeriesEpisodes = Builder<Episode>.CreateListOfSize(4)
                                            .All()
                                            .With(e => e.Id = 0)
-                                           .With(e => e.SeriesId = _monitoredSeries.Id)
+                                           .With(e => e.AuthorId = _monitoredSeries.Id)
                                            .With(e => e.AirDateUtc = DateTime.Now.AddDays(-5))
                                            .With(e => e.Monitored = true)
-                                           .With(e => e.EpisodeFileId = qualityUnmetLanguageUnmet.Id)
+                                           .With(e => e.EditionFileId = qualityUnmetLanguageUnmet.Id)
                                            .TheFirst(1)
                                            .With(e => e.Monitored = false)
-                                           .With(e => e.EpisodeFileId = qualityMetLanguageMet.Id)
+                                           .With(e => e.EditionFileId = qualityMetLanguageMet.Id)
                                            .TheNext(1)
-                                           .With(e => e.EpisodeFileId = qualityRawHDLanguageExceed.Id)
+                                           .With(e => e.EditionFileId = qualityRawHDLanguageExceed.Id)
                                            .TheLast(1)
-                                           .With(e => e.SeasonNumber = 0)
+                                           .With(e => e.BookNumber = 0)
                                            .Build();
 
             var unmonitoredSeriesEpisodes = Builder<Episode>.CreateListOfSize(3)
                                            .All()
                                            .With(e => e.Id = 0)
-                                           .With(e => e.SeriesId = _unmonitoredSeries.Id)
+                                           .With(e => e.AuthorId = _unmonitoredSeries.Id)
                                            .With(e => e.AirDateUtc = DateTime.Now.AddDays(-5))
                                            .With(e => e.Monitored = true)
-                                           .With(e => e.EpisodeFileId = qualityRawHDLanguageUnmet.Id)
+                                           .With(e => e.EditionFileId = qualityRawHDLanguageUnmet.Id)
                                            .TheFirst(1)
                                            .With(e => e.Monitored = false)
-                                           .With(e => e.EpisodeFileId = qualityMetLanguageMet.Id)
+                                           .With(e => e.EditionFileId = qualityMetLanguageMet.Id)
                                            .TheLast(1)
-                                           .With(e => e.SeasonNumber = 0)
+                                           .With(e => e.BookNumber = 0)
                                            .Build();
 
             _unairedEpisodes             = Builder<Episode>.CreateListOfSize(1)
                                            .All()
                                            .With(e => e.Id = 0)
-                                           .With(e => e.SeriesId = _monitoredSeries.Id)
+                                           .With(e => e.AuthorId = _monitoredSeries.Id)
                                            .With(e => e.AirDateUtc = DateTime.Now.AddDays(5))
                                            .With(e => e.Monitored = true)
-                                           .With(e => e.EpisodeFileId = qualityUnmetLanguageUnmet.Id)
+                                           .With(e => e.EditionFileId = qualityUnmetLanguageUnmet.Id)
                                            .Build()
                                            .ToList();
 
@@ -154,7 +154,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
             var spec = Subject.EpisodesWhereCutoffUnmet(_pagingSpec, _qualitiesBelowCutoff, false);
 
             spec.Records.Should().HaveCount(1);
-            spec.Records.Should().OnlyContain(e => e.EpisodeFile.Value.Quality.Quality == Quality.SDTV);
+            spec.Records.Should().OnlyContain(e => e.EditionFile.Value.Quality.Quality == Quality.SDTV);
         }
 
         [Test]

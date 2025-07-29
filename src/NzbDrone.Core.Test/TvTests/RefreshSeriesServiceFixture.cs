@@ -18,7 +18,7 @@ using NzbDrone.Test.Common;
 namespace NzbDrone.Core.Test.TvTests
 {
     [TestFixture]
-    public class RefreshSeriesServiceFixture : CoreTest<RefreshSeriesService>
+    public class RefreshAuthorServiceFixture : CoreTest<RefreshAuthorService>
     {
         private Series _series;
 
@@ -26,7 +26,7 @@ namespace NzbDrone.Core.Test.TvTests
         public void Setup()
         {
             var season1 = Builder<Season>.CreateNew()
-                                         .With(s => s.SeasonNumber = 1)
+                                         .With(s => s.BookNumber = 1)
                                          .Build();
 
             _series = Builder<Series>.CreateNew()
@@ -37,7 +37,7 @@ namespace NzbDrone.Core.Test.TvTests
                                                             })
                                      .Build();
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Setup(s => s.GetSeries(_series.Id))
                   .Returns(_series);
 
@@ -64,15 +64,15 @@ namespace NzbDrone.Core.Test.TvTests
 
             var newSeriesInfo = _series.JsonClone();
             newSeriesInfo.Seasons.Add(Builder<Season>.CreateNew()
-                                         .With(s => s.SeasonNumber = 2)
+                                         .With(s => s.BookNumber = 2)
                                          .Build());
 
             GivenNewSeriesInfo(newSeriesInfo);
 
             Subject.Execute(new RefreshSeriesCommand(new List<int> { _series.Id }));
 
-            Mocker.GetMock<ISeriesService>()
-                .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.Seasons.Count == 2 && s.Seasons.Single(season => season.SeasonNumber == 2).Monitored == true), It.IsAny<bool>(), It.IsAny<bool>()));
+            Mocker.GetMock<IAuthorService>()
+                .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.Seasons.Count == 2 && s.Seasons.Single(season => season.BookNumber == 2).Monitored == true), It.IsAny<bool>(), It.IsAny<bool>()));
         }
 
         [Test]
@@ -82,15 +82,15 @@ namespace NzbDrone.Core.Test.TvTests
 
             var newSeriesInfo = _series.JsonClone();
             newSeriesInfo.Seasons.Add(Builder<Season>.CreateNew()
-                .With(s => s.SeasonNumber = 2)
+                .With(s => s.BookNumber = 2)
                 .Build());
 
             GivenNewSeriesInfo(newSeriesInfo);
 
             Subject.Execute(new RefreshSeriesCommand(new List<int> { _series.Id }));
 
-            Mocker.GetMock<ISeriesService>()
-                .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.Seasons.Count == 2 && s.Seasons.Single(season => season.SeasonNumber == 2).Monitored == false), It.IsAny<bool>(), It.IsAny<bool>()));
+            Mocker.GetMock<IAuthorService>()
+                .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.Seasons.Count == 2 && s.Seasons.Single(season => season.BookNumber == 2).Monitored == false), It.IsAny<bool>(), It.IsAny<bool>()));
         }
 
         [Test]
@@ -98,15 +98,15 @@ namespace NzbDrone.Core.Test.TvTests
         {
             var series = _series.JsonClone();
             series.Seasons.Add(Builder<Season>.CreateNew()
-                                         .With(s => s.SeasonNumber = 0)
+                                         .With(s => s.BookNumber = 0)
                                          .Build());
 
             GivenNewSeriesInfo(series);
 
             Subject.Execute(new RefreshSeriesCommand(new List<int> { _series.Id }));
 
-            Mocker.GetMock<ISeriesService>()
-                .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.Seasons.Count == 2 && s.Seasons.Single(season => season.SeasonNumber == 0).Monitored == false), It.IsAny<bool>(), It.IsAny<bool>()));
+            Mocker.GetMock<IAuthorService>()
+                .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.Seasons.Count == 2 && s.Seasons.Single(season => season.BookNumber == 0).Monitored == false), It.IsAny<bool>(), It.IsAny<bool>()));
         }
 
         [Test]
@@ -119,7 +119,7 @@ namespace NzbDrone.Core.Test.TvTests
 
             Subject.Execute(new RefreshSeriesCommand(new List<int> { _series.Id }));
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                 .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.TvRageId == newSeriesInfo.TvRageId), It.IsAny<bool>(), It.IsAny<bool>()));
         }
 
@@ -133,7 +133,7 @@ namespace NzbDrone.Core.Test.TvTests
 
             Subject.Execute(new RefreshSeriesCommand(new List<int> { _series.Id }));
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                 .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.TvMazeId == newSeriesInfo.TvMazeId), It.IsAny<bool>(), It.IsAny<bool>()));
         }
 
@@ -147,7 +147,7 @@ namespace NzbDrone.Core.Test.TvTests
 
             Subject.Execute(new RefreshSeriesCommand(new List<int> { _series.Id }));
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                 .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.TmdbId == newSeriesInfo.TmdbId), It.IsAny<bool>(), It.IsAny<bool>()));
         }
 
@@ -156,7 +156,7 @@ namespace NzbDrone.Core.Test.TvTests
         {
             Subject.Execute(new RefreshSeriesCommand(new List<int> { _series.Id }));
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                 .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.Status == SeriesStatusType.Deleted), It.IsAny<bool>(), It.IsAny<bool>()), Times.Once());
 
             ExceptionVerification.ExpectedErrors(1);
@@ -167,7 +167,7 @@ namespace NzbDrone.Core.Test.TvTests
         {
             Subject.Execute(new RefreshSeriesCommand(new List<int> { _series.Id }));
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                 .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.Status == SeriesStatusType.Deleted), It.IsAny<bool>(), It.IsAny<bool>()), Times.Once());
 
             ExceptionVerification.ExpectedErrors(1);
@@ -180,7 +180,7 @@ namespace NzbDrone.Core.Test.TvTests
 
             Subject.Execute(new RefreshSeriesCommand(new List<int> { _series.Id }));
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                 .Verify(v => v.UpdateSeries(It.IsAny<Series>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Never());
 
             ExceptionVerification.ExpectedErrors(1);
@@ -196,7 +196,7 @@ namespace NzbDrone.Core.Test.TvTests
 
             Subject.Execute(new RefreshSeriesCommand(new List<int> { _series.Id }));
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                 .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.TvdbId == newSeriesInfo.TvdbId), It.IsAny<bool>(), It.IsAny<bool>()));
 
             ExceptionVerification.ExpectedWarns(1);
@@ -207,22 +207,22 @@ namespace NzbDrone.Core.Test.TvTests
         {
             var newSeriesInfo = _series.JsonClone();
             newSeriesInfo.Seasons.Add(Builder<Season>.CreateNew()
-                                         .With(s => s.SeasonNumber = 2)
+                                         .With(s => s.BookNumber = 2)
                                          .Build());
 
             _series.Seasons.Add(Builder<Season>.CreateNew()
-                                         .With(s => s.SeasonNumber = 2)
+                                         .With(s => s.BookNumber = 2)
                                          .Build());
 
             _series.Seasons.Add(Builder<Season>.CreateNew()
-                                         .With(s => s.SeasonNumber = 2)
+                                         .With(s => s.BookNumber = 2)
                                          .Build());
 
             GivenNewSeriesInfo(newSeriesInfo);
 
             Subject.Execute(new RefreshSeriesCommand(new List<int> { _series.Id }));
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.Seasons.Count == 2), It.IsAny<bool>(), It.IsAny<bool>()));
         }
 
@@ -231,18 +231,18 @@ namespace NzbDrone.Core.Test.TvTests
         {
             var newSeriesInfo = _series.JsonClone();
             newSeriesInfo.Seasons.Add(Builder<Season>.CreateNew()
-                                         .With(s => s.SeasonNumber = 2)
+                                         .With(s => s.BookNumber = 2)
                                          .Build());
 
             newSeriesInfo.Seasons.Add(Builder<Season>.CreateNew()
-                                         .With(s => s.SeasonNumber = 2)
+                                         .With(s => s.BookNumber = 2)
                                          .Build());
 
             GivenNewSeriesInfo(newSeriesInfo);
 
             Subject.Execute(new RefreshSeriesCommand(new List<int> { _series.Id }));
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.Seasons.Count == 2), It.IsAny<bool>(), It.IsAny<bool>()));
         }
 

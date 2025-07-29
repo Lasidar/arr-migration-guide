@@ -60,7 +60,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
             _remoteEpisode.Release.DownloadProtocol = DownloadProtocol.Usenet;
 
             _remoteEpisode.Episodes = Builder<Episode>.CreateListOfSize(1).Build().ToList();
-            _remoteEpisode.Episodes.First().EpisodeFileId = 0;
+            _remoteEpisode.Episodes.First().EditionFileId = 0;
 
             Mocker.GetMock<IDelayProfileService>()
                   .Setup(s => s.BestForTags(It.IsAny<HashSet<int>>()))
@@ -73,9 +73,9 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
 
         private void GivenExistingFile(QualityModel quality, Language language)
         {
-            _remoteEpisode.Episodes.First().EpisodeFileId = 1;
+            _remoteEpisode.Episodes.First().EditionFileId = 1;
 
-            _remoteEpisode.Episodes.First().EpisodeFile = new EpisodeFile
+            _remoteEpisode.Episodes.First().EditionFile = new EditionFile
             {
                 Quality = quality,
                 Languages = new List<Language> { language },

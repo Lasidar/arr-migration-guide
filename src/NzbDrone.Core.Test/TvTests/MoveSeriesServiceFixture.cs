@@ -14,7 +14,7 @@ using NzbDrone.Test.Common;
 namespace NzbDrone.Core.Test.TvTests
 {
     [TestFixture]
-    public class MoveSeriesServiceFixture : CoreTest<MoveSeriesService>
+    public class MoveAuthorServiceFixture : CoreTest<MoveAuthorService>
     {
         private Series _series;
         private MoveSeriesCommand _command;
@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Test.TvTests
 
             _command = new MoveSeriesCommand
                        {
-                           SeriesId = 1,
+                           AuthorId = 1,
                            SourcePath = @"C:\Test\TV\Series".AsOsAgnostic(),
                            DestinationPath = @"C:\Test\TV2\Series".AsOsAgnostic()
                        };
@@ -40,14 +40,14 @@ namespace NzbDrone.Core.Test.TvTests
                                     {
                                         new BulkMoveSeries
                                         {
-                                            SeriesId = 1,
+                                            AuthorId = 1,
                                             SourcePath = @"C:\Test\TV\Series".AsOsAgnostic()
                                         }
                                     },
                            DestinationRootFolder = @"C:\Test\TV2".AsOsAgnostic()
                        };
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Setup(s => s.GetSeries(It.IsAny<int>()))
                   .Returns(_series);
 
@@ -82,7 +82,7 @@ namespace NzbDrone.Core.Test.TvTests
 
             ExceptionVerification.ExpectedErrors(1);
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Verify(v => v.UpdateSeries(It.IsAny<Series>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Once());
         }
 

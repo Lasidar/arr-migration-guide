@@ -3,7 +3,7 @@ using NzbDrone.Core.Books;
 
 namespace Readarr.Api.V3.SeasonPass
 {
-    public class SeasonPassResource
+    public class BookPassResource
     {
         public List<SeasonPassSeriesResource> Series { get; set; }
         public MonitoringOptions MonitoringOptions { get; set; }

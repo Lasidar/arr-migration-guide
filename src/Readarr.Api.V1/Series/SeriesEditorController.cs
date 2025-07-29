@@ -11,13 +11,13 @@ using Readarr.Http;
 namespace Readarr.Api.V3.Series
 {
     [V3ApiController("series/editor")]
-    public class SeriesEditorController : Controller
+    public class AuthorEditorController : Controller
     {
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
         private readonly IManageCommandQueue _commandQueueManager;
         private readonly SeriesEditorValidator _seriesEditorValidator;
 
-        public SeriesEditorController(ISeriesService seriesService, IManageCommandQueue commandQueueManager, SeriesEditorValidator seriesEditorValidator)
+        public SeriesEditorController(IAuthorService seriesService, IManageCommandQueue commandQueueManager, SeriesEditorValidator seriesEditorValidator)
         {
             _seriesService = seriesService;
             _commandQueueManager = commandQueueManager;
@@ -27,7 +27,7 @@ namespace Readarr.Api.V3.Series
         [HttpPut]
         public object SaveAll([FromBody] SeriesEditorResource resource)
         {
-            var seriesToUpdate = _seriesService.GetSeries(resource.SeriesIds);
+            var seriesToUpdate = _seriesService.GetSeries(resource.AuthorIds);
             var seriesToMove = new List<BulkMoveSeries>();
 
             foreach (var series in seriesToUpdate)
@@ -62,7 +62,7 @@ namespace Readarr.Api.V3.Series
                     series.RootFolderPath = resource.RootFolderPath;
                     seriesToMove.Add(new BulkMoveSeries
                     {
-                        SeriesId = series.Id,
+                        AuthorId = series.Id,
                         SourcePath = series.Path
                     });
                 }
@@ -109,7 +109,7 @@ namespace Readarr.Api.V3.Series
         [HttpDelete]
         public object DeleteSeries([FromBody] SeriesEditorResource resource)
         {
-            _seriesService.DeleteSeries(resource.SeriesIds, resource.DeleteFiles, resource.AddImportListExclusion);
+            _seriesService.DeleteSeries(resource.AuthorIds, resource.DeleteFiles, resource.AddImportListExclusion);
 
             return new { };
         }

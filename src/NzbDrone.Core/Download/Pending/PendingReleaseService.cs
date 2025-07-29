@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Download.Pending
     {
         private readonly IIndexerStatusService _indexerStatusService;
         private readonly IPendingReleaseRepository _repository;
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
         private readonly IParsingService _parsingService;
         private readonly IDelayProfileService _delayProfileService;
         private readonly ITaskManager _taskManager;
@@ -54,7 +54,7 @@ namespace NzbDrone.Core.Download.Pending
 
         public PendingReleaseService(IIndexerStatusService indexerStatusService,
                                     IPendingReleaseRepository repository,
-                                    ISeriesService seriesService,
+                                    IAuthorService seriesService,
                                     IParsingService parsingService,
                                     IDelayProfileService delayProfileService,
                                     ITaskManager taskManager,
@@ -91,7 +91,7 @@ namespace NzbDrone.Core.Download.Pending
             foreach (var seriesDecisions in decisions.GroupBy(v => v.Item1.RemoteEpisode.Series.Id))
             {
                 var series = seriesDecisions.First().Item1.RemoteEpisode.Series;
-                var alreadyPending = _repository.AllBySeriesId(series.Id);
+                var alreadyPending = _repository.AllByAuthorId(series.Id);
 
                 alreadyPending = IncludeRemoteEpisodes(alreadyPending, seriesDecisions.ToDictionaryIgnoreDuplicates(v => v.Item1.RemoteEpisode.Release.Title, v => v.Item1.RemoteEpisode));
                 var alreadyPendingByEpisode = CreateEpisodeLookup(alreadyPending);
@@ -172,7 +172,7 @@ namespace NzbDrone.Core.Download.Pending
 
         public List<RemoteEpisode> GetPendingRemoteEpisodes(int seriesId)
         {
-            return IncludeRemoteEpisodes(_repository.AllBySeriesId(seriesId)).Select(v => v.RemoteEpisode).ToList();
+            return IncludeRemoteEpisodes(_repository.AllByAuthorId(seriesId)).Select(v => v.RemoteEpisode).ToList();
         }
 
         public List<Queue.Queue> GetPendingQueue()
@@ -223,11 +223,11 @@ namespace NzbDrone.Core.Download.Pending
         public void RemovePendingQueueItems(int queueId)
         {
             var targetItem = FindPendingRelease(queueId);
-            var seriesReleases = _repository.AllBySeriesId(targetItem.SeriesId);
+            var seriesReleases = _repository.AllByAuthorId(targetItem.AuthorId);
 
             var releasesToRemove = seriesReleases.Where(
-                c => c.ParsedEpisodeInfo.SeasonNumber == targetItem.ParsedEpisodeInfo.SeasonNumber &&
-                     c.ParsedEpisodeInfo.EpisodeNumbers.SequenceEqual(targetItem.ParsedEpisodeInfo.EpisodeNumbers));
+                c => c.ParsedEpisodeInfo.BookNumber == targetItem.ParsedEpisodeInfo.BookNumber &&
+                     c.ParsedEpisodeInfo.EditionNumbers.SequenceEqual(targetItem.ParsedEpisodeInfo.EditionNumbers));
 
             _repository.DeleteMany(releasesToRemove.Select(c => c.Id));
         }
@@ -262,7 +262,7 @@ namespace NzbDrone.Core.Download.Pending
 
         private List<PendingRelease> GetPendingReleases(int seriesId)
         {
-            return IncludeRemoteEpisodes(_repository.AllBySeriesId(seriesId).ToList());
+            return IncludeRemoteEpisodes(_repository.AllByAuthorId(seriesId).ToList());
         }
 
         private List<PendingRelease> IncludeRemoteEpisodes(List<PendingRelease> releases, Dictionary<string, RemoteEpisode> knownRemoteEpisodes = null)
@@ -279,14 +279,14 @@ namespace NzbDrone.Core.Download.Pending
                 }
             }
 
-            foreach (var series in _seriesService.GetSeries(releases.Select(v => v.SeriesId).Distinct().Where(v => !seriesMap.ContainsKey(v))))
+            foreach (var series in _seriesService.GetSeries(releases.Select(v => v.AuthorId).Distinct().Where(v => !seriesMap.ContainsKey(v))))
             {
                 seriesMap[series.Id] = series;
             }
 
             foreach (var release in releases)
             {
-                var series = seriesMap.GetValueOrDefault(release.SeriesId);
+                var series = seriesMap.GetValueOrDefault(release.AuthorId);
 
                 // Just in case the series was removed, but wasn't cleaned up yet (housekeeper will clean it up)
                 if (series == null)
@@ -311,7 +311,7 @@ namespace NzbDrone.Core.Download.Pending
 
                 if (knownRemoteEpisodes != null && knownRemoteEpisodes.TryGetValue(release.Release.Title, out var knownRemoteEpisode))
                 {
-                    release.RemoteEpisode.MappedSeasonNumber = knownRemoteEpisode.MappedSeasonNumber;
+                    release.RemoteEpisode.MappedBookNumber = knownRemoteEpisode.MappedBookNumber;
                     release.RemoteEpisode.Episodes = knownRemoteEpisode.Episodes;
                 }
                 else if (ValidateParsedEpisodeInfo.ValidateForSeriesType(release.ParsedEpisodeInfo, series))
@@ -320,20 +320,20 @@ namespace NzbDrone.Core.Download.Pending
                     {
                         var remoteEpisode = _parsingService.Map(release.ParsedEpisodeInfo, series);
 
-                        release.RemoteEpisode.MappedSeasonNumber = remoteEpisode.MappedSeasonNumber;
+                        release.RemoteEpisode.MappedBookNumber = remoteEpisode.MappedBookNumber;
                         release.RemoteEpisode.Episodes = remoteEpisode.Episodes;
                     }
                     catch (InvalidOperationException ex)
                     {
                         _logger.Debug(ex, ex.Message);
 
-                        release.RemoteEpisode.MappedSeasonNumber = release.ParsedEpisodeInfo.SeasonNumber;
+                        release.RemoteEpisode.MappedBookNumber = release.ParsedEpisodeInfo.BookNumber;
                         release.RemoteEpisode.Episodes = new List<Episode>();
                     }
                 }
                 else
                 {
-                    release.RemoteEpisode.MappedSeasonNumber = release.ParsedEpisodeInfo.SeasonNumber;
+                    release.RemoteEpisode.MappedBookNumber = release.ParsedEpisodeInfo.BookNumber;
                     release.RemoteEpisode.Episodes = new List<Episode>();
                 }
 
@@ -403,7 +403,7 @@ namespace NzbDrone.Core.Download.Pending
         {
             _repository.Insert(new PendingRelease
             {
-                SeriesId = decision.RemoteEpisode.Series.Id,
+                AuthorId = decision.RemoteEpisode.Series.Id,
                 ParsedEpisodeInfo = decision.RemoteEpisode.ParsedEpisodeInfo,
                 Release = decision.RemoteEpisode.Release,
                 Title = decision.RemoteEpisode.Release.Title,
@@ -507,7 +507,7 @@ namespace NzbDrone.Core.Download.Pending
 
         public void Handle(SeriesDeletedEvent message)
         {
-            _repository.DeleteBySeriesIds(message.Series.Select(m => m.Id).ToList());
+            _repository.DeleteByAuthorIds(message.Series.Select(m => m.Id).ToList());
         }
 
         public void Handle(EpisodeGrabbedEvent message)

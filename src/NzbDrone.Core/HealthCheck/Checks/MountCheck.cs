@@ -9,9 +9,9 @@ namespace NzbDrone.Core.HealthCheck.Checks
     public class MountCheck : HealthCheckBase
     {
         private readonly IDiskProvider _diskProvider;
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
 
-        public MountCheck(IDiskProvider diskProvider, ISeriesService seriesService, ILocalizationService localizationService)
+        public MountCheck(IDiskProvider diskProvider, IAuthorService seriesService, ILocalizationService localizationService)
             : base(localizationService)
         {
             _diskProvider = diskProvider;

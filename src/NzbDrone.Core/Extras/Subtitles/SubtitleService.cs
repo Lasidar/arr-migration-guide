@@ -48,7 +48,7 @@ namespace NzbDrone.Core.Extras.Subtitles
             return Enumerable.Empty<SubtitleFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EpisodeFile> episodeFiles)
+        public override IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EditionFile> episodeFiles)
         {
             return Enumerable.Empty<SubtitleFile>();
         }
@@ -58,7 +58,7 @@ namespace NzbDrone.Core.Extras.Subtitles
             return Enumerable.Empty<SubtitleFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EpisodeFile episodeFile)
+        public override IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EditionFile episodeFile)
         {
             return Enumerable.Empty<SubtitleFile>();
         }
@@ -68,7 +68,7 @@ namespace NzbDrone.Core.Extras.Subtitles
             return Enumerable.Empty<SubtitleFile>();
         }
 
-        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EpisodeFile> episodeFiles)
+        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EditionFile> episodeFiles)
         {
             var subtitleFiles = _subtitleFileService.GetFilesBySeries(series.Id);
 
@@ -76,10 +76,10 @@ namespace NzbDrone.Core.Extras.Subtitles
 
             foreach (var episodeFile in episodeFiles)
             {
-                var groupedExtraFilesForEpisodeFile = subtitleFiles.Where(m => m.EpisodeFileId == episodeFile.Id)
+                var groupedExtraFilesForEditionFile = subtitleFiles.Where(m => m.EditionFileId == episodeFile.Id)
                                                             .GroupBy(s => s.AggregateString).ToList();
 
-                foreach (var group in groupedExtraFilesForEpisodeFile)
+                foreach (var group in groupedExtraFilesForEditionFile)
                 {
                     var multipleCopies = group.Count() > 1;
                     var orderedGroup = group.OrderBy(s => -s.Copy).ToList();
@@ -104,12 +104,12 @@ namespace NzbDrone.Core.Extras.Subtitles
             return movedFiles;
         }
 
-        public override bool CanImportFile(LocalEpisode localEpisode, EpisodeFile episodeFile, string path, string extension, bool readOnly)
+        public override bool CanImportFile(LocalEpisode localEpisode, EditionFile episodeFile, string path, string extension, bool readOnly)
         {
             return SubtitleFileExtensions.Extensions.Contains(extension.ToLowerInvariant());
         }
 
-        public override IEnumerable<ExtraFile> ImportFiles(LocalEpisode localEpisode, EpisodeFile episodeFile, List<string> files, bool isReadOnly)
+        public override IEnumerable<ExtraFile> ImportFiles(LocalEpisode localEpisode, EditionFile episodeFile, List<string> files, bool isReadOnly)
         {
             var importedFiles = new List<SubtitleFile>();
 
@@ -135,13 +135,13 @@ namespace NzbDrone.Core.Extras.Subtitles
                     // Season and episode match
                     var fileEpisodeInfo = Parser.Parser.ParsePath(file) ?? new ParsedEpisodeInfo();
 
-                    if (fileEpisodeInfo.EpisodeNumbers.Length == 0)
+                    if (fileEpisodeInfo.EditionNumbers.Length == 0)
                     {
                         continue;
                     }
 
-                    if (fileEpisodeInfo.SeasonNumber == localEpisode.FileEpisodeInfo.SeasonNumber &&
-                        fileEpisodeInfo.EpisodeNumbers.SequenceEqual(localEpisode.FileEpisodeInfo.EpisodeNumbers))
+                    if (fileEpisodeInfo.BookNumber == localEpisode.FileEpisodeInfo.BookNumber &&
+                        fileEpisodeInfo.EditionNumbers.SequenceEqual(localEpisode.FileEpisodeInfo.EditionNumbers))
                     {
                         matchingFiles.Add(file);
                     }

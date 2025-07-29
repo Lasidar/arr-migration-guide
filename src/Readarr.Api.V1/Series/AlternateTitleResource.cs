@@ -6,8 +6,8 @@ namespace Readarr.Api.V3.Series
     public class AlternateTitleResource
     {
         public string Title { get; set; }
-        public int? SeasonNumber { get; set; }
-        public int? SceneSeasonNumber { get; set; }
+        public int? BookNumber { get; set; }
+        public int? SceneBookNumber { get; set; }
         public string SceneOrigin { get; set; }
         public string Comment { get; set; }
     }
@@ -31,8 +31,8 @@ namespace Readarr.Api.V3.Series
             return new AlternateTitleResource
             {
                 Title = sceneMapping.Title,
-                SeasonNumber = sceneMapping.SeasonNumber,
-                SceneSeasonNumber = sceneMapping.SceneSeasonNumber,
+                BookNumber = sceneMapping.BookNumber,
+                SceneBookNumber = sceneMapping.SceneBookNumber,
                 SceneOrigin = sceneMapping.SceneOrigin,
                 Comment = comment
             };

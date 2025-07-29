@@ -8,10 +8,10 @@ using NzbDrone.Core.AutoTagging;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Core.Books;
 
-namespace NzbDrone.Core.Test.TvTests.SeriesServiceTests
+namespace NzbDrone.Core.Test.TvTests.AuthorServiceTests
 {
     [TestFixture]
-    public class UpdateSeriesFixture : CoreTest<SeriesService>
+    public class UpdateSeriesFixture : CoreTest<AuthorService>
     {
         private Series _fakeSeries;
         private Series _existingSeries;
@@ -24,28 +24,28 @@ namespace NzbDrone.Core.Test.TvTests.SeriesServiceTests
 
             _fakeSeries.Seasons = new List<Season>
             {
-                new Season { SeasonNumber = 1, Monitored = true },
-                new Season { SeasonNumber = 2, Monitored = true }
+                new Season { BookNumber = 1, Monitored = true },
+                new Season { BookNumber = 2, Monitored = true }
             };
 
             _existingSeries.Seasons = new List<Season>
             {
-                new Season { SeasonNumber = 1, Monitored = true },
-                new Season { SeasonNumber = 2, Monitored = true }
+                new Season { BookNumber = 1, Monitored = true },
+                new Season { BookNumber = 2, Monitored = true }
             };
 
             Mocker.GetMock<IAutoTaggingService>()
                 .Setup(s => s.GetTagChanges(It.IsAny<Series>()))
                 .Returns(new AutoTaggingChanges());
 
-            Mocker.GetMock<ISeriesRepository>()
+            Mocker.GetMock<IAuthorRepository>()
                 .Setup(s => s.Update(It.IsAny<Series>()))
                 .Returns<Series>(r => r);
         }
 
         private void GivenExistingSeries()
         {
-            Mocker.GetMock<ISeriesRepository>()
+            Mocker.GetMock<IAuthorRepository>()
                   .Setup(s => s.Get(It.IsAny<int>()))
                   .Returns(_existingSeries);
         }
@@ -57,7 +57,7 @@ namespace NzbDrone.Core.Test.TvTests.SeriesServiceTests
 
             Subject.UpdateSeries(_fakeSeries);
 
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                   .Verify(v => v.SetEpisodeMonitoredBySeason(_fakeSeries.Id, It.IsAny<int>(), It.IsAny<bool>()), Times.Never());
         }
 
@@ -68,14 +68,14 @@ namespace NzbDrone.Core.Test.TvTests.SeriesServiceTests
             var seasonNumber = 1;
             var monitored = false;
 
-            _fakeSeries.Seasons.Single(s => s.SeasonNumber == seasonNumber).Monitored = monitored;
+            _fakeSeries.Seasons.Single(s => s.BookNumber == seasonNumber).Monitored = monitored;
 
             Subject.UpdateSeries(_fakeSeries);
 
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                   .Verify(v => v.SetEpisodeMonitoredBySeason(_fakeSeries.Id, seasonNumber, monitored), Times.Once());
 
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                   .Verify(v => v.SetEpisodeMonitoredBySeason(_fakeSeries.Id, It.IsAny<int>(), It.IsAny<bool>()), Times.Once());
         }
 
@@ -87,7 +87,7 @@ namespace NzbDrone.Core.Test.TvTests.SeriesServiceTests
             var monitored = false;
 
             _fakeSeries.Tags = new HashSet<int> { 1, 2 };
-            _fakeSeries.Seasons.Single(s => s.SeasonNumber == seasonNumber).Monitored = monitored;
+            _fakeSeries.Seasons.Single(s => s.BookNumber == seasonNumber).Monitored = monitored;
 
             Mocker.GetMock<IAutoTaggingService>()
                 .Setup(s => s.GetTagChanges(_fakeSeries))

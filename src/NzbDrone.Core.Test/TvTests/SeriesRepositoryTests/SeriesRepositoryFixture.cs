@@ -7,11 +7,11 @@ using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Core.Books;
 
-namespace NzbDrone.Core.Test.TvTests.SeriesRepositoryTests
+namespace NzbDrone.Core.Test.TvTests.AuthorRepositoryTests
 {
     [TestFixture]
 
-    public class SeriesRepositoryFixture : DbTest<SeriesRepository, Series>
+    public class AuthorRepositoryFixture : DbTest<AuthorRepository, Series>
     {
         [Test]
         public void should_lazyload_quality_profile()

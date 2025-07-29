@@ -9,6 +9,6 @@ namespace NzbDrone.Core.Organizer
         public string FileName { get; set; }
         public Series Series { get; set; }
         public List<Episode> Episodes { get; set; }
-        public EpisodeFile EpisodeFile { get; set; }
+        public EditionFile EditionFile { get; set; }
     }
 }

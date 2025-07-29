@@ -4,7 +4,7 @@ using NzbDrone.Core.Organizer;
 
 namespace Readarr.Api.V5.Series
 {
-    public class SeriesFolderAsRootFolderValidator : PropertyValidator
+    public class AuthorFolderAsRootFolderValidator : PropertyValidator
     {
         private readonly IBuildFileNames _fileNameBuilder;
 

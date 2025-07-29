@@ -37,7 +37,7 @@ namespace NzbDrone.Core.Test.HealthCheck.Checks
                     .BuildList();
             }
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                 .Setup(v => v.GetAllSeries())
                 .Returns(series);
 

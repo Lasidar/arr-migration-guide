@@ -1,6 +1,6 @@
 ﻿namespace NzbDrone.Core.Organizer
 {
-    public class EpisodeFormat
+    public class EditionFormat
     {
         public string Separator { get; set; }
         public string EpisodePattern { get; set; }

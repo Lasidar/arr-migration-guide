@@ -16,7 +16,7 @@ namespace NzbDrone.Core.History
         List<EpisodeHistory> FindByDownloadId(string downloadId);
         List<EpisodeHistory> GetBySeries(int seriesId, EpisodeHistoryEventType? eventType);
         List<EpisodeHistory> GetBySeason(int seriesId, int seasonNumber, EpisodeHistoryEventType? eventType);
-        List<EpisodeHistory> FindDownloadHistory(int idSeriesId, QualityModel quality);
+        List<EpisodeHistory> FindDownloadHistory(int idAuthorId, QualityModel quality);
         void DeleteForSeries(List<int> seriesIds);
         List<EpisodeHistory> Since(DateTime date, EpisodeHistoryEventType? eventType);
         PagingSpec<EpisodeHistory> GetPaged(PagingSpec<EpisodeHistory> pagingSpec, int[] languages, int[] qualities);
@@ -53,9 +53,9 @@ namespace NzbDrone.Core.History
 
         public List<EpisodeHistory> GetBySeries(int seriesId, EpisodeHistoryEventType? eventType)
         {
-            var builder = Builder().Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
+            var builder = Builder().Join<EpisodeHistory, Series>((h, a) => h.AuthorId == a.Id)
                                    .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id)
-                                   .Where<EpisodeHistory>(h => h.SeriesId == seriesId);
+                                   .Where<EpisodeHistory>(h => h.AuthorId == seriesId);
 
             if (eventType.HasValue)
             {
@@ -69,8 +69,8 @@ namespace NzbDrone.Core.History
         {
             var builder = Builder()
                 .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id)
-                .Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
-                .Where<EpisodeHistory>(h => h.SeriesId == seriesId && h.Episode.SeasonNumber == seasonNumber);
+                .Join<EpisodeHistory, Series>((h, a) => h.AuthorId == a.Id)
+                .Where<EpisodeHistory>(h => h.AuthorId == seriesId && h.Episode.BookNumber == seasonNumber);
 
             if (eventType.HasValue)
             {
@@ -86,10 +86,10 @@ namespace NzbDrone.Core.History
                 }).OrderByDescending(h => h.Date).ToList();
         }
 
-        public List<EpisodeHistory> FindDownloadHistory(int idSeriesId, QualityModel quality)
+        public List<EpisodeHistory> FindDownloadHistory(int idAuthorId, QualityModel quality)
         {
             return Query(h =>
-                 h.SeriesId == idSeriesId &&
+                 h.AuthorId == idAuthorId &&
                  h.Quality == quality &&
                  (h.EventType == EpisodeHistoryEventType.Grabbed ||
                  h.EventType == EpisodeHistoryEventType.DownloadFailed ||
@@ -99,13 +99,13 @@ namespace NzbDrone.Core.History
 
         public void DeleteForSeries(List<int> seriesIds)
         {
-            Delete(c => seriesIds.Contains(c.SeriesId));
+            Delete(c => seriesIds.Contains(c.AuthorId));
         }
 
         public List<EpisodeHistory> Since(DateTime date, EpisodeHistoryEventType? eventType)
         {
             var builder = Builder()
-                .Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
+                .Join<EpisodeHistory, Series>((h, a) => h.AuthorId == a.Id)
                 .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id)
                 .Where<EpisodeHistory>(x => x.Date >= date);
 
@@ -135,7 +135,7 @@ namespace NzbDrone.Core.History
         private SqlBuilder PagedBuilder(int[] languages, int[] qualities)
         {
             var builder = Builder()
-                .Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
+                .Join<EpisodeHistory, Series>((h, a) => h.AuthorId == a.Id)
                 .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id);
 
             if (languages is { Length: > 0 })

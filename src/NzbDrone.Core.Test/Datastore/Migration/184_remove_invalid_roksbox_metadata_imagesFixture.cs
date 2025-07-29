@@ -18,26 +18,26 @@ namespace NzbDrone.Core.Test.Datastore.Migration
             {
                 c.Insert.IntoTable("MetadataFiles").Row(new
                 {
-                    SeriesId = 1,
+                    AuthorId = 1,
                     Consumer = "RoksboxMetadata",
                     Type = 5,
                     RelativePath = @"Season 01\metadata\S01E01.jpg",
                     LastUpdated = "2023-01-21 00:00:00.000",
-                    SeasonNumber = 1,
-                    EpisodeFileId = 1,
+                    BookNumber = 1,
+                    EditionFileId = 1,
                     Added = "2023-01-21 00:00:00.000",
                     Extension = ".jpg"
                 });
 
                 c.Insert.IntoTable("MetadataFiles").Row(new
                 {
-                    SeriesId = 1,
+                    AuthorId = 1,
                     Consumer = "RoksboxMetadata",
                     Type = 5,
                     RelativePath = @"Season 01\S01E01.jpg",
                     LastUpdated = "2023-01-21 00:00:00.000",
-                    SeasonNumber = 1,
-                    EpisodeFileId = 1,
+                    BookNumber = 1,
+                    EditionFileId = 1,
                     Added = "2023-01-21 00:00:00.000",
                     Extension = ".jpg"
                 });
@@ -53,9 +53,9 @@ namespace NzbDrone.Core.Test.Datastore.Migration
     public class MetadataFile184
     {
         public int Id { get; set; }
-        public int SeriesId { get; set; }
-        public int? EpisodeFileId { get; set; }
-        public int? SeasonNumber { get; set; }
+        public int AuthorId { get; set; }
+        public int? EditionFileId { get; set; }
+        public int? BookNumber { get; set; }
         public string RelativePath { get; set; }
         public DateTime Added { get; set; }
         public DateTime LastUpdated { get; set; }

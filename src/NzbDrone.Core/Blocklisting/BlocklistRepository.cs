@@ -10,7 +10,7 @@ namespace NzbDrone.Core.Blocklisting
         List<Blocklist> BlocklistedByTitle(int seriesId, string sourceTitle);
         List<Blocklist> BlocklistedByTorrentInfoHash(int seriesId, string torrentInfoHash);
         List<Blocklist> BlocklistedBySeries(int seriesId);
-        void DeleteForSeriesIds(List<int> seriesIds);
+        void DeleteForAuthorIds(List<int> seriesIds);
     }
 
     public class BlocklistRepository : BasicRepository<Blocklist>, IBlocklistRepository
@@ -22,22 +22,22 @@ namespace NzbDrone.Core.Blocklisting
 
         public List<Blocklist> BlocklistedByTitle(int seriesId, string sourceTitle)
         {
-            return Query(e => e.SeriesId == seriesId && e.SourceTitle.Contains(sourceTitle));
+            return Query(e => e.AuthorId == seriesId && e.SourceTitle.Contains(sourceTitle));
         }
 
         public List<Blocklist> BlocklistedByTorrentInfoHash(int seriesId, string torrentInfoHash)
         {
-            return Query(e => e.SeriesId == seriesId && e.TorrentInfoHash.Contains(torrentInfoHash));
+            return Query(e => e.AuthorId == seriesId && e.TorrentInfoHash.Contains(torrentInfoHash));
         }
 
         public List<Blocklist> BlocklistedBySeries(int seriesId)
         {
-            return Query(b => b.SeriesId == seriesId);
+            return Query(b => b.AuthorId == seriesId);
         }
 
-        public void DeleteForSeriesIds(List<int> seriesIds)
+        public void DeleteForAuthorIds(List<int> seriesIds)
         {
-            Delete(x => seriesIds.Contains(x.SeriesId));
+            Delete(x => seriesIds.Contains(x.AuthorId));
         }
 
         public override PagingSpec<Blocklist> GetPaged(PagingSpec<Blocklist> pagingSpec)
@@ -53,7 +53,7 @@ namespace NzbDrone.Core.Blocklisting
         protected override SqlBuilder PagedBuilder()
         {
             var builder = Builder()
-                .Join<Blocklist, Series>((b, m) => b.SeriesId == m.Id);
+                .Join<Blocklist, Series>((b, m) => b.AuthorId == m.Id);
 
             return builder;
         }

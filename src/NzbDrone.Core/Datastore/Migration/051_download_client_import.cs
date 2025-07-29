@@ -118,7 +118,7 @@ namespace NzbDrone.Core.Datastore.Migration
         {
             public int Id { get; set; }
             public int EpisodeId { get; set; }
-            public int SeriesId { get; set; }
+            public int AuthorId { get; set; }
             public string SourceTitle { get; set; }
             public DateTime Date { get; set; }
             public Dictionary<string, string> Data { get; set; }
@@ -141,7 +141,7 @@ namespace NzbDrone.Core.Datastore.Migration
             using (var historyCmd = conn.CreateCommand())
             {
                 historyCmd.Transaction = tran;
-                historyCmd.CommandText = "SELECT \"Id\", \"EpisodeId\", \"SeriesId\", \"SourceTitle\", \"Date\", \"Data\", \"EventType\" FROM \"History\" WHERE \"EventType\" IS NOT NULL";
+                historyCmd.CommandText = "SELECT \"Id\", \"EpisodeId\", \"AuthorId\", \"SourceTitle\", \"Date\", \"Data\", \"EventType\" FROM \"History\" WHERE \"EventType\" IS NOT NULL";
                 using (var historyRead = historyCmd.ExecuteReader())
                 {
                     while (historyRead.Read())
@@ -150,7 +150,7 @@ namespace NzbDrone.Core.Datastore.Migration
                             {
                                 Id = historyRead.GetInt32(0),
                                 EpisodeId = historyRead.GetInt32(1),
-                                SeriesId = historyRead.GetInt32(2),
+                                AuthorId = historyRead.GetInt32(2),
                                 SourceTitle = historyRead.GetString(3),
                                 Date = historyRead.GetDateTime(4),
                                 Data = Json.Deserialize<Dictionary<string, string>>(historyRead.GetString(5)),

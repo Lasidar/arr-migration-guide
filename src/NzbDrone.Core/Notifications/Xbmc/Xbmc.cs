@@ -48,12 +48,12 @@ namespace NzbDrone.Core.Notifications.Xbmc
             UpdateAndClean(message.Series);
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedEditionFile> renamedFiles)
         {
             UpdateAndClean(series);
         }
 
-        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        public override void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             const string header = "Sonarr - Deleted";
 

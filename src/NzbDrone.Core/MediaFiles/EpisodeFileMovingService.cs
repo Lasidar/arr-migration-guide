@@ -17,17 +17,17 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.MediaFiles
 {
-    public interface IMoveEpisodeFiles
+    public interface IMoveEditionFiles
     {
-        EpisodeFile MoveEpisodeFile(EpisodeFile episodeFile, Series series);
-        EpisodeFile MoveEpisodeFile(EpisodeFile episodeFile, LocalEpisode localEpisode);
-        EpisodeFile CopyEpisodeFile(EpisodeFile episodeFile, LocalEpisode localEpisode);
+        EditionFile MoveEditionFile(EditionFile episodeFile, Series series);
+        EditionFile MoveEditionFile(EditionFile episodeFile, LocalEpisode localEpisode);
+        EditionFile CopyEditionFile(EditionFile episodeFile, LocalEpisode localEpisode);
     }
 
-    public class EpisodeFileMovingService : IMoveEpisodeFiles
+    public class EditionFileMovingService : IMoveEditionFiles
     {
-        private readonly IEpisodeService _episodeService;
-        private readonly IUpdateEpisodeFileService _updateEpisodeFileService;
+        private readonly IEditionService _episodeService;
+        private readonly IUpdateEditionFileService _updateEditionFileService;
         private readonly IBuildFileNames _buildFileNames;
         private readonly IDiskTransferService _diskTransferService;
         private readonly IDiskProvider _diskProvider;
@@ -38,8 +38,8 @@ namespace NzbDrone.Core.MediaFiles
         private readonly IConfigService _configService;
         private readonly Logger _logger;
 
-        public EpisodeFileMovingService(IEpisodeService episodeService,
-                                IUpdateEpisodeFileService updateEpisodeFileService,
+        public EditionFileMovingService(IEditionService episodeService,
+                                IUpdateEditionFileService updateEditionFileService,
                                 IBuildFileNames buildFileNames,
                                 IDiskTransferService diskTransferService,
                                 IDiskProvider diskProvider,
@@ -51,7 +51,7 @@ namespace NzbDrone.Core.MediaFiles
                                 Logger logger)
         {
             _episodeService = episodeService;
-            _updateEpisodeFileService = updateEpisodeFileService;
+            _updateEditionFileService = updateEditionFileService;
             _buildFileNames = buildFileNames;
             _diskTransferService = diskTransferService;
             _diskProvider = diskProvider;
@@ -63,24 +63,24 @@ namespace NzbDrone.Core.MediaFiles
             _logger = logger;
         }
 
-        public EpisodeFile MoveEpisodeFile(EpisodeFile episodeFile, Series series)
+        public EditionFile MoveEditionFile(EditionFile episodeFile, Series series)
         {
             var episodes = _episodeService.GetEpisodesByFileId(episodeFile.Id);
-            return MoveEpisodeFile(episodeFile, series, episodes);
+            return MoveEditionFile(episodeFile, series, episodes);
         }
 
-        private EpisodeFile MoveEpisodeFile(EpisodeFile episodeFile, Series series, List<Episode> episodes)
+        private EditionFile MoveEditionFile(EditionFile episodeFile, Series series, List<Episode> episodes)
         {
             var filePath = _buildFileNames.BuildFilePath(episodes, series, episodeFile, Path.GetExtension(episodeFile.RelativePath));
 
-            EnsureEpisodeFolder(episodeFile, series, episodes.Select(v => v.SeasonNumber).First(), filePath);
+            EnsureEpisodeFolder(episodeFile, series, episodes.Select(v => v.BookNumber).First(), filePath);
 
             _logger.Debug("Renaming episode file: {0} to {1}", episodeFile, filePath);
 
             return TransferFile(episodeFile, series, episodes, filePath, TransferMode.Move);
         }
 
-        public EpisodeFile MoveEpisodeFile(EpisodeFile episodeFile, LocalEpisode localEpisode)
+        public EditionFile MoveEditionFile(EditionFile episodeFile, LocalEpisode localEpisode)
         {
             var filePath = _buildFileNames.BuildFilePath(localEpisode.Episodes, localEpisode.Series, episodeFile, Path.GetExtension(localEpisode.Path), null, localEpisode.CustomFormats);
 
@@ -91,7 +91,7 @@ namespace NzbDrone.Core.MediaFiles
             return TransferFile(episodeFile, localEpisode.Series, localEpisode.Episodes, filePath, TransferMode.Move, localEpisode);
         }
 
-        public EpisodeFile CopyEpisodeFile(EpisodeFile episodeFile, LocalEpisode localEpisode)
+        public EditionFile CopyEditionFile(EditionFile episodeFile, LocalEpisode localEpisode)
         {
             var filePath = _buildFileNames.BuildFilePath(localEpisode.Episodes, localEpisode.Series, episodeFile, Path.GetExtension(localEpisode.Path), null, localEpisode.CustomFormats);
 
@@ -107,7 +107,7 @@ namespace NzbDrone.Core.MediaFiles
             return TransferFile(episodeFile, localEpisode.Series, localEpisode.Episodes, filePath, TransferMode.Copy, localEpisode);
         }
 
-        private EpisodeFile TransferFile(EpisodeFile episodeFile, Series series, List<Episode> episodes, string destinationFilePath, TransferMode mode, LocalEpisode localEpisode = null)
+        private EditionFile TransferFile(EditionFile episodeFile, Series series, List<Episode> episodes, string destinationFilePath, TransferMode mode, LocalEpisode localEpisode = null)
         {
             Ensure.That(episodeFile, () => episodeFile).IsNotNull();
             Ensure.That(series, () => series).IsNotNull();
@@ -138,7 +138,7 @@ namespace NzbDrone.Core.MediaFiles
                 {
                     try
                     {
-                        MoveEpisodeFile(episodeFile, series, episodeFile.Episodes);
+                        MoveEditionFile(episodeFile, series, episodeFile.Episodes);
                     }
                     catch (SameFilenameException)
                     {
@@ -151,7 +151,7 @@ namespace NzbDrone.Core.MediaFiles
                 _diskTransferService.TransferFile(episodeFilePath, destinationFilePath, mode);
             }
 
-            _updateEpisodeFileService.ChangeFileDateForFile(episodeFile, series, episodes);
+            _updateEditionFileService.ChangeFileDateForFile(episodeFile, series, episodes);
 
             try
             {
@@ -174,12 +174,12 @@ namespace NzbDrone.Core.MediaFiles
             return episodeFile;
         }
 
-        private void EnsureEpisodeFolder(EpisodeFile episodeFile, LocalEpisode localEpisode, string filePath)
+        private void EnsureEpisodeFolder(EditionFile episodeFile, LocalEpisode localEpisode, string filePath)
         {
-            EnsureEpisodeFolder(episodeFile, localEpisode.Series, localEpisode.SeasonNumber, filePath);
+            EnsureEpisodeFolder(episodeFile, localEpisode.Series, localEpisode.BookNumber, filePath);
         }
 
-        private void EnsureEpisodeFolder(EpisodeFile episodeFile, Series series, int seasonNumber, string filePath)
+        private void EnsureEpisodeFolder(EditionFile episodeFile, Series series, int seasonNumber, string filePath)
         {
             var episodeFolder = Path.GetDirectoryName(filePath);
             var seasonFolder = _buildFileNames.BuildSeasonPath(series, seasonNumber);

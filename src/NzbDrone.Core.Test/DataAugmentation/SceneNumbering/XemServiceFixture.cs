@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
     public class XemServiceFixture : CoreTest<XemService>
     {
         private Series _series;
-        private List<int> _theXemSeriesIds;
+        private List<int> _theXemAuthorIds;
         private List<XemSceneTvdbMapping> _theXemTvdbMappings;
         private List<Episode> _episodes;
 
@@ -30,10 +30,10 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
                 .With(v => v.UseSceneNumbering = false)
                 .BuildNew();
 
-            _theXemSeriesIds = new List<int> { 120 };
+            _theXemAuthorIds = new List<int> { 120 };
             Mocker.GetMock<IXemProxy>()
-                  .Setup(v => v.GetXemSeriesIds())
-                  .Returns(_theXemSeriesIds);
+                  .Setup(v => v.GetXemAuthorIds())
+                  .Returns(_theXemAuthorIds);
 
             _theXemTvdbMappings = new List<XemSceneTvdbMapping>();
             Mocker.GetMock<IXemProxy>()
@@ -41,24 +41,24 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
                   .Returns(_theXemTvdbMappings);
 
             _episodes = new List<Episode>();
-            _episodes.Add(new Episode { SeasonNumber = 1, EpisodeNumber = 1 });
-            _episodes.Add(new Episode { SeasonNumber = 1, EpisodeNumber = 2 });
-            _episodes.Add(new Episode { SeasonNumber = 2, EpisodeNumber = 1 });
-            _episodes.Add(new Episode { SeasonNumber = 2, EpisodeNumber = 2 });
-            _episodes.Add(new Episode { SeasonNumber = 2, EpisodeNumber = 3 });
-            _episodes.Add(new Episode { SeasonNumber = 2, EpisodeNumber = 4 });
-            _episodes.Add(new Episode { SeasonNumber = 2, EpisodeNumber = 5 });
-            _episodes.Add(new Episode { SeasonNumber = 3, EpisodeNumber = 1 });
-            _episodes.Add(new Episode { SeasonNumber = 3, EpisodeNumber = 2 });
+            _episodes.Add(new Episode { BookNumber = 1, EditionNumber = 1 });
+            _episodes.Add(new Episode { BookNumber = 1, EditionNumber = 2 });
+            _episodes.Add(new Episode { BookNumber = 2, EditionNumber = 1 });
+            _episodes.Add(new Episode { BookNumber = 2, EditionNumber = 2 });
+            _episodes.Add(new Episode { BookNumber = 2, EditionNumber = 3 });
+            _episodes.Add(new Episode { BookNumber = 2, EditionNumber = 4 });
+            _episodes.Add(new Episode { BookNumber = 2, EditionNumber = 5 });
+            _episodes.Add(new Episode { BookNumber = 3, EditionNumber = 1 });
+            _episodes.Add(new Episode { BookNumber = 3, EditionNumber = 2 });
 
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                   .Setup(v => v.GetEpisodeBySeries(It.IsAny<int>()))
                   .Returns(_episodes);
         }
 
         private void GivenTvdbMappings()
         {
-            _theXemSeriesIds.Add(10);
+            _theXemAuthorIds.Add(10);
 
             AddTvdbMapping(1, 1, 1, 1, 1, 1); // 1x01 -> 1x01
             AddTvdbMapping(2, 1, 2, 2, 1, 2); // 1x02 -> 1x02
@@ -73,20 +73,20 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
         {
             _series.UseSceneNumbering = true;
 
-            _episodes[0].SceneSeasonNumber = 1;
-            _episodes[0].SceneEpisodeNumber = 1;
-            _episodes[1].SceneSeasonNumber = 1;
-            _episodes[1].SceneEpisodeNumber = 2;
-            _episodes[2].SceneSeasonNumber = 2;
-            _episodes[2].SceneEpisodeNumber = 1;
-            _episodes[3].SceneSeasonNumber = 2;
-            _episodes[3].SceneEpisodeNumber = 2;
-            _episodes[4].SceneSeasonNumber = 2;
-            _episodes[4].SceneEpisodeNumber = 3;
-            _episodes[5].SceneSeasonNumber = 3;
-            _episodes[5].SceneEpisodeNumber = 1;
-            _episodes[6].SceneSeasonNumber = 3;
-            _episodes[6].SceneEpisodeNumber = 1;
+            _episodes[0].SceneBookNumber = 1;
+            _episodes[0].SceneEditionNumber = 1;
+            _episodes[1].SceneBookNumber = 1;
+            _episodes[1].SceneEditionNumber = 2;
+            _episodes[2].SceneBookNumber = 2;
+            _episodes[2].SceneEditionNumber = 1;
+            _episodes[3].SceneBookNumber = 2;
+            _episodes[3].SceneEditionNumber = 2;
+            _episodes[4].SceneBookNumber = 2;
+            _episodes[4].SceneEditionNumber = 3;
+            _episodes[5].SceneBookNumber = 3;
+            _episodes[5].SceneEditionNumber = 1;
+            _episodes[6].SceneBookNumber = 3;
+            _episodes[6].SceneEditionNumber = 1;
         }
 
         private void AddTvdbMapping(int sceneAbsolute, int sceneSeason, int sceneEpisode, int tvdbAbsolute, int tvdbSeason, int tvdbEpisode)
@@ -106,7 +106,7 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
             Mocker.GetMock<IXemProxy>()
                   .Verify(v => v.GetSceneTvdbMappings(10), Times.Never());
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Verify(v => v.UpdateSeries(It.IsAny<Series>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Never());
         }
 
@@ -117,7 +117,7 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.UseSceneNumbering == true), It.IsAny<bool>(), It.IsAny<bool>()), Times.Once());
         }
 
@@ -128,7 +128,7 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Verify(v => v.UpdateSeries(It.IsAny<Series>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Once());
         }
 
@@ -137,11 +137,11 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
         {
             GivenExistingMapping();
 
-            _theXemSeriesIds.Clear();
+            _theXemAuthorIds.Clear();
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Verify(v => v.UpdateSeries(It.IsAny<Series>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Never());
 
             ExceptionVerification.ExpectedWarns(1);
@@ -153,12 +153,12 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
             GivenExistingMapping();
 
             Mocker.GetMock<IXemProxy>()
-                  .Setup(v => v.GetXemSeriesIds())
+                  .Setup(v => v.GetXemAuthorIds())
                   .Throws(new InvalidOperationException());
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Verify(v => v.UpdateSeries(It.IsAny<Series>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Never());
 
             ExceptionVerification.ExpectedWarns(1);
@@ -172,7 +172,7 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            var episode = _episodes.First(v => v.SeasonNumber == 2 && v.EpisodeNumber == 5);
+            var episode = _episodes.First(v => v.BookNumber == 2 && v.EditionNumber == 5);
 
             episode.UnverifiedSceneNumbering.Should().BeTrue();
         }
@@ -184,7 +184,7 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            var episode = _episodes.First(v => v.SeasonNumber == 3 && v.EpisodeNumber == 1);
+            var episode = _episodes.First(v => v.BookNumber == 3 && v.EditionNumber == 1);
 
             episode.UnverifiedSceneNumbering.Should().BeTrue();
         }
@@ -197,7 +197,7 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            var episode = _episodes.First(v => v.SeasonNumber == 3 && v.EpisodeNumber == 1);
+            var episode = _episodes.First(v => v.BookNumber == 3 && v.EditionNumber == 1);
 
             episode.UnverifiedSceneNumbering.Should().BeFalse();
         }
@@ -210,7 +210,7 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            var episode = _episodes.First(v => v.SeasonNumber == 2 && v.EpisodeNumber == 1);
+            var episode = _episodes.First(v => v.BookNumber == 2 && v.EditionNumber == 1);
 
             episode.UnverifiedSceneNumbering.Should().BeFalse();
         }
@@ -224,7 +224,7 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            var episode = _episodes.First(v => v.SeasonNumber == 2 && v.EpisodeNumber == 1);
+            var episode = _episodes.First(v => v.BookNumber == 2 && v.EditionNumber == 1);
 
             episode.UnverifiedSceneNumbering.Should().BeTrue();
         }
@@ -239,11 +239,11 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            var episode = _episodes.First(v => v.SeasonNumber == 2 && v.EpisodeNumber == 5);
+            var episode = _episodes.First(v => v.BookNumber == 2 && v.EditionNumber == 5);
 
             episode.UnverifiedSceneNumbering.Should().BeTrue();
-            episode.SceneSeasonNumber.Should().NotHaveValue();
-            episode.SceneEpisodeNumber.Should().NotHaveValue();
+            episode.SceneBookNumber.Should().NotHaveValue();
+            episode.SceneEditionNumber.Should().NotHaveValue();
         }
 
         [Test]
@@ -254,11 +254,11 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            var episode = _episodes.First(v => v.SeasonNumber == 2 && v.EpisodeNumber == 5);
+            var episode = _episodes.First(v => v.BookNumber == 2 && v.EditionNumber == 5);
 
             episode.UnverifiedSceneNumbering.Should().BeTrue();
-            episode.SceneSeasonNumber.Should().Be(3);
-            episode.SceneEpisodeNumber.Should().Be(2);
+            episode.SceneBookNumber.Should().Be(3);
+            episode.SceneEditionNumber.Should().Be(2);
         }
 
         [Test]
@@ -272,11 +272,11 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            var episode = _episodes.First(v => v.SeasonNumber == 2 && v.EpisodeNumber == 5);
+            var episode = _episodes.First(v => v.BookNumber == 2 && v.EditionNumber == 5);
 
             episode.UnverifiedSceneNumbering.Should().BeTrue();
-            episode.SceneSeasonNumber.Should().Be(2);
-            episode.SceneEpisodeNumber.Should().Be(4);
+            episode.SceneBookNumber.Should().Be(2);
+            episode.SceneEditionNumber.Should().Be(4);
         }
 
         [Test]
@@ -286,11 +286,11 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            var episode = _episodes.First(v => v.SeasonNumber == 3 && v.EpisodeNumber == 2);
+            var episode = _episodes.First(v => v.BookNumber == 3 && v.EditionNumber == 2);
 
             episode.UnverifiedSceneNumbering.Should().BeTrue();
-            episode.SceneSeasonNumber.Should().Be(4);
-            episode.SceneEpisodeNumber.Should().Be(2);
+            episode.SceneBookNumber.Should().Be(4);
+            episode.SceneEditionNumber.Should().Be(2);
         }
 
         [Test]
@@ -301,11 +301,11 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            var episode = _episodes.First(v => v.SeasonNumber == 3 && v.EpisodeNumber == 2);
+            var episode = _episodes.First(v => v.BookNumber == 3 && v.EditionNumber == 2);
 
             episode.UnverifiedSceneNumbering.Should().BeFalse();
-            episode.SceneSeasonNumber.Should().NotHaveValue();
-            episode.SceneEpisodeNumber.Should().NotHaveValue();
+            episode.SceneBookNumber.Should().NotHaveValue();
+            episode.SceneEditionNumber.Should().NotHaveValue();
         }
 
         [Test]
@@ -318,8 +318,8 @@ namespace NzbDrone.Core.Test.DataAugmentation.SceneNumbering
 
             Subject.Handle(new SeriesUpdatedEvent(_series));
 
-            Mocker.GetMock<IEpisodeService>()
-                  .Verify(v => v.UpdateEpisodes(It.Is<List<Episode>>(e => e.Any(c => c.SceneAbsoluteEpisodeNumber == 0 && c.SceneSeasonNumber == 0 && c.SceneEpisodeNumber == 0))), Times.Never());
+            Mocker.GetMock<IEditionService>()
+                  .Verify(v => v.UpdateEpisodes(It.Is<List<Episode>>(e => e.Any(c => c.SceneAbsoluteEditionNumber == 0 && c.SceneBookNumber == 0 && c.SceneEditionNumber == 0))), Times.Never());
         }
     }
 }

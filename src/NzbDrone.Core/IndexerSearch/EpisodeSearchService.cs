@@ -14,20 +14,20 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.IndexerSearch
 {
-    public class EpisodeSearchService : IExecute<EpisodeSearchCommand>,
+    public class EditionSearchService : IExecute<EpisodeSearchCommand>,
                                         IExecute<MissingEpisodeSearchCommand>,
                                         IExecute<CutoffUnmetEpisodeSearchCommand>
     {
         private readonly ISearchForReleases _releaseSearchService;
         private readonly IProcessDownloadDecisions _processDownloadDecisions;
-        private readonly IEpisodeService _episodeService;
+        private readonly IEditionService _episodeService;
         private readonly IEpisodeCutoffService _episodeCutoffService;
         private readonly IQueueService _queueService;
         private readonly Logger _logger;
 
         public EpisodeSearchService(ISearchForReleases releaseSearchService,
                                     IProcessDownloadDecisions processDownloadDecisions,
-                                    IEpisodeService episodeService,
+                                    IEditionService episodeService,
                                     IEpisodeCutoffService episodeCutoffService,
                                     IQueueService queueService,
                                     Logger logger)
@@ -46,14 +46,14 @@ namespace NzbDrone.Core.IndexerSearch
             var downloadedCount = 0;
             var groups = new List<EpisodeSearchGroup>();
 
-            foreach (var series in episodes.GroupBy(e => e.SeriesId))
+            foreach (var series in episodes.GroupBy(e => e.AuthorId))
             {
-                foreach (var season in series.Select(e => e).GroupBy(e => e.SeasonNumber))
+                foreach (var season in series.Select(e => e).GroupBy(e => e.BookNumber))
                 {
                     groups.Add(new EpisodeSearchGroup
                     {
-                        SeriesId = series.Key,
-                        SeasonNumber = season.Key,
+                        AuthorId = series.Key,
+                        BookNumber = season.Key,
                         Episodes = season.ToList()
                     });
                 }
@@ -63,8 +63,8 @@ namespace NzbDrone.Core.IndexerSearch
             {
                 List<DownloadDecision> decisions;
 
-                var seriesId = group.SeriesId;
-                var seasonNumber = group.SeasonNumber;
+                var seriesId = group.AuthorId;
+                var seasonNumber = group.BookNumber;
                 var groupEpisodes = group.Episodes;
 
                 if (groupEpisodes.Count > 1)
@@ -123,9 +123,9 @@ namespace NzbDrone.Core.IndexerSearch
             var monitored = message.Monitored;
             List<Episode> episodes;
 
-            if (message.SeriesId.HasValue)
+            if (message.AuthorId.HasValue)
             {
-                episodes = _episodeService.GetEpisodeBySeries(message.SeriesId.Value)
+                episodes = _episodeService.GetEpisodeBySeries(message.AuthorId.Value)
                                           .Where(e => e.Monitored == monitored &&
                                                  !e.HasFile &&
                                                  e.AirDateUtc.HasValue &&
@@ -172,10 +172,10 @@ namespace NzbDrone.Core.IndexerSearch
                                  SortKey = "Id"
                              };
 
-            if (message.SeriesId.HasValue)
+            if (message.AuthorId.HasValue)
             {
-                var seriesId = message.SeriesId.Value;
-                pagingSpec.FilterExpressions.Add(v => v.SeriesId == seriesId);
+                var seriesId = message.AuthorId.Value;
+                pagingSpec.FilterExpressions.Add(v => v.AuthorId == seriesId);
             }
 
             if (monitored)

@@ -43,7 +43,7 @@ namespace Readarr.Api.V3.Blocklist
 
             if (seriesIds?.Any() == true)
             {
-                pagingSpec.FilterExpressions.Add(b => seriesIds.Contains(b.SeriesId));
+                pagingSpec.FilterExpressions.Add(b => seriesIds.Contains(b.AuthorId));
             }
 
             if (protocols?.Any() == true)

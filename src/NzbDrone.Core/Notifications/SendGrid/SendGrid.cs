@@ -37,7 +37,7 @@ namespace NzbDrone.Core.Notifications.SendGrid
             _proxy.SendNotification(IMPORT_COMPLETE_TITLE, message.Message, Settings);
         }
 
-        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        public override void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             _proxy.SendNotification(EPISODE_DELETED_TITLE, deleteMessage.Message, Settings);
         }

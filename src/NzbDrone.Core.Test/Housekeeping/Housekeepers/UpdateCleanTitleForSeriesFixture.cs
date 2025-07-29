@@ -18,13 +18,13 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
                                         .With(s => s.CleanTitle = "unclean")
                                         .Build();
 
-            Mocker.GetMock<ISeriesRepository>()
+            Mocker.GetMock<IAuthorRepository>()
                  .Setup(s => s.All())
                  .Returns(new[] { series });
 
             Subject.Clean();
 
-            Mocker.GetMock<ISeriesRepository>()
+            Mocker.GetMock<IAuthorRepository>()
                 .Verify(v => v.Update(It.Is<Series>(s => s.CleanTitle == "fulltitle")), Times.Once());
         }
 
@@ -36,13 +36,13 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
                                         .With(s => s.CleanTitle = "fulltitle")
                                         .Build();
 
-            Mocker.GetMock<ISeriesRepository>()
+            Mocker.GetMock<IAuthorRepository>()
                  .Setup(s => s.All())
                  .Returns(new[] { series });
 
             Subject.Clean();
 
-            Mocker.GetMock<ISeriesRepository>()
+            Mocker.GetMock<IAuthorRepository>()
                 .Verify(v => v.Update(It.Is<Series>(s => s.CleanTitle == "fulltitle")), Times.Never());
         }
     }

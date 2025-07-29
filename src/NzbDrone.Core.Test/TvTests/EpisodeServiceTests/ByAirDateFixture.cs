@@ -7,10 +7,10 @@ using NUnit.Framework;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Core.Books;
 
-namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
+namespace NzbDrone.Core.Test.TvTests.EditionServiceTests
 {
     [TestFixture]
-    public class ByAirDateFixture : CoreTest<EpisodeService>
+    public class ByAirDateFixture : CoreTest<EditionService>
     {
         private const int SERIES_ID = 1;
         private const string AIR_DATE = "2014-04-02";
@@ -18,9 +18,9 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
         private Episode CreateEpisode(int seasonNumber, int episodeNumber)
         {
             var episode = Builder<Episode>.CreateNew()
-                                          .With(e => e.SeriesId = 1)
-                                          .With(e => e.SeasonNumber = seasonNumber)
-                                          .With(e => e.EpisodeNumber = episodeNumber)
+                                          .With(e => e.AuthorId = 1)
+                                          .With(e => e.BookNumber = seasonNumber)
+                                          .With(e => e.EditionNumber = episodeNumber)
                                           .With(e => e.AirDate = AIR_DATE)
                                           .BuildNew();
 
@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
 
         private void GivenEpisodes(params Episode[] episodes)
         {
-            Mocker.GetMock<IEpisodeRepository>()
+            Mocker.GetMock<IEditionRepository>()
                   .Setup(s => s.Find(It.IsAny<int>(), It.IsAny<string>()))
                   .Returns(episodes.ToList());
         }

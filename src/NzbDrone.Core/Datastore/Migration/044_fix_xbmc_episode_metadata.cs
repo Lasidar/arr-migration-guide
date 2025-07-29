@@ -12,7 +12,7 @@ namespace NzbDrone.Core.Datastore.Migration
             Execute.Sql("UPDATE \"MetadataFiles\" " +
                         "SET \"Type\" = 2 " +
                         "WHERE \"Consumer\" = 'XbmcMetadata' " +
-                        "AND \"EpisodeFileId\" IS NOT NULL " +
+                        "AND \"EditionFileId\" IS NOT NULL " +
                         "AND \"Type\" = 4 " +
                         "AND \"RelativePath\" LIKE '%.nfo'");
 
@@ -20,7 +20,7 @@ namespace NzbDrone.Core.Datastore.Migration
             Execute.Sql("UPDATE \"MetadataFiles\" " +
                         "SET \"Type\" = 5 " +
                         "WHERE \"Consumer\" = 'XbmcMetadata' " +
-                        "AND \"EpisodeFileId\" IS NOT NULL " +
+                        "AND \"EditionFileId\" IS NOT NULL " +
                         "AND \"Type\" = 4");
         }
     }

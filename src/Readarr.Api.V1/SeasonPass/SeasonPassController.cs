@@ -6,12 +6,12 @@ using Readarr.Http;
 namespace Readarr.Api.V3.SeasonPass
 {
     [V3ApiController]
-    public class SeasonPassController : Controller
+    public class BookPassController : Controller
     {
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
         private readonly IEpisodeMonitoredService _episodeMonitoredService;
 
-        public SeasonPassController(ISeriesService seriesService, IEpisodeMonitoredService episodeMonitoredService)
+        public SeasonPassController(IAuthorService seriesService, IEpisodeMonitoredService episodeMonitoredService)
         {
             _seriesService = seriesService;
             _episodeMonitoredService = episodeMonitoredService;
@@ -36,7 +36,7 @@ namespace Readarr.Api.V3.SeasonPass
                 {
                     foreach (var seriesSeason in series.Seasons)
                     {
-                        var season = s.Seasons.FirstOrDefault(c => c.SeasonNumber == seriesSeason.SeasonNumber);
+                        var season = s.Seasons.FirstOrDefault(c => c.BookNumber == seriesSeason.BookNumber);
 
                         if (season != null)
                         {

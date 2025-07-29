@@ -36,7 +36,7 @@ namespace NzbDrone.Core.MediaFiles
         private readonly IMakeImportDecision _importDecisionMaker;
         private readonly IImportApprovedEpisodes _importApprovedEpisodes;
         private readonly IConfigService _configService;
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
         private readonly IMediaFileService _mediaFileService;
         private readonly IMediaFileTableCleanupService _mediaFileTableCleanupService;
         private readonly IRootFolderService _rootFolderService;
@@ -48,7 +48,7 @@ namespace NzbDrone.Core.MediaFiles
                                IMakeImportDecision importDecisionMaker,
                                IImportApprovedEpisodes importApprovedEpisodes,
                                IConfigService configService,
-                               ISeriesService seriesService,
+                               IAuthorService seriesService,
                                IMediaFileService mediaFileService,
                                IMediaFileTableCleanupService mediaFileTableCleanupService,
                                IRootFolderService rootFolderService,
@@ -145,7 +145,7 @@ namespace NzbDrone.Core.MediaFiles
             // Update existing files that have a different file size
 
             var fileInfoStopwatch = Stopwatch.StartNew();
-            var filesToUpdate = new List<EpisodeFile>();
+            var filesToUpdate = new List<EditionFile>();
 
             foreach (var file in seriesFiles)
             {
@@ -278,9 +278,9 @@ namespace NzbDrone.Core.MediaFiles
 
         public void Execute(RescanSeriesCommand message)
         {
-            if (message.SeriesId.HasValue)
+            if (message.AuthorId.HasValue)
             {
-                var series = _seriesService.GetSeries(message.SeriesId.Value);
+                var series = _seriesService.GetSeries(message.AuthorId.Value);
                 Scan(series);
             }
             else

@@ -94,8 +94,8 @@ namespace NzbDrone.Core.Datastore
                   .Ignore(i => i.SupportsOnRename)
                   .Ignore(i => i.SupportsOnSeriesAdd)
                   .Ignore(i => i.SupportsOnSeriesDelete)
-                  .Ignore(i => i.SupportsOnEpisodeFileDelete)
-                  .Ignore(i => i.SupportsOnEpisodeFileDeleteForUpgrade)
+                  .Ignore(i => i.SupportsOnEditionFileDelete)
+                  .Ignore(i => i.SupportsOnEditionFileDeleteForUpgrade)
                   .Ignore(i => i.SupportsOnHealthIssue)
                   .Ignore(i => i.SupportsOnHealthRestored)
                   .Ignore(i => i.SupportsOnApplicationUpdate)
@@ -117,10 +117,10 @@ namespace NzbDrone.Core.Datastore
                   .Ignore(s => s.RootFolderPath)
                   .HasOne(s => s.QualityProfile, s => s.QualityProfileId);
 
-            Mapper.Entity<EpisodeFile>("EpisodeFiles").RegisterModel()
-                  .HasOne(f => f.Series, f => f.SeriesId)
+            Mapper.Entity<EditionFile>("EditionFiles").RegisterModel()
+                  .HasOne(f => f.Series, f => f.AuthorId)
                   .LazyLoad(x => x.Episodes,
-                            (db, parent) => db.Query<Episode>(new SqlBuilder(db.DatabaseType).Where<Episode>(c => c.EpisodeFileId == parent.Id)).ToList(),
+                            (db, parent) => db.Query<Episode>(new SqlBuilder(db.DatabaseType).Where<Episode>(c => c.EditionFileId == parent.Id)).ToList(),
                             t => t.Id > 0)
                   .Ignore(f => f.Path);
 
@@ -128,8 +128,8 @@ namespace NzbDrone.Core.Datastore
                   .Ignore(e => e.SeriesTitle)
                   .Ignore(e => e.Series)
                   .Ignore(e => e.HasFile)
-                  .Ignore(e => e.AbsoluteEpisodeNumberAdded)
-                  .HasOne(s => s.EpisodeFile, s => s.EpisodeFileId);
+                  .Ignore(e => e.AbsoluteEditionNumberAdded)
+                  .HasOne(s => s.EditionFile, s => s.EditionFileId);
 
             Mapper.Entity<QualityDefinition>("QualityDefinitions").RegisterModel()
                   .Ignore(d => d.GroupName)

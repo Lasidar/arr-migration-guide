@@ -9,13 +9,13 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
 {
-    public class DeletedEpisodeFileSpecification : IDownloadDecisionEngineSpecification
+    public class DeletedEditionFileSpecification : IDownloadDecisionEngineSpecification
     {
         private readonly IDiskProvider _diskProvider;
         private readonly IConfigService _configService;
         private readonly Logger _logger;
 
-        public DeletedEpisodeFileSpecification(IDiskProvider diskProvider, IConfigService configService, Logger logger)
+        public DeletedEditionFileSpecification(IDiskProvider diskProvider, IConfigService configService, Logger logger)
         {
             _diskProvider = diskProvider;
             _configService = configService;
@@ -38,18 +38,18 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
                 return DownloadSpecDecision.Accept();
             }
 
-            var missingEpisodeFiles = subject.Episodes
-                                             .Where(v => v.EpisodeFileId != 0)
-                                             .Select(v => v.EpisodeFile.Value)
+            var missingEditionFiles = subject.Episodes
+                                             .Where(v => v.EditionFileId != 0)
+                                             .Select(v => v.EditionFile.Value)
                                              .DistinctBy(v => v.Id)
-                                             .Where(v => IsEpisodeFileMissing(subject.Series, v))
+                                             .Where(v => IsEditionFileMissing(subject.Series, v))
                                              .ToArray();
 
-            if (missingEpisodeFiles.Any())
+            if (missingEditionFiles.Any())
             {
-                foreach (var missingEpisodeFile in missingEpisodeFiles)
+                foreach (var missingEditionFile in missingEditionFiles)
                 {
-                    _logger.Trace("Episode file {0} is missing from disk.", missingEpisodeFile.RelativePath);
+                    _logger.Trace("Episode file {0} is missing from disk.", missingEditionFile.RelativePath);
                 }
 
                 _logger.Debug("Files for this episode exist in the database but not on disk, will be unmonitored on next diskscan. skipping.");
@@ -59,7 +59,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
             return DownloadSpecDecision.Accept();
         }
 
-        private bool IsEpisodeFileMissing(Series series, EpisodeFile episodeFile)
+        private bool IsEditionFileMissing(Series series, EditionFile episodeFile)
         {
             var fullPath = Path.Combine(series.Path, episodeFile.RelativePath);
 

@@ -34,15 +34,15 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase(@"C:\Test\Series\Season 1\02.04.24 - S01E01 - The Rabbit Hole", 1, 1)]
         [TestCase(@"C:\Test\Series\Season 1\8 Series Rules - S01E01 - Pilot", 1, 1)]
 
-        // [TestCase(@"C:\series.state.S02E04.720p.WEB-DL.DD5.1.H.264\73696S02-04.mkv", 2, 4)] //Gets treated as S01E04 (because it gets parsed as anime); 2020-01 broken test case: Expected result.EpisodeNumbers to contain 1 item(s), but found 0
+        // [TestCase(@"C:\series.state.S02E04.720p.WEB-DL.DD5.1.H.264\73696S02-04.mkv", 2, 4)] //Gets treated as S01E04 (because it gets parsed as anime); 2020-01 broken test case: Expected result.EditionNumbers to contain 1 item(s), but found 0
         public void should_parse_from_path(string path, int season, int episode)
         {
             var result = Parser.Parser.ParsePath(path.AsOsAgnostic());
 
-            result.EpisodeNumbers.Should().HaveCount(1);
-            result.SeasonNumber.Should().Be(season);
-            result.EpisodeNumbers[0].Should().Be(episode);
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.EditionNumbers.Should().HaveCount(1);
+            result.BookNumber.Should().Be(season);
+            result.EditionNumbers[0].Should().Be(episode);
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeFalse();
 
             ExceptionVerification.IgnoreWarns();
@@ -55,10 +55,10 @@ namespace NzbDrone.Core.Test.ParserTests
             var result = Parser.Parser.ParsePath(path.AsOsAgnostic());
 
             result.SeriesTitle.Should().Be(title);
-            result.EpisodeNumbers.Should().HaveCount(episodes.Length);
-            result.SeasonNumber.Should().Be(season);
-            result.EpisodeNumbers.Should().BeEquivalentTo(episodes);
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.EditionNumbers.Should().HaveCount(episodes.Length);
+            result.BookNumber.Should().Be(season);
+            result.EditionNumbers.Should().BeEquivalentTo(episodes);
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeFalse();
 
             ExceptionVerification.IgnoreWarns();

@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Alter.Table("EpisodeFiles")
+            Alter.Table("EditionFiles")
                  .AddColumn("Languages").AsString().NotNullable().WithDefaultValue("[]");
 
             Alter.Table("History")
@@ -18,13 +18,13 @@ namespace NzbDrone.Core.Datastore.Migration
                  .AddColumn("Languages").AsString().NotNullable().WithDefaultValue("[]");
 
             // Migrate Language to Languages in all tables
-            Execute.Sql("UPDATE \"EpisodeFiles\" SET \"Languages\" = '[' || \"Language\" || ']'");
+            Execute.Sql("UPDATE \"EditionFiles\" SET \"Languages\" = '[' || \"Language\" || ']'");
             Execute.Sql("UPDATE \"History\" SET \"Languages\" = '[' || \"Language\" || ']'");
             Execute.Sql("UPDATE \"Blocklist\" SET \"Languages\" = '[' || \"Language\" || ']'");
 
             // Migrate Language Profiles to CFs
 
-            Delete.Column("Language").FromTable("EpisodeFiles");
+            Delete.Column("Language").FromTable("EditionFiles");
             Delete.Column("Language").FromTable("History");
             Delete.Column("Language").FromTable("Blocklist");
 

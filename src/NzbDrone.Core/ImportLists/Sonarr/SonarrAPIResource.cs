@@ -39,7 +39,7 @@ namespace NzbDrone.Core.ImportLists.Sonarr
 
     public class SonarrSeason
     {
-        public int SeasonNumber { get; set; }
+        public int BookNumber { get; set; }
         public bool Monitored { get; set; }
     }
 }

@@ -64,7 +64,7 @@ namespace NzbDrone.Core.Datastore.Migration
         {
             // Converts the QualityModel JSON objects to their new format (only storing the QualityId instead of the entire object)
             ConvertQualityModel(conn, tran, "Blacklist");
-            ConvertQualityModel(conn, tran, "EpisodeFiles");
+            ConvertQualityModel(conn, tran, "EditionFiles");
             ConvertQualityModel(conn, tran, "History");
         }
 

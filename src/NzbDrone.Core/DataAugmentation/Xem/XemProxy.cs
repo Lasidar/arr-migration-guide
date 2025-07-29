@@ -11,7 +11,7 @@ namespace NzbDrone.Core.DataAugmentation.Xem
 {
     public interface IXemProxy
     {
-        List<int> GetXemSeriesIds();
+        List<int> GetXemAuthorIds();
         List<XemSceneTvdbMapping> GetSceneTvdbMappings(int id);
         List<SceneMapping> GetSceneTvdbNames();
     }
@@ -36,7 +36,7 @@ namespace NzbDrone.Core.DataAugmentation.Xem
                 .CreateFactory();
         }
 
-        public List<int> GetXemSeriesIds()
+        public List<int> GetXemAuthorIds()
         {
             _logger.Debug("Fetching Series IDs from");
 
@@ -103,7 +103,7 @@ namespace NzbDrone.Core.DataAugmentation.Xem
                                    {
                                        Title = n.Key,
                                        SearchTerm = n.Key,
-                                       SceneSeasonNumber = seasonNumber,
+                                       SceneBookNumber = seasonNumber,
                                        TvdbId = series.Key
                                    });
                     }

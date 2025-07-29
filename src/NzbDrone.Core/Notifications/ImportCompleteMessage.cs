@@ -12,7 +12,7 @@ namespace NzbDrone.Core.Notifications
         public string Message { get; set; }
         public Series Series { get; set; }
         public List<Episode> Episodes { get; set; }
-        public List<EpisodeFile> EpisodeFiles { get; set; }
+        public List<EditionFile> EditionFiles { get; set; }
         public string SourcePath { get; set; }
         public string SourceTitle { get; set; }
         public DownloadClientItemClientInfo DownloadClientInfo { get; set; }

@@ -18,8 +18,8 @@ namespace Readarr.Api.V3.Wanted
         private readonly IEpisodeCutoffService _episodeCutoffService;
 
         public CutoffController(IEpisodeCutoffService episodeCutoffService,
-                            IEpisodeService episodeService,
-                            ISeriesService seriesService,
+                            IEditionService episodeService,
+                            IAuthorService seriesService,
                             IUpgradableSpecification upgradableSpecification,
                             ICustomFormatCalculationService formatCalculator,
                             IBroadcastSignalRMessage signalRBroadcaster)
@@ -30,7 +30,7 @@ namespace Readarr.Api.V3.Wanted
 
         [HttpGet]
         [Produces("application/json")]
-        public PagingResource<EpisodeResource> GetCutoffUnmetEpisodes([FromQuery] PagingRequestResource paging, bool includeSeries = false, bool includeEpisodeFile = false, bool includeImages = false, bool monitored = true)
+        public PagingResource<EpisodeResource> GetCutoffUnmetEpisodes([FromQuery] PagingRequestResource paging, bool includeSeries = false, bool includeEditionFile = false, bool includeImages = false, bool monitored = true)
         {
             var pagingResource = new PagingResource<EpisodeResource>(paging);
             var pagingSpec = pagingResource.MapToPagingSpec<EpisodeResource, Episode>(
@@ -52,7 +52,7 @@ namespace Readarr.Api.V3.Wanted
                 pagingSpec.FilterExpressions.Add(v => v.Monitored == false || v.Series.Monitored == false);
             }
 
-            var resource = pagingSpec.ApplyToPage(_episodeCutoffService.EpisodesWhereCutoffUnmet, v => MapToResource(v, includeSeries, includeEpisodeFile, includeImages));
+            var resource = pagingSpec.ApplyToPage(_episodeCutoffService.EpisodesWhereCutoffUnmet, v => MapToResource(v, includeSeries, includeEditionFile, includeImages));
 
             return resource;
         }

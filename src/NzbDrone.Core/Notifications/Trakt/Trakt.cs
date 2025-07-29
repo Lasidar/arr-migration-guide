@@ -36,20 +36,20 @@ namespace NzbDrone.Core.Notifications.Trakt
         public override void OnDownload(DownloadMessage message)
         {
             RefreshTokenIfNecessary();
-            AddEpisodeToCollection(Settings, message.Series, message.EpisodeFile);
+            AddEpisodeToCollection(Settings, message.Series, message.EditionFile);
         }
 
         public override void OnImportComplete(ImportCompleteMessage message)
         {
             RefreshTokenIfNecessary();
 
-            message.EpisodeFiles.ForEach(f => AddEpisodeToCollection(Settings, message.Series, f));
+            message.EditionFiles.ForEach(f => AddEpisodeToCollection(Settings, message.Series, f));
         }
 
-        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        public override void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             RefreshTokenIfNecessary();
-            RemoveEpisodeFromCollection(Settings, deleteMessage.Series, deleteMessage.EpisodeFile);
+            RemoveEpisodeFromCollection(Settings, deleteMessage.Series, deleteMessage.EditionFile);
         }
 
         public override void OnSeriesAdd(SeriesAddMessage message)
@@ -162,7 +162,7 @@ namespace NzbDrone.Core.Notifications.Trakt
             }
         }
 
-        private void AddEpisodeToCollection(TraktSettings settings, Series series, EpisodeFile episodeFile)
+        private void AddEpisodeToCollection(TraktSettings settings, Series series, EditionFile episodeFile)
         {
             var payload = new TraktCollectShowsResource
             {
@@ -181,7 +181,7 @@ namespace NzbDrone.Core.Notifications.Trakt
             {
                 payloadEpisodes.Add(new TraktEpisodeResource
                 {
-                    Number = episode.EpisodeNumber,
+                    Number = episode.EditionNumber,
                     CollectedAt = DateTime.Now,
                     Resolution = traktResolution,
                     Hdr = hdr,
@@ -194,7 +194,7 @@ namespace NzbDrone.Core.Notifications.Trakt
             var payloadSeasons = new List<TraktSeasonResource>();
             payloadSeasons.Add(new TraktSeasonResource
             {
-                Number = episodeFile.SeasonNumber,
+                Number = episodeFile.BookNumber,
                 Episodes = payloadEpisodes
             });
 
@@ -213,7 +213,7 @@ namespace NzbDrone.Core.Notifications.Trakt
             _proxy.AddToCollection(payload, settings.AccessToken);
         }
 
-        private void RemoveEpisodeFromCollection(TraktSettings settings, Series series, EpisodeFile episodeFile)
+        private void RemoveEpisodeFromCollection(TraktSettings settings, Series series, EditionFile episodeFile)
         {
             var payload = new TraktCollectShowsResource
             {
@@ -226,14 +226,14 @@ namespace NzbDrone.Core.Notifications.Trakt
             {
                 payloadEpisodes.Add(new TraktEpisodeResource
                 {
-                    Number = episode.EpisodeNumber
+                    Number = episode.EditionNumber
                 });
             }
 
             var payloadSeasons = new List<TraktSeasonResource>();
             payloadSeasons.Add(new TraktSeasonResource
             {
-                Number = episodeFile.SeasonNumber,
+                Number = episodeFile.BookNumber,
                 Episodes = payloadEpisodes
             });
 
@@ -328,7 +328,7 @@ namespace NzbDrone.Core.Notifications.Trakt
             return traktResolution;
         }
 
-        private string MapHdr(EpisodeFile episodeFile)
+        private string MapHdr(EditionFile episodeFile)
         {
             var traktHdr = episodeFile.MediaInfo?.VideoHdrFormat switch
             {
@@ -342,7 +342,7 @@ namespace NzbDrone.Core.Notifications.Trakt
             return traktHdr;
         }
 
-        private string MapAudio(EpisodeFile episodeFile)
+        private string MapAudio(EditionFile episodeFile)
         {
             var audioCodec = episodeFile.MediaInfo != null ? MediaInfoFormatter.FormatAudioCodec(episodeFile.MediaInfo, episodeFile.SceneName) : string.Empty;
 
@@ -372,7 +372,7 @@ namespace NzbDrone.Core.Notifications.Trakt
             return traktAudioFormat;
         }
 
-        private string MapAudioChannels(EpisodeFile episodeFile, string audioFormat)
+        private string MapAudioChannels(EditionFile episodeFile, string audioFormat)
         {
             var audioChannels = episodeFile.MediaInfo != null ? MediaInfoFormatter.FormatAudioChannels(episodeFile.MediaInfo).ToString("0.0") : string.Empty;
 

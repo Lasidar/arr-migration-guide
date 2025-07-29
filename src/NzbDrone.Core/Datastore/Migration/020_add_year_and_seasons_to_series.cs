@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Datastore.Migration
                         using (var seasonsCmd = conn.CreateCommand())
                         {
                             seasonsCmd.Transaction = tran;
-                            seasonsCmd.CommandText = $"SELECT \"SeasonNumber\", \"Monitored\" FROM \"Seasons\" WHERE \"SeriesId\" = {seriesId}";
+                            seasonsCmd.CommandText = $"SELECT \"BookNumber\", \"Monitored\" FROM \"Seasons\" WHERE \"AuthorId\" = {seriesId}";
 
                             using (var seasonReader = seasonsCmd.ExecuteReader())
                             {

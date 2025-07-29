@@ -12,10 +12,10 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Test.MediaFiles
 {
-    public class RenameEpisodeFileServiceFixture : CoreTest<RenameEpisodeFileService>
+    public class RenameEditionFileServiceFixture : CoreTest<RenameEditionFileService>
     {
         private Series _series;
-        private List<EpisodeFile> _episodeFiles;
+        private List<EditionFile> _episodeFiles;
 
         [SetUp]
         public void Setup()
@@ -23,26 +23,26 @@ namespace NzbDrone.Core.Test.MediaFiles
             _series = Builder<Series>.CreateNew()
                                      .Build();
 
-            _episodeFiles = Builder<EpisodeFile>.CreateListOfSize(2)
+            _episodeFiles = Builder<EditionFile>.CreateListOfSize(2)
                                                 .All()
-                                                .With(e => e.SeriesId = _series.Id)
-                                                .With(e => e.SeasonNumber = 1)
+                                                .With(e => e.AuthorId = _series.Id)
+                                                .With(e => e.BookNumber = 1)
                                                 .Build()
                                                 .ToList();
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Setup(s => s.GetSeries(_series.Id))
                   .Returns(_series);
         }
 
-        private void GivenNoEpisodeFiles()
+        private void GivenNoEditionFiles()
         {
             Mocker.GetMock<IMediaFileService>()
                   .Setup(s => s.Get(It.IsAny<IEnumerable<int>>()))
-                  .Returns(new List<EpisodeFile>());
+                  .Returns(new List<EditionFile>());
         }
 
-        private void GivenEpisodeFiles()
+        private void GivenEditionFiles()
         {
             Mocker.GetMock<IMediaFileService>()
                   .Setup(s => s.Get(It.IsAny<IEnumerable<int>>()))
@@ -51,14 +51,14 @@ namespace NzbDrone.Core.Test.MediaFiles
 
         private void GivenMovedFiles()
         {
-            Mocker.GetMock<IMoveEpisodeFiles>()
-                  .Setup(s => s.MoveEpisodeFile(It.IsAny<EpisodeFile>(), _series));
+            Mocker.GetMock<IMoveEditionFiles>()
+                  .Setup(s => s.MoveEditionFile(It.IsAny<EditionFile>(), _series));
         }
 
         [Test]
         public void should_not_publish_event_if_no_files_to_rename()
         {
-            GivenNoEpisodeFiles();
+            GivenNoEditionFiles();
 
             Subject.Execute(new RenameFilesCommand(_series.Id, new List<int> { 1 }));
 
@@ -69,10 +69,10 @@ namespace NzbDrone.Core.Test.MediaFiles
         [Test]
         public void should_not_publish_event_if_no_files_are_renamed()
         {
-            GivenEpisodeFiles();
+            GivenEditionFiles();
 
-            Mocker.GetMock<IMoveEpisodeFiles>()
-                  .Setup(s => s.MoveEpisodeFile(It.IsAny<EpisodeFile>(), It.IsAny<Series>()))
+            Mocker.GetMock<IMoveEditionFiles>()
+                  .Setup(s => s.MoveEditionFile(It.IsAny<EditionFile>(), It.IsAny<Series>()))
                   .Throws(new SameFilenameException("Same file name", "Filename"));
 
             Subject.Execute(new RenameFilesCommand(_series.Id, new List<int> { 1 }));
@@ -84,7 +84,7 @@ namespace NzbDrone.Core.Test.MediaFiles
         [Test]
         public void should_publish_event_if_files_are_renamed()
         {
-            GivenEpisodeFiles();
+            GivenEditionFiles();
             GivenMovedFiles();
 
             Subject.Execute(new RenameFilesCommand(_series.Id, new List<int> { 1 }));
@@ -96,19 +96,19 @@ namespace NzbDrone.Core.Test.MediaFiles
         [Test]
         public void should_update_moved_files()
         {
-            GivenEpisodeFiles();
+            GivenEditionFiles();
             GivenMovedFiles();
 
             Subject.Execute(new RenameFilesCommand(_series.Id, new List<int> { 1 }));
 
             Mocker.GetMock<IMediaFileService>()
-                  .Verify(v => v.Update(It.IsAny<EpisodeFile>()), Times.Exactly(2));
+                  .Verify(v => v.Update(It.IsAny<EditionFile>()), Times.Exactly(2));
         }
 
         [Test]
         public void should_get_episodefiles_by_ids_only()
         {
-            GivenEpisodeFiles();
+            GivenEditionFiles();
             GivenMovedFiles();
 
             var files = new List<int> { 1 };

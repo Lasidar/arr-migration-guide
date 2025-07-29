@@ -12,13 +12,13 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
     public class DeleteBadMediaCovers : IHousekeepingTask
     {
         private readonly IMetadataFileService _metaFileService;
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
         private readonly IDiskProvider _diskProvider;
         private readonly IConfigService _configService;
         private readonly Logger _logger;
 
         public DeleteBadMediaCovers(IMetadataFileService metaFileService,
-                                    ISeriesService seriesService,
+                                    IAuthorService seriesService,
                                     IDiskProvider diskProvider,
                                     IConfigService configService,
                                     Logger logger)

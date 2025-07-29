@@ -7,7 +7,7 @@ namespace NzbDrone.Core.Tags
     public class TagDetails : ModelBase
     {
         public string Label { get; set; }
-        public List<int> SeriesIds { get; set; }
+        public List<int> AuthorIds { get; set; }
         public List<int> NotificationIds { get; set; }
         public List<int> RestrictionIds { get; set; }
         public List<int> DelayProfileIds { get; set; }
@@ -16,7 +16,7 @@ namespace NzbDrone.Core.Tags
         public List<int> AutoTagIds { get; set; }
         public List<int> DownloadClientIds { get; set; }
 
-        public bool InUse => SeriesIds.Any() ||
+        public bool InUse => AuthorIds.Any() ||
                              NotificationIds.Any() ||
                              RestrictionIds.Any() ||
                              DelayProfileIds.Any() ||

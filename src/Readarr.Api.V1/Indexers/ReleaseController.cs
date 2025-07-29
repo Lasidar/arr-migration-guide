@@ -30,8 +30,8 @@ namespace Readarr.Api.V3.Indexers
         private readonly IMakeDownloadDecision _downloadDecisionMaker;
         private readonly IPrioritizeDownloadDecision _prioritizeDownloadDecision;
         private readonly IDownloadService _downloadService;
-        private readonly ISeriesService _seriesService;
-        private readonly IEpisodeService _episodeService;
+        private readonly IAuthorService _seriesService;
+        private readonly IEditionService _episodeService;
         private readonly IParsingService _parsingService;
         private readonly Logger _logger;
 
@@ -42,8 +42,8 @@ namespace Readarr.Api.V3.Indexers
                              IMakeDownloadDecision downloadDecisionMaker,
                              IPrioritizeDownloadDecision prioritizeDownloadDecision,
                              IDownloadService downloadService,
-                             ISeriesService seriesService,
-                             IEpisodeService episodeService,
+                             IAuthorService seriesService,
+                             IEditionService episodeService,
                              IParsingService parsingService,
                              ICacheManager cacheManager,
                              IQualityProfileService qualityProfileService,
@@ -83,7 +83,7 @@ namespace Readarr.Api.V3.Indexers
             {
                 if (release.ShouldOverride == true)
                 {
-                    Ensure.That(release.SeriesId, () => release.SeriesId).IsNotNull();
+                    Ensure.That(release.AuthorId, () => release.AuthorId).IsNotNull();
                     Ensure.That(release.EpisodeIds, () => release.EpisodeIds).IsNotNull();
                     Ensure.That(release.EpisodeIds, () => release.EpisodeIds).HasItems();
                     Ensure.That(release.Quality, () => release.Quality).IsNotNull();
@@ -95,7 +95,7 @@ namespace Readarr.Api.V3.Indexers
                         Release = remoteEpisode.Release,
                         ParsedEpisodeInfo = remoteEpisode.ParsedEpisodeInfo.JsonClone(),
                         SceneMapping = remoteEpisode.SceneMapping,
-                        MappedSeasonNumber = remoteEpisode.MappedSeasonNumber,
+                        MappedBookNumber = remoteEpisode.MappedBookNumber,
                         EpisodeRequested = remoteEpisode.EpisodeRequested,
                         DownloadAllowed = remoteEpisode.DownloadAllowed,
                         SeedConfiguration = remoteEpisode.SeedConfiguration,
@@ -105,7 +105,7 @@ namespace Readarr.Api.V3.Indexers
                         ReleaseSource = remoteEpisode.ReleaseSource
                     };
 
-                    remoteEpisode.Series = _seriesService.GetSeries(release.SeriesId!.Value);
+                    remoteEpisode.Series = _seriesService.GetSeries(release.AuthorId!.Value);
                     remoteEpisode.Episodes = _episodeService.GetEpisodes(release.EpisodeIds);
                     remoteEpisode.ParsedEpisodeInfo.Quality = release.Quality;
                     remoteEpisode.Languages = release.Languages;
@@ -117,12 +117,12 @@ namespace Readarr.Api.V3.Indexers
                     {
                         var episode = _episodeService.GetEpisode(release.EpisodeId.Value);
 
-                        remoteEpisode.Series = _seriesService.GetSeries(episode.SeriesId);
+                        remoteEpisode.Series = _seriesService.GetSeries(episode.AuthorId);
                         remoteEpisode.Episodes = new List<Episode> { episode };
                     }
-                    else if (release.SeriesId.HasValue)
+                    else if (release.AuthorId.HasValue)
                     {
-                        var series = _seriesService.GetSeries(release.SeriesId.Value);
+                        var series = _seriesService.GetSeries(release.AuthorId.Value);
                         var episodes = _parsingService.GetEpisodes(remoteEpisode.ParsedEpisodeInfo, series, true);
 
                         if (episodes.Empty())

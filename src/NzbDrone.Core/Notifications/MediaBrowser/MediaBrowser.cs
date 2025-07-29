@@ -57,12 +57,12 @@ namespace NzbDrone.Core.Notifications.Emby
             UpdateIfEnabled(message.Series, Created);
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedEditionFile> renamedFiles)
         {
             UpdateIfEnabled(series, Modified);
         }
 
-        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        public override void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             if (Settings.Notify)
             {

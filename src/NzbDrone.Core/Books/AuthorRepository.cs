@@ -6,7 +6,7 @@ using NzbDrone.Core.Messaging.Events;
 
 namespace NzbDrone.Core.Books
 {
-    public interface ISeriesRepository : IBasicRepository<Series>
+    public interface IAuthorRepository : IBasicRepository<Series>
     {
         bool SeriesPathExists(string path);
         Series FindByTitle(string cleanTitle);
@@ -21,9 +21,9 @@ namespace NzbDrone.Core.Books
         Dictionary<int, List<int>> AllSeriesTags();
     }
 
-    public class SeriesRepository : BasicRepository<Series>, ISeriesRepository
+    public class AuthorRepository : BasicRepository<Series>, IAuthorRepository
     {
-        public SeriesRepository(IMainDatabase database, IEventAggregator eventAggregator)
+        public AuthorRepository(IMainDatabase database, IEventAggregator eventAggregator)
             : base(database, eventAggregator)
         {
         }

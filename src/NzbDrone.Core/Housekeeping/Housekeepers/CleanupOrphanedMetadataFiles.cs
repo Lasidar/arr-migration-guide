@@ -15,8 +15,8 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
         public void Clean()
         {
             DeleteOrphanedBySeries();
-            DeleteOrphanedByEpisodeFile();
-            DeleteWhereEpisodeFileIsZero();
+            DeleteOrphanedByEditionFile();
+            DeleteWhereEditionFileIsZero();
         }
 
         private void DeleteOrphanedBySeries()
@@ -26,30 +26,30 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
                                      WHERE ""Id"" IN (
                                      SELECT ""MetadataFiles"".""Id"" FROM ""MetadataFiles""
                                      LEFT OUTER JOIN ""Series""
-                                     ON ""MetadataFiles"".""SeriesId"" = ""Series"".""Id""
+                                     ON ""MetadataFiles"".""AuthorId"" = ""Series"".""Id""
                                      WHERE ""Series"".""Id"" IS NULL)");
         }
 
-        private void DeleteOrphanedByEpisodeFile()
+        private void DeleteOrphanedByEditionFile()
         {
             using var mapper = _database.OpenConnection();
             mapper.Execute(@"DELETE FROM ""MetadataFiles""
                                      WHERE ""Id"" IN (
                                      SELECT ""MetadataFiles"".""Id"" FROM ""MetadataFiles""
-                                     LEFT OUTER JOIN ""EpisodeFiles""
-                                     ON ""MetadataFiles"".""EpisodeFileId"" = ""EpisodeFiles"".""Id""
-                                     WHERE ""MetadataFiles"".""EpisodeFileId"" > 0
-                                     AND ""EpisodeFiles"".""Id"" IS NULL)");
+                                     LEFT OUTER JOIN ""EditionFiles""
+                                     ON ""MetadataFiles"".""EditionFileId"" = ""EditionFiles"".""Id""
+                                     WHERE ""MetadataFiles"".""EditionFileId"" > 0
+                                     AND ""EditionFiles"".""Id"" IS NULL)");
         }
 
-        private void DeleteWhereEpisodeFileIsZero()
+        private void DeleteWhereEditionFileIsZero()
         {
             using var mapper = _database.OpenConnection();
             mapper.Execute(@"DELETE FROM ""MetadataFiles""
                                      WHERE ""Id"" IN (
                                      SELECT ""Id"" FROM ""MetadataFiles""
                                      WHERE ""Type"" IN (2, 5)
-                                     AND ""EpisodeFileId"" = 0)");
+                                     AND ""EditionFileId"" = 0)");
         }
     }
 }

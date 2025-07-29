@@ -23,7 +23,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
     {
         private Series _series;
         private Episode _episode1;
-        private EpisodeFile _episodeFile;
+        private EditionFile _episodeFile;
         private NamingConfig _namingConfig;
 
         [SetUp]
@@ -42,12 +42,12 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             _episode1 = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
-                            .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 6)
-                            .With(e => e.AbsoluteEpisodeNumber = 100)
+                            .With(e => e.BookNumber = 15)
+                            .With(e => e.EditionNumber = 6)
+                            .With(e => e.AbsoluteEditionNumber = 100)
                             .Build();
 
-            _episodeFile = new EpisodeFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
+            _episodeFile = new EditionFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
 
             Mocker.GetMock<IQualityDefinitionService>()
                 .Setup(v => v.Get(Moq.It.IsAny<Quality>()))
@@ -162,7 +162,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_season_number_with_single_digit()
         {
-            _episode1.SeasonNumber = 1;
+            _episode1.BookNumber = 1;
             _namingConfig.StandardEpisodeFormat = "{season}x{episode}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
@@ -172,7 +172,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_season00_number_with_two_digits()
         {
-            _episode1.SeasonNumber = 1;
+            _episode1.BookNumber = 1;
             _namingConfig.StandardEpisodeFormat = "{season:00}x{episode}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
@@ -182,7 +182,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_episode_number_with_single_digit()
         {
-            _episode1.SeasonNumber = 1;
+            _episode1.BookNumber = 1;
             _namingConfig.StandardEpisodeFormat = "{season}x{episode}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
@@ -192,7 +192,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_episode00_number_with_two_digits()
         {
-            _episode1.SeasonNumber = 1;
+            _episode1.BookNumber = 1;
             _namingConfig.StandardEpisodeFormat = "{season}x{episode:00}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
@@ -315,10 +315,10 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             _episode1.AirDate = "2012-12-13";
             _episode1.Title = "Kristen Stewart";
-            _episode1.SeasonNumber = 1;
-            _episode1.EpisodeNumber = 5;
+            _episode1.BookNumber = 1;
+            _episode1.EditionNumber = 5;
 
-            _episodeFile.SeasonNumber = 1;
+            _episodeFile.BookNumber = 1;
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("The Daily Show with Jon Stewart - 2012-12-13 - Kristen Stewart");
@@ -334,10 +334,10 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             _episode1.AirDate = "2012-12-13";
             _episode1.Title = "Kristen Stewart";
-            _episode1.SeasonNumber = 0;
-            _episode1.EpisodeNumber = 5;
+            _episode1.BookNumber = 0;
+            _episode1.EditionNumber = 5;
 
-            _episodeFile.SeasonNumber = 0;
+            _episodeFile.BookNumber = 0;
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("The Daily Show with Jon Stewart - S00E05 - Kristen Stewart");
@@ -353,10 +353,10 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             _episode1.AirDate = null;
             _episode1.Title = "Kristen Stewart";
-            _episode1.SeasonNumber = 1;
-            _episode1.EpisodeNumber = 5;
+            _episode1.BookNumber = 1;
+            _episode1.EditionNumber = 5;
 
-            _episodeFile.SeasonNumber = 1;
+            _episodeFile.BookNumber = 1;
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("The Daily Show with Jon Stewart - Unknown - Kristen Stewart");
@@ -404,8 +404,8 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             var episode = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "Part 1.")
-                            .With(e => e.SeasonNumber = 6)
-                            .With(e => e.EpisodeNumber = 6)
+                            .With(e => e.BookNumber = 6)
+                            .With(e => e.EditionNumber = 6)
                             .Build();
 
             Subject.BuildFileName(new List<Episode> { episode }, new Series { Title = "30 Rock" }, _episodeFile)
@@ -420,8 +420,8 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             var episode = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "Part 1?")
-                            .With(e => e.SeasonNumber = 6)
-                            .With(e => e.EpisodeNumber = 6)
+                            .With(e => e.BookNumber = 6)
+                            .With(e => e.EditionNumber = 6)
                             .Build();
 
             Subject.BuildFileName(new List<Episode> { episode }, new Series { Title = "30 Rock" }, _episodeFile)
@@ -435,8 +435,8 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             var episode = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "Part 1")
-                            .With(e => e.SeasonNumber = 6)
-                            .With(e => e.EpisodeNumber = 6)
+                            .With(e => e.BookNumber = 6)
+                            .With(e => e.EditionNumber = 6)
                             .Build();
 
             Subject.BuildFileName(new List<Episode> { episode }, new Series { Title = "Chicago P.D." }, _episodeFile)
@@ -450,8 +450,8 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             var episode = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "Part 1")
-                            .With(e => e.SeasonNumber = 6)
-                            .With(e => e.EpisodeNumber = 6)
+                            .With(e => e.BookNumber = 6)
+                            .With(e => e.EditionNumber = 6)
                             .Build();
 
             Subject.BuildFileName(new List<Episode> { episode }, new Series { Title = "Chicago P.D.." }, _episodeFile)
@@ -521,7 +521,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_use_standard_naming_when_anime_episode_has_no_absolute_number()
         {
             _series.SeriesType = SeriesTypes.Anime;
-            _episode1.AbsoluteEpisodeNumber = null;
+            _episode1.AbsoluteEditionNumber = null;
 
             _namingConfig.StandardEpisodeFormat = "{Series Title} - {season:0}x{episode:00} - {Episode Title}";
             _namingConfig.AnimeEpisodeFormat = "{Series Title} - {absolute:000} - {Episode Title}";
@@ -987,7 +987,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             Mocker.GetMock<IUpdateMediaInfo>()
                 .Setup(u => u.Update(_episodeFile, _series))
-                .Callback((EpisodeFile e, Series s) => e.MediaInfo = new MediaInfoModel
+                .Callback((EditionFile e, Series s) => e.MediaInfo = new MediaInfoModel
                 {
                     VideoFormat = "AVC",
                     AudioFormat = "DTS",

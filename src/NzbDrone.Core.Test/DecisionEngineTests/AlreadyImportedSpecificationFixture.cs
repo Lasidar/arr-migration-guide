@@ -36,9 +36,9 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                                         new Episode
                                         {
                                             Id = FIRST_EPISODE_ID,
-                                            SeasonNumber = 12,
-                                            EpisodeNumber = 3,
-                                            EpisodeFileId = 1
+                                            BookNumber = 12,
+                                            EditionNumber = 3,
+                                            EditionFileId = 1
                                         }
                                     };
 
@@ -98,7 +98,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         [Test]
         public void should_be_accepted_if_episode_does_not_have_a_file()
         {
-            _remoteEpisode.Episodes.First().EpisodeFileId = 0;
+            _remoteEpisode.Episodes.First().EditionFileId = 0;
 
             Subject.IsSatisfiedBy(_remoteEpisode, new()).Accepted.Should().BeTrue();
         }

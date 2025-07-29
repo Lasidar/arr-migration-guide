@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Organizer
                 return validationFailure;
             }
 
-            if (!ValidateSeasonAndEpisodeNumbers(sampleResult.Episodes, parsedEpisodeInfo))
+            if (!ValidateSeasonAndEditionNumbers(sampleResult.Episodes, parsedEpisodeInfo))
             {
                 return validationFailure;
             }
@@ -60,7 +60,7 @@ namespace NzbDrone.Core.Organizer
                 return null;
             }
 
-            if (!ValidateSeasonAndEpisodeNumbers(sampleResult.Episodes, parsedEpisodeInfo))
+            if (!ValidateSeasonAndEditionNumbers(sampleResult.Episodes, parsedEpisodeInfo))
             {
                 return validationFailure;
             }
@@ -80,9 +80,9 @@ namespace NzbDrone.Core.Organizer
                 return validationFailure;
             }
 
-            if (parsedEpisodeInfo.AbsoluteEpisodeNumbers.Any())
+            if (parsedEpisodeInfo.AbsoluteEditionNumbers.Any())
             {
-                if (!parsedEpisodeInfo.AbsoluteEpisodeNumbers.First().Equals(sampleResult.Episodes.First().AbsoluteEpisodeNumber))
+                if (!parsedEpisodeInfo.AbsoluteEditionNumbers.First().Equals(sampleResult.Episodes.First().AbsoluteEditionNumber))
                 {
                     return validationFailure;
                 }
@@ -90,7 +90,7 @@ namespace NzbDrone.Core.Organizer
                 return null;
             }
 
-            if (!ValidateSeasonAndEpisodeNumbers(sampleResult.Episodes, parsedEpisodeInfo))
+            if (!ValidateSeasonAndEditionNumbers(sampleResult.Episodes, parsedEpisodeInfo))
             {
                 return validationFailure;
             }
@@ -98,10 +98,10 @@ namespace NzbDrone.Core.Organizer
             return null;
         }
 
-        private bool ValidateSeasonAndEpisodeNumbers(List<Episode> episodes, ParsedEpisodeInfo parsedEpisodeInfo)
+        private bool ValidateSeasonAndEditionNumbers(List<Episode> episodes, ParsedEpisodeInfo parsedEpisodeInfo)
         {
-            if (parsedEpisodeInfo.SeasonNumber != episodes.First().SeasonNumber ||
-                !parsedEpisodeInfo.EpisodeNumbers.OrderBy(e => e).SequenceEqual(episodes.Select(e => e.EpisodeNumber).OrderBy(e => e)))
+            if (parsedEpisodeInfo.BookNumber != episodes.First().BookNumber ||
+                !parsedEpisodeInfo.EditionNumbers.OrderBy(e => e).SequenceEqual(episodes.Select(e => e.EditionNumber).OrderBy(e => e)))
             {
                 return false;
             }

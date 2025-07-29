@@ -10,11 +10,11 @@ namespace Readarr.Api.V3.Episodes
     [V3ApiController("rename")]
     public class RenameEpisodeController : Controller
     {
-        private readonly IRenameEpisodeFileService _renameEpisodeFileService;
+        private readonly IRenameEditionFileService _renameEditionFileService;
 
-        public RenameEpisodeController(IRenameEpisodeFileService renameEpisodeFileService)
+        public RenameEpisodeController(IRenameEditionFileService renameEditionFileService)
         {
-            _renameEpisodeFileService = renameEpisodeFileService;
+            _renameEditionFileService = renameEditionFileService;
         }
 
         [HttpGet]
@@ -23,10 +23,10 @@ namespace Readarr.Api.V3.Episodes
         {
             if (seasonNumber.HasValue)
             {
-                return _renameEpisodeFileService.GetRenamePreviews(seriesId, seasonNumber.Value).ToResource();
+                return _renameEditionFileService.GetRenamePreviews(seriesId, seasonNumber.Value).ToResource();
             }
 
-            return _renameEpisodeFileService.GetRenamePreviews(seriesId).ToResource();
+            return _renameEditionFileService.GetRenamePreviews(seriesId).ToResource();
         }
 
         [HttpGet("bulk")]
@@ -43,7 +43,7 @@ namespace Readarr.Api.V3.Episodes
                 throw new BadRequestException("seriesIds must be positive integers");
             }
 
-            return _renameEpisodeFileService.GetRenamePreviews(seriesIds).ToResource();
+            return _renameEditionFileService.GetRenamePreviews(seriesIds).ToResource();
         }
     }
 }

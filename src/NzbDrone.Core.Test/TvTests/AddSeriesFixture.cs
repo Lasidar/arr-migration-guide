@@ -17,7 +17,7 @@ using NzbDrone.Test.Common;
 namespace NzbDrone.Core.Test.TvTests
 {
     [TestFixture]
-    public class AddSeriesFixture : CoreTest<AddSeriesService>
+    public class AddSeriesFixture : CoreTest<AddAuthorService>
     {
         private Series _fakeSeries;
 

@@ -17,7 +17,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             var files = Builder<MetadataFile>.CreateListOfSize(2)
                                              .All()
                                              .With(m => m.Type = MetadataType.SeriesMetadata)
-                                             .With(m => m.SeriesId = 1)
+                                             .With(m => m.AuthorId = 1)
                                              .BuildListOfNew();
 
             Db.InsertMany(files);
@@ -45,7 +45,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             var files = Builder<MetadataFile>.CreateListOfSize(2)
                                              .All()
                                              .With(m => m.Type = MetadataType.SeriesMetadata)
-                                             .With(m => m.SeriesId = 1)
+                                             .With(m => m.AuthorId = 1)
                                              .With(m => m.Consumer = "XbmcMetadata")
                                              .BuildListOfNew();
 
@@ -71,7 +71,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             var files = Builder<MetadataFile>.CreateListOfSize(2)
                                              .All()
                                              .With(m => m.Type = MetadataType.EpisodeMetadata)
-                                             .With(m => m.EpisodeFileId = 1)
+                                             .With(m => m.EditionFileId = 1)
                                              .BuildListOfNew();
 
             Db.InsertMany(files);
@@ -99,7 +99,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             var files = Builder<MetadataFile>.CreateListOfSize(2)
                                              .All()
                                              .With(m => m.Type = MetadataType.EpisodeMetadata)
-                                             .With(m => m.EpisodeFileId = 1)
+                                             .With(m => m.EditionFileId = 1)
                                              .With(m => m.Consumer = "XbmcMetadata")
                                              .BuildListOfNew();
 
@@ -125,7 +125,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             var files = Builder<MetadataFile>.CreateListOfSize(2)
                                              .All()
                                              .With(m => m.Type = MetadataType.EpisodeImage)
-                                             .With(m => m.EpisodeFileId = 1)
+                                             .With(m => m.EditionFileId = 1)
                                              .BuildListOfNew();
 
             Db.InsertMany(files);
@@ -153,7 +153,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             var files = Builder<MetadataFile>.CreateListOfSize(2)
                                              .All()
                                              .With(m => m.Type = MetadataType.EpisodeImage)
-                                             .With(m => m.EpisodeFileId = 1)
+                                             .With(m => m.EditionFileId = 1)
                                              .With(m => m.Consumer = "XbmcMetadata")
                                              .BuildListOfNew();
 

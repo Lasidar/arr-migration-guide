@@ -3,7 +3,7 @@ using NzbDrone.Common.Messaging;
 
 namespace NzbDrone.Core.Books.Events
 {
-    public class SeriesDeletedEvent : IEvent
+    public class AuthorDeletedEvent : IEvent
     {
         public List<Series> Series { get; private set; }
         public bool DeleteFiles { get; private set; }

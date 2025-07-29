@@ -8,24 +8,24 @@ using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Books;
 using NzbDrone.SignalR;
-using Readarr.Api.V3.EpisodeFiles;
+using Readarr.Api.V3.EditionFiles;
 using Readarr.Api.V3.Series;
 using Readarr.Http.REST;
 
 namespace Readarr.Api.V3.Episodes
 {
-    public abstract class EpisodeControllerWithSignalR : RestControllerWithSignalR<EpisodeResource, Episode>,
+    public abstract class EditionControllerWithSignalR : RestControllerWithSignalR<EpisodeResource, Episode>,
                                                          IHandle<EpisodeGrabbedEvent>,
                                                          IHandle<EpisodeImportedEvent>,
-                                                         IHandle<EpisodeFileDeletedEvent>
+                                                         IHandle<EditionFileDeletedEvent>
     {
-        protected readonly IEpisodeService _episodeService;
-        protected readonly ISeriesService _seriesService;
+        protected readonly IEditionService _episodeService;
+        protected readonly IAuthorService _seriesService;
         protected readonly IUpgradableSpecification _upgradableSpecification;
         protected readonly ICustomFormatCalculationService _formatCalculator;
 
-        protected EpisodeControllerWithSignalR(IEpisodeService episodeService,
-                                           ISeriesService seriesService,
+        protected EpisodeControllerWithSignalR(IEditionService episodeService,
+                                           IAuthorService seriesService,
                                            IUpgradableSpecification upgradableSpecification,
                                            ICustomFormatCalculationService formatCalculator,
                                            IBroadcastSignalRMessage signalRBroadcaster)
@@ -37,8 +37,8 @@ namespace Readarr.Api.V3.Episodes
             _formatCalculator = formatCalculator;
         }
 
-        protected EpisodeControllerWithSignalR(IEpisodeService episodeService,
-                                           ISeriesService seriesService,
+        protected EpisodeControllerWithSignalR(IEditionService episodeService,
+                                           IAuthorService seriesService,
                                            IUpgradableSpecification upgradableSpecification,
                                            ICustomFormatCalculationService formatCalculator,
                                            IBroadcastSignalRMessage signalRBroadcaster,
@@ -58,22 +58,22 @@ namespace Readarr.Api.V3.Episodes
             return resource;
         }
 
-        protected EpisodeResource MapToResource(Episode episode, bool includeSeries, bool includeEpisodeFile, bool includeImages)
+        protected EpisodeResource MapToResource(Episode episode, bool includeSeries, bool includeEditionFile, bool includeImages)
         {
             var resource = episode.ToResource();
 
-            if (includeSeries || includeEpisodeFile || includeImages)
+            if (includeSeries || includeEditionFile || includeImages)
             {
-                var series = episode.Series ?? _seriesService.GetSeries(episode.SeriesId);
+                var series = episode.Series ?? _seriesService.GetSeries(episode.AuthorId);
 
                 if (includeSeries)
                 {
                     resource.Series = series.ToResource();
                 }
 
-                if (includeEpisodeFile && episode.EpisodeFileId != 0)
+                if (includeEditionFile && episode.EditionFileId != 0)
                 {
-                    resource.EpisodeFile = episode.EpisodeFile.Value.ToResource(series, _upgradableSpecification, _formatCalculator);
+                    resource.EditionFile = episode.EditionFile.Value.ToResource(series, _upgradableSpecification, _formatCalculator);
                 }
 
                 if (includeImages)
@@ -85,11 +85,11 @@ namespace Readarr.Api.V3.Episodes
             return resource;
         }
 
-        protected List<EpisodeResource> MapToResource(List<Episode> episodes, bool includeSeries, bool includeEpisodeFile, bool includeImages)
+        protected List<EpisodeResource> MapToResource(List<Episode> episodes, bool includeSeries, bool includeEditionFile, bool includeImages)
         {
             var result = episodes.ToResource();
 
-            if (includeSeries || includeEpisodeFile || includeImages)
+            if (includeSeries || includeEditionFile || includeImages)
             {
                 var seriesDict = new Dictionary<int, NzbDrone.Core.Tv.Series>();
                 for (var i = 0; i < episodes.Count; i++)
@@ -97,7 +97,7 @@ namespace Readarr.Api.V3.Episodes
                     var episode = episodes[i];
                     var resource = result[i];
 
-                    var series = episode.Series ?? seriesDict.GetValueOrDefault(episodes[i].SeriesId) ?? _seriesService.GetSeries(episodes[i].SeriesId);
+                    var series = episode.Series ?? seriesDict.GetValueOrDefault(episodes[i].AuthorId) ?? _seriesService.GetSeries(episodes[i].AuthorId);
                     seriesDict[series.Id] = series;
 
                     if (includeSeries)
@@ -105,9 +105,9 @@ namespace Readarr.Api.V3.Episodes
                         resource.Series = series.ToResource();
                     }
 
-                    if (includeEpisodeFile && episode.EpisodeFileId != 0)
+                    if (includeEditionFile && episode.EditionFileId != 0)
                     {
-                        resource.EpisodeFile = episode.EpisodeFile.Value.ToResource(series, _upgradableSpecification, _formatCalculator);
+                        resource.EditionFile = episode.EditionFile.Value.ToResource(series, _upgradableSpecification, _formatCalculator);
                     }
 
                     if (includeImages)
@@ -142,9 +142,9 @@ namespace Readarr.Api.V3.Episodes
         }
 
         [NonAction]
-        public void Handle(EpisodeFileDeletedEvent message)
+        public void Handle(EditionFileDeletedEvent message)
         {
-            foreach (var episode in message.EpisodeFile.Episodes.Value)
+            foreach (var episode in message.EditionFile.Episodes.Value)
             {
                 BroadcastResourceChange(ModelAction.Updated, episode.Id);
             }

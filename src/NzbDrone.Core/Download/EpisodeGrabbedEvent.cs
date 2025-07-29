@@ -3,7 +3,7 @@ using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.Download
 {
-    public class EpisodeGrabbedEvent : IEvent
+    public class EditionGrabbedEvent : IEvent
     {
         public RemoteEpisode Episode { get; private set; }
         public int DownloadClientId { get; set; }

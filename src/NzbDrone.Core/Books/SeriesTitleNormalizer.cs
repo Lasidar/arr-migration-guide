@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace NzbDrone.Core.Books
 {
-    public static class SeriesTitleNormalizer
+    public static class AuthorTitleNormalizer
     {
         private static readonly Dictionary<int, string> PreComputedTitles = new()
         {

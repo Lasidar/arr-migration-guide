@@ -75,7 +75,7 @@ namespace NzbDrone.Core.Blocklisting
         {
             var blocklist = new Blocklist
                             {
-                                SeriesId = remoteEpisode.Series.Id,
+                                AuthorId = remoteEpisode.Series.Id,
                                 EpisodeIds = remoteEpisode.Episodes.Select(e => e.Id).ToList(),
                                 SourceTitle =  remoteEpisode.Release.Title,
                                 Quality = remoteEpisode.ParsedEpisodeInfo.Quality,
@@ -175,7 +175,7 @@ namespace NzbDrone.Core.Blocklisting
         {
             var blocklist = new Blocklist
             {
-                SeriesId = message.SeriesId,
+                AuthorId = message.AuthorId,
                 EpisodeIds = message.EpisodeIds,
                 SourceTitle = message.SourceTitle,
                 Quality = message.Quality,
@@ -206,7 +206,7 @@ namespace NzbDrone.Core.Blocklisting
 
         public void HandleAsync(SeriesDeletedEvent message)
         {
-            _blocklistRepository.DeleteForSeriesIds(message.Series.Select(m => m.Id).ToList());
+            _blocklistRepository.DeleteForAuthorIds(message.Series.Select(m => m.Id).ToList());
         }
     }
 }

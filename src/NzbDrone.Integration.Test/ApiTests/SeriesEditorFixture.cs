@@ -7,7 +7,7 @@ using Readarr.Api.V3.Series;
 namespace NzbDrone.Integration.Test.ApiTests
 {
     [TestFixture]
-    public class SeriesEditorFixture : IntegrationTest
+    public class AuthorEditorFixture : IntegrationTest
     {
         private void GivenExistingSeries()
         {
@@ -34,7 +34,7 @@ namespace NzbDrone.Integration.Test.ApiTests
             var seriesEditor = new SeriesEditorResource
             {
                 QualityProfileId = 2,
-                SeriesIds = series.Select(s => s.Id).ToList()
+                AuthorIds = series.Select(s => s.Id).ToList()
             };
 
             var result = Series.Editor(seriesEditor);

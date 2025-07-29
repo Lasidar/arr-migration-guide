@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace NzbDrone.Core.ImportLists.Trakt
 {
-    public class TraktSeriesIdsResource
+    public class TraktAuthorIdsResource
     {
         public int Trakt { get; set; }
         public string Slug { get; set; }
@@ -16,7 +16,7 @@ namespace NzbDrone.Core.ImportLists.Trakt
     {
         public string Title { get; set; }
         public int? Year { get; set; }
-        public TraktSeriesIdsResource Ids { get; set; }
+        public TraktAuthorIdsResource Ids { get; set; }
         [JsonProperty("aired_episodes")]
         public int AiredEpisodes { get; set; }
     }

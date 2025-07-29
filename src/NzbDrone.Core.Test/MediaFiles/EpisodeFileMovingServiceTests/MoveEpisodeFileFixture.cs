@@ -17,13 +17,13 @@ using NzbDrone.Core.Test.Framework;
 using NzbDrone.Core.Books;
 using NzbDrone.Test.Common;
 
-namespace NzbDrone.Core.Test.MediaFiles.EpisodeFileMovingServiceTests
+namespace NzbDrone.Core.Test.MediaFiles.EditionFileMovingServiceTests
 {
     [TestFixture]
-    public class MoveEpisodeFileFixture : CoreTest<EpisodeFileMovingService>
+    public class MoveEditionFileFixture : CoreTest<EditionFileMovingService>
     {
         private Series _series;
-        private EpisodeFile _episodeFile;
+        private EditionFile _episodeFile;
         private LocalEpisode _localEpisode;
 
         [SetUp]
@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeFileMovingServiceTests
                                      .With(s => s.Path = @"C:\Test\TV\Series".AsOsAgnostic())
                                      .Build();
 
-            _episodeFile = Builder<EpisodeFile>.CreateNew()
+            _episodeFile = Builder<EditionFile>.CreateNew()
                                                .With(f => f.Path = null)
                                                .With(f => f.RelativePath = @"Season 1\File.avi")
                                                .Build();
@@ -44,7 +44,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeFileMovingServiceTests
                                                  .Build();
 
             Mocker.GetMock<IBuildFileNames>()
-                  .Setup(s => s.BuildFilePath(It.IsAny<List<Episode>>(), It.IsAny<Series>(), It.IsAny<EpisodeFile>(), It.IsAny<string>(), It.IsAny<NamingConfig>(), It.IsAny<List<CustomFormat>>()))
+                  .Setup(s => s.BuildFilePath(It.IsAny<List<Episode>>(), It.IsAny<Series>(), It.IsAny<EditionFile>(), It.IsAny<string>(), It.IsAny<NamingConfig>(), It.IsAny<List<CustomFormat>>()))
                   .Returns(@"C:\Test\TV\Series\Season 01\File Name.avi".AsOsAgnostic());
 
             Mocker.GetMock<IBuildFileNames>()
@@ -75,7 +75,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeFileMovingServiceTests
                   .Setup(s => s.InheritFolderPermissions(It.IsAny<string>()))
                   .Throws<UnauthorizedAccessException>();
 
-            Subject.MoveEpisodeFile(_episodeFile, _localEpisode);
+            Subject.MoveEditionFile(_episodeFile, _localEpisode);
         }
 
         [Test]
@@ -87,13 +87,13 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeFileMovingServiceTests
                   .Setup(s => s.InheritFolderPermissions(It.IsAny<string>()))
                   .Throws<InvalidOperationException>();
 
-            Subject.MoveEpisodeFile(_episodeFile, _localEpisode);
+            Subject.MoveEditionFile(_episodeFile, _localEpisode);
         }
 
         [Test]
         public void should_notify_on_series_folder_creation()
         {
-            Subject.MoveEpisodeFile(_episodeFile, _localEpisode);
+            Subject.MoveEditionFile(_episodeFile, _localEpisode);
 
             Mocker.GetMock<IEventAggregator>()
                   .Verify(s => s.PublishEvent<EpisodeFolderCreatedEvent>(It.Is<EpisodeFolderCreatedEvent>(p =>
@@ -104,7 +104,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeFileMovingServiceTests
         [Test]
         public void should_notify_on_season_folder_creation()
         {
-            Subject.MoveEpisodeFile(_episodeFile, _localEpisode);
+            Subject.MoveEditionFile(_episodeFile, _localEpisode);
 
             Mocker.GetMock<IEventAggregator>()
                   .Verify(s => s.PublishEvent<EpisodeFolderCreatedEvent>(It.Is<EpisodeFolderCreatedEvent>(p =>
@@ -119,7 +119,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeFileMovingServiceTests
                   .Setup(s => s.FolderExists(_series.Path))
                   .Returns(true);
 
-            Subject.MoveEpisodeFile(_episodeFile, _localEpisode);
+            Subject.MoveEditionFile(_episodeFile, _localEpisode);
 
             Mocker.GetMock<IEventAggregator>()
                   .Verify(s => s.PublishEvent<EpisodeFolderCreatedEvent>(It.Is<EpisodeFolderCreatedEvent>(p =>

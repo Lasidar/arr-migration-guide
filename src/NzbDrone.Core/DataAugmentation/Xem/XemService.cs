@@ -12,15 +12,15 @@ namespace NzbDrone.Core.DataAugmentation.Xem
 {
     public class XemService : ISceneMappingProvider, IHandle<SeriesUpdatedEvent>, IHandle<SeriesRefreshStartingEvent>
     {
-        private readonly IEpisodeService _episodeService;
+        private readonly IEditionService _episodeService;
         private readonly IXemProxy _xemProxy;
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
         private readonly Logger _logger;
         private readonly ICachedDictionary<bool> _cache;
 
-        public XemService(IEpisodeService episodeService,
+        public XemService(IEditionService episodeService,
                            IXemProxy xemProxy,
-                           ISeriesService seriesService,
+                           IAuthorService seriesService,
                            ICacheManager cacheManager,
                            Logger logger)
         {
@@ -49,9 +49,9 @@ namespace NzbDrone.Core.DataAugmentation.Xem
 
                 foreach (var episode in episodes)
                 {
-                    episode.SceneAbsoluteEpisodeNumber = null;
-                    episode.SceneSeasonNumber = null;
-                    episode.SceneEpisodeNumber = null;
+                    episode.SceneAbsoluteEditionNumber = null;
+                    episode.SceneBookNumber = null;
+                    episode.SceneEditionNumber = null;
                     episode.UnverifiedSceneNumbering = false;
                 }
 
@@ -59,7 +59,7 @@ namespace NzbDrone.Core.DataAugmentation.Xem
                 {
                     _logger.Debug("Setting scene numbering mappings for {0} S{1:00}E{2:00}", series, mapping.Tvdb.Season, mapping.Tvdb.Episode);
 
-                    var episode = episodes.SingleOrDefault(e => e.SeasonNumber == mapping.Tvdb.Season && e.EpisodeNumber == mapping.Tvdb.Episode);
+                    var episode = episodes.SingleOrDefault(e => e.BookNumber == mapping.Tvdb.Season && e.EditionNumber == mapping.Tvdb.Episode);
 
                     if (episode == null)
                     {
@@ -75,12 +75,12 @@ namespace NzbDrone.Core.DataAugmentation.Xem
                         continue;
                     }
 
-                    episode.SceneAbsoluteEpisodeNumber = mapping.Scene.Absolute;
-                    episode.SceneSeasonNumber = mapping.Scene.Season;
-                    episode.SceneEpisodeNumber = mapping.Scene.Episode;
+                    episode.SceneAbsoluteEditionNumber = mapping.Scene.Absolute;
+                    episode.SceneBookNumber = mapping.Scene.Season;
+                    episode.SceneEditionNumber = mapping.Scene.Episode;
                 }
 
-                if (episodes.Any(v => v.SceneEpisodeNumber.HasValue && v.SceneSeasonNumber != 0))
+                if (episodes.Any(v => v.SceneEditionNumber.HasValue && v.SceneBookNumber != 0))
                 {
                     ExtrapolateMappings(series, episodes, mappings);
                 }
@@ -99,8 +99,8 @@ namespace NzbDrone.Core.DataAugmentation.Xem
 
         private void ExtrapolateMappings(Series series, List<Episode> episodes, List<Model.XemSceneTvdbMapping> mappings)
         {
-            var mappedEpisodes = episodes.Where(v => v.SeasonNumber != 0 && v.SceneEpisodeNumber.HasValue).ToList();
-            var mappedSeasons = new HashSet<int>(mappedEpisodes.Select(v => v.SeasonNumber).Distinct());
+            var mappedEpisodes = episodes.Where(v => v.BookNumber != 0 && v.SceneEditionNumber.HasValue).ToList();
+            var mappedSeasons = new HashSet<int>(mappedEpisodes.Select(v => v.BookNumber).Distinct());
 
             var sceneEpisodeMappings = mappings.ToLookup(v => v.Scene.Season)
                                                .ToDictionary(v => v.Key, e => new HashSet<int>(e.Select(v => v.Scene.Episode)));
@@ -114,34 +114,34 @@ namespace NzbDrone.Core.DataAugmentation.Xem
             // Mark all episodes not on the xem as unverified.
             foreach (var episode in episodes)
             {
-                if (episode.SeasonNumber == 0)
+                if (episode.BookNumber == 0)
                 {
                     continue;
                 }
 
-                if (episode.SceneEpisodeNumber.HasValue)
+                if (episode.SceneEditionNumber.HasValue)
                 {
                     continue;
                 }
 
-                if (mappedSeasons.Contains(episode.SeasonNumber))
+                if (mappedSeasons.Contains(episode.BookNumber))
                 {
                     // Mark if a mapping exists for an earlier episode in this season.
-                    if (firstTvdbEpisodeBySeason[episode.SeasonNumber] <= episode.EpisodeNumber)
+                    if (firstTvdbEpisodeBySeason[episode.BookNumber] <= episode.EditionNumber)
                     {
                         episode.UnverifiedSceneNumbering = true;
                         continue;
                     }
 
                     // Mark if a mapping exists with a scene number to this episode.
-                    if (sceneEpisodeMappings.ContainsKey(episode.SeasonNumber) &&
-                        sceneEpisodeMappings[episode.SeasonNumber].Contains(episode.EpisodeNumber))
+                    if (sceneEpisodeMappings.ContainsKey(episode.BookNumber) &&
+                        sceneEpisodeMappings[episode.BookNumber].Contains(episode.EditionNumber))
                     {
                         episode.UnverifiedSceneNumbering = true;
                         continue;
                     }
                 }
-                else if (lastSceneSeason != lastTvdbSeason && episode.SeasonNumber > lastTvdbSeason)
+                else if (lastSceneSeason != lastTvdbSeason && episode.BookNumber > lastTvdbSeason)
                 {
                     episode.UnverifiedSceneNumbering = true;
                 }
@@ -149,17 +149,17 @@ namespace NzbDrone.Core.DataAugmentation.Xem
 
             foreach (var episode in episodes)
             {
-                if (episode.SeasonNumber == 0)
+                if (episode.BookNumber == 0)
                 {
                     continue;
                 }
 
-                if (episode.SceneEpisodeNumber.HasValue)
+                if (episode.SceneEditionNumber.HasValue)
                 {
                     continue;
                 }
 
-                if (episode.SeasonNumber < lastTvdbSeason)
+                if (episode.BookNumber < lastTvdbSeason)
                 {
                     continue;
                 }
@@ -169,8 +169,8 @@ namespace NzbDrone.Core.DataAugmentation.Xem
                     continue;
                 }
 
-                var seasonMappings = mappings.Where(v => v.Tvdb.Season == episode.SeasonNumber).ToList();
-                if (seasonMappings.Any(v => v.Tvdb.Episode >= episode.EpisodeNumber))
+                var seasonMappings = mappings.Where(v => v.Tvdb.Season == episode.BookNumber).ToList();
+                if (seasonMappings.Any(v => v.Tvdb.Episode >= episode.EditionNumber))
                 {
                     continue;
                 }
@@ -185,29 +185,29 @@ namespace NzbDrone.Core.DataAugmentation.Xem
                         continue;
                     }
 
-                    var offset = episode.EpisodeNumber - lastEpisodeMapping.Tvdb.Episode;
+                    var offset = episode.EditionNumber - lastEpisodeMapping.Tvdb.Episode;
 
-                    episode.SceneSeasonNumber = lastEpisodeMapping.Scene.Season;
-                    episode.SceneEpisodeNumber = lastEpisodeMapping.Scene.Episode + offset;
-                    episode.SceneAbsoluteEpisodeNumber = lastEpisodeMapping.Scene.Absolute + offset;
+                    episode.SceneBookNumber = lastEpisodeMapping.Scene.Season;
+                    episode.SceneEditionNumber = lastEpisodeMapping.Scene.Episode + offset;
+                    episode.SceneAbsoluteEditionNumber = lastEpisodeMapping.Scene.Absolute + offset;
                 }
                 else if (lastTvdbSeason != lastSceneSeason)
                 {
-                    var offset = episode.SeasonNumber - lastTvdbSeason;
+                    var offset = episode.BookNumber - lastTvdbSeason;
 
-                    episode.SceneSeasonNumber = lastSceneSeason + offset;
-                    episode.SceneEpisodeNumber = episode.EpisodeNumber;
+                    episode.SceneBookNumber = lastSceneSeason + offset;
+                    episode.SceneEditionNumber = episode.EditionNumber;
 
-                    // TODO: SceneAbsoluteEpisodeNumber.
+                    // TODO: SceneAbsoluteEditionNumber.
                 }
             }
         }
 
-        private void UpdateXemSeriesIds()
+        private void UpdateXemAuthorIds()
         {
             try
             {
-                var ids = _xemProxy.GetXemSeriesIds();
+                var ids = _xemProxy.GetXemAuthorIds();
 
                 if (ids.Any())
                 {
@@ -236,7 +236,7 @@ namespace NzbDrone.Core.DataAugmentation.Xem
         {
             if (_cache.IsExpired(TimeSpan.FromHours(3)))
             {
-                UpdateXemSeriesIds();
+                UpdateXemAuthorIds();
             }
 
             if (_cache.Count == 0)
@@ -258,7 +258,7 @@ namespace NzbDrone.Core.DataAugmentation.Xem
         {
             if (message.ManualTrigger && _cache.IsExpired(TimeSpan.FromMinutes(1)))
             {
-                UpdateXemSeriesIds();
+                UpdateXemAuthorIds();
             }
         }
     }

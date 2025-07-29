@@ -21,9 +21,9 @@ namespace NzbDrone.Core.Test.Datastore.Migration
             {
                 c.Insert.IntoTable("SubtitleFiles").Row(new
                 {
-                    SeriesId = 1,
-                    SeasonNumber = 1,
-                    EpisodeFileId = 1,
+                    AuthorId = 1,
+                    BookNumber = 1,
+                    EditionFileId = 1,
                     RelativePath = "S01E05.eng.srt",
                     Added = now,
                     LastUpdated = now,
@@ -47,9 +47,9 @@ namespace NzbDrone.Core.Test.Datastore.Migration
             {
                 c.Insert.IntoTable("SubtitleFiles").Row(new
                 {
-                    SeriesId = 1,
-                    SeasonNumber = 1,
-                    EpisodeFileId = 1,
+                    AuthorId = 1,
+                    BookNumber = 1,
+                    EditionFileId = 1,
                     RelativePath = "S01E05.eng.forced.srt",
                     Added = now,
                     LastUpdated = now,
@@ -77,9 +77,9 @@ namespace NzbDrone.Core.Test.Datastore.Migration
             {
                 c.Insert.IntoTable("SubtitleFiles").Row(new
                 {
-                    SeriesId = 1,
-                    SeasonNumber = 1,
-                    EpisodeFileId = 1,
+                    AuthorId = 1,
+                    BookNumber = 1,
+                    EditionFileId = 1,
                     RelativePath = "S01E05.eng.srt",
                     Added = now,
                     LastUpdated = now,
@@ -100,9 +100,9 @@ namespace NzbDrone.Core.Test.Datastore.Migration
     public class SubtitleFile195
     {
         public int Id { get; set; }
-        public int SeriesId { get; set; }
-        public int? EpisodeFileId { get; set; }
-        public int? SeasonNumber { get; set; }
+        public int AuthorId { get; set; }
+        public int? EditionFileId { get; set; }
+        public int? BookNumber { get; set; }
         public string RelativePath { get; set; }
         public DateTime Added { get; set; }
         public DateTime LastUpdated { get; set; }

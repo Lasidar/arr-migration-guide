@@ -38,9 +38,9 @@ namespace NzbDrone.Core.Indexers.Fanzub
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            if (Settings.AnimeStandardFormatSearch && searchCriteria.SeasonNumber > 0)
+            if (Settings.AnimeStandardFormatSearch && searchCriteria.BookNumber > 0)
             {
-                var searchTitles = searchCriteria.CleanSceneTitles.SelectMany(v => GetSeasonSearchStrings(v, searchCriteria.SeasonNumber)).ToList();
+                var searchTitles = searchCriteria.CleanSceneTitles.SelectMany(v => GetSeasonSearchStrings(v, searchCriteria.BookNumber)).ToList();
                 pageableRequests.Add(GetPagedRequests(string.Join("|", searchTitles)));
             }
 
@@ -61,11 +61,11 @@ namespace NzbDrone.Core.Indexers.Fanzub
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            var searchTitles = searchCriteria.CleanSceneTitles.SelectMany(v => GetTitleSearchStrings(v, searchCriteria.AbsoluteEpisodeNumber)).ToList();
+            var searchTitles = searchCriteria.CleanSceneTitles.SelectMany(v => GetTitleSearchStrings(v, searchCriteria.AbsoluteEditionNumber)).ToList();
 
-            if (Settings.AnimeStandardFormatSearch && searchCriteria.SeasonNumber > 0 && searchCriteria.EpisodeNumber > 0)
+            if (Settings.AnimeStandardFormatSearch && searchCriteria.BookNumber > 0 && searchCriteria.EditionNumber > 0)
             {
-                searchTitles.AddRange(searchCriteria.CleanSceneTitles.SelectMany(v => GetTitleSearchStrings(v, searchCriteria.SeasonNumber, searchCriteria.EpisodeNumber)).ToList());
+                searchTitles.AddRange(searchCriteria.CleanSceneTitles.SelectMany(v => GetTitleSearchStrings(v, searchCriteria.BookNumber, searchCriteria.EditionNumber)).ToList());
             }
 
             pageableRequests.Add(GetPagedRequests(string.Join("|", searchTitles)));
@@ -77,9 +77,9 @@ namespace NzbDrone.Core.Indexers.Fanzub
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            if (Settings.AnimeStandardFormatSearch && searchCriteria.SeasonNumber > 0)
+            if (Settings.AnimeStandardFormatSearch && searchCriteria.BookNumber > 0)
             {
-                var searchTitles = searchCriteria.CleanSceneTitles.SelectMany(v => GetSeasonSearchStrings(v, searchCriteria.SeasonNumber)).ToList();
+                var searchTitles = searchCriteria.CleanSceneTitles.SelectMany(v => GetSeasonSearchStrings(v, searchCriteria.BookNumber)).ToList();
                 pageableRequests.Add(GetPagedRequests(string.Join("|", searchTitles)));
             }
 
@@ -111,11 +111,11 @@ namespace NzbDrone.Core.Indexers.Fanzub
             return formats.Select(s => "\"" + string.Format(s, CleanTitle(title), seasonNumber) + "\"");
         }
 
-        private IEnumerable<string> GetTitleSearchStrings(string title, int absoluteEpisodeNumber)
+        private IEnumerable<string> GetTitleSearchStrings(string title, int absoluteEditionNumber)
         {
             var formats = new[] { "{0}%20{1:00}", "{0}%20-%20{1:00}" };
 
-            return formats.Select(s => "\"" + string.Format(s, CleanTitle(title), absoluteEpisodeNumber) + "\"");
+            return formats.Select(s => "\"" + string.Format(s, CleanTitle(title), absoluteEditionNumber) + "\"");
         }
 
         private IEnumerable<string> GetTitleSearchStrings(string title, int seasonNumber, int episodeNumber)

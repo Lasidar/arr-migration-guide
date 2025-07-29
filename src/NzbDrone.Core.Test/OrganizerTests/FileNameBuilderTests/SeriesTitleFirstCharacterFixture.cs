@@ -10,7 +10,7 @@ using NzbDrone.Core.Books;
 namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 {
     [TestFixture]
-    public class SeriesTitleFirstCharacterFixture : CoreTest<FileNameBuilder>
+    public class AuthorTitleFirstCharacterFixture : CoreTest<FileNameBuilder>
     {
         private Series _series;
         private NamingConfig _namingConfig;

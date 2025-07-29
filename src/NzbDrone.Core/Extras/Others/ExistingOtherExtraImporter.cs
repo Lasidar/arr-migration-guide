@@ -68,7 +68,7 @@ namespace NzbDrone.Core.Extras.Others
                     continue;
                 }
 
-                if (localEpisode.Episodes.DistinctBy(e => e.EpisodeFileId).Count() > 1)
+                if (localEpisode.Episodes.DistinctBy(e => e.EditionFileId).Count() > 1)
                 {
                     _logger.Debug("Extra file: {0} does not match existing files.", possibleExtraFile);
                     continue;
@@ -76,9 +76,9 @@ namespace NzbDrone.Core.Extras.Others
 
                 var extraFile = new OtherExtraFile
                 {
-                    SeriesId = series.Id,
-                    SeasonNumber = localEpisode.SeasonNumber,
-                    EpisodeFileId = localEpisode.Episodes.First().EpisodeFileId,
+                    AuthorId = series.Id,
+                    BookNumber = localEpisode.BookNumber,
+                    EditionFileId = localEpisode.Episodes.First().EditionFileId,
                     RelativePath = series.Path.GetRelativePath(possibleExtraFile),
                     Extension = extension
                 };

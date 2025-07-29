@@ -16,17 +16,17 @@ namespace NzbDrone.Core.MediaFiles
 {
     public interface IDeleteMediaFiles
     {
-        void DeleteEpisodeFile(Series series, EpisodeFile episodeFile);
+        void DeleteEditionFile(Series series, EditionFile episodeFile);
     }
 
     public class MediaFileDeletionService : IDeleteMediaFiles,
                                             IHandleAsync<SeriesDeletedEvent>,
-                                            IHandle<EpisodeFileDeletedEvent>
+                                            IHandle<EditionFileDeletedEvent>
     {
         private readonly IDiskProvider _diskProvider;
         private readonly IRecycleBinProvider _recycleBinProvider;
         private readonly IMediaFileService _mediaFileService;
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
         private readonly IConfigService _configService;
         private readonly IEventAggregator _eventAggregator;
         private readonly Logger _logger;
@@ -34,7 +34,7 @@ namespace NzbDrone.Core.MediaFiles
         public MediaFileDeletionService(IDiskProvider diskProvider,
                                         IRecycleBinProvider recycleBinProvider,
                                         IMediaFileService mediaFileService,
-                                        ISeriesService seriesService,
+                                        IAuthorService seriesService,
                                         IConfigService configService,
                                         IEventAggregator eventAggregator,
                                         Logger logger)
@@ -48,7 +48,7 @@ namespace NzbDrone.Core.MediaFiles
             _logger = logger;
         }
 
-        public void DeleteEpisodeFile(Series series, EpisodeFile episodeFile)
+        public void DeleteEditionFile(Series series, EditionFile episodeFile)
         {
             var fullPath = Path.Combine(series.Path, episodeFile.RelativePath);
             var rootFolder = _diskProvider.GetParentFolder(series.Path);
@@ -127,16 +127,16 @@ namespace NzbDrone.Core.MediaFiles
         }
 
         [EventHandleOrder(EventHandleOrder.Last)]
-        public void Handle(EpisodeFileDeletedEvent message)
+        public void Handle(EditionFileDeletedEvent message)
         {
             if (!_configService.DeleteEmptyFolders || message.Reason == DeleteMediaFileReason.MissingFromDisk)
             {
                 return;
             }
 
-            var series = message.EpisodeFile.Series.Value;
+            var series = message.EditionFile.Series.Value;
             var seriesPath = series.Path;
-            var folder = message.EpisodeFile.Path.GetParentPath();
+            var folder = message.EditionFile.Path.GetParentPath();
 
             while (seriesPath.IsParentPath(folder))
             {

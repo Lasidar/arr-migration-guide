@@ -38,31 +38,31 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
             {
                 Series = new Tv.Series { TvRageId = 10, TvdbId = 20, TvMazeId = 30, ImdbId = "t40", TmdbId = 50 },
                 SceneTitles = new List<string> { "Monkey Island" },
-                SeasonNumber = 1,
-                EpisodeNumber = 2
+                BookNumber = 1,
+                EditionNumber = 2
             };
 
             _seasonSearchCriteria = new SeasonSearchCriteria
             {
                 Series = new Tv.Series { TvRageId = 10, TvdbId = 20, TvMazeId = 30, ImdbId = "t40", TmdbId = 50 },
                 SceneTitles = new List<string> { "Monkey Island" },
-                SeasonNumber = 1,
+                BookNumber = 1,
             };
 
             _animeSearchCriteria = new AnimeEpisodeSearchCriteria()
             {
                 Series = new Tv.Series { TvRageId = 10, TvdbId = 20, TvMazeId = 30, ImdbId = "t40", TmdbId = 50 },
                 SceneTitles = new List<string>() { "Monkey+Island" },
-                AbsoluteEpisodeNumber = 100,
-                SeasonNumber = 5,
-                EpisodeNumber = 4
+                AbsoluteEditionNumber = 100,
+                BookNumber = 5,
+                EditionNumber = 4
             };
 
             _animeSeasonSearchCriteria = new AnimeSeasonSearchCriteria()
             {
                 Series = new Tv.Series { TvRageId = 10, TvdbId = 20, TvMazeId = 30, ImdbId = "t40", TmdbId = 50 },
                 SceneTitles = new List<string> { "Monkey Island" },
-                SeasonNumber = 3,
+                BookNumber = 3,
             };
 
             _capabilities = new NewznabCapabilities();

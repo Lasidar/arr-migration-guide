@@ -50,7 +50,7 @@ namespace NzbDrone.Core.Notifications.Email
             SendEmail(Settings, IMPORT_COMPLETE_TITLE, body);
         }
 
-        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        public override void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             var body = $"{deleteMessage.Message} deleted.";
 

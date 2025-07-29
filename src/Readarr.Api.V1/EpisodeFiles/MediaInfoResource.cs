@@ -3,7 +3,7 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.EpisodeFiles
+namespace Readarr.Api.V3.EditionFiles
 {
     public class MediaInfoResource : RestResource
     {

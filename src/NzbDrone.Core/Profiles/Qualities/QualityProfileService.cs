@@ -32,13 +32,13 @@ namespace NzbDrone.Core.Profiles.Qualities
         private readonly IQualityProfileRepository _qualityProfileRepository;
         private readonly IImportListFactory _importListFactory;
         private readonly ICustomFormatService _formatService;
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
         private readonly Logger _logger;
 
         public QualityProfileService(IQualityProfileRepository qualityProfileRepository,
                                      IImportListFactory importListFactory,
                                      ICustomFormatService formatService,
-                                     ISeriesService seriesService,
+                                     IAuthorService seriesService,
                                      Logger logger)
         {
             _qualityProfileRepository = qualityProfileRepository;

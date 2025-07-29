@@ -6,7 +6,7 @@ using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.CustomFormats
 {
-    public class SeasonPackSpecificationValidator : AbstractValidator<ReleaseTypeSpecification>
+    public class BookPackSpecificationValidator : AbstractValidator<ReleaseTypeSpecification>
     {
         public SeasonPackSpecificationValidator()
         {

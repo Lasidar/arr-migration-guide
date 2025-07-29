@@ -12,7 +12,7 @@ namespace NzbDrone.Core.Books
         string BuildPath(Series series, bool useExistingRelativeFolder);
     }
 
-    public class SeriesPathBuilder : IBuildSeriesPaths
+    public class AuthorPathBuilder : IBuildSeriesPaths
     {
         private readonly IBuildFileNames _fileNameBuilder;
         private readonly IRootFolderService _rootFolderService;

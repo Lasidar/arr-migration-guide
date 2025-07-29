@@ -17,7 +17,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
     {
         private Series _series;
         private Episode _episode;
-        private EpisodeFile _episodeFile;
+        private EditionFile _episodeFile;
         private NamingConfig _namingConfig;
 
         [SetUp]
@@ -31,12 +31,12 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             _episode = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
-                            .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 6)
-                            .With(e => e.AbsoluteEpisodeNumber = 100)
+                            .With(e => e.BookNumber = 15)
+                            .With(e => e.EditionNumber = 6)
+                            .With(e => e.AbsoluteEditionNumber = 100)
                             .Build();
 
-            _episodeFile = new EpisodeFile { Id = 5, Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
+            _episodeFile = new EditionFile { Id = 5, Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
 
             _namingConfig = NamingConfig.Default;
             _namingConfig.RenameEpisodes = true;
@@ -56,7 +56,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_use_standard_format_if_absolute_format_requires_absolute_episode_number_and_it_is_missing()
         {
-            _episode.AbsoluteEpisodeNumber = null;
+            _episode.AbsoluteEditionNumber = null;
             _namingConfig.StandardEpisodeFormat = "{Series Title} S{season:00}E{episode:00}";
             _namingConfig.AnimeEpisodeFormat = "{Series Title} {absolute:00} [{ReleaseGroup}]";
 
@@ -87,7 +87,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_use_standard_format_without_absolute_numbering_if_absolute_format_requires_absolute_episode_number_and_it_is_missing()
         {
-            _episode.AbsoluteEpisodeNumber = null;
+            _episode.AbsoluteEditionNumber = null;
             _namingConfig.StandardEpisodeFormat = "{Series Title} S{season:00}E{episode:00} - {absolute:00}";
             _namingConfig.AnimeEpisodeFormat = "{Series Title} {absolute:00} [{ReleaseGroup}]";
 

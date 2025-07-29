@@ -4,7 +4,7 @@ using NzbDrone.Common.Messaging;
 
 namespace NzbDrone.Core.Books.Events
 {
-    public class EpisodeInfoRefreshedEvent : IEvent
+    public class EditionInfoRefreshedEvent : IEvent
     {
         public Series Series { get; set; }
         public ReadOnlyCollection<Episode> Added { get; private set; }

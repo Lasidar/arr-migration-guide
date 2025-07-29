@@ -21,7 +21,7 @@ namespace NzbDrone.Core.Datastore.Migration
 
             // Add HeldReleases
             Create.TableForModel("PendingReleases")
-                  .WithColumn("SeriesId").AsInt32()
+                  .WithColumn("AuthorId").AsInt32()
                   .WithColumn("Title").AsString()
                   .WithColumn("Added").AsDateTime()
                   .WithColumn("ParsedEpisodeInfo").AsString()

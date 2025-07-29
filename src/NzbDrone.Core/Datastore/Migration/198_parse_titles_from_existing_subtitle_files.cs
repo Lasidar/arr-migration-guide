@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Datastore.Migration
             using (var cmd = conn.CreateCommand())
             {
                 cmd.Transaction = tran;
-                cmd.CommandText = "SELECT \"SubtitleFiles\".\"Id\", \"SubtitleFiles\".\"RelativePath\", \"EpisodeFiles\".\"RelativePath\", \"EpisodeFiles\".\"OriginalFilePath\" FROM \"SubtitleFiles\" JOIN \"EpisodeFiles\" ON \"SubtitleFiles\".\"EpisodeFileId\" = \"EpisodeFiles\".\"Id\"";
+                cmd.CommandText = "SELECT \"SubtitleFiles\".\"Id\", \"SubtitleFiles\".\"RelativePath\", \"EditionFiles\".\"RelativePath\", \"EditionFiles\".\"OriginalFilePath\" FROM \"SubtitleFiles\" JOIN \"EditionFiles\" ON \"SubtitleFiles\".\"EditionFileId\" = \"EditionFiles\".\"Id\"";
 
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -65,9 +65,9 @@ namespace NzbDrone.Core.Datastore.Migration
             var subtitleTitleInfo = LanguageParser.ParseSubtitleLanguageInformation(path);
 
             var episodeFileTitle = Path.GetFileNameWithoutExtension(relativePath);
-            var originalEpisodeFileTitle = Path.GetFileNameWithoutExtension(originalFilePath) ?? string.Empty;
+            var originalEditionFileTitle = Path.GetFileNameWithoutExtension(originalFilePath) ?? string.Empty;
 
-            if (subtitleTitleInfo.TitleFirst && (episodeFileTitle.Contains(subtitleTitleInfo.RawTitle, StringComparison.OrdinalIgnoreCase) || originalEpisodeFileTitle.Contains(subtitleTitleInfo.RawTitle, StringComparison.OrdinalIgnoreCase)))
+            if (subtitleTitleInfo.TitleFirst && (episodeFileTitle.Contains(subtitleTitleInfo.RawTitle, StringComparison.OrdinalIgnoreCase) || originalEditionFileTitle.Contains(subtitleTitleInfo.RawTitle, StringComparison.OrdinalIgnoreCase)))
             {
                 Logger.Debug("Subtitle title '{0}' is in episode file title '{1}'. Removing from subtitle title.", subtitleTitleInfo.RawTitle, episodeFileTitle);
 

@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Aggregation.Aggregators
         [TestCase("", "Name (2020)/Season 1/Name (2020) - S01E20 - [AAC 2.0].mkv", "Name (2020) - S01E20 - [AAC 2.0].fra.ass", null)]
         public void should_do_basic_parse(string relativePath, string originalFilePath, string path, string fileNameBeforeRename)
         {
-            var episodeFile = new EpisodeFile
+            var episodeFile = new EditionFile
             {
                 RelativePath = relativePath,
                 OriginalFilePath = originalFilePath
@@ -36,7 +36,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Aggregation.Aggregators
         [TestCase("Default (2020)/Season 1/Default (2020) - S01E20 - [AAC 2.0].mkv", "Default (2020) - S01E20 - [AAC 2.0].testtitle.eng.default.ass")]
         public void should_not_parse_default(string relativePath, string path)
         {
-            var episodeFile = new EpisodeFile
+            var episodeFile = new EditionFile
             {
                 RelativePath = relativePath
             };

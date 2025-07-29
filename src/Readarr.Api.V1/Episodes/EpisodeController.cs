@@ -12,10 +12,10 @@ using Readarr.Http.REST.Attributes;
 namespace Readarr.Api.V3.Episodes
 {
     [V3ApiController]
-    public class EpisodeController : EpisodeControllerWithSignalR
+    public class EditionController : EpisodeControllerWithSignalR
     {
-        public EpisodeController(ISeriesService seriesService,
-                             IEpisodeService episodeService,
+        public EpisodeController(IAuthorService seriesService,
+                             IEditionService episodeService,
                              IUpgradableSpecification upgradableSpecification,
                              ICustomFormatCalculationService formatCalculator,
                              IBroadcastSignalRMessage signalRBroadcaster)
@@ -25,24 +25,24 @@ namespace Readarr.Api.V3.Episodes
 
         [HttpGet]
         [Produces("application/json")]
-        public List<EpisodeResource> GetEpisodes(int? seriesId, int? seasonNumber, [FromQuery]List<int> episodeIds, int? episodeFileId, bool includeSeries = false, bool includeEpisodeFile = false, bool includeImages = false)
+        public List<EpisodeResource> GetEpisodes(int? seriesId, int? seasonNumber, [FromQuery]List<int> episodeIds, int? episodeFileId, bool includeSeries = false, bool includeEditionFile = false, bool includeImages = false)
         {
             if (seriesId.HasValue)
             {
                 if (seasonNumber.HasValue)
                 {
-                    return MapToResource(_episodeService.GetEpisodesBySeason(seriesId.Value, seasonNumber.Value), includeSeries, includeEpisodeFile, includeImages);
+                    return MapToResource(_episodeService.GetEpisodesBySeason(seriesId.Value, seasonNumber.Value), includeSeries, includeEditionFile, includeImages);
                 }
 
-                return MapToResource(_episodeService.GetEpisodeBySeries(seriesId.Value), includeSeries, includeEpisodeFile, includeImages);
+                return MapToResource(_episodeService.GetEpisodeBySeries(seriesId.Value), includeSeries, includeEditionFile, includeImages);
             }
             else if (episodeIds.Any())
             {
-                return MapToResource(_episodeService.GetEpisodes(episodeIds), includeSeries, includeEpisodeFile, includeImages);
+                return MapToResource(_episodeService.GetEpisodes(episodeIds), includeSeries, includeEditionFile, includeImages);
             }
             else if (episodeFileId.HasValue)
             {
-                return MapToResource(_episodeService.GetEpisodesByFileId(episodeFileId.Value), includeSeries, includeEpisodeFile, includeImages);
+                return MapToResource(_episodeService.GetEpisodesByFileId(episodeFileId.Value), includeSeries, includeEditionFile, includeImages);
             }
 
             throw new BadRequestException("seriesId or episodeIds must be provided");

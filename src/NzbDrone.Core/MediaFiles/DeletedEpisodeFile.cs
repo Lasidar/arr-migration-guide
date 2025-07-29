@@ -1,13 +1,13 @@
 namespace NzbDrone.Core.MediaFiles
 {
-    public class DeletedEpisodeFile
+    public class DeletedEditionFile
     {
         public string RecycleBinPath { get; set; }
-        public EpisodeFile EpisodeFile { get; set; }
+        public EditionFile EditionFile { get; set; }
 
-        public DeletedEpisodeFile(EpisodeFile episodeFile, string recycleBinPath)
+        public DeletedEditionFile(EditionFile episodeFile, string recycleBinPath)
         {
-            EpisodeFile = episodeFile;
+            EditionFile = episodeFile;
             RecycleBinPath = recycleBinPath;
         }
     }

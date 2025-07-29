@@ -2,10 +2,10 @@
 
 namespace NzbDrone.Core.IndexerSearch
 {
-    public class SeasonSearchCommand : Command
+    public class BookSearchCommand : Command
     {
-        public int SeriesId { get; set; }
-        public int SeasonNumber { get; set; }
+        public int AuthorId { get; set; }
+        public int BookNumber { get; set; }
 
         public override bool SendUpdatesToClient => true;
     }

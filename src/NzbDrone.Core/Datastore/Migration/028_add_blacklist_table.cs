@@ -9,7 +9,7 @@ namespace NzbDrone.Core.Datastore.Migration
         protected override void MainDbUpgrade()
         {
             Create.TableForModel("Blacklist")
-                .WithColumn("SeriesId").AsInt32()
+                .WithColumn("AuthorId").AsInt32()
                 .WithColumn("EpisodeIds").AsString()
                 .WithColumn("SourceTitle").AsString()
                 .WithColumn("Quality").AsString()

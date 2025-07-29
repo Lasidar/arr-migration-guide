@@ -13,13 +13,13 @@ using NzbDrone.Core.Books;
 namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 {
     [TestFixture]
-    public class EpisodeTitleCollapseFixture : CoreTest<FileNameBuilder>
+    public class EditionTitleCollapseFixture : CoreTest<FileNameBuilder>
     {
         private Series _series;
         private Episode _episode1;
         private Episode _episode2;
         private Episode _episode3;
-        private EpisodeFile _episodeFile;
+        private EditionFile _episodeFile;
         private NamingConfig _namingConfig;
 
         [SetUp]
@@ -38,26 +38,26 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             _episode1 = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
-                            .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 6)
-                            .With(e => e.AbsoluteEpisodeNumber = 100)
+                            .With(e => e.BookNumber = 15)
+                            .With(e => e.EditionNumber = 6)
+                            .With(e => e.AbsoluteEditionNumber = 100)
                             .Build();
 
             _episode2 = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
-                            .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 7)
-                            .With(e => e.AbsoluteEpisodeNumber = 101)
+                            .With(e => e.BookNumber = 15)
+                            .With(e => e.EditionNumber = 7)
+                            .With(e => e.AbsoluteEditionNumber = 101)
                             .Build();
 
             _episode3 = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
-                            .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 8)
-                            .With(e => e.AbsoluteEpisodeNumber = 102)
+                            .With(e => e.BookNumber = 15)
+                            .With(e => e.EditionNumber = 8)
+                            .With(e => e.AbsoluteEditionNumber = 102)
                             .Build();
 
-            _episodeFile = new EpisodeFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
+            _episodeFile = new EditionFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
 
             Mocker.GetMock<IQualityDefinitionService>()
                 .Setup(v => v.Get(Moq.It.IsAny<Quality>()))

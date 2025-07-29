@@ -12,7 +12,7 @@ namespace NzbDrone.Core.Datastore.Migration
 
             Create.TableForModel("History")
                   .WithColumn("EpisodeId").AsInt32()
-                  .WithColumn("SeriesId").AsInt32()
+                  .WithColumn("AuthorId").AsInt32()
                   .WithColumn("SourceTitle").AsString()
                   .WithColumn("Date").AsDateTime()
                   .WithColumn("Quality").AsString()

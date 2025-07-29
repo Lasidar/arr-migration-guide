@@ -42,11 +42,11 @@ namespace NzbDrone.Core.Datastore.Migration
                     SeriesTitle = old.SeriesTitle,
                     SeriesTitleInfo = old.SeriesTitleInfo,
                     Quality = newQuality,
-                    SeasonNumber = old.SeasonNumber,
+                    BookNumber = old.BookNumber,
                     SeasonPart = old.SeasonPart,
-                    EpisodeNumbers = old.EpisodeNumbers,
-                    AbsoluteEpisodeNumbers = old.AbsoluteEpisodeNumbers,
-                    SpecialAbsoluteEpisodeNumbers = old.SpecialAbsoluteEpisodeNumbers,
+                    EditionNumbers = old.EditionNumbers,
+                    AbsoluteEditionNumbers = old.AbsoluteEditionNumbers,
+                    SpecialAbsoluteEditionNumbers = old.SpecialAbsoluteEditionNumbers,
                     Language = old.Language?.Id ?? 0,
                     FullSeason = old.FullSeason,
                     IsPartialSeason = old.IsPartialSeason,
@@ -84,10 +84,10 @@ namespace NzbDrone.Core.Datastore.Migration
             public string SeriesTitle { get; set; }
             public SeriesTitleInfo161 SeriesTitleInfo { get; set; }
             public QualityModel161 Quality { get; set; }
-            public int SeasonNumber { get; set; }
-            public List<int> EpisodeNumbers { get; set; }
-            public List<int> AbsoluteEpisodeNumbers { get; set; }
-            public List<int> SpecialAbsoluteEpisodeNumbers { get; set; }
+            public int BookNumber { get; set; }
+            public List<int> EditionNumbers { get; set; }
+            public List<int> AbsoluteEditionNumbers { get; set; }
+            public List<int> SpecialAbsoluteEditionNumbers { get; set; }
             public Language161 Language { get; set; }
             public bool FullSeason { get; set; }
             public bool IsPartialSeason { get; set; }
@@ -104,7 +104,7 @@ namespace NzbDrone.Core.Datastore.Migration
             public bool IsPossibleSceneSeasonSpecial { get; set; }
         }
 
-        private class SeriesTitleInfo161
+        private class AuthorTitleInfo161
         {
             public string Title { get; set; }
             public string TitleWithoutYear { get; set; }
@@ -138,10 +138,10 @@ namespace NzbDrone.Core.Datastore.Migration
             public string SeriesTitle { get; set; }
             public SeriesTitleInfo161 SeriesTitleInfo { get; set; }
             public QualityModel162 Quality { get; set; }
-            public int SeasonNumber { get; set; }
-            public List<int> EpisodeNumbers { get; set; }
-            public List<int> AbsoluteEpisodeNumbers { get; set; }
-            public List<int> SpecialAbsoluteEpisodeNumbers { get; set; }
+            public int BookNumber { get; set; }
+            public List<int> EditionNumbers { get; set; }
+            public List<int> AbsoluteEditionNumbers { get; set; }
+            public List<int> SpecialAbsoluteEditionNumbers { get; set; }
             public int Language { get; set; }
             public bool FullSeason { get; set; }
             public bool IsPartialSeason { get; set; }

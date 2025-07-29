@@ -9,7 +9,7 @@ namespace NzbDrone.Core.SeriesStats
         SeriesStatistics SeriesStatistics(int seriesId);
     }
 
-    public class SeriesStatisticsService : ISeriesStatisticsService
+    public class AuthorStatisticsService : ISeriesStatisticsService
     {
         private readonly ISeriesStatisticsRepository _seriesStatisticsRepository;
 
@@ -22,7 +22,7 @@ namespace NzbDrone.Core.SeriesStats
         {
             var seasonStatistics = _seriesStatisticsRepository.SeriesStatistics();
 
-            return seasonStatistics.GroupBy(s => s.SeriesId).Select(s => MapSeriesStatistics(s.ToList())).ToList();
+            return seasonStatistics.GroupBy(s => s.AuthorId).Select(s => MapSeriesStatistics(s.ToList())).ToList();
         }
 
         public SeriesStatistics SeriesStatistics(int seriesId)
@@ -42,8 +42,8 @@ namespace NzbDrone.Core.SeriesStats
             var seriesStatistics = new SeriesStatistics
             {
                 SeasonStatistics = seasonStatistics,
-                SeriesId = seasonStatistics.First().SeriesId,
-                EpisodeFileCount = seasonStatistics.Sum(s => s.EpisodeFileCount),
+                AuthorId = seasonStatistics.First().AuthorId,
+                EditionFileCount = seasonStatistics.Sum(s => s.EditionFileCount),
                 EpisodeCount = seasonStatistics.Sum(s => s.EpisodeCount),
                 TotalEpisodeCount = seasonStatistics.Sum(s => s.TotalEpisodeCount),
                 SizeOnDisk = seasonStatistics.Sum(s => s.SizeOnDisk),
@@ -52,7 +52,7 @@ namespace NzbDrone.Core.SeriesStats
 
             var nextAiring = seasonStatistics.Where(s => s.NextAiring != null).MinBy(s => s.NextAiring);
             var previousAiring = seasonStatistics.Where(s => s.PreviousAiring != null).MaxBy(s => s.PreviousAiring);
-            var lastAired = seasonStatistics.Where(s => s.SeasonNumber > 0 && s.LastAired != null).MaxBy(s => s.LastAired);
+            var lastAired = seasonStatistics.Where(s => s.BookNumber > 0 && s.LastAired != null).MaxBy(s => s.LastAired);
 
             seriesStatistics.NextAiring = nextAiring?.NextAiring;
             seriesStatistics.PreviousAiring = previousAiring?.PreviousAiring;

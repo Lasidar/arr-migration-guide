@@ -14,7 +14,7 @@ namespace NzbDrone.Core.Datastore.Migration
         {
             Create.TableForModel("DownloadHistory")
                   .WithColumn("EventType").AsInt32().NotNullable()
-                  .WithColumn("SeriesId").AsInt32().NotNullable()
+                  .WithColumn("AuthorId").AsInt32().NotNullable()
                   .WithColumn("DownloadId").AsString().NotNullable()
                   .WithColumn("SourceTitle").AsString().NotNullable()
                   .WithColumn("Date").AsDateTime().NotNullable()
@@ -25,7 +25,7 @@ namespace NzbDrone.Core.Datastore.Migration
                   .WithColumn("Data").AsString().Nullable();
 
             Create.Index().OnTable("DownloadHistory").OnColumn("EventType");
-            Create.Index().OnTable("DownloadHistory").OnColumn("SeriesId");
+            Create.Index().OnTable("DownloadHistory").OnColumn("AuthorId");
             Create.Index().OnTable("DownloadHistory").OnColumn("DownloadId");
 
             IfDatabase("sqlite").Execute.WithConnection(InitialImportedDownloadHistory);
@@ -51,7 +51,7 @@ namespace NzbDrone.Core.Datastore.Migration
             using (var cmd = conn.CreateCommand())
             {
                 cmd.Transaction = tran;
-                cmd.CommandText = "SELECT SeriesId, DownloadId, EventType, SourceTitle, Date, Data FROM History WHERE DownloadId IS NOT NULL AND EventType IN (1, 3, 4, 7) GROUP BY EventType, DownloadId";
+                cmd.CommandText = "SELECT AuthorId, DownloadId, EventType, SourceTitle, Date, Data FROM History WHERE DownloadId IS NOT NULL AND EventType IN (1, 3, 4, 7) GROUP BY EventType, DownloadId";
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -82,7 +82,7 @@ namespace NzbDrone.Core.Datastore.Migration
                         using (var updateCmd = conn.CreateCommand())
                         {
                             updateCmd.Transaction = tran;
-                            updateCmd.CommandText = @"INSERT INTO DownloadHistory (EventType, SeriesId, DownloadId, SourceTitle, Date, Protocol, Data) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                            updateCmd.CommandText = @"INSERT INTO DownloadHistory (EventType, AuthorId, DownloadId, SourceTitle, Date, Protocol, Data) VALUES (?, ?, ?, ?, ?, ?, ?)";
                             updateCmd.AddParameter(downloadHistoryEventType);
                             updateCmd.AddParameter(seriesId);
                             updateCmd.AddParameter(downloadId);

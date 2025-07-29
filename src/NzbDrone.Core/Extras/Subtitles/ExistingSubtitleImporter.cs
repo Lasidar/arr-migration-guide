@@ -66,7 +66,7 @@ namespace NzbDrone.Core.Extras.Subtitles
                         continue;
                     }
 
-                    if (localEpisode.Episodes.DistinctBy(e => e.EpisodeFileId).Count() > 1)
+                    if (localEpisode.Episodes.DistinctBy(e => e.EditionFileId).Count() > 1)
                     {
                         _logger.Debug("Subtitle file: {0} does not match existing files.", possibleSubtitleFile);
                         continue;
@@ -76,9 +76,9 @@ namespace NzbDrone.Core.Extras.Subtitles
 
                     var subtitleFile = new SubtitleFile
                                        {
-                                           SeriesId = series.Id,
-                                           SeasonNumber = localEpisode.SeasonNumber,
-                                           EpisodeFileId = firstEpisode.EpisodeFileId,
+                                           AuthorId = series.Id,
+                                           BookNumber = localEpisode.BookNumber,
+                                           EditionFileId = firstEpisode.EditionFileId,
                                            RelativePath = series.Path.GetRelativePath(possibleSubtitleFile),
                                            Language = localEpisode.SubtitleInfo?.Language ?? Language.Unknown,
                                            LanguageTags = localEpisode.SubtitleInfo?.LanguageTags ?? new List<string>(),

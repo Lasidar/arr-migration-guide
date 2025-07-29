@@ -51,7 +51,7 @@ namespace NzbDrone.Core.Notifications.Webhook
 
         protected WebhookImportPayload BuildOnDownloadPayload(DownloadMessage message)
         {
-            var episodeFile = message.EpisodeFile;
+            var episodeFile = message.EditionFile;
 
             var payload = new WebhookImportPayload
             {
@@ -60,7 +60,7 @@ namespace NzbDrone.Core.Notifications.Webhook
                 ApplicationUrl = _configService.ApplicationUrl,
                 Series = GetSeries(message.Series),
                 Episodes = episodeFile.Episodes.Value.ConvertAll(x => new WebhookEpisode(x)),
-                EpisodeFile = new WebhookEpisodeFile(episodeFile)
+                EditionFile = new WebhookEditionFile(episodeFile)
                 {
                     SourcePath = message.SourcePath
                 },
@@ -74,9 +74,9 @@ namespace NzbDrone.Core.Notifications.Webhook
 
             if (message.OldFiles.Any())
             {
-                payload.DeletedFiles = message.OldFiles.ConvertAll(x => new WebhookEpisodeFile(x.EpisodeFile)
+                payload.DeletedFiles = message.OldFiles.ConvertAll(x => new WebhookEditionFile(x.EditionFile)
                 {
-                    Path = Path.Combine(message.Series.Path, x.EpisodeFile.RelativePath),
+                    Path = Path.Combine(message.Series.Path, x.EditionFile.RelativePath),
                     RecycleBinPath = x.RecycleBinPath
                 });
             }
@@ -86,7 +86,7 @@ namespace NzbDrone.Core.Notifications.Webhook
 
         protected WebhookImportCompletePayload BuildOnImportCompletePayload(ImportCompleteMessage message)
         {
-            var episodeFiles = message.EpisodeFiles;
+            var episodeFiles = message.EditionFiles;
 
             var payload = new WebhookImportCompletePayload
             {
@@ -95,7 +95,7 @@ namespace NzbDrone.Core.Notifications.Webhook
                 ApplicationUrl = _configService.ApplicationUrl,
                 Series = GetSeries(message.Series),
                 Episodes = message.Episodes.ConvertAll(x => new WebhookEpisode(x)),
-                EpisodeFiles = episodeFiles.ConvertAll(e => new WebhookEpisodeFile(e)),
+                EditionFiles = episodeFiles.ConvertAll(e => new WebhookEditionFile(e)),
                 Release = new WebhookGrabbedRelease(message.Release, episodeFiles.First().IndexerFlags, episodeFiles.First().ReleaseType),
                 DownloadClient = message.DownloadClientInfo?.Name,
                 DownloadClientType = message.DownloadClientInfo?.Type,
@@ -107,16 +107,16 @@ namespace NzbDrone.Core.Notifications.Webhook
             return payload;
         }
 
-        protected WebhookEpisodeDeletePayload BuildOnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        protected WebhookEpisodeDeletePayload BuildOnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             return new WebhookEpisodeDeletePayload
             {
-                EventType = WebhookEventType.EpisodeFileDelete,
+                EventType = WebhookEventType.EditionFileDelete,
                 InstanceName = _configFileProvider.InstanceName,
                 ApplicationUrl = _configService.ApplicationUrl,
                 Series = GetSeries(deleteMessage.Series),
-                Episodes = deleteMessage.EpisodeFile.Episodes.Value.ConvertAll(x => new WebhookEpisode(x)),
-                EpisodeFile = new WebhookEpisodeFile(deleteMessage.EpisodeFile),
+                Episodes = deleteMessage.EditionFile.Episodes.Value.ConvertAll(x => new WebhookEpisode(x)),
+                EditionFile = new WebhookEditionFile(deleteMessage.EditionFile),
                 DeleteReason = deleteMessage.Reason
             };
         }
@@ -144,7 +144,7 @@ namespace NzbDrone.Core.Notifications.Webhook
             };
         }
 
-        protected WebhookRenamePayload BuildOnRenamePayload(Series series, List<RenamedEpisodeFile> renamedFiles)
+        protected WebhookRenamePayload BuildOnRenamePayload(Series series, List<RenamedEditionFile> renamedFiles)
         {
             return new WebhookRenamePayload
             {
@@ -152,7 +152,7 @@ namespace NzbDrone.Core.Notifications.Webhook
                 InstanceName = _configFileProvider.InstanceName,
                 ApplicationUrl = _configService.ApplicationUrl,
                 Series = GetSeries(series),
-                RenamedEpisodeFiles = renamedFiles.ConvertAll(x => new WebhookRenamedEpisodeFile(x))
+                RenamedEditionFiles = renamedFiles.ConvertAll(x => new WebhookRenamedEditionFile(x))
             };
         }
 
@@ -237,8 +237,8 @@ namespace NzbDrone.Core.Notifications.Webhook
                     new()
                     {
                         Id = 123,
-                        EpisodeNumber = 1,
-                        SeasonNumber = 1,
+                        EditionNumber = 1,
+                        BookNumber = 1,
                         Title = "Test title"
                     }
                 }

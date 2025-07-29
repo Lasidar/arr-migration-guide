@@ -12,19 +12,19 @@ namespace NzbDrone.Core.MediaFiles
 {
     public interface IMediaFileService
     {
-        EpisodeFile Add(EpisodeFile episodeFile);
-        void Update(EpisodeFile episodeFile);
-        void Update(List<EpisodeFile> episodeFiles);
-        void Delete(EpisodeFile episodeFile, DeleteMediaFileReason reason);
-        List<EpisodeFile> GetFilesBySeries(int seriesId);
-        List<EpisodeFile> GetFilesBySeriesIds(List<int> seriesIds);
-        List<EpisodeFile> GetFilesBySeason(int seriesId, int seasonNumber);
-        List<EpisodeFile> GetFiles(IEnumerable<int> ids);
-        List<EpisodeFile> GetFilesWithoutMediaInfo();
+        EditionFile Add(EditionFile episodeFile);
+        void Update(EditionFile episodeFile);
+        void Update(List<EditionFile> episodeFiles);
+        void Delete(EditionFile episodeFile, DeleteMediaFileReason reason);
+        List<EditionFile> GetFilesBySeries(int seriesId);
+        List<EditionFile> GetFilesByAuthorIds(List<int> seriesIds);
+        List<EditionFile> GetFilesBySeason(int seriesId, int seasonNumber);
+        List<EditionFile> GetFiles(IEnumerable<int> ids);
+        List<EditionFile> GetFilesWithoutMediaInfo();
         List<string> FilterExistingFiles(List<string> files, Series series);
-        EpisodeFile Get(int id);
-        List<EpisodeFile> Get(IEnumerable<int> ids);
-        List<EpisodeFile> GetFilesWithRelativePath(int seriesId, string relativePath);
+        EditionFile Get(int id);
+        List<EditionFile> Get(IEnumerable<int> ids);
+        List<EditionFile> GetFilesWithRelativePath(int seriesId, string relativePath);
     }
 
     public class MediaFileService : IMediaFileService, IHandleAsync<SeriesDeletedEvent>
@@ -40,54 +40,54 @@ namespace NzbDrone.Core.MediaFiles
             _logger = logger;
         }
 
-        public EpisodeFile Add(EpisodeFile episodeFile)
+        public EditionFile Add(EditionFile episodeFile)
         {
             var addedFile = _mediaFileRepository.Insert(episodeFile);
-            _eventAggregator.PublishEvent(new EpisodeFileAddedEvent(addedFile));
+            _eventAggregator.PublishEvent(new EditionFileAddedEvent(addedFile));
             return addedFile;
         }
 
-        public void Update(EpisodeFile episodeFile)
+        public void Update(EditionFile episodeFile)
         {
             _mediaFileRepository.Update(episodeFile);
         }
 
-        public void Update(List<EpisodeFile> episodeFiles)
+        public void Update(List<EditionFile> episodeFiles)
         {
             _mediaFileRepository.UpdateMany(episodeFiles);
         }
 
-        public void Delete(EpisodeFile episodeFile, DeleteMediaFileReason reason)
+        public void Delete(EditionFile episodeFile, DeleteMediaFileReason reason)
         {
             // Little hack so we have the episodes and series attached for the event consumers
             episodeFile.Episodes.LazyLoad();
             episodeFile.Path = Path.Combine(episodeFile.Series.Value.Path, episodeFile.RelativePath);
 
             _mediaFileRepository.Delete(episodeFile);
-            _eventAggregator.PublishEvent(new EpisodeFileDeletedEvent(episodeFile, reason));
+            _eventAggregator.PublishEvent(new EditionFileDeletedEvent(episodeFile, reason));
         }
 
-        public List<EpisodeFile> GetFilesBySeries(int seriesId)
+        public List<EditionFile> GetFilesBySeries(int seriesId)
         {
             return _mediaFileRepository.GetFilesBySeries(seriesId);
         }
 
-        public List<EpisodeFile> GetFilesBySeriesIds(List<int> seriesIds)
+        public List<EditionFile> GetFilesByAuthorIds(List<int> seriesIds)
         {
-            return _mediaFileRepository.GetFilesBySeriesIds(seriesIds);
+            return _mediaFileRepository.GetFilesByAuthorIds(seriesIds);
         }
 
-        public List<EpisodeFile> GetFilesBySeason(int seriesId, int seasonNumber)
+        public List<EditionFile> GetFilesBySeason(int seriesId, int seasonNumber)
         {
             return _mediaFileRepository.GetFilesBySeason(seriesId, seasonNumber);
         }
 
-        public List<EpisodeFile> GetFiles(IEnumerable<int> ids)
+        public List<EditionFile> GetFiles(IEnumerable<int> ids)
         {
             return _mediaFileRepository.Get(ids).ToList();
         }
 
-        public List<EpisodeFile> GetFilesWithoutMediaInfo()
+        public List<EditionFile> GetFilesWithoutMediaInfo()
         {
             return _mediaFileRepository.GetFilesWithoutMediaInfo();
         }
@@ -99,17 +99,17 @@ namespace NzbDrone.Core.MediaFiles
             return FilterExistingFiles(files, seriesFiles, series);
         }
 
-        public EpisodeFile Get(int id)
+        public EditionFile Get(int id)
         {
             return _mediaFileRepository.Get(id);
         }
 
-        public List<EpisodeFile> Get(IEnumerable<int> ids)
+        public List<EditionFile> Get(IEnumerable<int> ids)
         {
             return _mediaFileRepository.Get(ids).ToList();
         }
 
-        public List<EpisodeFile> GetFilesWithRelativePath(int seriesId, string relativePath)
+        public List<EditionFile> GetFilesWithRelativePath(int seriesId, string relativePath)
         {
             return _mediaFileRepository.GetFilesWithRelativePath(seriesId, relativePath);
         }
@@ -119,7 +119,7 @@ namespace NzbDrone.Core.MediaFiles
             _mediaFileRepository.DeleteForSeries(message.Series.Select(s => s.Id).ToList());
         }
 
-        public static List<string> FilterExistingFiles(List<string> files, List<EpisodeFile> seriesFiles, Series series)
+        public static List<string> FilterExistingFiles(List<string> files, List<EditionFile> seriesFiles, Series series)
         {
             var seriesFilePaths = seriesFiles.Select(f => Path.Combine(series.Path, f.RelativePath)).ToList();
 

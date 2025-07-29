@@ -2,13 +2,13 @@
 
 namespace NzbDrone.Core.MediaFiles.Events
 {
-    public class EpisodeFileAddedEvent : IEvent
+    public class EditionFileAddedEvent : IEvent
     {
-        public EpisodeFile EpisodeFile { get; private set; }
+        public EditionFile EditionFile { get; private set; }
 
-        public EpisodeFileAddedEvent(EpisodeFile episodeFile)
+        public EditionFileAddedEvent(EditionFile episodeFile)
         {
-            EpisodeFile = episodeFile;
+            EditionFile = episodeFile;
         }
     }
 }

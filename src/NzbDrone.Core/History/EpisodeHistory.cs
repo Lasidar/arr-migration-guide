@@ -7,7 +7,7 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.History
 {
-    public class EpisodeHistory : ModelBase
+    public class EditionHistory : ModelBase
     {
         public const string DOWNLOAD_CLIENT = "downloadClient";
         public const string SERIES_MATCH_TYPE = "seriesMatchType";
@@ -22,7 +22,7 @@ namespace NzbDrone.Core.History
         }
 
         public int EpisodeId { get; set; }
-        public int SeriesId { get; set; }
+        public int AuthorId { get; set; }
         public string SourceTitle { get; set; }
         public QualityModel Quality { get; set; }
         public DateTime Date { get; set; }
@@ -41,8 +41,8 @@ namespace NzbDrone.Core.History
         SeriesFolderImported = 2,
         DownloadFolderImported = 3,
         DownloadFailed = 4,
-        EpisodeFileDeleted = 5,
-        EpisodeFileRenamed = 6,
+        EditionFileDeleted = 5,
+        EditionFileRenamed = 6,
         DownloadIgnored = 7
     }
 }

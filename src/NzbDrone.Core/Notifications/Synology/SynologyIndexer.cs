@@ -29,13 +29,13 @@ namespace NzbDrone.Core.Notifications.Synology
             {
                 foreach (var oldFile in message.OldFiles)
                 {
-                    var fullPath = Path.Combine(message.Series.Path, oldFile.EpisodeFile.RelativePath);
+                    var fullPath = Path.Combine(message.Series.Path, oldFile.EditionFile.RelativePath);
 
                     _indexerProxy.DeleteFile(fullPath);
                 }
 
                 {
-                    var fullPath = Path.Combine(message.Series.Path, message.EpisodeFile.RelativePath);
+                    var fullPath = Path.Combine(message.Series.Path, message.EditionFile.RelativePath);
 
                     _indexerProxy.AddFile(fullPath);
                 }
@@ -50,7 +50,7 @@ namespace NzbDrone.Core.Notifications.Synology
             }
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedEditionFile> renamedFiles)
         {
             if (Settings.UpdateLibrary)
             {
@@ -58,11 +58,11 @@ namespace NzbDrone.Core.Notifications.Synology
             }
         }
 
-        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        public override void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             if (Settings.UpdateLibrary)
             {
-                var fullPath = Path.Combine(deleteMessage.Series.Path, deleteMessage.EpisodeFile.RelativePath);
+                var fullPath = Path.Combine(deleteMessage.Series.Path, deleteMessage.EditionFile.RelativePath);
                 _indexerProxy.DeleteFile(fullPath);
             }
         }

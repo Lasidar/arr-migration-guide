@@ -24,7 +24,7 @@ namespace NzbDrone.Core.Notifications
           IHandle<SeriesRenamedEvent>,
           IHandle<SeriesAddCompletedEvent>,
           IHandle<SeriesDeletedEvent>,
-          IHandle<EpisodeFileDeletedEvent>,
+          IHandle<EditionFileDeletedEvent>,
           IHandle<HealthCheckFailedEvent>,
           IHandle<HealthCheckRestoredEvent>,
           IHandle<UpdateInstalledEvent>,
@@ -60,14 +60,14 @@ namespace NzbDrone.Core.Notifications
                                          qualityString);
             }
 
-            var episodeNumbers = string.Concat(episodes.Select(e => e.EpisodeNumber)
+            var episodeNumbers = string.Concat(episodes.Select(e => e.EditionNumber)
                                                        .Select(i => string.Format("x{0:00}", i)));
 
             var episodeTitles = string.Join(" + ", episodes.Select(e => e.Title));
 
             return string.Format("{0} - {1}{2} - {3} [{4}]",
                                     series.Title,
-                                    episodes.First().SeasonNumber,
+                                    episodes.First().BookNumber,
                                     episodeNumbers,
                                     episodeTitles,
                                     qualityString);
@@ -180,7 +180,7 @@ namespace NzbDrone.Core.Notifications
                 Message = GetMessage(message.EpisodeInfo.Series, message.EpisodeInfo.Episodes, message.EpisodeInfo.Quality),
                 Series = message.EpisodeInfo.Series,
                 EpisodeInfo = message.EpisodeInfo,
-                EpisodeFile = message.ImportedEpisode,
+                EditionFile = message.ImportedEpisode,
                 OldFiles = message.OldFiles,
                 SourcePath = message.EpisodeInfo.Path,
                 DownloadClientInfo = message.DownloadClientInfo,
@@ -218,16 +218,16 @@ namespace NzbDrone.Core.Notifications
             var downloadMessage = new ImportCompleteMessage
             {
                 Message = parsedEpisodeInfo.FullSeason
-                    ? GetFullSeasonMessage(series, episodes.First().SeasonNumber, parsedEpisodeInfo.Quality)
+                    ? GetFullSeasonMessage(series, episodes.First().BookNumber, parsedEpisodeInfo.Quality)
                     : GetMessage(series, episodes, parsedEpisodeInfo.Quality),
                 Series = series,
                 Episodes = episodes,
-                EpisodeFiles = message.EpisodeFiles,
+                EditionFiles = message.EditionFiles,
                 DownloadClientInfo = message.TrackedDownload.DownloadItem.DownloadClientInfo,
                 DownloadId = message.TrackedDownload.DownloadItem.DownloadId,
                 Release = message.Release,
                 SourcePath = message.TrackedDownload.DownloadItem.OutputPath.FullPath,
-                DestinationPath = message.EpisodeFiles.Select(e => Path.Join(series.Path, e.RelativePath)).ToList().GetLongestCommonPath(),
+                DestinationPath = message.EditionFiles.Select(e => Path.Join(series.Path, e.RelativePath)).ToList().GetLongestCommonPath(),
                 ReleaseGroup = parsedEpisodeInfo.ReleaseGroup,
                 ReleaseQuality = parsedEpisodeInfo.Quality
             };
@@ -262,14 +262,14 @@ namespace NzbDrone.Core.Notifications
             var downloadMessage = new ImportCompleteMessage
             {
                 Message = parsedEpisodeInfo.FullSeason
-                    ? GetFullSeasonMessage(series, episodes.First().SeasonNumber, parsedEpisodeInfo.Quality)
+                    ? GetFullSeasonMessage(series, episodes.First().BookNumber, parsedEpisodeInfo.Quality)
                     : GetMessage(series, episodes, parsedEpisodeInfo.Quality),
                 Series = series,
                 Episodes = episodes,
-                EpisodeFiles = message.EpisodeFiles,
+                EditionFiles = message.EditionFiles,
                 SourcePath = message.SourcePath,
                 SourceTitle = parsedEpisodeInfo.ReleaseTitle,
-                DestinationPath = message.EpisodeFiles.Select(e => Path.Join(series.Path, e.RelativePath)).ToList().GetLongestCommonPath(),
+                DestinationPath = message.EditionFiles.Select(e => Path.Join(series.Path, e.RelativePath)).ToList().GetLongestCommonPath(),
                 ReleaseGroup = parsedEpisodeInfo.ReleaseGroup,
                 ReleaseQuality = parsedEpisodeInfo.Quality
             };
@@ -389,9 +389,9 @@ namespace NzbDrone.Core.Notifications
             }
         }
 
-        public void Handle(EpisodeFileDeletedEvent message)
+        public void Handle(EditionFileDeletedEvent message)
         {
-            if (message.EpisodeFile.Episodes.Value.Empty())
+            if (message.EditionFile.Episodes.Value.Empty())
             {
                 _logger.Trace("Skipping notification for deleted file without an episode (episode metadata was removed)");
 
@@ -399,20 +399,20 @@ namespace NzbDrone.Core.Notifications
             }
 
             var deleteMessage = new EpisodeDeleteMessage();
-            deleteMessage.Message = GetMessage(message.EpisodeFile.Series, message.EpisodeFile.Episodes, message.EpisodeFile.Quality);
-            deleteMessage.Series = message.EpisodeFile.Series;
-            deleteMessage.EpisodeFile = message.EpisodeFile;
+            deleteMessage.Message = GetMessage(message.EditionFile.Series, message.EditionFile.Episodes, message.EditionFile.Quality);
+            deleteMessage.Series = message.EditionFile.Series;
+            deleteMessage.EditionFile = message.EditionFile;
             deleteMessage.Reason = message.Reason;
 
-            foreach (var notification in _notificationFactory.OnEpisodeFileDeleteEnabled())
+            foreach (var notification in _notificationFactory.OnEditionFileDeleteEnabled())
             {
                 try
                 {
-                    if (message.Reason != MediaFiles.DeleteMediaFileReason.Upgrade || ((NotificationDefinition)notification.Definition).OnEpisodeFileDeleteForUpgrade)
+                    if (message.Reason != MediaFiles.DeleteMediaFileReason.Upgrade || ((NotificationDefinition)notification.Definition).OnEditionFileDeleteForUpgrade)
                     {
-                        if (ShouldHandleSeries(notification.Definition, deleteMessage.EpisodeFile.Series))
+                        if (ShouldHandleSeries(notification.Definition, deleteMessage.EditionFile.Series))
                         {
-                            notification.OnEpisodeFileDelete(deleteMessage);
+                            notification.OnEditionFileDelete(deleteMessage);
                             _notificationStatusService.RecordSuccess(notification.Definition.Id);
                         }
                     }
@@ -420,7 +420,7 @@ namespace NzbDrone.Core.Notifications
                 catch (Exception ex)
                 {
                     _notificationStatusService.RecordFailure(notification.Definition.Id);
-                    _logger.Warn(ex, "Unable to send OnEpisodeFileDelete notification to: " + notification.Definition.Name);
+                    _logger.Warn(ex, "Unable to send OnEditionFileDelete notification to: " + notification.Definition.Name);
                 }
             }
         }

@@ -8,10 +8,10 @@ using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Core.Books;
 
-namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
+namespace NzbDrone.Core.Test.TvTests.EditionRepositoryTests
 {
     [TestFixture]
-    public class EpisodesRepositoryReadFixture : DbTest<EpisodeRepository, Episode>
+    public class EditionsRepositoryReadFixture : DbTest<EditionRepository, Episode>
     {
         private Series _series;
 
@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
         [Test]
         public void should_get_episodes_by_file()
         {
-            var episodeFile = Builder<EpisodeFile>.CreateNew()
+            var episodeFile = Builder<EditionFile>.CreateNew()
                 .With(h => h.Quality = new QualityModel())
                 .With(h => h.Languages = new List<Language> { Language.English })
                 .BuildNew();
@@ -37,8 +37,8 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
 
             var episode = Builder<Episode>.CreateListOfSize(2)
                                         .All()
-                                        .With(e => e.SeriesId = _series.Id)
-                                        .With(e => e.EpisodeFileId = episodeFile.Id)
+                                        .With(e => e.AuthorId = _series.Id)
+                                        .With(e => e.EditionFileId = episodeFile.Id)
                                         .BuildListOfNew();
 
             Db.InsertMany(episode);

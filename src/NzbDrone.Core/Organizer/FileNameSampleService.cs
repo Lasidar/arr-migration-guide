@@ -30,11 +30,11 @@ namespace NzbDrone.Core.Organizer
         private static Episode _episode3;
         private static List<Episode> _singleEpisode;
         private static List<Episode> _multiEpisodes;
-        private static EpisodeFile _singleEpisodeFile;
-        private static EpisodeFile _multiEpisodeFile;
-        private static EpisodeFile _dailyEpisodeFile;
-        private static EpisodeFile _animeEpisodeFile;
-        private static EpisodeFile _animeMultiEpisodeFile;
+        private static EditionFile _singleEditionFile;
+        private static EditionFile _multiEditionFile;
+        private static EditionFile _dailyEditionFile;
+        private static EditionFile _animeEditionFile;
+        private static EditionFile _animeMultiEditionFile;
         private static List<CustomFormat> _customFormats;
 
         public FileNameSampleService(IBuildFileNames buildFileNames)
@@ -76,27 +76,27 @@ namespace NzbDrone.Core.Organizer
 
             _episode1 = new Episode
             {
-                SeasonNumber = 1,
-                EpisodeNumber = 1,
+                BookNumber = 1,
+                EditionNumber = 1,
                 Title = "Episode Title (1)",
                 AirDate = "2013-10-30",
-                AbsoluteEpisodeNumber = 1,
+                AbsoluteEditionNumber = 1,
             };
 
             _episode2 = new Episode
             {
-                SeasonNumber = 1,
-                EpisodeNumber = 2,
+                BookNumber = 1,
+                EditionNumber = 2,
                 Title = "Episode Title (2)",
-                AbsoluteEpisodeNumber = 2
+                AbsoluteEditionNumber = 2
             };
 
             _episode3 = new Episode
             {
-                SeasonNumber = 1,
-                EpisodeNumber = 3,
+                BookNumber = 1,
+                EditionNumber = 3,
                 Title = "Episode Title (3)",
-                AbsoluteEpisodeNumber = 3
+                AbsoluteEditionNumber = 3
             };
 
             _singleEpisode = new List<Episode> { _episode1 };
@@ -142,7 +142,7 @@ namespace NzbDrone.Core.Organizer
                 }
             };
 
-            _singleEpisodeFile = new EpisodeFile
+            _singleEditionFile = new EditionFile
             {
                 Quality = new QualityModel(Quality.WEBDL1080p, new Revision(2)),
                 RelativePath = "The.Series.Title's!.S01E01.1080p.WEBDL.x264-EVOLVE.mkv",
@@ -151,7 +151,7 @@ namespace NzbDrone.Core.Organizer
                 MediaInfo = mediaInfo
             };
 
-            _multiEpisodeFile = new EpisodeFile
+            _multiEditionFile = new EditionFile
             {
                 Quality = new QualityModel(Quality.WEBDL1080p, new Revision(2)),
                 RelativePath = "The.Series.Title's!.S01E01-E03.1080p.WEBDL.x264-EVOLVE.mkv",
@@ -160,7 +160,7 @@ namespace NzbDrone.Core.Organizer
                 MediaInfo = mediaInfo,
             };
 
-            _dailyEpisodeFile = new EpisodeFile
+            _dailyEditionFile = new EditionFile
             {
                 Quality = new QualityModel(Quality.WEBDL1080p, new Revision(2)),
                 RelativePath = "The.Series.Title's!.2013.10.30.1080p.WEBDL.x264-EVOLVE.mkv",
@@ -169,7 +169,7 @@ namespace NzbDrone.Core.Organizer
                 MediaInfo = mediaInfo
             };
 
-            _animeEpisodeFile = new EpisodeFile
+            _animeEditionFile = new EditionFile
             {
                 Quality = new QualityModel(Quality.WEBDL1080p, new Revision(2)),
                 RelativePath = "[RlsGroup] The Series Title's! - 001 [1080P].mkv",
@@ -178,7 +178,7 @@ namespace NzbDrone.Core.Organizer
                 MediaInfo = mediaInfoAnime
             };
 
-            _animeMultiEpisodeFile = new EpisodeFile
+            _animeMultiEditionFile = new EditionFile
             {
                 Quality = new QualityModel(Quality.WEBDL1080p, new Revision(2)),
                 RelativePath = "[RlsGroup] The Series Title's! - 001 - 103 [1080p].mkv",
@@ -192,10 +192,10 @@ namespace NzbDrone.Core.Organizer
         {
             var result = new SampleResult
             {
-                FileName = BuildSample(_singleEpisode, _standardSeries, _singleEpisodeFile, nameSpec, _customFormats),
+                FileName = BuildSample(_singleEpisode, _standardSeries, _singleEditionFile, nameSpec, _customFormats),
                 Series = _standardSeries,
                 Episodes = _singleEpisode,
-                EpisodeFile = _singleEpisodeFile
+                EditionFile = _singleEditionFile
             };
 
             return result;
@@ -205,10 +205,10 @@ namespace NzbDrone.Core.Organizer
         {
             var result = new SampleResult
             {
-                FileName = BuildSample(_multiEpisodes, _standardSeries, _multiEpisodeFile, nameSpec, _customFormats),
+                FileName = BuildSample(_multiEpisodes, _standardSeries, _multiEditionFile, nameSpec, _customFormats),
                 Series = _standardSeries,
                 Episodes = _multiEpisodes,
-                EpisodeFile = _multiEpisodeFile
+                EditionFile = _multiEditionFile
             };
 
             return result;
@@ -218,10 +218,10 @@ namespace NzbDrone.Core.Organizer
         {
             var result = new SampleResult
             {
-                FileName = BuildSample(_singleEpisode, _dailySeries, _dailyEpisodeFile, nameSpec, _customFormats),
+                FileName = BuildSample(_singleEpisode, _dailySeries, _dailyEditionFile, nameSpec, _customFormats),
                 Series = _dailySeries,
                 Episodes = _singleEpisode,
-                EpisodeFile = _dailyEpisodeFile
+                EditionFile = _dailyEditionFile
             };
 
             return result;
@@ -231,10 +231,10 @@ namespace NzbDrone.Core.Organizer
         {
             var result = new SampleResult
             {
-                FileName = BuildSample(_singleEpisode, _animeSeries, _animeEpisodeFile, nameSpec, _customFormats),
+                FileName = BuildSample(_singleEpisode, _animeSeries, _animeEditionFile, nameSpec, _customFormats),
                 Series = _animeSeries,
                 Episodes = _singleEpisode,
-                EpisodeFile = _animeEpisodeFile
+                EditionFile = _animeEditionFile
             };
 
             return result;
@@ -244,10 +244,10 @@ namespace NzbDrone.Core.Organizer
         {
             var result = new SampleResult
             {
-                FileName = BuildSample(_multiEpisodes, _animeSeries, _animeMultiEpisodeFile, nameSpec, _customFormats),
+                FileName = BuildSample(_multiEpisodes, _animeSeries, _animeMultiEditionFile, nameSpec, _customFormats),
                 Series = _animeSeries,
                 Episodes = _multiEpisodes,
-                EpisodeFile = _animeMultiEpisodeFile
+                EditionFile = _animeMultiEditionFile
             };
 
             return result;
@@ -260,7 +260,7 @@ namespace NzbDrone.Core.Organizer
 
         public string GetSeasonFolderSample(NamingConfig nameSpec)
         {
-            return _buildFileNames.GetSeasonFolder(_standardSeries, _episode1.SeasonNumber, nameSpec);
+            return _buildFileNames.GetSeasonFolder(_standardSeries, _episode1.BookNumber, nameSpec);
         }
 
         public string GetSpecialsFolderSample(NamingConfig nameSpec)
@@ -268,7 +268,7 @@ namespace NzbDrone.Core.Organizer
             return _buildFileNames.GetSeasonFolder(_standardSeries, 0, nameSpec);
         }
 
-        private string BuildSample(List<Episode> episodes, Series series, EpisodeFile episodeFile, NamingConfig nameSpec, List<CustomFormat> customFormats)
+        private string BuildSample(List<Episode> episodes, Series series, EditionFile episodeFile, NamingConfig nameSpec, List<CustomFormat> customFormats)
         {
             try
             {

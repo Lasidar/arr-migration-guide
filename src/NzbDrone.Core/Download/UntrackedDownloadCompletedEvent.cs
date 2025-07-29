@@ -10,15 +10,15 @@ namespace NzbDrone.Core.Download
     {
         public Series Series { get; private set; }
         public List<Episode> Episodes { get; private set; }
-        public List<EpisodeFile> EpisodeFiles { get; private set; }
+        public List<EditionFile> EditionFiles { get; private set; }
         public ParsedEpisodeInfo ParsedEpisodeInfo { get; private set; }
         public string SourcePath { get; private set; }
 
-        public UntrackedDownloadCompletedEvent(Series series, List<Episode> episodes, List<EpisodeFile> episodeFiles, ParsedEpisodeInfo parsedEpisodeInfo, string sourcePath)
+        public UntrackedDownloadCompletedEvent(Series series, List<Episode> episodes, List<EditionFile> episodeFiles, ParsedEpisodeInfo parsedEpisodeInfo, string sourcePath)
         {
             Series = series;
             Episodes = episodes;
-            EpisodeFiles = episodeFiles;
+            EditionFiles = episodeFiles;
             ParsedEpisodeInfo = parsedEpisodeInfo;
             SourcePath = sourcePath;
         }

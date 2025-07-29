@@ -12,24 +12,24 @@ namespace NzbDrone.Core.Notifications.Webhook
         public WebhookEpisode(Episode episode)
         {
             Id = episode.Id;
-            SeasonNumber = episode.SeasonNumber;
-            EpisodeNumber = episode.EpisodeNumber;
+            BookNumber = episode.BookNumber;
+            EditionNumber = episode.EditionNumber;
             Title = episode.Title;
             Overview = episode.Overview;
             AirDate = episode.AirDate;
             AirDateUtc = episode.AirDateUtc;
-            SeriesId = episode.SeriesId;
+            AuthorId = episode.AuthorId;
             TvdbId = episode.TvdbId;
         }
 
         public int Id { get; set; }
-        public int EpisodeNumber { get; set; }
-        public int SeasonNumber { get; set; }
+        public int EditionNumber { get; set; }
+        public int BookNumber { get; set; }
         public string Title { get; set; }
         public string Overview { get; set; }
         public string AirDate { get; set; }
         public DateTime? AirDateUtc { get; set; }
-        public int SeriesId { get; set; }
+        public int AuthorId { get; set; }
         public int TvdbId { get; set; }
     }
 }

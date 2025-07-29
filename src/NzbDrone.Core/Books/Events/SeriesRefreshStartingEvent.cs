@@ -2,7 +2,7 @@
 
 namespace NzbDrone.Core.Books.Events
 {
-    public class SeriesRefreshStartingEvent : IEvent
+    public class AuthorRefreshStartingEvent : IEvent
     {
         public bool ManualTrigger { get; set; }
 

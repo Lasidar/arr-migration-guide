@@ -16,11 +16,11 @@ namespace Readarr.Api.V3.Calendar
     [V3FeedController("calendar")]
     public class CalendarFeedController : Controller
     {
-        private readonly IEpisodeService _episodeService;
-        private readonly ISeriesService _seriesService;
+        private readonly IEditionService _episodeService;
+        private readonly IAuthorService _seriesService;
         private readonly ITagService _tagService;
 
-        public CalendarFeedController(IEpisodeService episodeService, ISeriesService seriesService, ITagService tagService)
+        public CalendarFeedController(IEditionService episodeService, IAuthorService seriesService, ITagService tagService)
         {
             _episodeService = episodeService;
             _seriesService = seriesService;
@@ -52,14 +52,14 @@ namespace Readarr.Api.V3.Calendar
 
             foreach (var episode in episodes.OrderBy(v => v.AirDateUtc.Value))
             {
-                var series = allSeries.SingleOrDefault(s => s.Id == episode.SeriesId);
+                var series = allSeries.SingleOrDefault(s => s.Id == episode.AuthorId);
 
                 if (series == null)
                 {
                     continue;
                 }
 
-                if (premieresOnly && (episode.SeasonNumber == 0 || episode.EpisodeNumber != 1))
+                if (premieresOnly && (episode.BookNumber == 0 || episode.EditionNumber != 1))
                 {
                     continue;
                 }
@@ -91,7 +91,7 @@ namespace Readarr.Api.V3.Calendar
                         occurrence.Summary = $"{series.Title} - {episode.Title}";
                         break;
                     default:
-                        occurrence.Summary = $"{series.Title} - {episode.SeasonNumber}x{episode.EpisodeNumber:00} - {episode.Title}";
+                        occurrence.Summary = $"{series.Title} - {episode.BookNumber}x{episode.EditionNumber:00} - {episode.Title}";
                         break;
                 }
             }

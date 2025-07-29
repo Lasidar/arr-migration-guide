@@ -17,7 +17,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
     {
         private Series _series;
         private Episode _episode;
-        private EpisodeFile _episodeFile;
+        private EditionFile _episodeFile;
         private NamingConfig _namingConfig;
 
         [SetUp]
@@ -30,12 +30,12 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             _episode = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
-                            .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 6)
-                            .With(e => e.AbsoluteEpisodeNumber = 100)
+                            .With(e => e.BookNumber = 15)
+                            .With(e => e.EditionNumber = 6)
+                            .With(e => e.AbsoluteEditionNumber = 100)
                             .Build();
 
-            _episodeFile = new EpisodeFile { Id = 5, Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
+            _episodeFile = new EditionFile { Id = 5, Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
 
             _namingConfig = NamingConfig.Default;
             _namingConfig.RenameEpisodes = true;
@@ -99,7 +99,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_include_current_filename_if_not_including_absolute_episode_number_token_for_anime_series()
         {
             _series.SeriesType = SeriesTypes.Anime;
-            _episode.AbsoluteEpisodeNumber = 123;
+            _episode.AbsoluteEditionNumber = 123;
             _episodeFile.RelativePath = "My Series - 123 - City Sushi";
             _namingConfig.AnimeEpisodeFormat = "{Original Title} {Quality Title}";
 
@@ -133,7 +133,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_not_include_current_filename_if_including_absolute_episode_number_token_for_anime_series()
         {
             _series.SeriesType = SeriesTypes.Anime;
-            _episode.AbsoluteEpisodeNumber = 123;
+            _episode.AbsoluteEditionNumber = 123;
             _episodeFile.RelativePath = "My Series - 123 - City Sushi";
             _namingConfig.AnimeEpisodeFormat = "{Series Title} - {absolute:00} {[Original Title]}";
 
@@ -169,7 +169,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_include_current_filename_for_new_file_if_including_absolute_episode_number_token_for_anime_series()
         {
             _series.SeriesType = SeriesTypes.Anime;
-            _episode.AbsoluteEpisodeNumber = 123;
+            _episode.AbsoluteEditionNumber = 123;
             _episodeFile.Id = 0;
             _episodeFile.RelativePath = "My Series - 123 - City Sushi";
             _namingConfig.AnimeEpisodeFormat = "{Series Title} - {absolute:00} {[Original Title]}";

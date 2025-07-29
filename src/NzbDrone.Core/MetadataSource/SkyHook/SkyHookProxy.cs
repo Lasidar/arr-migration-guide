@@ -21,29 +21,29 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
     {
         private readonly IHttpClient _httpClient;
         private readonly Logger _logger;
-        private readonly ISeriesService _seriesService;
-        private readonly IDailySeriesService _dailySeriesService;
+        private readonly IAuthorService _seriesService;
+        private readonly IDailyAuthorService _dailyAuthorService;
         private readonly IHttpRequestBuilderFactory _requestBuilder;
 
         public SkyHookProxy(IHttpClient httpClient,
                             ISonarrCloudRequestBuilder requestBuilder,
-                            ISeriesService seriesService,
-                            IDailySeriesService dailySeriesService,
+                            IAuthorService seriesService,
+                            IDailyAuthorService dailyAuthorService,
                             Logger logger)
         {
             _httpClient = httpClient;
             _requestBuilder = requestBuilder.SkyHookTvdb;
             _logger = logger;
             _seriesService = seriesService;
-            _dailySeriesService = dailySeriesService;
+            _dailyAuthorService = dailyAuthorService;
             _requestBuilder = requestBuilder.SkyHookTvdb;
         }
 
-        public Tuple<Series, List<Episode>> GetSeriesInfo(int tvdbSeriesId)
+        public Tuple<Series, List<Episode>> GetSeriesInfo(int tvdbAuthorId)
         {
             var httpRequest = _requestBuilder.Create()
                                              .SetSegment("route", "shows")
-                                             .Resource(tvdbSeriesId.ToString())
+                                             .Resource(tvdbAuthorId.ToString())
                                              .Build();
 
             httpRequest.AllowAutoRedirect = true;
@@ -55,7 +55,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             {
                 if (httpResponse.StatusCode == HttpStatusCode.NotFound)
                 {
-                    throw new SeriesNotFoundException(tvdbSeriesId);
+                    throw new SeriesNotFoundException(tvdbAuthorId);
                 }
                 else
                 {
@@ -239,7 +239,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 series.Certification = show.ContentRating.ToUpper();
             }
 
-            if (_dailySeriesService.IsDailySeries(series.TvdbId))
+            if (_dailyAuthorService.IsDailySeries(series.TvdbId))
             {
                 series.SeriesType = SeriesTypes.Daily;
             }
@@ -276,13 +276,13 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var episode = new Episode();
             episode.TvdbId = oracleEpisode.TvdbId;
             episode.Overview = oracleEpisode.Overview;
-            episode.SeasonNumber = oracleEpisode.SeasonNumber;
-            episode.EpisodeNumber = oracleEpisode.EpisodeNumber;
-            episode.AbsoluteEpisodeNumber = oracleEpisode.AbsoluteEpisodeNumber;
+            episode.BookNumber = oracleEpisode.BookNumber;
+            episode.EditionNumber = oracleEpisode.EditionNumber;
+            episode.AbsoluteEditionNumber = oracleEpisode.AbsoluteEditionNumber;
             episode.Title = oracleEpisode.Title;
-            episode.AiredAfterSeasonNumber = oracleEpisode.AiredAfterSeasonNumber;
-            episode.AiredBeforeSeasonNumber = oracleEpisode.AiredBeforeSeasonNumber;
-            episode.AiredBeforeEpisodeNumber = oracleEpisode.AiredBeforeEpisodeNumber;
+            episode.AiredAfterBookNumber = oracleEpisode.AiredAfterBookNumber;
+            episode.AiredBeforeBookNumber = oracleEpisode.AiredBeforeBookNumber;
+            episode.AiredBeforeEditionNumber = oracleEpisode.AiredBeforeEditionNumber;
 
             episode.AirDate = oracleEpisode.AirDate;
             episode.AirDateUtc = oracleEpisode.AirDateUtc;
@@ -304,9 +304,9 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         {
             return new Season
             {
-                SeasonNumber = seasonResource.SeasonNumber,
+                BookNumber = seasonResource.BookNumber,
                 Images = seasonResource.Images.Select(MapImage).ToList(),
-                Monitored = seasonResource.SeasonNumber > 0
+                Monitored = seasonResource.BookNumber > 0
             };
         }
 

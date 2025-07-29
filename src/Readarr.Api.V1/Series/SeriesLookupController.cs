@@ -10,7 +10,7 @@ using Readarr.Http;
 namespace Readarr.Api.V3.Series
 {
     [V3ApiController("series/lookup")]
-    public class SeriesLookupController : Controller
+    public class AuthorLookupController : Controller
     {
         private readonly ISearchForNewSeries _searchProxy;
         private readonly IBuildFileNames _fileNameBuilder;

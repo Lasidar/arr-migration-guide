@@ -10,7 +10,7 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Create.Column("RelativePath").OnTable("EpisodeFiles").AsString().Nullable();
+            Create.Column("RelativePath").OnTable("EditionFiles").AsString().Nullable();
 
             // TODO: Add unique constraint for series ID and Relative Path
             // TODO: Warn if multiple series share the same path
@@ -34,7 +34,7 @@ namespace NzbDrone.Core.Datastore.Migration
                         using (var updateCmd = conn.CreateCommand())
                         {
                             updateCmd.Transaction = tran;
-                            updateCmd.CommandText = "UPDATE \"EpisodeFiles\" SET \"RelativePath\" = REPLACE(\"Path\", ?, '') WHERE \"SeriesId\" = ?";
+                            updateCmd.CommandText = "UPDATE \"EditionFiles\" SET \"RelativePath\" = REPLACE(\"Path\", ?, '') WHERE \"AuthorId\" = ?";
                             updateCmd.AddParameter(seriesPath);
                             updateCmd.AddParameter(seriesId);
 

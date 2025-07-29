@@ -7,9 +7,9 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
 {
     public class SameEpisodesSpecification
     {
-        private readonly IEpisodeService _episodeService;
+        private readonly IEditionService _episodeService;
 
-        public SameEpisodesSpecification(IEpisodeService episodeService)
+        public SameEpisodesSpecification(IEditionService episodeService)
         {
             _episodeService = episodeService;
         }
@@ -17,7 +17,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
         public bool IsSatisfiedBy(List<Episode> episodes)
         {
             var episodeIds = episodes.SelectList(e => e.Id);
-            var episodeFileIds = episodes.Where(c => c.EpisodeFileId != 0).Select(c => c.EpisodeFileId).Distinct();
+            var episodeFileIds = episodes.Where(c => c.EditionFileId != 0).Select(c => c.EditionFileId).Distinct();
 
             foreach (var episodeFileId in episodeFileIds)
             {

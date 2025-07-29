@@ -12,7 +12,7 @@ using NzbDrone.Test.Common;
 namespace NzbDrone.Core.Test.TvTests
 {
     [TestFixture]
-    public class SeriesFolderPathBuilderFixture : CoreTest<SeriesPathBuilder>
+    public class AuthorFolderPathBuilderFixture : CoreTest<SeriesPathBuilder>
     {
         private Series _series;
 

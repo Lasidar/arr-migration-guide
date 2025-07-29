@@ -13,18 +13,18 @@ namespace NzbDrone.Core.Datastore.Migration
         protected override void MainDbUpgrade()
         {
             Create.TableForModel("ExtraFiles")
-                  .WithColumn("SeriesId").AsInt32().NotNullable()
-                  .WithColumn("SeasonNumber").AsInt32().NotNullable()
-                  .WithColumn("EpisodeFileId").AsInt32().NotNullable()
+                  .WithColumn("AuthorId").AsInt32().NotNullable()
+                  .WithColumn("BookNumber").AsInt32().NotNullable()
+                  .WithColumn("EditionFileId").AsInt32().NotNullable()
                   .WithColumn("RelativePath").AsString().NotNullable()
                   .WithColumn("Extension").AsString().NotNullable()
                   .WithColumn("Added").AsDateTime().NotNullable()
                   .WithColumn("LastUpdated").AsDateTime().NotNullable();
 
             Create.TableForModel("SubtitleFiles")
-                  .WithColumn("SeriesId").AsInt32().NotNullable()
-                  .WithColumn("SeasonNumber").AsInt32().NotNullable()
-                  .WithColumn("EpisodeFileId").AsInt32().NotNullable()
+                  .WithColumn("AuthorId").AsInt32().NotNullable()
+                  .WithColumn("BookNumber").AsInt32().NotNullable()
+                  .WithColumn("EditionFileId").AsInt32().NotNullable()
                   .WithColumn("RelativePath").AsString().NotNullable()
                   .WithColumn("Extension").AsString().NotNullable()
                   .WithColumn("Added").AsDateTime().NotNullable()
@@ -78,9 +78,9 @@ namespace NzbDrone.Core.Datastore.Migration
     public class MetadataFile99
     {
         public int Id { get; set; }
-        public int SeriesId { get; set; }
-        public int? EpisodeFileId { get; set; }
-        public int? SeasonNumber { get; set; }
+        public int AuthorId { get; set; }
+        public int? EditionFileId { get; set; }
+        public int? BookNumber { get; set; }
         public string RelativePath { get; set; }
         public DateTime Added { get; set; }
         public DateTime LastUpdated { get; set; }

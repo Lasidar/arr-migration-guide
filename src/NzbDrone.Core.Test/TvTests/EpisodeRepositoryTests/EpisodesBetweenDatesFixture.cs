@@ -5,10 +5,10 @@ using NUnit.Framework;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Core.Books;
 
-namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
+namespace NzbDrone.Core.Test.TvTests.EditionRepositoryTests
 {
     [TestFixture]
-    public class EpisodesBetweenDatesFixture : DbTest<EpisodeRepository, Episode>
+    public class EditionsBetweenDatesFixture : DbTest<EditionRepository, Episode>
     {
         [SetUp]
         public void Setup()
@@ -23,7 +23,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
 
             var episode = Builder<Episode>.CreateNew()
                                           .With(e => e.Id = 0)
-                                          .With(e => e.SeriesId = series.Id)
+                                          .With(e => e.AuthorId = series.Id)
                                           .With(e => e.Monitored = true)
                                           .Build();
 

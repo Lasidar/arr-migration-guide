@@ -185,11 +185,11 @@ namespace NzbDrone.Core.Test.ParserTests
         {
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
-            result.EpisodeNumbers.Should().HaveCount(1);
-            result.SeasonNumber.Should().Be(seasonNumber);
-            result.EpisodeNumbers.First().Should().Be(episodeNumber);
+            result.EditionNumbers.Should().HaveCount(1);
+            result.BookNumber.Should().Be(seasonNumber);
+            result.EditionNumbers.First().Should().Be(episodeNumber);
             result.SeriesTitle.Should().Be(title);
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeFalse();
         }
 
@@ -204,11 +204,11 @@ namespace NzbDrone.Core.Test.ParserTests
         {
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
-            result.EpisodeNumbers.Should().HaveCount(1);
-            result.SeasonNumber.Should().Be(seasonNumber);
-            result.EpisodeNumbers.First().Should().Be(episodeNumber);
+            result.EditionNumbers.Should().HaveCount(1);
+            result.BookNumber.Should().Be(seasonNumber);
+            result.EditionNumbers.First().Should().Be(episodeNumber);
             result.SeriesTitle.Should().Be(title);
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeFalse();
         }
 
@@ -217,11 +217,11 @@ namespace NzbDrone.Core.Test.ParserTests
         {
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
-            result.EpisodeNumbers.Should().HaveCount(1);
-            result.SeasonNumber.Should().Be(seasonNumber);
-            result.EpisodeNumbers.First().Should().Be(episodeNumber);
+            result.EditionNumbers.Should().HaveCount(1);
+            result.BookNumber.Should().Be(seasonNumber);
+            result.EditionNumbers.First().Should().Be(episodeNumber);
             result.SeriesTitle.Should().Be(title);
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeFalse();
             result.Special.Should().BeTrue();
         }
@@ -231,11 +231,11 @@ namespace NzbDrone.Core.Test.ParserTests
         {
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
-            result.EpisodeNumbers.Should().HaveCount(1);
-            result.SeasonNumber.Should().Be(seasonNumber);
-            result.EpisodeNumbers.First().Should().Be(episodeNumber);
+            result.EditionNumbers.Should().HaveCount(1);
+            result.BookNumber.Should().Be(seasonNumber);
+            result.EditionNumbers.First().Should().Be(episodeNumber);
             result.SeriesTitle.Should().Be(title);
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeFalse();
             result.IsSplitEpisode.Should().BeTrue();
         }

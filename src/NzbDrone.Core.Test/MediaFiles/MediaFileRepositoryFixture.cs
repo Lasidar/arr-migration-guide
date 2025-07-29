@@ -11,7 +11,7 @@ using NzbDrone.Core.Books;
 namespace NzbDrone.Core.Test.MediaFiles
 {
     [TestFixture]
-    public class MediaFileRepositoryFixture : DbTest<MediaFileRepository, EpisodeFile>
+    public class MediaFileRepositoryFixture : DbTest<MediaFileRepository, EditionFile>
     {
         private Series _series1;
         private Series _series2;
@@ -31,13 +31,13 @@ namespace NzbDrone.Core.Test.MediaFiles
         [Test]
         public void get_files_by_series()
         {
-            var files = Builder<EpisodeFile>.CreateListOfSize(10)
+            var files = Builder<EditionFile>.CreateListOfSize(10)
                 .All()
                 .With(c => c.Id = 0)
                 .With(c => c.Languages = new List<Language> { Language.English })
                 .With(c => c.Quality = new QualityModel(Quality.Bluray720p))
                 .Random(4)
-                .With(s => s.SeriesId = 12)
+                .With(s => s.AuthorId = 12)
                 .BuildListOfNew();
 
             Db.InsertMany(files);
@@ -45,17 +45,17 @@ namespace NzbDrone.Core.Test.MediaFiles
             var seriesFiles = Subject.GetFilesBySeries(12);
 
             seriesFiles.Should().HaveCount(4);
-            seriesFiles.Should().OnlyContain(c => c.SeriesId == 12);
+            seriesFiles.Should().OnlyContain(c => c.AuthorId == 12);
         }
 
         [Test]
         public void should_delete_files_by_seriesId()
         {
-            var items = Builder<EpisodeFile>.CreateListOfSize(5)
+            var items = Builder<EditionFile>.CreateListOfSize(5)
                 .TheFirst(1)
-                .With(c => c.SeriesId = _series2.Id)
+                .With(c => c.AuthorId = _series2.Id)
                 .TheRest()
-                .With(c => c.SeriesId = _series1.Id)
+                .With(c => c.AuthorId = _series1.Id)
                 .All()
                 .With(c => c.Id = 0)
                 .With(c => c.Quality = new QualityModel(Quality.Bluray1080p))

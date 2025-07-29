@@ -36,7 +36,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
 
         public override string Name => "Roksbox";
 
-        public override string GetFilenameAfterMove(Series series, EpisodeFile episodeFile, MetadataFile metadataFile)
+        public override string GetFilenameAfterMove(Series series, EditionFile episodeFile, MetadataFile metadataFile)
         {
             var episodeFilePath = Path.Combine(series.Path, episodeFile.RelativePath);
 
@@ -67,7 +67,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
 
             var metadata = new MetadataFile
                            {
-                               SeriesId = series.Id,
+                               AuthorId = series.Id,
                                Consumer = GetType().Name,
                                RelativePath = series.Path.GetRelativePath(path)
                            };
@@ -83,11 +83,11 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
 
                     if (seasonMatch.Groups["specials"].Success)
                     {
-                        metadata.SeasonNumber = 0;
+                        metadata.BookNumber = 0;
                     }
                     else
                     {
-                        metadata.SeasonNumber = Convert.ToInt32(seasonMatch.Groups["season"].Value);
+                        metadata.BookNumber = Convert.ToInt32(seasonMatch.Groups["season"].Value);
                     }
 
                     return metadata;
@@ -130,7 +130,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
             return null;
         }
 
-        public override MetadataFileResult EpisodeMetadata(Series series, EpisodeFile episodeFile)
+        public override MetadataFileResult EpisodeMetadata(Series series, EditionFile episodeFile)
         {
             if (!Settings.EpisodeMetadata)
             {
@@ -152,7 +152,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
                     var doc = new XDocument();
 
                     var details = new XElement("video");
-                    details.Add(new XElement("title", string.Format("{0} - {1}x{2} - {3}", series.Title, episode.SeasonNumber, episode.EpisodeNumber, episode.Title)));
+                    details.Add(new XElement("title", string.Format("{0} - {1}x{2} - {3}", series.Title, episode.BookNumber, episode.EditionNumber, episode.Title)));
                     details.Add(new XElement("year", episode.AirDate));
                     details.Add(new XElement("genre", string.Join(" / ", series.Genres)));
                     var actors = string.Join(" , ", series.Actors.ConvertAll(c => c.Name + " - " + c.Character).GetRange(0, Math.Min(3, series.Actors.Count)));
@@ -210,9 +210,9 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
 
             var seasonFolders = GetSeasonFolders(series);
 
-            if (!seasonFolders.TryGetValue(season.SeasonNumber, out var seasonFolder))
+            if (!seasonFolders.TryGetValue(season.BookNumber, out var seasonFolder))
             {
-                _logger.Trace("Failed to find season folder for series {0}, season {1}.", series.Title, season.SeasonNumber);
+                _logger.Trace("Failed to find season folder for series {0}, season {1}.", series.Title, season.BookNumber);
                 return new List<ImageFileResult>();
             }
 
@@ -220,7 +220,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
             var image = season.Images.SingleOrDefault(c => c.CoverType == MediaCoverTypes.Poster) ?? season.Images.FirstOrDefault();
             if (image == null)
             {
-                _logger.Trace("Failed to find suitable season image for series {0}, season {1}.", series.Title, season.SeasonNumber);
+                _logger.Trace("Failed to find suitable season image for series {0}, season {1}.", series.Title, season.BookNumber);
                 return new List<ImageFileResult>();
             }
 
@@ -230,7 +230,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
             return new List<ImageFileResult> { new ImageFileResult(path, image.RemoteUrl) };
         }
 
-        public override List<ImageFileResult> EpisodeImages(Series series, EpisodeFile episodeFile)
+        public override List<ImageFileResult> EpisodeImages(Series series, EditionFile episodeFile)
         {
             if (!Settings.EpisodeImages)
             {

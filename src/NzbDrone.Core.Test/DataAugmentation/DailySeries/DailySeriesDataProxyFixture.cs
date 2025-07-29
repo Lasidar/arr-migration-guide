@@ -19,7 +19,7 @@ namespace NzbDrone.Core.Test.DataAugmentation.DailySeries
         [Test]
         public void should_get_list_of_daily_series()
         {
-            var list = Subject.GetDailySeriesIds();
+            var list = Subject.GetDailyAuthorIds();
             list.Should().NotBeEmpty();
             list.Should().OnlyHaveUniqueItems();
         }

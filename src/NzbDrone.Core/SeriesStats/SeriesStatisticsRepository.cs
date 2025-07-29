@@ -14,10 +14,10 @@ namespace NzbDrone.Core.SeriesStats
         List<SeasonStatistics> SeriesStatistics(int seriesId);
     }
 
-    public class SeriesStatisticsRepository : ISeriesStatisticsRepository
+    public class AuthorStatisticsRepository : ISeriesStatisticsRepository
     {
         private const string _selectEpisodesTemplate = "SELECT /**select**/ FROM \"Episodes\" /**join**/ /**innerjoin**/ /**leftjoin**/ /**where**/ /**groupby**/ /**having**/ /**orderby**/";
-        private const string _selectEpisodeFilesTemplate = "SELECT /**select**/ FROM \"EpisodeFiles\" /**join**/ /**innerjoin**/ /**leftjoin**/ /**where**/ /**groupby**/ /**having**/ /**orderby**/";
+        private const string _selectEditionFilesTemplate = "SELECT /**select**/ FROM \"EditionFiles\" /**join**/ /**innerjoin**/ /**leftjoin**/ /**where**/ /**groupby**/ /**having**/ /**orderby**/";
 
         private readonly IMainDatabase _database;
 
@@ -30,22 +30,22 @@ namespace NzbDrone.Core.SeriesStats
         {
             var time = DateTime.UtcNow;
             return MapResults(Query(EpisodesBuilder(time), _selectEpisodesTemplate),
-                Query(EpisodeFilesBuilder(), _selectEpisodeFilesTemplate));
+                Query(EditionFilesBuilder(), _selectEditionFilesTemplate));
         }
 
         public List<SeasonStatistics> SeriesStatistics(int seriesId)
         {
             var time = DateTime.UtcNow;
 
-            return MapResults(Query(EpisodesBuilder(time).Where<Episode>(x => x.SeriesId == seriesId), _selectEpisodesTemplate),
-                Query(EpisodeFilesBuilder().Where<EpisodeFile>(x => x.SeriesId == seriesId), _selectEpisodeFilesTemplate));
+            return MapResults(Query(EpisodesBuilder(time).Where<Episode>(x => x.AuthorId == seriesId), _selectEpisodesTemplate),
+                Query(EditionFilesBuilder().Where<EditionFile>(x => x.AuthorId == seriesId), _selectEditionFilesTemplate));
         }
 
         private List<SeasonStatistics> MapResults(List<SeasonStatistics> episodesResult, List<SeasonStatistics> filesResult)
         {
             episodesResult.ForEach(e =>
             {
-                var file = filesResult.SingleOrDefault(f => f.SeriesId == e.SeriesId & f.SeasonNumber == e.SeasonNumber);
+                var file = filesResult.SingleOrDefault(f => f.AuthorId == e.AuthorId & f.BookNumber == e.BookNumber);
 
                 e.SizeOnDisk = file?.SizeOnDisk ?? 0;
                 e.ReleaseGroupsString = file?.ReleaseGroupsString;
@@ -73,40 +73,40 @@ namespace NzbDrone.Core.SeriesStats
             var falseIndicator = _database.DatabaseType == DatabaseType.PostgreSQL ? "false" : "0";
 
             return new SqlBuilder(_database.DatabaseType)
-            .Select($@"""Episodes"".""SeriesId"" AS SeriesId,
-                             ""Episodes"".""SeasonNumber"",
+            .Select($@"""Episodes"".""AuthorId"" AS AuthorId,
+                             ""Episodes"".""BookNumber"",
                              COUNT(*) AS TotalEpisodeCount,
-                             SUM(CASE WHEN ""AirDateUtc"" <= @currentDate OR ""EpisodeFileId"" > 0 THEN 1 ELSE 0 END) AS AvailableEpisodeCount,
-                             SUM(CASE WHEN (""Monitored"" = {trueIndicator} AND ""AirDateUtc"" <= @currentDate) OR ""EpisodeFileId"" > 0 THEN 1 ELSE 0 END) AS EpisodeCount,
-                             SUM(CASE WHEN ""EpisodeFileId"" > 0 THEN 1 ELSE 0 END) AS EpisodeFileCount,
+                             SUM(CASE WHEN ""AirDateUtc"" <= @currentDate OR ""EditionFileId"" > 0 THEN 1 ELSE 0 END) AS AvailableEpisodeCount,
+                             SUM(CASE WHEN (""Monitored"" = {trueIndicator} AND ""AirDateUtc"" <= @currentDate) OR ""EditionFileId"" > 0 THEN 1 ELSE 0 END) AS EpisodeCount,
+                             SUM(CASE WHEN ""EditionFileId"" > 0 THEN 1 ELSE 0 END) AS EditionFileCount,
                              MIN(CASE WHEN ""AirDateUtc"" < @currentDate OR ""Monitored"" = {falseIndicator} THEN NULL ELSE ""AirDateUtc"" END) AS NextAiringString,
                              MAX(CASE WHEN ""AirDateUtc"" >= @currentDate OR ""Monitored"" = {falseIndicator} THEN NULL ELSE ""AirDateUtc"" END) AS PreviousAiringString,
                              MAX(""AirDate"") AS LastAiredString",
                 parameters)
-            .GroupBy<Episode>(x => x.SeriesId)
-            .GroupBy<Episode>(x => x.SeasonNumber);
+            .GroupBy<Episode>(x => x.AuthorId)
+            .GroupBy<Episode>(x => x.BookNumber);
         }
 
-        private SqlBuilder EpisodeFilesBuilder()
+        private SqlBuilder EditionFilesBuilder()
         {
             if (_database.DatabaseType == DatabaseType.SQLite)
             {
                 return new SqlBuilder(_database.DatabaseType)
-                .Select(@"""SeriesId"",
-                            ""SeasonNumber"",
+                .Select(@"""AuthorId"",
+                            ""BookNumber"",
                             SUM(COALESCE(""Size"", 0)) AS SizeOnDisk,
                             GROUP_CONCAT(""ReleaseGroup"", '|') AS ReleaseGroupsString")
-                .GroupBy<EpisodeFile>(x => x.SeriesId)
-                .GroupBy<EpisodeFile>(x => x.SeasonNumber);
+                .GroupBy<EditionFile>(x => x.AuthorId)
+                .GroupBy<EditionFile>(x => x.BookNumber);
             }
 
             return new SqlBuilder(_database.DatabaseType)
-                .Select(@"""SeriesId"",
-                            ""SeasonNumber"",
+                .Select(@"""AuthorId"",
+                            ""BookNumber"",
                             SUM(COALESCE(""Size"", 0)) AS SizeOnDisk,
                             string_agg(""ReleaseGroup"", '|') AS ReleaseGroupsString")
-                .GroupBy<EpisodeFile>(x => x.SeriesId)
-                .GroupBy<EpisodeFile>(x => x.SeasonNumber);
+                .GroupBy<EditionFile>(x => x.AuthorId)
+                .GroupBy<EditionFile>(x => x.BookNumber);
         }
     }
 }

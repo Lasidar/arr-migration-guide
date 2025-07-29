@@ -9,7 +9,7 @@ using Readarr.Http.REST;
 
 namespace Readarr.Api.V3.Series
 {
-    public class SeriesResource : RestResource
+    public class AuthorResource : RestResource
     {
         // Todo: Sorters should be done completely on the client
         // Todo: Is there an easy way to keep IgnoreArticlesWhenSorting in sync between, Series, History, Missing?
@@ -75,7 +75,7 @@ namespace Readarr.Api.V3.Series
         public int LanguageProfileId  => 1;
     }
 
-    public static class SeriesResourceMapper
+    public static class AuthorResourceMapper
     {
         public static SeriesResource ToResource(this NzbDrone.Core.Tv.Series model, bool includeSeasonImages = false)
         {
@@ -95,7 +95,7 @@ namespace Readarr.Api.V3.Series
 
                        // TotalEpisodeCount
                        // EpisodeCount
-                       // EpisodeFileCount
+                       // EditionFileCount
                        // SizeOnDisk
                        Status = model.Status,
                        Overview = model.Overview,
@@ -162,7 +162,7 @@ namespace Readarr.Api.V3.Series
 
                        // TotalEpisodeCount
                        // EpisodeCount
-                       // EpisodeFileCount
+                       // EditionFileCount
                        // SizeOnDisk
                        Status = resource.Status,
                        Overview = resource.Overview,

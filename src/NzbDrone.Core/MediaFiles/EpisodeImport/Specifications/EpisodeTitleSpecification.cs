@@ -10,16 +10,16 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.MediaFiles.EpisodeImport.Specifications
 {
-    public class EpisodeTitleSpecification : IImportDecisionEngineSpecification
+    public class EditionTitleSpecification : IImportDecisionEngineSpecification
     {
         private readonly IConfigService _configService;
         private readonly IBuildFileNames _buildFileNames;
-        private readonly IEpisodeService _episodeService;
+        private readonly IEditionService _episodeService;
         private readonly Logger _logger;
 
         public EpisodeTitleSpecification(IConfigService configService,
                                          IBuildFileNames buildFileNames,
-                                         IEpisodeService episodeService,
+                                         IEditionService episodeService,
                                          Logger logger)
         {
             _configService = configService;
@@ -52,7 +52,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Specifications
 
             var episodes = localEpisode.Episodes;
             var firstEpisode = episodes.First();
-            var episodesInSeason = _episodeService.GetEpisodesBySeason(firstEpisode.SeriesId, firstEpisode.EpisodeNumber);
+            var episodesInSeason = _episodeService.GetEpisodesBySeason(firstEpisode.AuthorId, firstEpisode.EditionNumber);
             var allEpisodesOnTheSameDay = firstEpisode.AirDateUtc.HasValue && episodes.All(e =>
                                               !e.AirDateUtc.HasValue ||
                                               e.AirDateUtc.Value == firstEpisode.AirDateUtc.Value);

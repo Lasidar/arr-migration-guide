@@ -9,13 +9,13 @@ namespace NzbDrone.Core.IndexerSearch.Definitions
         public Episode Episode { get; set; }
         public SearchMode SearchMode { get; set; }
         public List<string> SceneTitles { get; set; }
-        public int SeasonNumber { get; set; }
-        public int EpisodeNumber { get; set; }
-        public int? AbsoluteEpisodeNumber { get; set; }
+        public int BookNumber { get; set; }
+        public int EditionNumber { get; set; }
+        public int? AbsoluteEditionNumber { get; set; }
 
         public override int GetHashCode()
         {
-            return SearchMode.GetHashCode() ^ SeasonNumber.GetHashCode() ^ EpisodeNumber.GetHashCode();
+            return SearchMode.GetHashCode() ^ BookNumber.GetHashCode() ^ EditionNumber.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -27,7 +27,7 @@ namespace NzbDrone.Core.IndexerSearch.Definitions
                 return false;
             }
 
-            return SeasonNumber == other.SeasonNumber && EpisodeNumber == other.EpisodeNumber && SearchMode == other.SearchMode;
+            return BookNumber == other.BookNumber && EditionNumber == other.EditionNumber && SearchMode == other.SearchMode;
         }
     }
 }

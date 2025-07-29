@@ -27,7 +27,7 @@ namespace NzbDrone.Core.RootFolders
     {
         private readonly IRootFolderRepository _rootFolderRepository;
         private readonly IDiskProvider _diskProvider;
-        private readonly ISeriesRepository _seriesRepository;
+        private readonly IAuthorRepository _seriesRepository;
         private readonly INamingConfigService _namingConfigService;
         private readonly Logger _logger;
 
@@ -48,7 +48,7 @@ namespace NzbDrone.Core.RootFolders
 
         public RootFolderService(IRootFolderRepository rootFolderRepository,
                                  IDiskProvider diskProvider,
-                                 ISeriesRepository seriesRepository,
+                                 IAuthorRepository seriesRepository,
                                  INamingConfigService namingConfigService,
                                  ICacheManager cacheManager,
                                  Logger logger)

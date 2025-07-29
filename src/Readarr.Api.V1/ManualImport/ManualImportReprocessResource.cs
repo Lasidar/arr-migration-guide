@@ -11,8 +11,8 @@ namespace Readarr.Api.V3.ManualImport
     public class ManualImportReprocessResource : RestResource
     {
         public string Path { get; set; }
-        public int SeriesId { get; set; }
-        public int? SeasonNumber { get; set; }
+        public int AuthorId { get; set; }
+        public int? BookNumber { get; set; }
         public List<EpisodeResource> Episodes { get; set; }
         public List<int> EpisodeIds { get; set; }
         public QualityModel Quality { get; set; }

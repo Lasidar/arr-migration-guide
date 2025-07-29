@@ -3,7 +3,7 @@
 namespace NzbDrone.Integration.Test.ApiTests
 {
     [TestFixture]
-    public class EpisodeFileFixture : IntegrationTest
+    public class EditionFileFixture : IntegrationTest
     {
         [Test]
         public void get_all_episodefiles()

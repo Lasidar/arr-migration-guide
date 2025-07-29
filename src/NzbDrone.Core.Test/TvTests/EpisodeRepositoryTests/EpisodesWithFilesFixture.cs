@@ -9,19 +9,19 @@ using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Core.Books;
 
-namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
+namespace NzbDrone.Core.Test.TvTests.EditionRepositoryTests
 {
     [TestFixture]
-    public class EpisodesWithFilesFixture : DbTest<EpisodeRepository, Episode>
+    public class EditionsWithFilesFixture : DbTest<EditionRepository, Episode>
     {
         private const int SERIES_ID = 1;
         private List<Episode> _episodes;
-        private List<EpisodeFile> _episodeFiles;
+        private List<EditionFile> _episodeFiles;
 
         [SetUp]
         public void Setup()
         {
-            _episodeFiles = Builder<EpisodeFile>.CreateListOfSize(5)
+            _episodeFiles = Builder<EditionFile>.CreateListOfSize(5)
                                                 .All()
                                                 .With(c => c.Quality = new QualityModel())
                                                 .With(c => c.Languages = new List<Language> { Language.English })
@@ -31,14 +31,14 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
 
             _episodes = Builder<Episode>.CreateListOfSize(10)
                                         .All()
-                                        .With(e => e.EpisodeFileId = 0)
-                                        .With(e => e.SeriesId = SERIES_ID)
+                                        .With(e => e.EditionFileId = 0)
+                                        .With(e => e.AuthorId = SERIES_ID)
                                         .BuildListOfNew()
                                         .ToList();
 
             for (var i = 0; i < _episodeFiles.Count; i++)
             {
-                _episodes[i].EpisodeFileId = _episodeFiles[i].Id;
+                _episodes[i].EditionFileId = _episodeFiles[i].Id;
             }
 
             Db.InsertMany(_episodes);
@@ -49,14 +49,14 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
         {
             var result = Subject.EpisodesWithFiles(SERIES_ID);
 
-            result.Should().OnlyContain(e => e.EpisodeFileId > 0);
+            result.Should().OnlyContain(e => e.EditionFileId > 0);
             result.Should().HaveCount(_episodeFiles.Count);
         }
 
         [Test]
         public void should_only_contain_episodes_for_the_given_series()
         {
-            var episodeFile = Builder<EpisodeFile>.CreateNew()
+            var episodeFile = Builder<EditionFile>.CreateNew()
                                                   .With(f => f.RelativePath = "another path")
                                                   .With(c => c.Quality = new QualityModel())
                                                   .With(c => c.Languages = new List<Language> { Language.English })
@@ -65,19 +65,19 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
             Db.Insert(episodeFile);
 
             var episode = Builder<Episode>.CreateNew()
-                                          .With(e => e.SeriesId = SERIES_ID + 10)
-                                          .With(e => e.EpisodeFileId = episodeFile.Id)
+                                          .With(e => e.AuthorId = SERIES_ID + 10)
+                                          .With(e => e.EditionFileId = episodeFile.Id)
                                           .BuildNew();
 
             Db.Insert(episode);
 
-            Subject.EpisodesWithFiles(episode.SeriesId).Should().OnlyContain(e => e.SeriesId == episode.SeriesId);
+            Subject.EpisodesWithFiles(episode.AuthorId).Should().OnlyContain(e => e.AuthorId == episode.AuthorId);
         }
 
         [Test]
         public void should_have_episode_file_loaded()
         {
-            Subject.EpisodesWithFiles(SERIES_ID).Should().OnlyContain(e => e.EpisodeFile.IsLoaded);
+            Subject.EpisodesWithFiles(SERIES_ID).Should().OnlyContain(e => e.EditionFile.IsLoaded);
         }
     }
 }

@@ -84,14 +84,14 @@ namespace NzbDrone.Core.Extras.Metadata
                             continue;
                         }
 
-                        if (localEpisode.Episodes.DistinctBy(e => e.EpisodeFileId).Count() > 1)
+                        if (localEpisode.Episodes.DistinctBy(e => e.EditionFileId).Count() > 1)
                         {
                             _logger.Debug("Extra file: {0} does not match existing files.", possibleMetadataFile);
                             continue;
                         }
 
-                        metadata.SeasonNumber = localEpisode.SeasonNumber;
-                        metadata.EpisodeFileId = localEpisode.Episodes.First().EpisodeFileId;
+                        metadata.BookNumber = localEpisode.BookNumber;
+                        metadata.EditionFileId = localEpisode.Episodes.First().EditionFileId;
                     }
 
                     metadata.Extension = Path.GetExtension(possibleMetadataFile);

@@ -58,12 +58,12 @@ namespace NzbDrone.Core.Test.NotificationTests
                 TestLogger.Info("OnDownload was called");
             }
 
-            public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+            public override void OnRename(Series series, List<RenamedEditionFile> renamedFiles)
             {
                 TestLogger.Info("OnRename was called");
             }
 
-            public override void OnEpisodeFileDelete(EpisodeDeleteMessage message)
+            public override void OnEditionFileDelete(EpisodeDeleteMessage message)
             {
                 TestLogger.Info("Episode OnDelete was called");
             }
@@ -127,8 +127,8 @@ namespace NzbDrone.Core.Test.NotificationTests
             notification.SupportsOnUpgrade.Should().BeTrue();
             notification.SupportsOnRename.Should().BeTrue();
             notification.SupportsOnSeriesDelete.Should().BeTrue();
-            notification.SupportsOnEpisodeFileDelete.Should().BeTrue();
-            notification.SupportsOnEpisodeFileDeleteForUpgrade.Should().BeTrue();
+            notification.SupportsOnEditionFileDelete.Should().BeTrue();
+            notification.SupportsOnEditionFileDeleteForUpgrade.Should().BeTrue();
             notification.SupportsOnHealthIssue.Should().BeTrue();
             notification.SupportsOnHealthRestored.Should().BeTrue();
             notification.SupportsOnApplicationUpdate.Should().BeTrue();
@@ -145,8 +145,8 @@ namespace NzbDrone.Core.Test.NotificationTests
             notification.SupportsOnUpgrade.Should().BeFalse();
             notification.SupportsOnRename.Should().BeFalse();
             notification.SupportsOnSeriesDelete.Should().BeFalse();
-            notification.SupportsOnEpisodeFileDelete.Should().BeFalse();
-            notification.SupportsOnEpisodeFileDeleteForUpgrade.Should().BeFalse();
+            notification.SupportsOnEditionFileDelete.Should().BeFalse();
+            notification.SupportsOnEditionFileDeleteForUpgrade.Should().BeFalse();
             notification.SupportsOnHealthIssue.Should().BeFalse();
             notification.SupportsOnHealthRestored.Should().BeFalse();
             notification.SupportsOnApplicationUpdate.Should().BeFalse();

@@ -13,12 +13,12 @@ using NzbDrone.Core.Books;
 namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
 {
     [TestFixture]
-    public class CleanupOrphanedEpisodeFilesFixture : DbTest<CleanupOrphanedEpisodeFiles, EpisodeFile>
+    public class CleanupOrphanedEditionFilesFixture : DbTest<CleanupOrphanedEditionFiles, EditionFile>
     {
         [Test]
         public void should_delete_orphaned_episode_files()
         {
-            var episodeFile = Builder<EpisodeFile>.CreateNew()
+            var episodeFile = Builder<EditionFile>.CreateNew()
                 .With(h => h.Languages = new List<Language> { Language.English })
                 .With(h => h.Quality = new QualityModel())
                 .BuildNew();
@@ -31,7 +31,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
         [Test]
         public void should_not_delete_unorphaned_episode_files()
         {
-            var episodeFiles = Builder<EpisodeFile>.CreateListOfSize(2)
+            var episodeFiles = Builder<EditionFile>.CreateListOfSize(2)
                 .All()
                 .With(h => h.Languages = new List<Language> { Language.English })
                 .With(h => h.Quality = new QualityModel())
@@ -40,14 +40,14 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             Db.InsertMany(episodeFiles);
 
             var episode = Builder<Episode>.CreateNew()
-                .With(e => e.EpisodeFileId = episodeFiles.First().Id)
+                .With(e => e.EditionFileId = episodeFiles.First().Id)
                 .BuildNew();
 
             Db.Insert(episode);
 
             Subject.Clean();
             AllStoredModels.Should().HaveCount(1);
-            Db.All<Episode>().Should().Contain(e => e.EpisodeFileId == AllStoredModels.First().Id);
+            Db.All<Episode>().Should().Contain(e => e.EditionFileId == AllStoredModels.First().Id);
         }
     }
 }

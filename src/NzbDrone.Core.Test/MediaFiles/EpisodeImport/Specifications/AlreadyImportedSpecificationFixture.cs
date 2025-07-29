@@ -32,7 +32,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
                                      .Build();
 
             _episode = Builder<Episode>.CreateNew()
-                .With(e => e.SeasonNumber = 1)
+                .With(e => e.BookNumber = 1)
                 .With(e => e.AirDateUtc = DateTime.UtcNow)
                 .Build();
 
@@ -63,7 +63,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         [Test]
         public void should_accept_if_episode_does_not_have_file()
         {
-            _episode.EpisodeFileId = 0;
+            _episode.EditionFileId = 0;
 
             Subject.IsSatisfiedBy(_localEpisode, _downloadClientItem).Accepted.Should().BeTrue();
         }

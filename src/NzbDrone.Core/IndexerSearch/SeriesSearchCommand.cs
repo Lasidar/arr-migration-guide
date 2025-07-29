@@ -2,9 +2,9 @@
 
 namespace NzbDrone.Core.IndexerSearch
 {
-    public class SeriesSearchCommand : Command
+    public class AuthorSearchCommand : Command
     {
-        public int SeriesId { get; set; }
+        public int AuthorId { get; set; }
 
         public override bool SendUpdatesToClient => true;
 
@@ -14,7 +14,7 @@ namespace NzbDrone.Core.IndexerSearch
 
         public SeriesSearchCommand(int seriesId)
         {
-            SeriesId = seriesId;
+            AuthorId = seriesId;
         }
     }
 }

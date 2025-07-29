@@ -2,10 +2,10 @@
 
 namespace NzbDrone.Core.Notifications.Webhook
 {
-    public class WebhookRenamedEpisodeFile : WebhookEpisodeFile
+    public class WebhookRenamedEditionFile : WebhookEditionFile
     {
-        public WebhookRenamedEpisodeFile(RenamedEpisodeFile renamedEpisode)
-            : base(renamedEpisode.EpisodeFile)
+        public WebhookRenamedEditionFile(RenamedEditionFile renamedEpisode)
+            : base(renamedEpisode.EditionFile)
         {
             PreviousRelativePath = renamedEpisode.PreviousRelativePath;
             PreviousPath = renamedEpisode.PreviousPath;

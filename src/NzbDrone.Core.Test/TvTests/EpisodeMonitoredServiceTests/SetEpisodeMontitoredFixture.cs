@@ -36,25 +36,25 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
                                         // Missing
                                         .TheFirst(1)
-                                        .With(e => e.EpisodeFileId = 0)
+                                        .With(e => e.EditionFileId = 0)
 
                                         // Has File
                                         .TheNext(1)
-                                        .With(e => e.EpisodeFileId = 1)
+                                        .With(e => e.EditionFileId = 1)
 
                                          // Future
                                         .TheNext(1)
-                                        .With(e => e.EpisodeFileId = 0)
+                                        .With(e => e.EditionFileId = 0)
                                         .With(e => e.AirDateUtc = DateTime.UtcNow.AddDays(7))
 
                                         // Future/TBA
                                         .TheNext(1)
-                                        .With(e => e.EpisodeFileId = 0)
+                                        .With(e => e.EditionFileId = 0)
                                         .With(e => e.AirDateUtc = null)
                                         .Build()
                                         .ToList();
 
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                   .Setup(s => s.GetEpisodeBySeries(It.IsAny<int>()))
                   .Returns(_episodes);
         }
@@ -63,10 +63,10 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
         {
             foreach (var episode in _episodes)
             {
-                episode.SeasonNumber = 0;
+                episode.BookNumber = 0;
             }
 
-            _series.Seasons = new List<Season> { new Season { Monitored = false, SeasonNumber = 0 } };
+            _series.Seasons = new List<Season> { new Season { Monitored = false, BookNumber = 0 } };
         }
 
         [Test]
@@ -74,10 +74,10 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
         {
             Subject.SetEpisodeMonitoredStatus(_series, null);
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Verify(v => v.UpdateSeries(It.IsAny<Series>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Once());
 
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                   .Verify(v => v.UpdateEpisodes(It.IsAny<List<Episode>>()), Times.Never());
         }
 
@@ -86,7 +86,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
         {
             Subject.SetEpisodeMonitoredStatus(_series, new MonitoringOptions());
 
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                   .Verify(v => v.UpdateEpisodes(It.Is<List<Episode>>(l => l.All(e => e.Monitored))));
         }
 
@@ -131,7 +131,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             Subject.SetEpisodeMonitoredStatus(_series, monitoringOptions);
 
-            VerifyNotMonitored(e => e.SeasonNumber == 0);
+            VerifyNotMonitored(e => e.BookNumber == 0);
         }
 
         [Test]
@@ -146,7 +146,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             Subject.SetEpisodeMonitoredStatus(_series, monitoringOptions);
 
-            VerifyNotMonitored(e => e.SeasonNumber == 0);
+            VerifyNotMonitored(e => e.BookNumber == 0);
         }
 
         [Test]
@@ -161,7 +161,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             Subject.SetEpisodeMonitoredStatus(_series, monitoringOptions);
 
-            VerifyMonitored(e => e.SeasonNumber == 0);
+            VerifyMonitored(e => e.BookNumber == 0);
         }
 
         [Test]
@@ -176,7 +176,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             Subject.SetEpisodeMonitoredStatus(_series, monitoringOptions);
 
-            VerifyNotMonitored(e => e.SeasonNumber == 0);
+            VerifyNotMonitored(e => e.BookNumber == 0);
         }
 
         [Test]
@@ -198,7 +198,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             Subject.SetEpisodeMonitoredStatus(_series, monitoringOptions);
 
-            VerifyNotMonitored(e => e.SeasonNumber == 0);
+            VerifyNotMonitored(e => e.BookNumber == 0);
         }
 
         [Test]
@@ -212,15 +212,15 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             _episodes = Builder<Episode>.CreateListOfSize(5)
                                         .All()
-                                        .With(e => e.SeasonNumber = 1)
-                                        .With(e => e.EpisodeFileId = 0)
+                                        .With(e => e.BookNumber = 1)
+                                        .With(e => e.EditionFileId = 0)
                                         .With(e => e.AirDateUtc = DateTime.UtcNow.AddDays(-5))
                                         .TheLast(1)
-                                        .With(e => e.SeasonNumber = 2)
+                                        .With(e => e.BookNumber = 2)
                                         .Build()
                                         .ToList();
 
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                   .Setup(s => s.GetEpisodeBySeries(It.IsAny<int>()))
                   .Returns(_episodes);
 
@@ -231,8 +231,8 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             Subject.SetEpisodeMonitoredStatus(_series, monitoringOptions);
 
-            VerifySeasonMonitored(n => n.SeasonNumber == 2);
-            VerifySeasonNotMonitored(n => n.SeasonNumber == 1);
+            VerifySeasonMonitored(n => n.BookNumber == 2);
+            VerifySeasonNotMonitored(n => n.BookNumber == 1);
         }
 
         [Test]
@@ -245,7 +245,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             Subject.SetEpisodeMonitoredStatus(_series, monitoringOptions);
 
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                   .Verify(v => v.UpdateEpisodes(It.Is<List<Episode>>(l => l.All(e => !e.Monitored))));
         }
 
@@ -274,11 +274,11 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             _episodes = Builder<Episode>.CreateListOfSize(5)
                 .All()
-                .With(e => e.SeasonNumber = 1)
-                .With(e => e.EpisodeFileId = 0)
+                .With(e => e.BookNumber = 1)
+                .With(e => e.EditionFileId = 0)
                 .With(e => e.AirDateUtc = DateTime.UtcNow.AddDays(-200))
                 .TheLast(2)
-                .With(e => e.SeasonNumber = 2)
+                .With(e => e.BookNumber = 2)
                 .With(e => e.AirDateUtc = DateTime.UtcNow.AddDays(-100))
                 .Build()
                 .ToList();
@@ -290,11 +290,11 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             Subject.SetEpisodeMonitoredStatus(_series, monitoringOptions);
 
-            VerifySeasonMonitored(n => n.SeasonNumber == 2);
-            VerifyMonitored(n => n.SeasonNumber == 2);
+            VerifySeasonMonitored(n => n.BookNumber == 2);
+            VerifyMonitored(n => n.BookNumber == 2);
 
-            VerifySeasonNotMonitored(n => n.SeasonNumber == 1);
-            VerifyNotMonitored(n => n.SeasonNumber == 1);
+            VerifySeasonNotMonitored(n => n.BookNumber == 1);
+            VerifyNotMonitored(n => n.BookNumber == 1);
         }
 
         [Test]
@@ -309,7 +309,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             Subject.SetEpisodeMonitoredStatus(_series, monitoringOptions);
 
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                   .Verify(v => v.UpdateEpisodes(It.Is<List<Episode>>(l => l.All(e => !e.Monitored))));
         }
 
@@ -325,8 +325,8 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             Subject.SetEpisodeMonitoredStatus(_series, monitoringOptions);
 
-            VerifySeasonNotMonitored(n => n.SeasonNumber > 0);
-            VerifyNotMonitored(n => n.SeasonNumber > 0);
+            VerifySeasonNotMonitored(n => n.BookNumber > 0);
+            VerifyNotMonitored(n => n.BookNumber > 0);
         }
 
         [Test]
@@ -340,8 +340,8 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             _episodes = Builder<Episode>.CreateListOfSize(5)
                 .All()
-                .With(e => e.SeasonNumber = 1)
-                .With(e => e.EpisodeFileId = 0)
+                .With(e => e.BookNumber = 1)
+                .With(e => e.EditionFileId = 0)
                 .With(e => e.AirDateUtc = DateTime.UtcNow.AddDays(-200))
                 .TheLast(3)
                 .With(e => e.AirDateUtc = DateTime.UtcNow.AddDays(-5))
@@ -350,7 +350,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
                 .Build()
                 .ToList();
 
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                 .Setup(s => s.GetEpisodeBySeries(It.IsAny<int>()))
                 .Returns(_episodes);
 
@@ -361,7 +361,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             Subject.SetEpisodeMonitoredStatus(_series, monitoringOptions);
 
-            VerifySeasonMonitored(n => n.SeasonNumber == 1);
+            VerifySeasonMonitored(n => n.BookNumber == 1);
             VerifyNotMonitored(n => n.AirDateUtc.HasValue && n.AirDateUtc.Value.Before(DateTime.UtcNow.AddDays(-90)));
             VerifyMonitored(n => n.AirDateUtc.HasValue && n.AirDateUtc.Value.After(DateTime.UtcNow.AddDays(-90)));
         }
@@ -377,11 +377,11 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             _episodes = Builder<Episode>.CreateListOfSize(5)
                                         .All()
-                                        .With(e => e.SeasonNumber = 1)
-                                        .With(e => e.EpisodeFileId = 0)
+                                        .With(e => e.BookNumber = 1)
+                                        .With(e => e.EditionFileId = 0)
                                         .With(e => e.AirDateUtc = DateTime.UtcNow.AddDays(-100))
                                         .TheLast(2)
-                                        .With(e => e.SeasonNumber = 2)
+                                        .With(e => e.BookNumber = 2)
                                         .TheLast(1)
                                         .With(e => e.AirDateUtc = DateTime.UtcNow.AddDays(100))
                                         .Build()
@@ -394,34 +394,34 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeMonitoredServiceTests
 
             Subject.SetEpisodeMonitoredStatus(_series, monitoringOptions);
 
-            VerifySeasonMonitored(n => n.SeasonNumber == 2);
-            VerifyMonitored(n => n.SeasonNumber == 2);
+            VerifySeasonMonitored(n => n.BookNumber == 2);
+            VerifyMonitored(n => n.BookNumber == 2);
 
-            VerifySeasonNotMonitored(n => n.SeasonNumber == 1);
-            VerifyNotMonitored(n => n.SeasonNumber == 1);
+            VerifySeasonNotMonitored(n => n.BookNumber == 1);
+            VerifyNotMonitored(n => n.BookNumber == 1);
         }
 
         private void VerifyMonitored(Func<Episode, bool> predicate)
         {
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                 .Verify(v => v.UpdateEpisodes(It.Is<List<Episode>>(l => l.Where(predicate).All(e => e.Monitored))));
         }
 
         private void VerifyNotMonitored(Func<Episode, bool> predicate)
         {
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                 .Verify(v => v.UpdateEpisodes(It.Is<List<Episode>>(l => l.Where(predicate).All(e => !e.Monitored))));
         }
 
         private void VerifySeasonMonitored(Func<Season, bool> predicate)
         {
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.Seasons.Where(predicate).All(n => n.Monitored)), It.IsAny<bool>(), It.IsAny<bool>()));
         }
 
         private void VerifySeasonNotMonitored(Func<Season, bool> predicate)
         {
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.Seasons.Where(predicate).All(n => !n.Monitored)), It.IsAny<bool>(), It.IsAny<bool>()));
         }
     }

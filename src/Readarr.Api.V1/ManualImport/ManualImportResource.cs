@@ -22,9 +22,9 @@ namespace Readarr.Api.V3.ManualImport
         public string Name { get; set; }
         public long Size { get; set; }
         public SeriesResource Series { get; set; }
-        public int? SeasonNumber { get; set; }
+        public int? BookNumber { get; set; }
         public List<EpisodeResource> Episodes { get; set; }
-        public int? EpisodeFileId { get; set; }
+        public int? EditionFileId { get; set; }
         public string ReleaseGroup { get; set; }
         public QualityModel Quality { get; set; }
         public List<Language> Languages { get; set; }
@@ -58,9 +58,9 @@ namespace Readarr.Api.V3.ManualImport
                 Name = model.Name,
                 Size = model.Size,
                 Series = model.Series.ToResource(),
-                SeasonNumber = model.SeasonNumber,
+                BookNumber = model.BookNumber,
                 Episodes = model.Episodes.ToResource(),
-                EpisodeFileId = model.EpisodeFileId,
+                EditionFileId = model.EditionFileId,
                 ReleaseGroup = model.ReleaseGroup,
                 Quality = model.Quality,
                 Languages = model.Languages,

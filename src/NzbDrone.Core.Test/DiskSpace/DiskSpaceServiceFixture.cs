@@ -47,7 +47,7 @@ namespace NzbDrone.Core.Test.DiskSpace
 
         private void GivenSeries(params string[] seriesPaths)
         {
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                 .Setup(v => v.GetAllSeriesPaths())
                 .Returns(new Dictionary<int, string>(seriesPaths.Select((value, i) => new KeyValuePair<int, string>(i, value))));
         }

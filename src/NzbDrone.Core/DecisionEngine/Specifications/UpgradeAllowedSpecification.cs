@@ -27,7 +27,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
         {
             var qualityProfile = subject.Series.QualityProfile.Value;
 
-            foreach (var file in subject.Episodes.Where(c => c.EpisodeFileId != 0).Select(c => c.EpisodeFile.Value))
+            foreach (var file in subject.Episodes.Where(c => c.EditionFileId != 0).Select(c => c.EditionFile.Value))
             {
                 if (file == null)
                 {

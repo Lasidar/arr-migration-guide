@@ -16,13 +16,13 @@ namespace NzbDrone.Core.Extras.Files
     {
         int Order { get; }
         IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Series series);
-        IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EpisodeFile> episodeFiles);
+        IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EditionFile> episodeFiles);
         IEnumerable<ExtraFile> CreateAfterEpisodesImported(Series series);
-        IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EpisodeFile episodeFile);
+        IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EditionFile episodeFile);
         IEnumerable<ExtraFile> CreateAfterEpisodeFolder(Series series, string seriesFolder, string seasonFolder);
-        IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EpisodeFile> episodeFiles);
-        bool CanImportFile(LocalEpisode localEpisode, EpisodeFile episodeFile, string path, string extension, bool readOnly);
-        IEnumerable<ExtraFile> ImportFiles(LocalEpisode localEpisode, EpisodeFile episodeFile, List<string> files, bool isReadOnly);
+        IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EditionFile> episodeFiles);
+        bool CanImportFile(LocalEpisode localEpisode, EditionFile episodeFile, string path, string extension, bool readOnly);
+        IEnumerable<ExtraFile> ImportFiles(LocalEpisode localEpisode, EditionFile episodeFile, List<string> files, bool isReadOnly);
     }
 
     public abstract class ExtraFileManager<TExtraFile> : IManageExtraFiles
@@ -46,15 +46,15 @@ namespace NzbDrone.Core.Extras.Files
 
         public abstract int Order { get; }
         public abstract IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Series series);
-        public abstract IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EpisodeFile> episodeFiles);
+        public abstract IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EditionFile> episodeFiles);
         public abstract IEnumerable<ExtraFile> CreateAfterEpisodesImported(Series series);
-        public abstract IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EpisodeFile episodeFile);
+        public abstract IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EditionFile episodeFile);
         public abstract IEnumerable<ExtraFile> CreateAfterEpisodeFolder(Series series, string seriesFolder, string seasonFolder);
-        public abstract IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EpisodeFile> episodeFiles);
-        public abstract bool CanImportFile(LocalEpisode localEpisode, EpisodeFile episodeFile, string path, string extension, bool readOnly);
-        public abstract IEnumerable<ExtraFile> ImportFiles(LocalEpisode localEpisode, EpisodeFile episodeFile, List<string> files, bool isReadOnly);
+        public abstract IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EditionFile> episodeFiles);
+        public abstract bool CanImportFile(LocalEpisode localEpisode, EditionFile episodeFile, string path, string extension, bool readOnly);
+        public abstract IEnumerable<ExtraFile> ImportFiles(LocalEpisode localEpisode, EditionFile episodeFile, List<string> files, bool isReadOnly);
 
-        protected TExtraFile ImportFile(Series series, EpisodeFile episodeFile, string path, bool readOnly, string extension, string fileNameSuffix = null)
+        protected TExtraFile ImportFile(Series series, EditionFile episodeFile, string path, bool readOnly, string extension, string fileNameSuffix = null)
         {
             var newFolder = Path.GetDirectoryName(Path.Combine(series.Path, episodeFile.RelativePath));
             var filenameBuilder = new StringBuilder(Path.GetFileNameWithoutExtension(episodeFile.RelativePath));
@@ -78,15 +78,15 @@ namespace NzbDrone.Core.Extras.Files
 
             return new TExtraFile
             {
-                SeriesId = series.Id,
-                SeasonNumber = episodeFile.SeasonNumber,
-                EpisodeFileId = episodeFile.Id,
+                AuthorId = series.Id,
+                BookNumber = episodeFile.BookNumber,
+                EditionFileId = episodeFile.Id,
                 RelativePath = series.Path.GetRelativePath(newFileName),
                 Extension = extension
             };
         }
 
-        protected TExtraFile MoveFile(Series series, EpisodeFile episodeFile, TExtraFile extraFile, string fileNameSuffix = null)
+        protected TExtraFile MoveFile(Series series, EditionFile episodeFile, TExtraFile extraFile, string fileNameSuffix = null)
         {
             _logger.Trace("Renaming extra file: {0}", extraFile);
 

@@ -3,18 +3,18 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.MediaFiles.Events
 {
-    public class EpisodeFolderCreatedEvent : IEvent
+    public class EditionFolderCreatedEvent : IEvent
     {
         public Series Series { get; private set; }
-        public EpisodeFile EpisodeFile { get; private set; }
+        public EditionFile EditionFile { get; private set; }
         public string SeriesFolder { get; set; }
         public string SeasonFolder { get; set; }
         public string EpisodeFolder { get; set; }
 
-        public EpisodeFolderCreatedEvent(Series series, EpisodeFile episodeFile)
+        public EpisodeFolderCreatedEvent(Series series, EditionFile episodeFile)
         {
             Series = series;
-            EpisodeFile = episodeFile;
+            EditionFile = episodeFile;
         }
     }
 }

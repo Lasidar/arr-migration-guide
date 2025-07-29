@@ -167,7 +167,7 @@ namespace NzbDrone.Core.Parser
                 new Regex(@"^(?<title>.+?)(?:(?:[-_\W](?<![()\[!]))+S?(?<season>(?<!\d+)(?:\d{1,2})(?!\d+))(?:[ex]|\W[ex]|_){1,2}(?<episode>\d{2,3}(?!\d+|(?:[ex]|\W[ex]|_|-){1,2}\d+))).+?(?:\[.+?\])(?!\\)",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
-                // Anime - Title Season EpisodeNumber + Absolute Episode Number [SubGroup]
+                // Anime - Title Season EditionNumber + Absolute Episode Number [SubGroup]
                 new Regex(@"^(?<title>.+?)(?:[-_\W](?<![()\[!]))+(?:S?(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:(?:[ex]|\W[ex]|-){1,2}(?<episode>(?<!\d+)\d{2}(?!\d+)))+)[-_. (]+?(?:[-_. ]?(?<absoluteepisode>(?<!\d+)\d{3}(\.\d{1,2})?(?!\d+|[pi])))+.+?\[(?<subgroup>.+?)\](?:$|\.mkv)",
                           RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
@@ -598,7 +598,7 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex SpecialEpisodeWordRegex = new Regex(@"\b(part|special|edition|christmas)\b\s?", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex DuplicateSpacesRegex = new Regex(@"\s{2,}", RegexOptions.Compiled);
         private static readonly Regex SeasonFolderRegex = new Regex(@"^(?:S|Season|Saison|Series|Stagione)[-_. ]*(?<season>(?<!\d+)\d{1,4}(?!\d+))(?:[_. ]+(?!\d+)|$)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex SimpleEpisodeNumberRegex = new Regex(@"^[ex]?(?<episode>(?<!\d+)\d{1,3}(?!\d+))(?:[ex-](?<episode>(?<!\d+)\d{1,3}(?!\d+)))?(?:[_. ](?!\d+)(?<remaining>.+)|$)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex SimpleEditionNumberRegex = new Regex(@"^[ex]?(?<episode>(?<!\d+)\d{1,3}(?!\d+))(?:[ex-](?<episode>(?<!\d+)\d{1,3}(?!\d+)))?(?:[_. ](?!\d+)(?<remaining>.+)|$)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RequestInfoRegex = new Regex(@"^(?:\[.+?\])+", RegexOptions.Compiled);
 
@@ -628,9 +628,9 @@ namespace NzbDrone.Core.Parser
             var result = ParseTitle(fileInfo.Name);
 
             // Parse using the folder and file separately, but combine if they both parse correctly.
-            var episodeNumberMatch = SimpleEpisodeNumberRegex.Match(fileInfo.Name);
+            var episodeNumberMatch = SimpleEditionNumberRegex.Match(fileInfo.Name);
 
-            if (episodeNumberMatch.Success && fileInfo.Directory?.Name != null && (result == null || result.IsMiniSeries || result.AbsoluteEpisodeNumbers.Any()))
+            if (episodeNumberMatch.Success && fileInfo.Directory?.Name != null && (result == null || result.IsMiniSeries || result.AbsoluteEditionNumbers.Any()))
             {
                 var seasonMatch = SeasonFolderRegex.Match(fileInfo.Directory.Name);
 
@@ -664,13 +664,13 @@ namespace NzbDrone.Core.Parser
                 Logger.Debug("Attempting to parse episode info using directory and file names. {0}", fileInfo.Directory.Name);
                 result = ParseTitle(fileInfo.Directory.Name);
 
-                if (result != null && result.AbsoluteEpisodeNumbers.Contains(number))
+                if (result != null && result.AbsoluteEditionNumbers.Contains(number))
                 {
-                    result.AbsoluteEpisodeNumbers = new[] { number };
+                    result.AbsoluteEditionNumbers = new[] { number };
                 }
-                else if (result != null && result.EpisodeNumbers.Contains(number))
+                else if (result != null && result.EditionNumbers.Contains(number))
                 {
-                    result.EpisodeNumbers = new[] { number };
+                    result.EditionNumbers = new[] { number };
                 }
                 else
                 {
@@ -1062,8 +1062,8 @@ namespace NzbDrone.Core.Parser
                 result = new ParsedEpisodeInfo
                 {
                     ReleaseTitle = releaseTitle,
-                    EpisodeNumbers = Array.Empty<int>(),
-                    AbsoluteEpisodeNumbers = Array.Empty<int>()
+                    EditionNumbers = Array.Empty<int>(),
+                    AbsoluteEditionNumbers = Array.Empty<int>()
                 };
 
                 foreach (Match matchGroup in matchCollection)
@@ -1083,7 +1083,7 @@ namespace NzbDrone.Core.Parser
                         }
 
                         var count = last - first + 1;
-                        result.EpisodeNumbers = Enumerable.Range(first, count).ToArray();
+                        result.EditionNumbers = Enumerable.Range(first, count).ToArray();
 
                         lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, episodeCaptures.Last().EndIndex());
 
@@ -1115,7 +1115,7 @@ namespace NzbDrone.Core.Parser
                                 return null; // Multiple matches not allowed for specials
                             }
 
-                            result.SpecialAbsoluteEpisodeNumbers = new decimal[] { first };
+                            result.SpecialAbsoluteEditionNumbers = new decimal[] { first };
                             result.Special = true;
 
                             lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, absoluteEpisodeCaptures.First().EndIndex());
@@ -1123,7 +1123,7 @@ namespace NzbDrone.Core.Parser
                         else
                         {
                             var count = last - first + 1;
-                            result.AbsoluteEpisodeNumbers = Enumerable.Range((int)first, (int)count).ToArray();
+                            result.AbsoluteEditionNumbers = Enumerable.Range((int)first, (int)count).ToArray();
 
                             if (matchGroup.Groups["special"].Success)
                             {
@@ -1160,7 +1160,7 @@ namespace NzbDrone.Core.Parser
 
                     if (episodeCaptures.Count == 2 && matchCollection[0].Groups["episodecount"].Success && episodeCaptures.Last().Value == matchCollection[0].Groups["episodecount"].Value)
                     {
-                        result.EpisodeNumbers = Array.Empty<int>();
+                        result.EditionNumbers = Array.Empty<int>();
                         result.FullSeason = true;
                     }
                 }
@@ -1186,12 +1186,12 @@ namespace NzbDrone.Core.Parser
                 if (seasons.Any())
                 {
                     // If at least one season was parsed use the first season as the season
-                    result.SeasonNumber = seasons.First();
+                    result.BookNumber = seasons.First();
                 }
-                else if (!result.AbsoluteEpisodeNumbers.Any() && result.EpisodeNumbers.Any())
+                else if (!result.AbsoluteEditionNumbers.Any() && result.EditionNumbers.Any())
                 {
                     // If no season was found and it's not an absolute only release it should be treated as a mini series and season 1
-                    result.SeasonNumber = 1;
+                    result.BookNumber = 1;
                     result.IsMiniSeries = true;
                 }
             }

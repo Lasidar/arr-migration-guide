@@ -16,13 +16,13 @@ namespace NzbDrone.Core.Datastore.Migration
                   .WithColumn("ConfigContract").AsString().NotNullable();
 
             Create.TableForModel("MetadataFiles")
-                  .WithColumn("SeriesId").AsInt32().NotNullable()
+                  .WithColumn("AuthorId").AsInt32().NotNullable()
                   .WithColumn("Consumer").AsString().NotNullable()
                   .WithColumn("Type").AsInt32().NotNullable()
                   .WithColumn("RelativePath").AsString().NotNullable()
                   .WithColumn("LastUpdated").AsDateTime().NotNullable()
-                  .WithColumn("SeasonNumber").AsInt32().Nullable()
-                  .WithColumn("EpisodeFileId").AsInt32().Nullable();
+                  .WithColumn("BookNumber").AsInt32().Nullable()
+                  .WithColumn("EditionFileId").AsInt32().Nullable();
         }
     }
 }

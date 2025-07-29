@@ -5,7 +5,7 @@ using NzbDrone.Core.Validation.Paths;
 
 namespace Readarr.Api.V3.Series
 {
-    public class SeriesEditorValidator : AbstractValidator<NzbDrone.Core.Tv.Series>
+    public class AuthorEditorValidator : AbstractValidator<NzbDrone.Core.Tv.Series>
     {
         public SeriesEditorValidator(RootFolderExistsValidator rootFolderExistsValidator, QualityProfileExistsValidator qualityProfileExistsValidator)
         {

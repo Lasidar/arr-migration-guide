@@ -6,9 +6,9 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
 {
     public class UpdateCleanTitleForSeries : IHousekeepingTask
     {
-        private readonly ISeriesRepository _seriesRepository;
+        private readonly IAuthorRepository _seriesRepository;
 
-        public UpdateCleanTitleForSeries(ISeriesRepository seriesRepository)
+        public UpdateCleanTitleForSeries(IAuthorRepository seriesRepository)
         {
             _seriesRepository = seriesRepository;
         }

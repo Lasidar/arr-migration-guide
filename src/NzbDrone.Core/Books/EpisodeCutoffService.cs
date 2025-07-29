@@ -12,12 +12,12 @@ namespace NzbDrone.Core.Books
         PagingSpec<Episode> EpisodesWhereCutoffUnmet(PagingSpec<Episode> pagingSpec);
     }
 
-    public class EpisodeCutoffService : IEpisodeCutoffService
+    public class EditionCutoffService : IEpisodeCutoffService
     {
-        private readonly IEpisodeRepository _episodeRepository;
+        private readonly IEditionRepository _episodeRepository;
         private readonly IQualityProfileService _qualityProfileService;
 
-        public EpisodeCutoffService(IEpisodeRepository episodeRepository, IQualityProfileService qualityProfileService)
+        public EpisodeCutoffService(IEditionRepository episodeRepository, IQualityProfileService qualityProfileService)
         {
             _episodeRepository = episodeRepository;
             _qualityProfileService = qualityProfileService;

@@ -20,7 +20,7 @@ namespace NzbDrone.Core.Test.TvTests
                                      .With(v => v.Status = SeriesStatusType.Continuing)
                                      .Build();
 
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                   .Setup(s => s.GetEpisodeBySeries(_series.Id))
                   .Returns(Builder<Episode>.CreateListOfSize(2)
                                            .All()
@@ -66,7 +66,7 @@ namespace NzbDrone.Core.Test.TvTests
 
         private void GivenRecentlyAired()
         {
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                               .Setup(s => s.GetEpisodeBySeries(_series.Id))
                               .Returns(Builder<Episode>.CreateListOfSize(2)
                                                        .TheFirst(1)

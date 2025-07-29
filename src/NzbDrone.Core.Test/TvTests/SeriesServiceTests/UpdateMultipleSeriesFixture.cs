@@ -11,10 +11,10 @@ using NzbDrone.Core.Test.Framework;
 using NzbDrone.Core.Books;
 using NzbDrone.Test.Common;
 
-namespace NzbDrone.Core.Test.TvTests.SeriesServiceTests
+namespace NzbDrone.Core.Test.TvTests.AuthorServiceTests
 {
     [TestFixture]
-    public class UpdateMultipleSeriesFixture : CoreTest<SeriesService>
+    public class UpdateMultipleSeriesFixture : CoreTest<AuthorService>
     {
         private List<Series> _series;
 
@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Test.TvTests.SeriesServiceTests
         {
             Subject.UpdateSeries(_series, false);
 
-            Mocker.GetMock<ISeriesRepository>().Verify(v => v.UpdateMany(_series), Times.Once());
+            Mocker.GetMock<IAuthorRepository>().Verify(v => v.UpdateMany(_series), Times.Once());
         }
 
         [Test]

@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Alter.Table("Notifications").AddColumn("OnEpisodeFileDeleteForUpgrade").AsBoolean().WithDefaultValue(true);
+            Alter.Table("Notifications").AddColumn("OnEditionFileDeleteForUpgrade").AsBoolean().WithDefaultValue(true);
         }
     }
 }

@@ -9,7 +9,7 @@ using NzbDrone.Core.Books.Events;
 
 namespace NzbDrone.Core.Books
 {
-    public interface ISeriesService
+    public interface IAuthorService
     {
         Series GetSeries(int seriesId);
         List<Series> GetSeries(IEnumerable<int> seriesIds);
@@ -35,18 +35,18 @@ namespace NzbDrone.Core.Books
         bool UpdateTags(Series series);
     }
 
-    public class SeriesService : ISeriesService
+    public class AuthorService : IAuthorService
     {
-        private readonly ISeriesRepository _seriesRepository;
+        private readonly IAuthorRepository _seriesRepository;
         private readonly IEventAggregator _eventAggregator;
-        private readonly IEpisodeService _episodeService;
+        private readonly IEditionService _episodeService;
         private readonly IBuildSeriesPaths _seriesPathBuilder;
         private readonly IAutoTaggingService _autoTaggingService;
         private readonly Logger _logger;
 
-        public SeriesService(ISeriesRepository seriesRepository,
+        public AuthorService(IAuthorRepository seriesRepository,
                              IEventAggregator eventAggregator,
-                             IEpisodeService episodeService,
+                             IEditionService episodeService,
                              IBuildSeriesPaths seriesPathBuilder,
                              IAutoTaggingService autoTaggingService,
                              Logger logger)
@@ -204,11 +204,11 @@ namespace NzbDrone.Core.Books
             {
                 foreach (var season in series.Seasons)
                 {
-                    var storedSeason = storedSeries.Seasons.SingleOrDefault(s => s.SeasonNumber == season.SeasonNumber);
+                    var storedSeason = storedSeries.Seasons.SingleOrDefault(s => s.BookNumber == season.BookNumber);
 
                     if (storedSeason != null && season.Monitored != storedSeason.Monitored)
                     {
-                        _episodeService.SetEpisodeMonitoredBySeason(series.Id, season.SeasonNumber, season.Monitored);
+                        _episodeService.SetEpisodeMonitoredBySeason(series.Id, season.BookNumber, season.Monitored);
                         episodeMonitoredChanged = true;
                     }
                 }

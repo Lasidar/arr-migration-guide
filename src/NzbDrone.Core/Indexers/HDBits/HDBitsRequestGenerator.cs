@@ -32,8 +32,8 @@ namespace NzbDrone.Core.Indexers.HDBits
                 {
                     var query = queryBase.Clone();
 
-                    query.TvdbInfo.Season = episode.SeasonNumber;
-                    query.TvdbInfo.Episode = episode.EpisodeNumber;
+                    query.TvdbInfo.Season = episode.BookNumber;
+                    query.TvdbInfo.Episode = episode.EditionNumber;
                 }
             }
 
@@ -47,7 +47,7 @@ namespace NzbDrone.Core.Indexers.HDBits
 
             if (TryAddSearchParameters(queryBase, searchCriteria))
             {
-                foreach (var seasonNumber in searchCriteria.Episodes.Select(e => e.SeasonNumber).Distinct())
+                foreach (var seasonNumber in searchCriteria.Episodes.Select(e => e.BookNumber).Distinct())
                 {
                     var query = queryBase.Clone();
 
@@ -102,7 +102,7 @@ namespace NzbDrone.Core.Indexers.HDBits
 
             if (TryAddSearchParameters(queryBase, searchCriteria))
             {
-                foreach (var seasonNumber in searchCriteria.Episodes.Select(e => e.SeasonNumber).Distinct())
+                foreach (var seasonNumber in searchCriteria.Episodes.Select(e => e.BookNumber).Distinct())
                 {
                     var query = queryBase.Clone();
 
@@ -126,8 +126,8 @@ namespace NzbDrone.Core.Indexers.HDBits
                 {
                     var query = queryBase.Clone();
 
-                    query.TvdbInfo.Season = episode.SeasonNumber;
-                    query.TvdbInfo.Episode = episode.EpisodeNumber;
+                    query.TvdbInfo.Season = episode.BookNumber;
+                    query.TvdbInfo.Episode = episode.EditionNumber;
 
                     pageableRequests.Add(GetRequest(query));
                 }

@@ -10,10 +10,10 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.MediaFiles
 {
-    public class EpisodeFile : ModelBase
+    public class EditionFile : ModelBase
     {
-        public int SeriesId { get; set; }
-        public int SeasonNumber { get; set; }
+        public int AuthorId { get; set; }
+        public int BookNumber { get; set; }
         public string RelativePath { get; set; }
         public string Path { get; set; }
         public long Size { get; set; }

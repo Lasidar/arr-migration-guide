@@ -160,7 +160,7 @@ namespace NzbDrone.Core.Datastore.Migration
         public int GrabDelay { get; set; }
     }
 
-    public class Series69
+    public class Author69
     {
         public int Id { get; set; }
         public List<int> Tags { get; set; }

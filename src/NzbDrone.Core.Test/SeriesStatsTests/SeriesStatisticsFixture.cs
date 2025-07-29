@@ -15,11 +15,11 @@ using NzbDrone.Core.Books;
 namespace NzbDrone.Core.Test.SeriesStatsTests
 {
     [TestFixture]
-    public class SeriesStatisticsFixture : DbTest<SeriesStatisticsRepository, Series>
+    public class AuthorStatisticsFixture : DbTest<SeriesStatisticsRepository, Series>
     {
         private Series _series;
         private Episode _episode;
-        private EpisodeFile _episodeFile;
+        private EditionFile _episodeFile;
 
         [SetUp]
         public void Setup()
@@ -31,14 +31,14 @@ namespace NzbDrone.Core.Test.SeriesStatsTests
             _series.Id = Db.Insert(_series).Id;
 
             _episode = Builder<Episode>.CreateNew()
-                                          .With(e => e.EpisodeFileId = 0)
+                                          .With(e => e.EditionFileId = 0)
                                           .With(e => e.Monitored = false)
-                                          .With(e => e.SeriesId = _series.Id)
+                                          .With(e => e.AuthorId = _series.Id)
                                           .With(e => e.AirDateUtc = DateTime.Today.AddDays(5))
                                           .BuildNew();
 
-            _episodeFile = Builder<EpisodeFile>.CreateNew()
-                                           .With(e => e.SeriesId = _series.Id)
+            _episodeFile = Builder<EditionFile>.CreateNew()
+                                           .With(e => e.AuthorId = _series.Id)
                                            .With(e => e.Quality = new QualityModel(Quality.HDTV720p))
                                            .With(e => e.Languages = new List<Language> { Language.English })
                                            .BuildNew();
@@ -46,7 +46,7 @@ namespace NzbDrone.Core.Test.SeriesStatsTests
 
         private void GivenEpisodeWithFile()
         {
-            _episode.EpisodeFileId = 1;
+            _episode.EditionFileId = 1;
         }
 
         private void GivenOldEpisode()
@@ -64,7 +64,7 @@ namespace NzbDrone.Core.Test.SeriesStatsTests
             Db.Insert(_episode);
         }
 
-        private void GivenEpisodeFile()
+        private void GivenEditionFile()
         {
             Db.Insert(_episodeFile);
         }
@@ -160,7 +160,7 @@ namespace NzbDrone.Core.Test.SeriesStatsTests
         {
             GivenEpisodeWithFile();
             GivenEpisode();
-            GivenEpisodeFile();
+            GivenEditionFile();
 
             var stats = Subject.SeriesStatistics();
 
@@ -173,12 +173,12 @@ namespace NzbDrone.Core.Test.SeriesStatsTests
         {
             GivenEpisodeWithFile();
             GivenEpisode();
-            GivenEpisodeFile();
+            GivenEditionFile();
 
             var episode2 = _episode.JsonClone();
 
             episode2.Id = 0;
-            episode2.EpisodeNumber += 1;
+            episode2.EditionNumber += 1;
 
             Db.Insert(episode2);
 

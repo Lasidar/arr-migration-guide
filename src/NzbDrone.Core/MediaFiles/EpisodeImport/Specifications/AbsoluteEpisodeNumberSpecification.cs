@@ -8,12 +8,12 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.MediaFiles.EpisodeImport.Specifications
 {
-    public class AbsoluteEpisodeNumberSpecification : IImportDecisionEngineSpecification
+    public class AbsoluteEditionNumberSpecification : IImportDecisionEngineSpecification
     {
         private readonly IBuildFileNames _buildFileNames;
         private readonly Logger _logger;
 
-        public AbsoluteEpisodeNumberSpecification(IBuildFileNames buildFileNames, Logger logger)
+        public AbsoluteEditionNumberSpecification(IBuildFileNames buildFileNames, Logger logger)
         {
             _buildFileNames = buildFileNames;
             _logger = logger;
@@ -27,7 +27,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Specifications
                 return ImportSpecDecision.Accept();
             }
 
-            if (!_buildFileNames.RequiresAbsoluteEpisodeNumber())
+            if (!_buildFileNames.RequiresAbsoluteEditionNumber())
             {
                 _logger.Debug("File name format does not require absolute episode number, skipping check");
                 return ImportSpecDecision.Accept();
@@ -36,7 +36,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Specifications
             foreach (var episode in localEpisode.Episodes)
             {
                 var airDateUtc = episode.AirDateUtc;
-                var absoluteEpisodeNumber = episode.AbsoluteEpisodeNumber;
+                var absoluteEditionNumber = episode.AbsoluteEditionNumber;
 
                 if (airDateUtc.HasValue && airDateUtc.Value.Before(DateTime.UtcNow.AddDays(-1)))
                 {
@@ -44,11 +44,11 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Specifications
                     continue;
                 }
 
-                if (!absoluteEpisodeNumber.HasValue)
+                if (!absoluteEditionNumber.HasValue)
                 {
                     _logger.Debug("Episode does not have an absolute episode number and recently aired");
 
-                    return ImportSpecDecision.Reject(ImportRejectionReason.MissingAbsoluteEpisodeNumber, "Episode does not have an absolute episode number and recently aired");
+                    return ImportSpecDecision.Reject(ImportRejectionReason.MissingAbsoluteEditionNumber, "Episode does not have an absolute episode number and recently aired");
                 }
             }
 

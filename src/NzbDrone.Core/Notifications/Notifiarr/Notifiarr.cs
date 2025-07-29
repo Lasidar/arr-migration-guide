@@ -40,14 +40,14 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             _proxy.SendNotification(BuildOnImportCompletePayload(message), Settings);
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedEditionFile> renamedFiles)
         {
             _proxy.SendNotification(BuildOnRenamePayload(series, renamedFiles), Settings);
         }
 
-        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        public override void OnEditionFileDelete(EpisodeDeleteMessage deleteMessage)
         {
-            _proxy.SendNotification(BuildOnEpisodeFileDelete(deleteMessage), Settings);
+            _proxy.SendNotification(BuildOnEditionFileDelete(deleteMessage), Settings);
         }
 
         public override void OnSeriesAdd(SeriesAddMessage message)

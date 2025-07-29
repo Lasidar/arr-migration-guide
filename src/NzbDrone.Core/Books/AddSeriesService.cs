@@ -14,21 +14,21 @@ using NzbDrone.Core.Parser;
 
 namespace NzbDrone.Core.Books
 {
-    public interface IAddSeriesService
+    public interface IAddAuthorService
     {
         Series AddSeries(Series newSeries);
         List<Series> AddSeries(List<Series> newSeries, bool ignoreErrors = false);
     }
 
-    public class AddSeriesService : IAddSeriesService
+    public class AddAuthorService : IAddAuthorService
     {
-        private readonly ISeriesService _seriesService;
+        private readonly IAuthorService _seriesService;
         private readonly IProvideSeriesInfo _seriesInfo;
         private readonly IBuildFileNames _fileNameBuilder;
         private readonly IAddSeriesValidator _addSeriesValidator;
         private readonly Logger _logger;
 
-        public AddSeriesService(ISeriesService seriesService,
+        public AddAuthorService(IAuthorService seriesService,
                                 IProvideSeriesInfo seriesInfo,
                                 IBuildFileNames fileNameBuilder,
                                 IAddSeriesValidator addSeriesValidator,

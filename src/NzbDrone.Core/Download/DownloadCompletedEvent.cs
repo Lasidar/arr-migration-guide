@@ -9,15 +9,15 @@ namespace NzbDrone.Core.Download
     public class DownloadCompletedEvent : IEvent
     {
         public TrackedDownload TrackedDownload { get; private set; }
-        public int SeriesId { get; private set; }
-        public List<EpisodeFile> EpisodeFiles { get; private set; }
+        public int AuthorId { get; private set; }
+        public List<EditionFile> EditionFiles { get; private set; }
         public GrabbedReleaseInfo Release { get; private set; }
 
-        public DownloadCompletedEvent(TrackedDownload trackedDownload, int seriesId, List<EpisodeFile> episodeFiles, GrabbedReleaseInfo release)
+        public DownloadCompletedEvent(TrackedDownload trackedDownload, int seriesId, List<EditionFile> episodeFiles, GrabbedReleaseInfo release)
         {
             TrackedDownload = trackedDownload;
-            SeriesId = seriesId;
-            EpisodeFiles = episodeFiles;
+            AuthorId = seriesId;
+            EditionFiles = episodeFiles;
             Release = release;
         }
     }

@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
     {
         private Series _series;
         private List<Episode> _episodes;
-        private EpisodeFile _episodeFile;
+        private EditionFile _episodeFile;
         private NamingConfig _namingConfig;
 
         [SetUp]
@@ -40,12 +40,12 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
                         {
                             Builder<Episode>.CreateNew()
                                             .With(e => e.Title = "Episode Title 1")
-                                            .With(e => e.SeasonNumber = 1)
-                                            .With(e => e.EpisodeNumber = 1)
+                                            .With(e => e.BookNumber = 1)
+                                            .With(e => e.EditionNumber = 1)
                                             .Build()
                         };
 
-            _episodeFile = new EpisodeFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
+            _episodeFile = new EditionFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
 
             Mocker.GetMock<IQualityDefinitionService>()
                 .Setup(v => v.Get(Moq.It.IsAny<Quality>()))

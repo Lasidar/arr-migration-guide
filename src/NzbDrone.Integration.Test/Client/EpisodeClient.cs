@@ -4,7 +4,7 @@ using Readarr.Api.V3.Episodes;
 
 namespace NzbDrone.Integration.Test.Client
 {
-    public class EpisodeClient : ClientBase<EpisodeResource>
+    public class EditionClient : ClientBase<EpisodeResource>
     {
         public EpisodeClient(IRestClient restClient, string apiKey)
             : base(restClient, apiKey, "episode")

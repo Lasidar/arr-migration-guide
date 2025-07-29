@@ -12,7 +12,7 @@ namespace Readarr.Api.V3.Blocklist
 {
     public class BlocklistResource : RestResource
     {
-        public int SeriesId { get; set; }
+        public int AuthorId { get; set; }
         public List<int> EpisodeIds { get; set; }
         public string SourceTitle { get; set; }
         public List<Language> Languages { get; set; }
@@ -39,7 +39,7 @@ namespace Readarr.Api.V3.Blocklist
             {
                 Id = model.Id,
 
-                SeriesId = model.SeriesId,
+                AuthorId = model.AuthorId,
                 EpisodeIds = model.EpisodeIds,
                 SourceTitle = model.SourceTitle,
                 Languages = model.Languages,

@@ -19,7 +19,7 @@ namespace NzbDrone.Core.Test.Providers
         [Test]
         public void get_series_ids()
         {
-            var ids = Subject.GetXemSeriesIds();
+            var ids = Subject.GetXemAuthorIds();
 
             ids.Should().NotBeEmpty();
             ids.Should().Contain(i => i == 73141);

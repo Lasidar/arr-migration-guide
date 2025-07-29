@@ -25,21 +25,21 @@ namespace NzbDrone.Core.Test.IndexerTests.FanzubTests
             _seasonSearchCriteria = new SeasonSearchCriteria()
             {
                 SceneTitles = new List<string>() { "Naruto Shippuuden" },
-                SeasonNumber = 1,
+                BookNumber = 1,
             };
 
             _animeSearchCriteria = new AnimeEpisodeSearchCriteria()
             {
                 SceneTitles = new List<string>() { "Naruto Shippuuden" },
-                AbsoluteEpisodeNumber = 9,
-                SeasonNumber = 1,
-                EpisodeNumber = 9
+                AbsoluteEditionNumber = 9,
+                BookNumber = 1,
+                EditionNumber = 9
             };
 
             _animeSeasonSearchCriteria = new AnimeSeasonSearchCriteria()
             {
                 SceneTitles = new List<string>() { "Naruto Shippuuden" },
-                SeasonNumber = 3,
+                BookNumber = 3,
             };
         }
 

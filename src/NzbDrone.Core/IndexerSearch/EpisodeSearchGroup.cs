@@ -3,10 +3,10 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.IndexerSearch
 {
-    public class EpisodeSearchGroup
+    public class EditionSearchGroup
     {
-        public int SeriesId { get; set; }
-        public int SeasonNumber { get; set; }
+        public int AuthorId { get; set; }
+        public int BookNumber { get; set; }
         public List<Episode> Episodes { get; set; }
     }
 }

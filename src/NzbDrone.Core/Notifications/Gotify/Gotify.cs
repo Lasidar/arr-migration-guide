@@ -44,7 +44,7 @@ namespace NzbDrone.Core.Notifications.Gotify
             SendNotification(IMPORT_COMPLETE_TITLE, message.Message, message.Series);
         }
 
-        public override void OnEpisodeFileDelete(EpisodeDeleteMessage message)
+        public override void OnEditionFileDelete(EpisodeDeleteMessage message)
         {
             SendNotification(EPISODE_DELETED_TITLE, message.Message, message.Series);
         }

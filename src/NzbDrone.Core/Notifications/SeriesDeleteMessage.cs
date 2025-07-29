@@ -2,7 +2,7 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.Notifications
 {
-    public class SeriesDeleteMessage
+    public class AuthorDeleteMessage
     {
         public string Message { get; set; }
         public Series Series { get; set; }

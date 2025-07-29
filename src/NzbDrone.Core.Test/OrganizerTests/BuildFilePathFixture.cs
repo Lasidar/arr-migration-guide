@@ -37,8 +37,8 @@ namespace NzbDrone.Core.Test.OrganizerTests
             var fakeEpisodes = Builder<Episode>.CreateListOfSize(1)
                 .All()
                 .With(s => s.Title = "Episode Title")
-                .With(s => s.SeasonNumber = seasonNumber)
-                .With(s => s.EpisodeNumber = 5)
+                .With(s => s.BookNumber = seasonNumber)
+                .With(s => s.EditionNumber = 5)
                 .Build().ToList();
             var fakeSeries = Builder<Series>.CreateNew()
                 .With(s => s.Title = "30 Rock")
@@ -46,14 +46,14 @@ namespace NzbDrone.Core.Test.OrganizerTests
                 .With(s => s.SeasonFolder = useSeasonFolder)
                 .With(s => s.SeriesType = SeriesTypes.Standard)
                 .Build();
-            var fakeEpisodeFile = Builder<EpisodeFile>.CreateNew()
+            var fakeEditionFile = Builder<EditionFile>.CreateNew()
                 .With(s => s.SceneName = filename)
                 .Build();
 
             _namingConfig.SeasonFolderFormat = seasonFolderFormat;
             _namingConfig.SpecialsFolderFormat = "MySpecials";
 
-            Subject.BuildFilePath(fakeEpisodes, fakeSeries, fakeEpisodeFile, ".mkv").Should().Be(expectedPath.AsOsAgnostic());
+            Subject.BuildFilePath(fakeEpisodes, fakeSeries, fakeEditionFile, ".mkv").Should().Be(expectedPath.AsOsAgnostic());
         }
 
         [Test]
@@ -66,8 +66,8 @@ namespace NzbDrone.Core.Test.OrganizerTests
             var fakeEpisodes = Builder<Episode>.CreateListOfSize(1)
                 .All()
                 .With(s => s.Title = "Episode Title")
-                .With(s => s.SeasonNumber = seasonNumber)
-                .With(s => s.EpisodeNumber = 5)
+                .With(s => s.BookNumber = seasonNumber)
+                .With(s => s.EditionNumber = 5)
                 .Build().ToList();
             var fakeSeries = Builder<Series>.CreateNew()
                 .With(s => s.Title = "NCIS: Los Angeles")
@@ -75,13 +75,13 @@ namespace NzbDrone.Core.Test.OrganizerTests
                 .With(s => s.SeasonFolder = true)
                 .With(s => s.SeriesType = SeriesTypes.Standard)
                 .Build();
-            var fakeEpisodeFile = Builder<EpisodeFile>.CreateNew()
+            var fakeEditionFile = Builder<EditionFile>.CreateNew()
                 .With(s => s.SceneName = filename)
                 .Build();
 
             _namingConfig.SeasonFolderFormat = "{Series Title} Season {season:0}";
 
-            Subject.BuildFilePath(fakeEpisodes, fakeSeries, fakeEpisodeFile, ".mkv").Should().Be(expectedPath.AsOsAgnostic());
+            Subject.BuildFilePath(fakeEpisodes, fakeSeries, fakeEditionFile, ".mkv").Should().Be(expectedPath.AsOsAgnostic());
         }
     }
 }

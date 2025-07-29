@@ -15,7 +15,7 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Alter.Table("EpisodeFiles")
+            Alter.Table("EditionFiles")
                  .AddColumn("Language").AsInt32().NotNullable().WithDefaultValue(0);
 
             Alter.Table("History")
@@ -80,21 +80,21 @@ namespace NzbDrone.Core.Datastore.Migration
 
                 var seriesIds = group.Select(v => v.ToString()).Join(",");
 
-                using (var updateEpisodeFilesCmd = conn.CreateCommand())
+                using (var updateEditionFilesCmd = conn.CreateCommand())
                 {
-                    updateEpisodeFilesCmd.Transaction = tran;
-                    updateEpisodeFilesCmd.CommandText = $"UPDATE \"EpisodeFiles\" SET \"Language\" = ? WHERE \"SeriesId\" IN ({seriesIds})";
-                    var param = updateEpisodeFilesCmd.CreateParameter();
+                    updateEditionFilesCmd.Transaction = tran;
+                    updateEditionFilesCmd.CommandText = $"UPDATE \"EditionFiles\" SET \"Language\" = ? WHERE \"AuthorId\" IN ({seriesIds})";
+                    var param = updateEditionFilesCmd.CreateParameter();
                     languageConverter.SetValue(param, language);
-                    updateEpisodeFilesCmd.Parameters.Add(param);
+                    updateEditionFilesCmd.Parameters.Add(param);
 
-                    updateEpisodeFilesCmd.ExecuteNonQuery();
+                    updateEditionFilesCmd.ExecuteNonQuery();
                 }
 
                 using (var updateHistoryCmd = conn.CreateCommand())
                 {
                     updateHistoryCmd.Transaction = tran;
-                    updateHistoryCmd.CommandText = $"UPDATE \"History\" SET \"Language\" = ? WHERE \"SeriesId\" IN ({seriesIds})";
+                    updateHistoryCmd.CommandText = $"UPDATE \"History\" SET \"Language\" = ? WHERE \"AuthorId\" IN ({seriesIds})";
                     var param = updateHistoryCmd.CreateParameter();
                     languageConverter.SetValue(param, language);
                     updateHistoryCmd.Parameters.Add(param);
@@ -105,7 +105,7 @@ namespace NzbDrone.Core.Datastore.Migration
                 using (var updateBlacklistCmd = conn.CreateCommand())
                 {
                     updateBlacklistCmd.Transaction = tran;
-                    updateBlacklistCmd.CommandText = $"UPDATE \"Blacklist\" SET \"Language\" = ? WHERE \"SeriesId\" IN ({seriesIds})";
+                    updateBlacklistCmd.CommandText = $"UPDATE \"Blacklist\" SET \"Language\" = ? WHERE \"AuthorId\" IN ({seriesIds})";
                     var param = updateBlacklistCmd.CreateParameter();
                     languageConverter.SetValue(param, language);
                     updateBlacklistCmd.Parameters.Add(param);

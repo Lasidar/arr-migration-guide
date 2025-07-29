@@ -4,12 +4,12 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.MediaFiles.Events
 {
-    public class SeriesRenamedEvent : IEvent
+    public class AuthorRenamedEvent : IEvent
     {
         public Series Series { get; private set; }
-        public List<RenamedEpisodeFile> RenamedFiles { get; private set; }
+        public List<RenamedEditionFile> RenamedFiles { get; private set; }
 
-        public SeriesRenamedEvent(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public SeriesRenamedEvent(Series series, List<RenamedEditionFile> renamedFiles)
         {
             Series = series;
             RenamedFiles = renamedFiles;

@@ -1,6 +1,6 @@
 ﻿namespace NzbDrone.Core.Parser.Model
 {
-    public class SeriesTitleInfo
+    public class AuthorTitleInfo
     {
         public string Title { get; set; }
         public string TitleWithoutYear { get; set; }

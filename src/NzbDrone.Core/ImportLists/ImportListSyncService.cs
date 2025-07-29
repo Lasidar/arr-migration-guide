@@ -24,8 +24,8 @@ namespace NzbDrone.Core.ImportLists
         private readonly IImportListItemService _importListItemService;
         private readonly IFetchAndParseImportList _listFetcherAndParser;
         private readonly ISearchForNewSeries _seriesSearchService;
-        private readonly ISeriesService _seriesService;
-        private readonly IAddSeriesService _addSeriesService;
+        private readonly IAuthorService _seriesService;
+        private readonly IAddAuthorService _addAuthorService;
         private readonly IConfigService _configService;
         private readonly ITaskManager _taskManager;
         private readonly Logger _logger;
@@ -36,8 +36,8 @@ namespace NzbDrone.Core.ImportLists
                               IImportListItemService importListItemService,
                               IFetchAndParseImportList listFetcherAndParser,
                               ISearchForNewSeries seriesSearchService,
-                              ISeriesService seriesService,
-                              IAddSeriesService addSeriesService,
+                              IAuthorService seriesService,
+                              IAddAuthorService addAuthorService,
                               IConfigService configService,
                               ITaskManager taskManager,
                               Logger logger)
@@ -49,7 +49,7 @@ namespace NzbDrone.Core.ImportLists
             _listFetcherAndParser = listFetcherAndParser;
             _seriesSearchService = seriesSearchService;
             _seriesService = seriesService;
-            _addSeriesService = addSeriesService;
+            _addAuthorService = addAuthorService;
             _configService = configService;
             _taskManager = taskManager;
             _logger = logger;
@@ -258,7 +258,7 @@ namespace NzbDrone.Core.ImportLists
                 }
             }
 
-            _addSeriesService.AddSeries(seriesToAdd, true);
+            _addAuthorService.AddSeries(seriesToAdd, true);
 
             _logger.ProgressInfo("Import List Sync Completed. Items found: {0}, Series added: {1}", items.Count, seriesToAdd.Count);
         }

@@ -15,8 +15,8 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
         public void Clean()
         {
             DeleteOrphanedBySeries();
-            DeleteOrphanedByEpisodeFile();
-            DeleteWhereEpisodeFileIsZero();
+            DeleteOrphanedByEditionFile();
+            DeleteWhereEditionFileIsZero();
         }
 
         private void DeleteOrphanedBySeries()
@@ -26,29 +26,29 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
                                      WHERE ""Id"" IN (
                                      SELECT ""SubtitleFiles"".""Id"" FROM ""SubtitleFiles""
                                      LEFT OUTER JOIN ""Series""
-                                     ON ""SubtitleFiles"".""SeriesId"" = ""Series"".""Id""
+                                     ON ""SubtitleFiles"".""AuthorId"" = ""Series"".""Id""
                                      WHERE ""Series"".""Id"" IS NULL)");
         }
 
-        private void DeleteOrphanedByEpisodeFile()
+        private void DeleteOrphanedByEditionFile()
         {
             using var mapper = _database.OpenConnection();
             mapper.Execute(@"DELETE FROM ""SubtitleFiles""
                                      WHERE ""Id"" IN (
                                      SELECT ""SubtitleFiles"".""Id"" FROM ""SubtitleFiles""
-                                     LEFT OUTER JOIN ""EpisodeFiles""
-                                     ON ""SubtitleFiles"".""EpisodeFileId"" = ""EpisodeFiles"".""Id""
-                                     WHERE ""SubtitleFiles"".""EpisodeFileId"" > 0
-                                     AND ""EpisodeFiles"".""Id"" IS NULL)");
+                                     LEFT OUTER JOIN ""EditionFiles""
+                                     ON ""SubtitleFiles"".""EditionFileId"" = ""EditionFiles"".""Id""
+                                     WHERE ""SubtitleFiles"".""EditionFileId"" > 0
+                                     AND ""EditionFiles"".""Id"" IS NULL)");
         }
 
-        private void DeleteWhereEpisodeFileIsZero()
+        private void DeleteWhereEditionFileIsZero()
         {
             using var mapper = _database.OpenConnection();
             mapper.Execute(@"DELETE FROM ""SubtitleFiles""
                                      WHERE ""Id"" IN (
                                      SELECT ""Id"" FROM ""SubtitleFiles""
-                                     WHERE ""EpisodeFileId"" = 0)");
+                                     WHERE ""EditionFileId"" = 0)");
         }
     }
 }

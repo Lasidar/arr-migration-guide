@@ -14,7 +14,7 @@ using NzbDrone.Test.Common;
 namespace NzbDrone.Core.Test.IndexerTests
 {
     [TestFixture]
-    public class SeasonSearchFixture : TestBase<TestIndexer>
+    public class BookSearchFixture : TestBase<TestIndexer>
     {
         private Series _series;
 

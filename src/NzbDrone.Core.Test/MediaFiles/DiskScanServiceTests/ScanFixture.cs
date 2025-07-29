@@ -50,7 +50,7 @@ namespace NzbDrone.Core.Test.MediaFiles.DiskScanServiceTests
 
             Mocker.GetMock<IMediaFileService>()
                   .Setup(s => s.GetFilesBySeries(It.IsAny<int>()))
-                  .Returns(new List<EpisodeFile>());
+                  .Returns(new List<EditionFile>());
         }
 
         private void GivenRootFolder(params string[] subfolders)

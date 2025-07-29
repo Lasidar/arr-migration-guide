@@ -71,7 +71,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             _episodes = Builder<Episode>.CreateListOfSize(10)
                 .All()
-                .With(s => s.SeasonNumber = 1)
+                .With(s => s.BookNumber = 1)
                 .With(s => s.Runtime = 30)
                 .BuildList();
 
@@ -82,7 +82,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                                         ParsedEpisodeInfo = new ParsedEpisodeInfo { Quality = new QualityModel(Quality.SDTV, new Revision(version: 2)) },
                                         Episodes = Builder<Episode>.CreateListOfSize(6)
                                             .All()
-                                            .With(s => s.SeasonNumber = 1)
+                                            .With(s => s.BookNumber = 1)
                                             .With(s => s.Runtime = 30)
                                             .BuildList()
                                     };
@@ -94,7 +94,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                                         ParsedEpisodeInfo = new ParsedEpisodeInfo { Quality = new QualityModel(Quality.SDTV, new Revision(version: 2)) },
                                         Episodes = Builder<Episode>.CreateListOfSize(2)
                                             .All()
-                                            .With(s => s.SeasonNumber = 1)
+                                            .With(s => s.BookNumber = 1)
                                             .With(s => s.Runtime = 30)
                                             .BuildList()
                                     };
@@ -107,8 +107,8 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                                         Episodes = new List<Episode>
                                         {
                                             Builder<Episode>.CreateNew()
-                                                .With(s => s.SeasonNumber = 1)
-                                                .With(s => s.EpisodeNumber = 1)
+                                                .With(s => s.BookNumber = 1)
+                                                .With(s => s.EditionNumber = 1)
                                                 .With(s => s.Runtime = 30)
                                                 .Build()
                                         }
@@ -118,7 +118,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                 .Setup(v => v.Get(It.IsAny<Quality>()))
                 .Returns<Quality>(v => Quality.DefaultQualityDefinitions.First(c => c.Quality == v));
 
-            Mocker.GetMock<IEpisodeService>().Setup(
+            Mocker.GetMock<IEditionService>().Setup(
                 s => s.GetEpisodesBySeason(It.IsAny<int>(), It.IsAny<int>()))
                 .Returns(_episodes);
         }
@@ -302,7 +302,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             _parseResultSingle.Series = _series;
             _parseResultSingle.Episodes.First().Id = 5;
             _parseResultSingle.Release.Size = 200.Megabytes();
-            _parseResultSingle.Episodes.First().SeasonNumber = 2;
+            _parseResultSingle.Episodes.First().BookNumber = 2;
             _parseResultSingle.Episodes.First().Runtime = 0;
 
             Subject.IsSatisfiedBy(_parseResultSingle, new()).Accepted.Should().Be(false);
@@ -316,8 +316,8 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             _parseResultSingle.Series = _series;
             _parseResultSingle.Release.Size = 200.Megabytes();
             _parseResultSingle.Episodes.First().Id = 5;
-            _parseResultSingle.Episodes.First().SeasonNumber = 1;
-            _parseResultSingle.Episodes.First().EpisodeNumber = 2;
+            _parseResultSingle.Episodes.First().BookNumber = 1;
+            _parseResultSingle.Episodes.First().EditionNumber = 2;
             _parseResultSingle.Episodes.First().AirDateUtc = _episodes.First().AirDateUtc.Value.AddDays(7);
             _parseResultSingle.Episodes.First().Runtime = 0;
 
@@ -332,8 +332,8 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             _parseResultSingle.Series = _series;
             _parseResultSingle.Release.Size = 200.Megabytes();
             _parseResultSingle.Episodes.First().Id = 5;
-            _parseResultSingle.Episodes.First().SeasonNumber = 1;
-            _parseResultSingle.Episodes.First().EpisodeNumber = 2;
+            _parseResultSingle.Episodes.First().BookNumber = 1;
+            _parseResultSingle.Episodes.First().EditionNumber = 2;
             _parseResultSingle.Episodes.First().AirDateUtc = _episodes.First().AirDateUtc.Value.AddHours(1);
             _parseResultSingle.Episodes.First().Runtime = 0;
 
@@ -348,7 +348,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             _parseResultMulti.Release.Size = 200.Megabytes();
             _parseResultMulti.Episodes.ForEach(e =>
             {
-                e.SeasonNumber = 2;
+                e.BookNumber = 2;
                 e.Runtime = 0;
             });
 
@@ -366,7 +366,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             _parseResultMulti.Release.Size = 200.Megabytes();
             _parseResultMulti.Episodes.ForEach(e =>
             {
-                e.SeasonNumber = 1;
+                e.BookNumber = 1;
                 e.AirDateUtc = airDateUtc;
                 e.Runtime = 0;
             });
@@ -385,7 +385,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             _parseResultMulti.Release.Size = 200.Megabytes();
             _parseResultMulti.Episodes.ForEach(e =>
             {
-                e.SeasonNumber = 1;
+                e.BookNumber = 1;
                 e.AirDateUtc = airDateUtc;
                 e.Runtime = 0;
             });
@@ -404,7 +404,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             _parseResultSingle.Release.Size = 200.Megabytes();
             _parseResultSingle.Episodes.ForEach(e =>
             {
-                e.SeasonNumber = 1;
+                e.BookNumber = 1;
                 e.AirDateUtc = airDateUtc;
                 e.Runtime = 0;
             });

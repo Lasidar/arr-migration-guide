@@ -9,16 +9,16 @@ using NzbDrone.Core.Books;
 
 namespace NzbDrone.Core.IndexerSearch
 {
-    public class SeriesSearchService : IExecute<SeriesSearchCommand>
+    public class AuthorSearchService : IExecute<SeriesSearchCommand>
     {
-        private readonly ISeriesService _seriesService;
-        private readonly IEpisodeService _episodeService;
+        private readonly IAuthorService _seriesService;
+        private readonly IEditionService _episodeService;
         private readonly ISearchForReleases _releaseSearchService;
         private readonly IProcessDownloadDecisions _processDownloadDecisions;
         private readonly Logger _logger;
 
-        public SeriesSearchService(ISeriesService seriesService,
-                                   IEpisodeService episodeService,
+        public SeriesSearchService(IAuthorService seriesService,
+                                   IEditionService episodeService,
                                    ISearchForReleases releaseSearchService,
                                    IProcessDownloadDecisions processDownloadDecisions,
                                    Logger logger)
@@ -32,7 +32,7 @@ namespace NzbDrone.Core.IndexerSearch
 
         public void Execute(SeriesSearchCommand message)
         {
-            var series = _seriesService.GetSeries(message.SeriesId);
+            var series = _seriesService.GetSeries(message.AuthorId);
             var downloadedCount = 0;
             var userInvokedSearch = message.Trigger == CommandTrigger.Manual;
 
@@ -56,15 +56,15 @@ namespace NzbDrone.Core.IndexerSearch
             }
             else
             {
-                foreach (var season in series.Seasons.OrderBy(s => s.SeasonNumber))
+                foreach (var season in series.Seasons.OrderBy(s => s.BookNumber))
                 {
                     if (!season.Monitored)
                     {
-                        _logger.Debug("Season {0} of {1} is not monitored, skipping search", season.SeasonNumber, series.Title);
+                        _logger.Debug("Season {0} of {1} is not monitored, skipping search", season.BookNumber, series.Title);
                         continue;
                     }
 
-                    var decisions = _releaseSearchService.SeasonSearch(message.SeriesId, season.SeasonNumber, false, true, userInvokedSearch, false).GetAwaiter().GetResult();
+                    var decisions = _releaseSearchService.SeasonSearch(message.AuthorId, season.BookNumber, false, true, userInvokedSearch, false).GetAwaiter().GetResult();
                     var processDecisions = _processDownloadDecisions.ProcessDecisions(decisions).GetAwaiter().GetResult();
                     downloadedCount += processDecisions.Grabbed.Count;
                 }

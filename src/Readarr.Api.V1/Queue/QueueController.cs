@@ -177,7 +177,7 @@ namespace Readarr.Api.V3.Queue
             var filteredQueue = includeUnknownSeriesItems ? queue : queue.Where(q => q.Series != null);
             var pending = _pendingReleaseService.GetPendingQueue();
 
-            var hasSeriesIdFilter = seriesIds is { Count: > 0 };
+            var hasAuthorIdFilter = seriesIds is { Count: > 0 };
             var hasLanguageFilter = languages is { Count: > 0 };
             var hasQualityFilter = quality is { Count: > 0 };
             var hasStatusFilter = status is { Count: > 0 };
@@ -186,7 +186,7 @@ namespace Readarr.Api.V3.Queue
             {
                 var include = true;
 
-                if (hasSeriesIdFilter)
+                if (hasAuthorIdFilter)
                 {
                     include &= q.Series != null && seriesIds.Contains(q.Series.Id);
                 }

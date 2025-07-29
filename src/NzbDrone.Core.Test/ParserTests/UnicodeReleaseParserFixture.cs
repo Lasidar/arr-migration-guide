@@ -25,14 +25,14 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[风车字幕组][名侦探柯南][857][米花町反复变化之谜（前篇）][简体][MP4][1080P]", "名侦探柯南", "风车字幕组", 857)]
         [TestCase("[风车字幕组][名侦探柯南][857集][米花町反复变化之谜（前篇）][简体][MP4][1080P]", "名侦探柯南", "风车字幕组", 857)]
         [TestCase("【喵萌奶茶屋】★10月新番★[后宫之乌/后宫の乌/Series Title][07][1080p][简日双语][招募翻译校对]", "Series Title", "喵萌奶茶屋", 7)]
-        public void should_parse_chinese_anime_releases(string postTitle, string title, string subgroup, int absoluteEpisodeNumber)
+        public void should_parse_chinese_anime_releases(string postTitle, string title, string subgroup, int absoluteEditionNumber)
         {
             postTitle = XmlCleaner.ReplaceUnicode(postTitle);
 
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
             result.ReleaseGroup.Should().Be(subgroup);
-            result.AbsoluteEpisodeNumbers.Single().Should().Be(absoluteEpisodeNumber);
+            result.AbsoluteEditionNumbers.Single().Should().Be(absoluteEditionNumber);
             result.SeriesTitle.Should().Be(title);
             result.FullSeason.Should().BeFalse();
         }
@@ -55,14 +55,14 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[ANi] SERIES / SERIES 靦腆英雄 - 11 [1080P][Baha][WEB-DL][AAC AVC][CHT][MP4]", "SERIES", "ANi", 11)]
         [TestCase("[Q] 全职高手 第3季 / Series S3 - 09 (1080p HBR HEVC Multi-Sub)", "Series S3", "Q", 9)]
         [TestCase("[Q] 全职高手 第3季 | Series S3 - 09 (1080p HBR HEVC Multi-Sub)", "Series S3", "Q", 9)]
-        public void should_parse_chinese_anime_season_episode_releases(string postTitle, string title, string subgroup, int absoluteEpisodeNumber)
+        public void should_parse_chinese_anime_season_episode_releases(string postTitle, string title, string subgroup, int absoluteEditionNumber)
         {
             postTitle = XmlCleaner.ReplaceUnicode(postTitle);
 
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
             result.ReleaseGroup.Should().Be(subgroup);
-            result.AbsoluteEpisodeNumbers.Single().Should().Be(absoluteEpisodeNumber);
+            result.AbsoluteEditionNumbers.Single().Should().Be(absoluteEditionNumber);
             result.SeriesTitle.Should().Be(title);
             result.FullSeason.Should().BeFalse();
         }
@@ -76,14 +76,14 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[OPFans楓雪動漫][ANIME SERIES 海賊王][第1008話][典藏版][1080P][MKV][簡繁]", "ANIME SERIES", "OPFans", 1008)]
         [TestCase("[Skymoon-Raws][Anime Series 海賊王][1008][ViuTV][WEB-RIP][CHT][SRTx2][1080p][MKV]", "Anime Series", "Skymoon-Raws", 1008)]
         [TestCase("[银光字幕组][名侦探柯南·Series Title][871][信长四五〇事件][繁日][HDrip][X264-AAC][720P][MP4]", "Series Title", "银光字幕组", 871)]
-        public void should_parse_unbracketed_chinese_anime_releases(string postTitle, string title, string subgroup, int absoluteEpisodeNumber)
+        public void should_parse_unbracketed_chinese_anime_releases(string postTitle, string title, string subgroup, int absoluteEditionNumber)
         {
             postTitle = XmlCleaner.ReplaceUnicode(postTitle);
 
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
             result.ReleaseGroup.Should().Be(subgroup);
-            result.AbsoluteEpisodeNumbers.Single().Should().Be(absoluteEpisodeNumber);
+            result.AbsoluteEditionNumbers.Single().Should().Be(absoluteEditionNumber);
             result.SeriesTitle.Should().Be(title);
             result.FullSeason.Should().BeFalse();
         }
@@ -93,14 +93,14 @@ namespace NzbDrone.Core.Test.ParserTests
 
         // [TestCase("[orion origin] Anime-Series Title S02 [01-07] [1080p] [H264 AAC] [CHS] [ENG＆JPN stidio]", "Anime-Series Title S2", "orion origin", new[] { 1, 2, 3, 4, 5, 6, 7 })]
         // [TestCase("【漫貓&愛戀字幕組】[五等分的新娘/五等分的花嫁/五等分の花嫁][Anime Series Title][01_03][BIG5][720P][HEVC]", "Anime Series Title", "漫貓&愛戀字幕組", new[] { 1, 2, 3 })]
-        public void should_parse_chinese_multiepisode_releases(string postTitle, string title, string subgroup, int[] absoluteEpisodeNumbers)
+        public void should_parse_chinese_multiepisode_releases(string postTitle, string title, string subgroup, int[] absoluteEditionNumbers)
         {
             postTitle = XmlCleaner.ReplaceUnicode(postTitle);
 
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
             result.ReleaseGroup.Should().Be(subgroup);
-            result.AbsoluteEpisodeNumbers.Should().BeEquivalentTo(absoluteEpisodeNumbers);
+            result.AbsoluteEditionNumbers.Should().BeEquivalentTo(absoluteEditionNumbers);
             result.SeriesTitle.Should().Be(title);
             result.FullSeason.Should().BeFalse();
             result.FullSeason.Should().BeFalse();
@@ -113,37 +113,37 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[GM-Team][国漫][Anime Title][2019][234][AVC][GB][1080P]", "Anime Title", 234)]
         [TestCase("[GM-Team][国漫][Anime Title][2019][234 END][AVC][GB][1080P]", "Anime Title", 234)]
         [TestCase("[GM-Team][国漫][Anime Title][2019][234 Fin][AVC][GB][1080P]", "Anime Title", 234)]
-        public void should_parse_gm_team_releases_and_files(string postTitle, string title, int absoluteEpisodeNumber)
+        public void should_parse_gm_team_releases_and_files(string postTitle, string title, int absoluteEditionNumber)
         {
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
-            result.AbsoluteEpisodeNumbers.Single().Should().Be(absoluteEpisodeNumber);
+            result.AbsoluteEditionNumbers.Single().Should().Be(absoluteEditionNumber);
             result.SeriesTitle.Should().Be(title);
             result.FullSeason.Should().BeFalse();
             result.ReleaseGroup.Should().Be("GM-Team");
         }
 
         [TestCase("[Subz] My Series - １５８ [h264 10-bit][1080p]", "My Series", 158)]
-        public void should_parse_unicode_digits(string postTitle, string title, int absoluteEpisodeNumber)
+        public void should_parse_unicode_digits(string postTitle, string title, int absoluteEditionNumber)
         {
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
             result.SeriesTitle.Should().Be(title);
-            result.AbsoluteEpisodeNumbers.Should().NotBeEmpty();
-            result.AbsoluteEpisodeNumbers.Should().BeEquivalentTo(new[] { absoluteEpisodeNumber });
-            result.SpecialAbsoluteEpisodeNumbers.Should().BeEmpty();
+            result.AbsoluteEditionNumbers.Should().NotBeEmpty();
+            result.AbsoluteEditionNumbers.Should().BeEquivalentTo(new[] { absoluteEditionNumber });
+            result.SpecialAbsoluteEditionNumbers.Should().BeEmpty();
             result.FullSeason.Should().BeFalse();
         }
 
         [TestCase("[BeanSub][Anime_Series_Title][01][GB][1080P][x264_AAC]", "Anime Series Title", "BeanSub", 1)]
-        public void should_parse_false_positive_chinese_anime_releases(string postTitle, string title, string subgroup, int absoluteEpisodeNumber)
+        public void should_parse_false_positive_chinese_anime_releases(string postTitle, string title, string subgroup, int absoluteEditionNumber)
         {
             postTitle = XmlCleaner.ReplaceUnicode(postTitle);
 
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
             result.ReleaseGroup.Should().Be(subgroup);
-            result.AbsoluteEpisodeNumbers.Single().Should().Be(absoluteEpisodeNumber);
+            result.AbsoluteEditionNumbers.Single().Should().Be(absoluteEditionNumber);
             result.SeriesTitle.Should().Be(title);
             result.FullSeason.Should().BeFalse();
         }

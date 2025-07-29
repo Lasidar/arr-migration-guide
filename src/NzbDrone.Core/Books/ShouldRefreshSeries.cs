@@ -12,10 +12,10 @@ namespace NzbDrone.Core.Books
 
     public class ShouldRefreshSeries : ICheckIfSeriesShouldBeRefreshed
     {
-        private readonly IEpisodeService _episodeService;
+        private readonly IEditionService _episodeService;
         private readonly Logger _logger;
 
-        public ShouldRefreshSeries(IEpisodeService episodeService, Logger logger)
+        public ShouldRefreshSeries(IEditionService episodeService, Logger logger)
         {
             _episodeService = episodeService;
             _logger = logger;
@@ -34,7 +34,7 @@ namespace NzbDrone.Core.Books
                 var episodes = _episodeService.GetEpisodeBySeries(series.Id);
 
                 var atLeastOneAiredEpisodeWithoutTitle = episodes.Any(e =>
-                    e.SeasonNumber > 0 &&
+                    e.BookNumber > 0 &&
                     e.AirDateUtc.HasValue && e.AirDateUtc.Value.Before(DateTime.UtcNow) &&
                     e.Title.Equals("TBA", StringComparison.Ordinal));
 

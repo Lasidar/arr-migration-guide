@@ -21,7 +21,7 @@ using RestSharp;
 using Readarr.Api.V3.Blocklist;
 using Readarr.Api.V3.Config;
 using Readarr.Api.V3.DownloadClient;
-using Readarr.Api.V3.EpisodeFiles;
+using Readarr.Api.V3.EditionFiles;
 using Readarr.Api.V3.Episodes;
 using Readarr.Api.V3.History;
 using Readarr.Api.V3.Profiles.Quality;
@@ -296,11 +296,11 @@ namespace NzbDrone.Integration.Test
             }
         }
 
-        public EpisodeFileResource EnsureEpisodeFile(SeriesResource series, int season, int episode, Quality quality)
+        public EditionFileResource EnsureEditionFile(SeriesResource series, int season, int episode, Quality quality)
         {
-            var result = Episodes.GetEpisodesInSeries(series.Id).Single(v => v.SeasonNumber == season && v.EpisodeNumber == episode);
+            var result = Episodes.GetEpisodesInSeries(series.Id).Single(v => v.BookNumber == season && v.EditionNumber == episode);
 
-            if (result.EpisodeFile == null)
+            if (result.EditionFile == null)
             {
                 var path = Path.Combine(SeriesRootFolder, series.Title, string.Format("Series.S{0}E{1}.{2}.mkv", season, episode, quality.Name));
 
@@ -311,12 +311,12 @@ namespace NzbDrone.Integration.Test
 
                 Commands.WaitAll();
 
-                result = Episodes.GetEpisodesInSeries(series.Id).Single(v => v.SeasonNumber == season && v.EpisodeNumber == episode);
+                result = Episodes.GetEpisodesInSeries(series.Id).Single(v => v.BookNumber == season && v.EditionNumber == episode);
 
-                result.EpisodeFileId.Should().NotBe(0);
+                result.EditionFileId.Should().NotBe(0);
             }
 
-            return result.EpisodeFile;
+            return result.EditionFile;
         }
 
         public QualityProfileResource EnsureQualityProfileCutoff(int profileId, Quality cutoff, bool upgradeAllowed)

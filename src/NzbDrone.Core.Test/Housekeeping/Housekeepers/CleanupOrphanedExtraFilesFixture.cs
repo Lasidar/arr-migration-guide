@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
         [Test]
         public void should_delete_extra_files_that_dont_have_a_coresponding_series()
         {
-            var episodeFile = Builder<EpisodeFile>.CreateNew()
+            var episodeFile = Builder<EditionFile>.CreateNew()
                 .With(h => h.Quality = new QualityModel())
                 .With(h => h.Languages = new List<Language> { Language.English })
                 .BuildNew();
@@ -26,7 +26,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             Db.Insert(episodeFile);
 
             var extraFile = Builder<OtherExtraFile>.CreateNew()
-                                                    .With(m => m.EpisodeFileId = episodeFile.Id)
+                                                    .With(m => m.EditionFileId = episodeFile.Id)
                                                     .BuildNew();
 
             Db.Insert(extraFile);
@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             var series = Builder<Series>.CreateNew()
                                         .BuildNew();
 
-            var episodeFile = Builder<EpisodeFile>.CreateNew()
+            var episodeFile = Builder<EditionFile>.CreateNew()
                 .With(h => h.Quality = new QualityModel())
                 .With(h => h.Languages = new List<Language> { Language.English })
                 .BuildNew();
@@ -49,8 +49,8 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             Db.Insert(episodeFile);
 
             var extraFile = Builder<OtherExtraFile>.CreateNew()
-                                                    .With(m => m.SeriesId = series.Id)
-                                                    .With(m => m.EpisodeFileId = episodeFile.Id)
+                                                    .With(m => m.AuthorId = series.Id)
+                                                    .With(m => m.EditionFileId = episodeFile.Id)
                                                     .BuildNew();
 
             Db.Insert(extraFile);
@@ -67,8 +67,8 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             Db.Insert(series);
 
             var extraFile = Builder<OtherExtraFile>.CreateNew()
-                                                    .With(m => m.SeriesId = series.Id)
-                                                    .With(m => m.EpisodeFileId = 10)
+                                                    .With(m => m.AuthorId = series.Id)
+                                                    .With(m => m.EditionFileId = 10)
                                                     .BuildNew();
 
             Db.Insert(extraFile);
@@ -82,7 +82,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             var series = Builder<Series>.CreateNew()
                                         .BuildNew();
 
-            var episodeFile = Builder<EpisodeFile>.CreateNew()
+            var episodeFile = Builder<EditionFile>.CreateNew()
                 .With(h => h.Quality = new QualityModel())
                 .With(h => h.Languages = new List<Language> { Language.English })
                 .BuildNew();
@@ -91,8 +91,8 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             Db.Insert(episodeFile);
 
             var extraFile = Builder<OtherExtraFile>.CreateNew()
-                                                    .With(m => m.SeriesId = series.Id)
-                                                    .With(m => m.EpisodeFileId = episodeFile.Id)
+                                                    .With(m => m.AuthorId = series.Id)
+                                                    .With(m => m.EditionFileId = episodeFile.Id)
                                                     .BuildNew();
 
             Db.Insert(extraFile);
@@ -109,8 +109,8 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             Db.Insert(series);
 
             var extraFile = Builder<OtherExtraFile>.CreateNew()
-                                                 .With(m => m.SeriesId = series.Id)
-                                                 .With(m => m.EpisodeFileId = 0)
+                                                 .With(m => m.AuthorId = series.Id)
+                                                 .With(m => m.EditionFileId = 0)
                                                  .BuildNew();
 
             Db.Insert(extraFile);

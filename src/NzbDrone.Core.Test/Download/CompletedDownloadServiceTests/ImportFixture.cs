@@ -29,9 +29,9 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
         [SetUp]
         public void Setup()
         {
-            _episode1 = new Episode { Id = 1, SeasonNumber = 1, EpisodeNumber = 1 };
-            _episode2 = new Episode { Id = 2, SeasonNumber = 1, EpisodeNumber = 2 };
-            _episode3 = new Episode { Id = 2, SeasonNumber = 1, EpisodeNumber = 3 };
+            _episode1 = new Episode { Id = 1, BookNumber = 1, EditionNumber = 1 };
+            _episode2 = new Episode { Id = 2, BookNumber = 1, EditionNumber = 2 };
+            _episode3 = new Episode { Id = 2, BookNumber = 1, EditionNumber = 3 };
 
             var completed = Builder<DownloadClientItem>.CreateNew()
                                                     .With(h => h.Status = DownloadItemStatus.Completed)
@@ -71,7 +71,7 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
                   .Setup(s => s.ProvideImportItem(It.IsAny<DownloadClientItem>(), It.IsAny<DownloadClientItem>()))
                   .Returns<DownloadClientItem, DownloadClientItem>((i, p) => i);
 
-            Mocker.GetMock<IEpisodeService>()
+            Mocker.GetMock<IEditionService>()
                 .Setup(s => s.GetEpisodes(It.IsAny<IEnumerable<int>>()))
                 .Returns(new List<Episode>());
         }
@@ -369,7 +369,7 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
                                new ImportResult(new ImportDecision(new LocalEpisode { Path = @"C:\TestPath\Droned.S01E01.mkv", Episodes = _trackedDownload.RemoteEpisode.Episodes }))
                            });
 
-            Mocker.GetMock<ISeriesService>()
+            Mocker.GetMock<IAuthorService>()
                   .Setup(v => v.GetSeries(It.IsAny<int>()))
                   .Returns(BuildRemoteEpisode().Series);
 

@@ -2,11 +2,11 @@ using NzbDrone.Core.SeriesStats;
 
 namespace Readarr.Api.V5.Series;
 
-public class SeasonStatisticsResource
+public class BookStatisticsResource
 {
     public DateTime? NextAiring { get; set; }
     public DateTime? PreviousAiring { get; set; }
-    public int EpisodeFileCount { get; set; }
+    public int EditionFileCount { get; set; }
     public int EpisodeCount { get; set; }
     public int TotalEpisodeCount { get; set; }
     public long SizeOnDisk { get; set; }
@@ -21,12 +21,12 @@ public class SeasonStatisticsResource
                 return 0;
             }
 
-            return (decimal)EpisodeFileCount / (decimal)EpisodeCount * 100;
+            return (decimal)EditionFileCount / (decimal)EpisodeCount * 100;
         }
     }
 }
 
-public static class SeasonStatisticsResourceMapper
+public static class BookStatisticsResourceMapper
 {
     public static SeasonStatisticsResource ToResource(this SeasonStatistics model)
     {
@@ -34,7 +34,7 @@ public static class SeasonStatisticsResourceMapper
         {
             NextAiring = model.NextAiring,
             PreviousAiring = model.PreviousAiring,
-            EpisodeFileCount = model.EpisodeFileCount,
+            EditionFileCount = model.EditionFileCount,
             EpisodeCount = model.EpisodeCount,
             TotalEpisodeCount = model.TotalEpisodeCount,
             SizeOnDisk = model.SizeOnDisk,

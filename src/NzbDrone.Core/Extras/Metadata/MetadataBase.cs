@@ -27,7 +27,7 @@ namespace NzbDrone.Core.Extras.Metadata
             return new ValidationResult();
         }
 
-        public virtual string GetFilenameAfterMove(Series series, EpisodeFile episodeFile, MetadataFile metadataFile)
+        public virtual string GetFilenameAfterMove(Series series, EditionFile episodeFile, MetadataFile metadataFile)
         {
             var existingFilename = Path.Combine(series.Path, metadataFile.RelativePath);
             var extension = Path.GetExtension(existingFilename).TrimStart('.');
@@ -39,10 +39,10 @@ namespace NzbDrone.Core.Extras.Metadata
         public abstract MetadataFile FindMetadataFile(Series series, string path);
 
         public abstract MetadataFileResult SeriesMetadata(Series series, SeriesMetadataReason reason);
-        public abstract MetadataFileResult EpisodeMetadata(Series series, EpisodeFile episodeFile);
+        public abstract MetadataFileResult EpisodeMetadata(Series series, EditionFile episodeFile);
         public abstract List<ImageFileResult> SeriesImages(Series series);
         public abstract List<ImageFileResult> SeasonImages(Series series, Season season);
-        public abstract List<ImageFileResult> EpisodeImages(Series series, EpisodeFile episodeFile);
+        public abstract List<ImageFileResult> EpisodeImages(Series series, EditionFile episodeFile);
 
         public virtual object RequestAction(string action, IDictionary<string, string> query)
         {

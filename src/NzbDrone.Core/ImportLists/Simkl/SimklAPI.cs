@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace NzbDrone.Core.ImportLists.Simkl
 {
-    public class SimklSeriesIdsResource
+    public class SimklAuthorIdsResource
     {
         public int Simkl { get; set; }
         public string Slug { get; set; }
@@ -19,7 +19,7 @@ namespace NzbDrone.Core.ImportLists.Simkl
     {
         public string Title { get; set; }
         public int? Year { get; set; }
-        public SimklSeriesIdsResource Ids { get; set; }
+        public SimklAuthorIdsResource Ids { get; set; }
     }
 
     public class SimklSeriesResource

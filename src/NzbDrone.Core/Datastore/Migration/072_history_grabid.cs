@@ -60,7 +60,7 @@ namespace NzbDrone.Core.Datastore.Migration
     public class History72
     {
         public int EpisodeId { get; set; }
-        public int SeriesId { get; set; }
+        public int AuthorId { get; set; }
         public string SourceTitle { get; set; }
         public string Quality { get; set; }
         public DateTime Date { get; set; }

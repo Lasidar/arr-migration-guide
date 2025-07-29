@@ -47,7 +47,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
                                      .Build();
 
             _episode = Builder<Episode>.CreateNew()
-                                       .With(e => e.SeriesId = _series.Id)
+                                       .With(e => e.AuthorId = _series.Id)
                                        .Build();
 
             _otherSeries = Builder<Series>.CreateNew()
@@ -55,10 +55,10 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
                                           .Build();
 
             _otherEpisode = Builder<Episode>.CreateNew()
-                                            .With(e => e.SeriesId = _otherSeries.Id)
+                                            .With(e => e.AuthorId = _otherSeries.Id)
                                             .With(e => e.Id = 2)
-                                            .With(e => e.SeasonNumber = 2)
-                                            .With(e => e.EpisodeNumber = 2)
+                                            .With(e => e.BookNumber = 2)
+                                            .With(e => e.EditionNumber = 2)
                                             .Build();
 
             _releaseInfo = Builder<ReleaseInfo>.CreateNew()
@@ -149,7 +149,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
         {
             GivenEmptyPendingQueue();
 
-            _otherEpisode.SeriesId = _series.Id;
+            _otherEpisode.AuthorId = _series.Id;
 
             Mocker.GetMock<IPendingReleaseService>()
                 .Setup(s => s.GetPendingQueue())

@@ -29,15 +29,15 @@ namespace NzbDrone.Core.IndexerSearch
     {
         private readonly IIndexerFactory _indexerFactory;
         private readonly ISceneMappingService _sceneMapping;
-        private readonly ISeriesService _seriesService;
-        private readonly IEpisodeService _episodeService;
+        private readonly IAuthorService _seriesService;
+        private readonly IEditionService _episodeService;
         private readonly IMakeDownloadDecision _makeDownloadDecision;
         private readonly Logger _logger;
 
         public ReleaseSearchService(IIndexerFactory indexerFactory,
                                 ISceneMappingService sceneMapping,
-                                ISeriesService seriesService,
-                                IEpisodeService episodeService,
+                                IAuthorService seriesService,
+                                IEditionService episodeService,
                                 IMakeDownloadDecision makeDownloadDecision,
                                 Logger logger)
         {
@@ -58,7 +58,7 @@ namespace NzbDrone.Core.IndexerSearch
 
         public async Task<List<DownloadDecision>> EpisodeSearch(Episode episode, bool userInvokedSearch, bool interactiveSearch)
         {
-            var series = _seriesService.GetSeries(episode.SeriesId);
+            var series = _seriesService.GetSeries(episode.AuthorId);
 
             if (series.SeriesType == SeriesTypes.Daily)
             {
@@ -73,9 +73,9 @@ namespace NzbDrone.Core.IndexerSearch
 
             if (series.SeriesType == SeriesTypes.Anime)
             {
-                if (episode.SeasonNumber == 0 &&
-                    episode.SceneAbsoluteEpisodeNumber == null &&
-                    episode.AbsoluteEpisodeNumber == null)
+                if (episode.BookNumber == 0 &&
+                    episode.SceneAbsoluteEditionNumber == null &&
+                    episode.AbsoluteEditionNumber == null)
                 {
                     // Search for special episodes in season 0 that don't have absolute episode numbers
                     return await SearchSpecial(series, new List<Episode> { episode }, false, userInvokedSearch, interactiveSearch);
@@ -84,7 +84,7 @@ namespace NzbDrone.Core.IndexerSearch
                 return await SearchAnime(series, episode, false, userInvokedSearch, interactiveSearch);
             }
 
-            if (episode.SeasonNumber == 0)
+            if (episode.BookNumber == 0)
             {
                 // Search for special episodes in season 0
                 return await SearchSpecial(series, new List<Episode> { episode }, false, userInvokedSearch, interactiveSearch);
@@ -125,7 +125,7 @@ namespace NzbDrone.Core.IndexerSearch
 
             foreach (var mapping in mappings)
             {
-                if (mapping.SeasonNumber == 0)
+                if (mapping.BookNumber == 0)
                 {
                     // search for special episodes in season 0
                     downloadDecisions.AddRange(await SearchSpecial(series, mapping.Episodes, monitoredOnly, userInvokedSearch, interactiveSearch));
@@ -135,8 +135,8 @@ namespace NzbDrone.Core.IndexerSearch
                 if (mapping.Episodes.Count == 1)
                 {
                     var searchSpec = Get<SingleEpisodeSearchCriteria>(series, mapping, monitoredOnly, userInvokedSearch, interactiveSearch);
-                    searchSpec.SeasonNumber = mapping.SeasonNumber;
-                    searchSpec.EpisodeNumber = mapping.EpisodeMapping.EpisodeNumber;
+                    searchSpec.BookNumber = mapping.BookNumber;
+                    searchSpec.EditionNumber = mapping.EpisodeMapping.EditionNumber;
 
                     var decisions = await Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
                     downloadDecisions.AddRange(decisions);
@@ -144,7 +144,7 @@ namespace NzbDrone.Core.IndexerSearch
                 else
                 {
                     var searchSpec = Get<SeasonSearchCriteria>(series, mapping, monitoredOnly, userInvokedSearch, interactiveSearch);
-                    searchSpec.SeasonNumber = mapping.SeasonNumber;
+                    searchSpec.BookNumber = mapping.BookNumber;
 
                     var decisions = await Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
                     downloadDecisions.AddRange(decisions);
@@ -160,8 +160,8 @@ namespace NzbDrone.Core.IndexerSearch
 
             var sceneMappings = _sceneMapping.FindByTvdbId(series.TvdbId);
 
-            // Group the episode by SceneSeasonNumber/SeasonNumber, in 99% of cases this will result in 1 groupedEpisode
-            var groupedEpisodes = episodes.ToLookup(v => ((v.SceneSeasonNumber ?? v.SeasonNumber) * 100000) + v.SeasonNumber);
+            // Group the episode by SceneBookNumber/BookNumber, in 99% of cases this will result in 1 groupedEpisode
+            var groupedEpisodes = episodes.ToLookup(v => ((v.SceneBookNumber ?? v.BookNumber) * 100000) + v.BookNumber);
 
             foreach (var groupedEpisode in groupedEpisodes)
             {
@@ -175,7 +175,7 @@ namespace NzbDrone.Core.IndexerSearch
                         EpisodeMapping = episodeMapping,
                         SceneTitles = episodeMapping.SceneTitles,
                         SearchMode = episodeMapping.SearchMode,
-                        SeasonNumber = episodeMapping.SeasonNumber
+                        BookNumber = episodeMapping.BookNumber
                     };
 
                     if (dict.TryGetValue(seasonMapping, out var existing))
@@ -234,24 +234,24 @@ namespace NzbDrone.Core.IndexerSearch
             foreach (var sceneMapping in sceneMappings)
             {
                 // There are two kinds of mappings:
-                // - Mapped on Release Season Number with sceneMapping.SceneSeasonNumber specified and optionally sceneMapping.SeasonNumber. This translates via episode.SceneSeasonNumber/SeasonNumber to specific episodes.
-                // - Mapped on Episode Season Number with optionally sceneMapping.SeasonNumber. This translates from episode.SceneSeasonNumber/SeasonNumber to specific releases. (Filter by episode.SeasonNumber or globally)
+                // - Mapped on Release Season Number with sceneMapping.SceneBookNumber specified and optionally sceneMapping.BookNumber. This translates via episode.SceneBookNumber/BookNumber to specific episodes.
+                // - Mapped on Episode Season Number with optionally sceneMapping.BookNumber. This translates from episode.SceneBookNumber/BookNumber to specific releases. (Filter by episode.BookNumber or globally)
 
                 var ignoreSceneNumbering = sceneMapping.SceneOrigin == "tvdb" || sceneMapping.SceneOrigin == "unknown:tvdb";
-                var mappingSceneSeasonNumber = sceneMapping.SceneSeasonNumber.NonNegative();
-                var mappingSeasonNumber = sceneMapping.SeasonNumber.NonNegative();
+                var mappingSceneBookNumber = sceneMapping.SceneBookNumber.NonNegative();
+                var mappingBookNumber = sceneMapping.BookNumber.NonNegative();
 
                 // Select scene or tvdb on the episode
-                var mappedSeasonNumber = ignoreSceneNumbering ? episode.SeasonNumber : (episode.SceneSeasonNumber ?? episode.SeasonNumber);
-                var releaseSeasonNumber = sceneMapping.SceneSeasonNumber.NonNegative() ?? mappedSeasonNumber;
+                var mappedBookNumber = ignoreSceneNumbering ? episode.BookNumber : (episode.SceneBookNumber ?? episode.BookNumber);
+                var releaseBookNumber = sceneMapping.SceneBookNumber.NonNegative() ?? mappedBookNumber;
 
-                if (mappingSceneSeasonNumber.HasValue)
+                if (mappingSceneBookNumber.HasValue)
                 {
                     // Apply the alternative mapping (release to scene/tvdb)
-                    var mappedAltSeasonNumber = sceneMapping.SeasonNumber.NonNegative() ?? sceneMapping.SceneSeasonNumber.NonNegative() ?? mappedSeasonNumber;
+                    var mappedAltBookNumber = sceneMapping.BookNumber.NonNegative() ?? sceneMapping.SceneBookNumber.NonNegative() ?? mappedBookNumber;
 
                     // Check if the mapping applies to the current season
-                    if (mappedAltSeasonNumber != mappedSeasonNumber)
+                    if (mappedAltBookNumber != mappedBookNumber)
                     {
                         continue;
                     }
@@ -259,7 +259,7 @@ namespace NzbDrone.Core.IndexerSearch
                 else
                 {
                     // Check if the mapping applies to the current season
-                    if (mappingSeasonNumber.HasValue && mappingSeasonNumber.Value != episode.SeasonNumber)
+                    if (mappingBookNumber.HasValue && mappingBookNumber.Value != episode.BookNumber)
                     {
                         continue;
                     }
@@ -272,7 +272,7 @@ namespace NzbDrone.Core.IndexerSearch
                 }
 
                 // By default we do a alt title search in case indexers don't have the release properly indexed.  Services can override this behavior.
-                var searchMode = sceneMapping.SearchMode ?? ((mappingSceneSeasonNumber.HasValue && series.CleanTitle != sceneMapping.SearchTerm.CleanSeriesTitle()) ? SearchMode.SearchTitle : SearchMode.Default);
+                var searchMode = sceneMapping.SearchMode ?? ((mappingSceneBookNumber.HasValue && series.CleanTitle != sceneMapping.SearchTerm.CleanSeriesTitle()) ? SearchMode.SearchTitle : SearchMode.Default);
 
                 if (ignoreSceneNumbering)
                 {
@@ -281,9 +281,9 @@ namespace NzbDrone.Core.IndexerSearch
                         Episode = episode,
                         SearchMode = searchMode,
                         SceneTitles = new List<string> { sceneMapping.SearchTerm },
-                        SeasonNumber = releaseSeasonNumber,
-                        EpisodeNumber = episode.EpisodeNumber,
-                        AbsoluteEpisodeNumber = episode.AbsoluteEpisodeNumber
+                        BookNumber = releaseBookNumber,
+                        EditionNumber = episode.EditionNumber,
+                        AbsoluteEditionNumber = episode.AbsoluteEditionNumber
                     };
                 }
                 else
@@ -293,9 +293,9 @@ namespace NzbDrone.Core.IndexerSearch
                         Episode = episode,
                         SearchMode = searchMode,
                         SceneTitles = new List<string> { sceneMapping.SearchTerm },
-                        SeasonNumber = releaseSeasonNumber,
-                        EpisodeNumber = episode.SceneEpisodeNumber ?? episode.EpisodeNumber,
-                        AbsoluteEpisodeNumber = episode.SceneAbsoluteEpisodeNumber ?? episode.AbsoluteEpisodeNumber
+                        BookNumber = releaseBookNumber,
+                        EditionNumber = episode.SceneEditionNumber ?? episode.EditionNumber,
+                        AbsoluteEditionNumber = episode.SceneAbsoluteEditionNumber ?? episode.AbsoluteEditionNumber
                     };
                 }
             }
@@ -307,9 +307,9 @@ namespace NzbDrone.Core.IndexerSearch
                     Episode = episode,
                     SearchMode = SearchMode.Default,
                     SceneTitles = new List<string> { series.Title },
-                    SeasonNumber = episode.SceneSeasonNumber ?? episode.SeasonNumber,
-                    EpisodeNumber = episode.SceneEpisodeNumber ?? episode.EpisodeNumber,
-                    AbsoluteEpisodeNumber = episode.SceneSeasonNumber ?? episode.AbsoluteEpisodeNumber
+                    BookNumber = episode.SceneBookNumber ?? episode.BookNumber,
+                    EditionNumber = episode.SceneEditionNumber ?? episode.EditionNumber,
+                    AbsoluteEditionNumber = episode.SceneBookNumber ?? episode.AbsoluteEditionNumber
                 };
             }
         }
@@ -323,8 +323,8 @@ namespace NzbDrone.Core.IndexerSearch
             foreach (var mapping in mappings)
             {
                 var searchSpec = Get<SingleEpisodeSearchCriteria>(series, mapping, monitoredOnly, userInvokedSearch, interactiveSearch);
-                searchSpec.SeasonNumber = mapping.SeasonNumber;
-                searchSpec.EpisodeNumber = mapping.EpisodeNumber;
+                searchSpec.BookNumber = mapping.BookNumber;
+                searchSpec.EditionNumber = mapping.EditionNumber;
 
                 var decisions = await Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
                 downloadDecisions.AddRange(decisions);
@@ -350,9 +350,9 @@ namespace NzbDrone.Core.IndexerSearch
 
             searchSpec.IsSeasonSearch = isSeasonSearch;
 
-            searchSpec.SeasonNumber = episode.SceneSeasonNumber ?? episode.SeasonNumber;
-            searchSpec.EpisodeNumber = episode.SceneEpisodeNumber ?? episode.EpisodeNumber;
-            searchSpec.AbsoluteEpisodeNumber = episode.SceneAbsoluteEpisodeNumber ?? episode.AbsoluteEpisodeNumber ?? 0;
+            searchSpec.BookNumber = episode.SceneBookNumber ?? episode.BookNumber;
+            searchSpec.EditionNumber = episode.SceneEditionNumber ?? episode.EditionNumber;
+            searchSpec.AbsoluteEditionNumber = episode.SceneAbsoluteEditionNumber ?? episode.AbsoluteEditionNumber ?? 0;
 
             var downloadDecisions = await Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
 
@@ -403,13 +403,13 @@ namespace NzbDrone.Core.IndexerSearch
                 .ToList();
 
             var seasonsToSearch = GetSceneSeasonMappings(series, episodesToSearch)
-                .GroupBy(ep => ep.SeasonNumber)
+                .GroupBy(ep => ep.BookNumber)
                 .Select(epList => epList.First())
                 .ToList();
 
             foreach (var season in seasonsToSearch)
             {
-                searchSpec.SeasonNumber = season.SeasonNumber;
+                searchSpec.BookNumber = season.BookNumber;
 
                 var decisions = await Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
                 downloadDecisions.AddRange(decisions);
@@ -461,8 +461,8 @@ namespace NzbDrone.Core.IndexerSearch
 
             spec.Series = series;
             spec.SceneTitles = _sceneMapping.GetSceneNames(series.TvdbId,
-                                                           episodes.Select(e => e.SeasonNumber).Distinct().ToList(),
-                                                           episodes.Select(e => e.SceneSeasonNumber ?? e.SeasonNumber).Distinct().ToList());
+                                                           episodes.Select(e => e.BookNumber).Distinct().ToList(),
+                                                           episodes.Select(e => e.SceneBookNumber ?? e.BookNumber).Distinct().ToList());
 
             spec.Episodes = episodes;
             spec.MonitoredEpisodesOnly = monitoredOnly;

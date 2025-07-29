@@ -15,8 +15,8 @@ namespace Readarr.Api.V3.Wanted
     [V3ApiController("wanted/missing")]
     public class MissingController : EpisodeControllerWithSignalR
     {
-        public MissingController(IEpisodeService episodeService,
-                             ISeriesService seriesService,
+        public MissingController(IEditionService episodeService,
+                             IAuthorService seriesService,
                              IUpgradableSpecification upgradableSpecification,
                              ICustomFormatCalculationService formatCalculator,
                              IBroadcastSignalRMessage signalRBroadcaster)

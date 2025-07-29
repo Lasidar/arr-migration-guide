@@ -3,7 +3,7 @@ using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications.Search
 {
-    public class SeriesSpecification : IDownloadDecisionEngineSpecification
+    public class AuthorSpecification : IDownloadDecisionEngineSpecification
     {
         private readonly Logger _logger;
 

@@ -91,7 +91,7 @@ namespace NzbDrone.Core.Test.Datastore.Migration
             migration.Insert.IntoTable("History").Row(new
             {
                 EpisodeId = 1,
-                SeriesId = 1,
+                AuthorId = 1,
                 SourceTitle = "Test",
                 Date = DateTime.Now,
                 Quality = "{}",

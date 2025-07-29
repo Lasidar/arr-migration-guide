@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             _multiSearch = new SeasonSearchCriteria();
             _multiSearch.Episodes = _episodes.ToList();
-            _multiSearch.SeasonNumber = 1;
+            _multiSearch.BookNumber = 1;
             _multiInfo = new ReleaseDecisionInformation(false, _multiSearch);
 
             _parseResultMulti = new RemoteEpisode
@@ -64,8 +64,8 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         {
             return new Episode()
                    {
-                        SeasonNumber = 1,
-                        EpisodeNumber = number,
+                        BookNumber = 1,
+                        EditionNumber = number,
                         AirDateUtc = DateTime.UtcNow.AddDays(-age)
                    };
         }
@@ -80,7 +80,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         {
             _parseResultSingle.Release.SeasonSearchMaximumSingleEpisodeAge = seasonSearchMaximumSingleEpisodeAge;
             _parseResultSingle.Episodes.Clear();
-            _parseResultSingle.Episodes.Add(_episodes.Find(e => e.EpisodeNumber == episode));
+            _parseResultSingle.Episodes.Add(_episodes.Find(e => e.EditionNumber == episode));
 
             Subject.IsSatisfiedBy(_parseResultSingle, _multiInfo).Accepted.Should().Be(expectedResult);
         }

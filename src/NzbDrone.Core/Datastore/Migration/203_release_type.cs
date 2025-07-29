@@ -15,19 +15,19 @@ namespace NzbDrone.Core.Datastore.Migration
         protected override void MainDbUpgrade()
         {
             Alter.Table("Blocklist").AddColumn("ReleaseType").AsInt32().WithDefaultValue(0);
-            Alter.Table("EpisodeFiles").AddColumn("ReleaseType").AsInt32().WithDefaultValue(0);
+            Alter.Table("EditionFiles").AddColumn("ReleaseType").AsInt32().WithDefaultValue(0);
 
-            Execute.WithConnection(UpdateEpisodeFiles);
+            Execute.WithConnection(UpdateEditionFiles);
         }
 
-        private void UpdateEpisodeFiles(IDbConnection conn, IDbTransaction tran)
+        private void UpdateEditionFiles(IDbConnection conn, IDbTransaction tran)
         {
             var updates = new List<object>();
 
             using (var cmd = conn.CreateCommand())
             {
                 cmd.Transaction = tran;
-                cmd.CommandText = "SELECT \"Id\", \"OriginalFilePath\" FROM \"EpisodeFiles\" WHERE \"OriginalFilePath\" IS NOT NULL";
+                cmd.CommandText = "SELECT \"Id\", \"OriginalFilePath\" FROM \"EditionFiles\" WHERE \"OriginalFilePath\" IS NOT NULL";
 
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -51,8 +51,8 @@ namespace NzbDrone.Core.Datastore.Migration
                 }
             }
 
-            var updateEpisodeFilesSql = "UPDATE \"EpisodeFiles\" SET \"ReleaseType\" = @ReleaseType WHERE \"Id\" = @Id";
-            conn.Execute(updateEpisodeFilesSql, updates, transaction: tran);
+            var updateEditionFilesSql = "UPDATE \"EditionFiles\" SET \"ReleaseType\" = @ReleaseType WHERE \"Id\" = @Id";
+            conn.Execute(updateEditionFilesSql, updates, transaction: tran);
         }
     }
 }

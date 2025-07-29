@@ -248,18 +248,18 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             var episodes = Builder<Episode>.CreateListOfSize(2)
                 .All()
-                .With(v => v.SeriesId, series.Id)
+                .With(v => v.AuthorId, series.Id)
                 .With(v => v.Series, series)
-                .With(v => v.SeasonNumber, 1)
-                .With(v => v.SceneSeasonNumber, 2)
+                .With(v => v.BookNumber, 1)
+                .With(v => v.SceneBookNumber, 2)
                 .BuildList();
 
-            var criteria = new SeasonSearchCriteria { Episodes = episodes.Take(1).ToList(), SeasonNumber = 1 };
+            var criteria = new SeasonSearchCriteria { Episodes = episodes.Take(1).ToList(), BookNumber = 1 };
 
             var reports = episodes.Select(v =>
                 new ReleaseInfo()
                 {
-                    Title = string.Format("{0}.S{1:00}E{2:00}.720p.WEB-DL-DRONE", series.Title, v.SceneSeasonNumber, v.SceneEpisodeNumber)
+                    Title = string.Format("{0}.S{1:00}E{2:00}.720p.WEB-DL-DRONE", series.Title, v.SceneBookNumber, v.SceneEditionNumber)
                 }).ToList();
 
             Mocker.GetMock<IParsingService>()
@@ -270,7 +270,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                         DownloadAllowed = true,
                         ParsedEpisodeInfo = p,
                         Series = series,
-                        Episodes = episodes.Where(v => v.SceneEpisodeNumber == p.EpisodeNumbers.First()).ToList()
+                        Episodes = episodes.Where(v => v.SceneEditionNumber == p.EditionNumbers.First()).ToList()
                     });
 
             Mocker.SetConstant<IEnumerable<IDownloadDecisionEngineSpecification>>(new List<IDownloadDecisionEngineSpecification>
