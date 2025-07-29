@@ -1,0 +1,2836 @@
+From f6fe21b3e81693f4f10dfe12d7ffbd3bc1ced124 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Tue, 29 Jul 2025 14:08:31 +0000
+Subject: [PATCH 2/4] Phase 3.1 & 3.2 Progress: Service layer transformation
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- Transformed service interfaces (ISeriesService → IAuthorService, etc.)
+- Updated service implementations with book terminology
+- Created comprehensive transformation scripts
+- Updated path builder interfaces and implementations
+- Fixed file naming builder references
+- Updated event and command classes
+
+Work in progress - continuing with service implementation updates
+---
+ scripts/transform/update-services.sh          |  77 ++++++
+ src/NzbDrone.Core/Books/AuthorPathBuilder.cs  |  34 +--
+ src/NzbDrone.Core/Books/AuthorService.cs      | 166 ++++++-------
+ .../Books/Commands/BulkMoveAuthorCommand.cs   |  16 +-
+ .../Books/Commands/MoveAuthorCommand.cs       |   4 +-
+ .../Books/Commands/RefreshAuthorCommand.cs    |  24 +-
+ .../Books/EditionMonitoredService.cs          |  24 +-
+ .../Books/EditionRefreshedService.cs          |   8 +-
+ src/NzbDrone.Core/Books/EditionService.cs     | 228 +++++++++---------
+ .../Books/Events/AuthorAddCompletedEvent.cs   |   8 +-
+ .../Books/Events/AuthorAddedEvent.cs          |   8 +-
+ .../Books/Events/AuthorBulkEditedEvent.cs     |   8 +-
+ .../Books/Events/AuthorDeletedEvent.cs        |   8 +-
+ .../Books/Events/AuthorEditedEvent.cs         |  16 +-
+ .../Books/Events/AuthorImportedEvent.cs       |   8 +-
+ .../Books/Events/AuthorMovedEvent.cs          |   8 +-
+ .../Events/AuthorRefreshCompleteEvent.cs      |   2 +-
+ .../Events/AuthorRefreshStartingEvent.cs      |   4 +-
+ .../Books/Events/AuthorUpdatedEvent.cs        |   8 +-
+ .../Books/Events/EditionInfoRefreshedEvent.cs |  20 +-
+ .../DataAugmentation/Xem/XemService.cs        |  18 +-
+ .../DiskSpace/DiskSpaceService.cs             |   8 +-
+ .../Download/CompletedDownloadService.cs      |  16 +-
+ .../Download/Pending/PendingReleaseService.cs |   8 +-
+ .../RedownloadFailedDownloadService.cs        |  10 +-
+ src/NzbDrone.Core/Extras/ExtraService.cs      |   8 +-
+ .../Extras/Files/ExtraFileService.cs          |   8 +-
+ .../Metadata/Files/MetadataFileService.cs     |   4 +-
+ .../Extras/Others/OtherExtraFileService.cs    |   4 +-
+ .../Extras/Subtitles/SubtitleFileService.cs   |   4 +-
+ .../ImportLists/ImportListSyncService.cs      |  12 +-
+ .../IndexerSearch/EpisodeSearchService.cs     |  10 +-
+ .../IndexerSearch/ReleaseSearchService.cs     |  22 +-
+ .../IndexerSearch/SeriesSearchService.cs      |  16 +-
+ .../MediaFiles/DiskScanService.cs             |  10 +-
+ .../DownloadedEpisodesImportService.cs        |   8 +-
+ .../Manual/ManualImportService.cs             |  28 +--
+ .../MediaFiles/EpisodeFileMovingService.cs    |   8 +-
+ .../MediaFiles/MediaFileDeletionService.cs    |   8 +-
+ .../MediaFileTableCleanupService.cs           |  10 +-
+ .../MediaFiles/RenameEpisodeFileService.cs    |  28 +--
+ .../MediaFiles/UpdateEpisodeFileService.cs    |   8 +-
+ .../Organizer/FileNameBuilder.cs              |   4 +-
+ src/NzbDrone.Core/Parser/ParsingService.cs    |  76 +++---
+ .../Qualities/QualityProfileService.cs        |   8 +-
+ src/NzbDrone.Core/Tags/TagService.cs          |  10 +-
+ 46 files changed, 555 insertions(+), 478 deletions(-)
+ create mode 100755 scripts/transform/update-services.sh
+
+diff --git a/scripts/transform/update-services.sh b/scripts/transform/update-services.sh
+new file mode 100755
+index 000000000..4202bd478
+--- /dev/null
++++ b/scripts/transform/update-services.sh
+@@ -0,0 +1,77 @@
++#!/bin/bash
++# Script to update service references from TV to book entities
++
++echo "Starting service transformation..."
++
++# Update AuthorService
++echo "Updating AuthorService..."
++sed -i 's/_seriesRepository/_authorRepository/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/_episodeService/_editionService/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/_seriesPathBuilder/_authorPathBuilder/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/GetSeries/GetAuthor/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/AddSeries/AddAuthor/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/DeleteSeries/DeleteAuthor/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/UpdateSeries/UpdateAuthor/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/AllSeries/AllAuthor/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/SeriesPath/AuthorPath/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/Series series/Author author/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/List<Series>/List<Author>/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/IEnumerable<Series>/IEnumerable<Author>/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/var series/var author/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/newSeries/newAuthor/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/seriesIds/authorIds/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/seriesId/authorId/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/FindByTvdbId/FindByGoodreadsId/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/FindByTvRageId/FindByOpenLibraryId/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/FindByImdbId/FindByIsbnId/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/tvdbId/goodreadsId/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/tvRageId/openLibraryId/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/imdbId/isbnId/g' src/NzbDrone.Core/Books/AuthorService.cs
++sed -i 's/updateEpisodesToMatchSeason/updateBooksToMatchAuthor/g' src/NzbDrone.Core/Books/AuthorService.cs
++
++# Update EditionService
++echo "Updating EditionService..."
++if [ -f "src/NzbDrone.Core/Books/EditionService.cs" ]; then
++    sed -i 's/IEpisodeService/IEditionService/g' src/NzbDrone.Core/Books/EditionService.cs
++    sed -i 's/EpisodeService/EditionService/g' src/NzbDrone.Core/Books/EditionService.cs
++    sed -i 's/IEpisodeRepository/IEditionRepository/g' src/NzbDrone.Core/Books/EditionService.cs
++    sed -i 's/_episodeRepository/_editionRepository/g' src/NzbDrone.Core/Books/EditionService.cs
++    sed -i 's/Episode/Edition/g' src/NzbDrone.Core/Books/EditionService.cs
++    sed -i 's/SeriesId/AuthorId/g' src/NzbDrone.Core/Books/EditionService.cs
++    sed -i 's/SeasonNumber/BookNumber/g' src/NzbDrone.Core/Books/EditionService.cs
++    sed -i 's/EpisodeNumber/EditionNumber/g' src/NzbDrone.Core/Books/EditionService.cs
++    sed -i 's/seriesId/authorId/g' src/NzbDrone.Core/Books/EditionService.cs
++    sed -i 's/seasonNumber/bookNumber/g' src/NzbDrone.Core/Books/EditionService.cs
++    sed -i 's/episodeNumber/editionNumber/g' src/NzbDrone.Core/Books/EditionService.cs
++fi
++
++# Update other services that reference Series/Episodes
++echo "Updating other services..."
++find src -name "*Service.cs" -type f | while read file; do
++    # Skip the files we've already processed
++    if [[ ! "$file" =~ "AuthorService.cs" ]] && [[ ! "$file" =~ "EditionService.cs" ]]; then
++        sed -i 's/ISeriesService/IAuthorService/g' "$file"
++        sed -i 's/IEpisodeService/IEditionService/g' "$file"
++        sed -i 's/_seriesService/_authorService/g' "$file"
++        sed -i 's/_episodeService/_editionService/g' "$file"
++        sed -i 's/seriesService/authorService/g' "$file"
++        sed -i 's/episodeService/editionService/g' "$file"
++    fi
++done
++
++# Update event classes
++echo "Updating event classes..."
++find src/NzbDrone.Core/Books/Events -name "*.cs" -type f | while read file; do
++    sed -i 's/Series/Author/g' "$file"
++    sed -i 's/Episode/Edition/g' "$file"
++done
++
++# Update command classes
++echo "Updating command classes..."
++find src/NzbDrone.Core/Books/Commands -name "*.cs" -type f | while read file; do
++    sed -i 's/Series/Author/g' "$file"
++    sed -i 's/seriesId/authorId/g' "$file"
++    sed -i 's/SeriesId/AuthorId/g' "$file"
++done
++
++echo "Service transformation complete!"
+\ No newline at end of file
+diff --git a/src/NzbDrone.Core/Books/AuthorPathBuilder.cs b/src/NzbDrone.Core/Books/AuthorPathBuilder.cs
+index bf53fba7b..82b1238fa 100644
+--- a/src/NzbDrone.Core/Books/AuthorPathBuilder.cs
++++ b/src/NzbDrone.Core/Books/AuthorPathBuilder.cs
+@@ -7,52 +7,52 @@
+ 
+ namespace NzbDrone.Core.Books
+ {
+-    public interface IBuildSeriesPaths
++    public interface IBuildAuthorPaths
+     {
+-        string BuildPath(Series series, bool useExistingRelativeFolder);
++        string BuildPath(Author author, bool useExistingRelativeFolder);
+     }
+ 
+-    public class SeriesPathBuilder : IBuildSeriesPaths
++    public class AuthorPathBuilder : IBuildAuthorPaths
+     {
+         private readonly IBuildFileNames _fileNameBuilder;
+         private readonly IRootFolderService _rootFolderService;
+         private readonly Logger _logger;
+ 
+-        public SeriesPathBuilder(IBuildFileNames fileNameBuilder, IRootFolderService rootFolderService, Logger logger)
++        public AuthorPathBuilder(IBuildFileNames fileNameBuilder, IRootFolderService rootFolderService, Logger logger)
+         {
+             _fileNameBuilder = fileNameBuilder;
+             _rootFolderService = rootFolderService;
+             _logger = logger;
+         }
+ 
+-        public string BuildPath(Series series, bool useExistingRelativeFolder)
++        public string BuildPath(Author author, bool useExistingRelativeFolder)
+         {
+-            if (series.RootFolderPath.IsNullOrWhiteSpace())
++            if (author.RootFolderPath.IsNullOrWhiteSpace())
+             {
+-                throw new ArgumentException("Root folder was not provided", nameof(series));
++                throw new ArgumentException("Root folder was not provided", nameof(author));
+             }
+ 
+-            if (useExistingRelativeFolder && series.Path.IsNotNullOrWhiteSpace())
++            if (useExistingRelativeFolder && author.Path.IsNotNullOrWhiteSpace())
+             {
+-                var relativePath = GetExistingRelativePath(series);
+-                return Path.Combine(series.RootFolderPath, relativePath);
++                var relativePath = GetExistingRelativePath(author);
++                return Path.Combine(author.RootFolderPath, relativePath);
+             }
+ 
+-            return Path.Combine(series.RootFolderPath, _fileNameBuilder.GetSeriesFolder(series));
++            return Path.Combine(author.RootFolderPath, _fileNameBuilder.GetAuthorFolder(author));
+         }
+ 
+-        private string GetExistingRelativePath(Series series)
++        private string GetExistingRelativePath(Author author)
+         {
+-            var rootFolderPath = _rootFolderService.GetBestRootFolderPath(series.Path);
++            var rootFolderPath = _rootFolderService.GetBestRootFolderPath(author.Path);
+ 
+-            if (rootFolderPath.IsParentPath(series.Path))
++            if (rootFolderPath.IsParentPath(author.Path))
+             {
+-                return rootFolderPath.GetRelativePath(series.Path);
++                return rootFolderPath.GetRelativePath(author.Path);
+             }
+ 
+-            var directoryName = series.Path.GetDirectoryName();
++            var directoryName = author.Path.GetDirectoryName();
+ 
+-            _logger.Warn("Unable to get relative path for series path {0}, using series folder name {1}", series.Path, directoryName);
++            _logger.Warn("Unable to get relative path for author path {0}, using author folder name {1}", author.Path, directoryName);
+ 
+             return directoryName;
+         }
+diff --git a/src/NzbDrone.Core/Books/AuthorService.cs b/src/NzbDrone.Core/Books/AuthorService.cs
+index 23c1943e3..8c309134b 100644
+--- a/src/NzbDrone.Core/Books/AuthorService.cs
++++ b/src/NzbDrone.Core/Books/AuthorService.cs
+@@ -5,111 +5,111 @@
+ using NzbDrone.Core.AutoTagging;
+ using NzbDrone.Core.Messaging.Events;
+ using NzbDrone.Core.Parser;
+-using NzbDrone.Core.Tv.Events;
++using NzbDrone.Core.Books.Events;
+ 
+ namespace NzbDrone.Core.Books
+ {
+-    public interface ISeriesService
++    public interface IAuthorService
+     {
+-        Series GetSeries(int seriesId);
+-        List<Series> GetSeries(IEnumerable<int> seriesIds);
+-        Series AddSeries(Series newSeries);
+-        List<Series> AddSeries(List<Series> newSeries);
+-        Series FindByTvdbId(int tvdbId);
+-        Series FindByTvRageId(int tvRageId);
+-        Series FindByImdbId(string imdbId);
+-        Series FindByTitle(string title);
+-        Series FindByTitle(string title, int year);
+-        Series FindByTitleInexact(string title);
+-        Series FindByPath(string path);
+-        void DeleteSeries(List<int> seriesIds, bool deleteFiles, bool addImportListExclusion);
+-        List<Series> GetAllSeries();
+-        List<int> AllSeriesTvdbIds();
+-        Dictionary<int, string> GetAllSeriesPaths();
+-        Dictionary<int, List<int>> GetAllSeriesTags();
+-        List<Series> AllForTag(int tagId);
+-        Series UpdateSeries(Series series, bool updateEpisodesToMatchSeason = true, bool publishUpdatedEvent = true);
+-        List<Series> UpdateSeries(List<Series> series, bool useExistingRelativeFolder);
+-        bool SeriesPathExists(string folder);
+-        void RemoveAddOptions(Series series);
+-        bool UpdateTags(Series series);
++        Author GetAuthor(int authorId);
++        List<Author> GetAuthors(IEnumerable<int> authorIds);
++        Author AddAuthor(Author newAuthor);
++        List<Author> AddAuthors(List<Author> newAuthors);
++        Author FindByGoodreadsId(int goodreadsId);
++        Author FindByOpenLibraryId(int openLibraryId);
++        Author FindByIsbnId(string isbnId);
++        Author FindByTitle(string title);
++        Author FindByTitle(string title, int year);
++        Author FindByTitleInexact(string title);
++        Author FindByPath(string path);
++        void DeleteAuthor(List<int> authorIds, bool deleteFiles, bool addImportListExclusion);
++        List<Author> GetAllAuthors();
++        List<int> AllAuthorGoodreadsIds();
++        Dictionary<int, string> GetAllAuthorPaths();
++        Dictionary<int, List<int>> GetAllAuthorTags();
++        List<Author> AllForTag(int tagId);
++        Author UpdateAuthor(Author author, bool updateBooksToMatchAuthor = true, bool publishUpdatedEvent = true);
++        List<Author> UpdateAuthors(List<Author> authors, bool useExistingRelativeFolder);
++        bool AuthorPathExists(string folder);
++        void RemoveAddOptions(Author author);
++        bool UpdateTags(Author author);
+     }
+ 
+-    public class SeriesService : ISeriesService
++    public class AuthorService : IAuthorService
+     {
+-        private readonly ISeriesRepository _seriesRepository;
++        private readonly IAuthorRepository _authorRepository;
+         private readonly IEventAggregator _eventAggregator;
+-        private readonly IEpisodeService _episodeService;
+-        private readonly IBuildSeriesPaths _seriesPathBuilder;
++        private readonly IEditionService _editionService;
++        private readonly IBuildAuthorPaths _authorPathBuilder;
+         private readonly IAutoTaggingService _autoTaggingService;
+         private readonly Logger _logger;
+ 
+-        public SeriesService(ISeriesRepository seriesRepository,
++        public AuthorService(IAuthorRepository authorRepository,
+                              IEventAggregator eventAggregator,
+-                             IEpisodeService episodeService,
+-                             IBuildSeriesPaths seriesPathBuilder,
++                             IEditionService editionService,
++                             IBuildAuthorPaths authorPathBuilder,
+                              IAutoTaggingService autoTaggingService,
+                              Logger logger)
+         {
+-            _seriesRepository = seriesRepository;
++            _authorRepository = seriesRepository;
+             _eventAggregator = eventAggregator;
+-            _episodeService = episodeService;
+-            _seriesPathBuilder = seriesPathBuilder;
++            _editionService = episodeService;
++            _authorPathBuilder = seriesPathBuilder;
+             _autoTaggingService = autoTaggingService;
+             _logger = logger;
+         }
+ 
+-        public Series GetSeries(int seriesId)
++        public Series GetAuthor(int authorId)
+         {
+-            return _seriesRepository.Get(seriesId);
++            return _authorRepository.Get(authorId);
+         }
+ 
+-        public List<Series> GetSeries(IEnumerable<int> seriesIds)
++        public List<Author> GetAuthor(IEnumerable<int> authorIds)
+         {
+-            return _seriesRepository.Get(seriesIds).ToList();
++            return _authorRepository.Get(authorIds).ToList();
+         }
+ 
+-        public Series AddSeries(Series newSeries)
++        public Series AddAuthor(Series newAuthor)
+         {
+-            _seriesRepository.Insert(newSeries);
+-            _eventAggregator.PublishEvent(new SeriesAddedEvent(GetSeries(newSeries.Id)));
++            _authorRepository.Insert(newAuthor);
++            _eventAggregator.PublishEvent(new SeriesAddedEvent(GetAuthor(newAuthor.Id)));
+ 
+-            return newSeries;
++            return newAuthor;
+         }
+ 
+-        public List<Series> AddSeries(List<Series> newSeries)
++        public List<Author> AddAuthor(List<Author> newAuthor)
+         {
+-            _seriesRepository.InsertMany(newSeries);
+-            _eventAggregator.PublishEvent(new SeriesImportedEvent(newSeries.Select(s => s.Id).ToList()));
++            _authorRepository.InsertMany(newAuthor);
++            _eventAggregator.PublishEvent(new SeriesImportedEvent(newAuthor.Select(s => s.Id).ToList()));
+ 
+-            return newSeries;
++            return newAuthor;
+         }
+ 
+-        public Series FindByTvdbId(int tvRageId)
++        public Series FindByGoodreadsId(int openLibraryId)
+         {
+-            return _seriesRepository.FindByTvdbId(tvRageId);
++            return _authorRepository.FindByGoodreadsId(openLibraryId);
+         }
+ 
+-        public Series FindByTvRageId(int tvRageId)
++        public Series FindByOpenLibraryId(int openLibraryId)
+         {
+-            return _seriesRepository.FindByTvRageId(tvRageId);
++            return _authorRepository.FindByOpenLibraryId(openLibraryId);
+         }
+ 
+-        public Series FindByImdbId(string imdbId)
++        public Series FindByIsbnId(string isbnId)
+         {
+-            return _seriesRepository.FindByImdbId(imdbId);
++            return _authorRepository.FindByIsbnId(isbnId);
+         }
+ 
+         public Series FindByTitle(string title)
+         {
+-            return _seriesRepository.FindByTitle(title.CleanSeriesTitle());
++            return _authorRepository.FindByTitle(title.CleanSeriesTitle());
+         }
+ 
+         public Series FindByTitleInexact(string title)
+         {
+             // find any series clean title within the provided release title
+             var cleanTitle = title.CleanSeriesTitle();
+-            var list = _seriesRepository.FindByTitleInexact(cleanTitle);
++            var list = _authorRepository.FindByTitleInexact(cleanTitle);
+             if (!list.Any())
+             {
+                 // no series matched
+@@ -151,56 +151,56 @@ public Series FindByTitleInexact(string title)
+ 
+         public Series FindByPath(string path)
+         {
+-            return _seriesRepository.FindByPath(path);
++            return _authorRepository.FindByPath(path);
+         }
+ 
+         public Series FindByTitle(string title, int year)
+         {
+-            return _seriesRepository.FindByTitle(title.CleanSeriesTitle(), year);
++            return _authorRepository.FindByTitle(title.CleanSeriesTitle(), year);
+         }
+ 
+-        public void DeleteSeries(List<int> seriesIds, bool deleteFiles, bool addImportListExclusion)
++        public void DeleteAuthor(List<int> authorIds, bool deleteFiles, bool addImportListExclusion)
+         {
+-            var series = _seriesRepository.Get(seriesIds).ToList();
+-            _seriesRepository.DeleteMany(seriesIds);
++            var author = _authorRepository.Get(authorIds).ToList();
++            _authorRepository.DeleteMany(authorIds);
+             _eventAggregator.PublishEvent(new SeriesDeletedEvent(series, deleteFiles, addImportListExclusion));
+         }
+ 
+-        public List<Series> GetAllSeries()
++        public List<Author> GetAllAuthor()
+         {
+-            return _seriesRepository.All().ToList();
++            return _authorRepository.All().ToList();
+         }
+ 
+-        public List<int> AllSeriesTvdbIds()
++        public List<int> AllAuthorTvdbIds()
+         {
+-            return _seriesRepository.AllSeriesTvdbIds().ToList();
++            return _authorRepository.AllAuthorTvdbIds().ToList();
+         }
+ 
+-        public Dictionary<int, string> GetAllSeriesPaths()
++        public Dictionary<int, string> GetAllAuthorPaths()
+         {
+-            return _seriesRepository.AllSeriesPaths();
++            return _authorRepository.AllAuthorPaths();
+         }
+ 
+-        public Dictionary<int, List<int>> GetAllSeriesTags()
++        public Dictionary<int, List<int>> GetAllAuthorTags()
+         {
+-            return _seriesRepository.AllSeriesTags();
++            return _authorRepository.AllAuthorTags();
+         }
+ 
+-        public List<Series> AllForTag(int tagId)
++        public List<Author> AllForTag(int tagId)
+         {
+-            return GetAllSeries().Where(s => s.Tags.Contains(tagId))
++            return GetAllAuthor().Where(s => s.Tags.Contains(tagId))
+                                  .ToList();
+         }
+ 
+-        // updateEpisodesToMatchSeason is an override for EpisodeMonitoredService to use so a change via Season pass doesn't get nuked by the seasons loop.
++        // updateBooksToMatchAuthor is an override for EpisodeMonitoredService to use so a change via Season pass doesn't get nuked by the seasons loop.
+         // TODO: Remove when seasons are split from series (or we come up with a better way to address this)
+-        public Series UpdateSeries(Series series, bool updateEpisodesToMatchSeason = true, bool publishUpdatedEvent = true)
++        public Series UpdateAuthor(Author author, bool updateBooksToMatchAuthor = true, bool publishUpdatedEvent = true)
+         {
+-            var storedSeries = GetSeries(series.Id);
++            var storedSeries = GetAuthor(series.Id);
+ 
+             var episodeMonitoredChanged = false;
+ 
+-            if (updateEpisodesToMatchSeason)
++            if (updateBooksToMatchAuthor)
+             {
+                 foreach (var season in series.Seasons)
+                 {
+@@ -208,7 +208,7 @@ public Series UpdateSeries(Series series, bool updateEpisodesToMatchSeason = tru
+ 
+                     if (storedSeason != null && season.Monitored != storedSeason.Monitored)
+                     {
+-                        _episodeService.SetEpisodeMonitoredBySeason(series.Id, season.SeasonNumber, season.Monitored);
++                        _editionService.SetEpisodeMonitoredBySeason(series.Id, season.SeasonNumber, season.Monitored);
+                         episodeMonitoredChanged = true;
+                     }
+                 }
+@@ -218,7 +218,7 @@ public Series UpdateSeries(Series series, bool updateEpisodesToMatchSeason = tru
+             series.AddOptions = storedSeries.AddOptions;
+             UpdateTags(series);
+ 
+-            var updatedSeries = _seriesRepository.Update(series);
++            var updatedSeries = _authorRepository.Update(series);
+             if (publishUpdatedEvent)
+             {
+                 _eventAggregator.PublishEvent(new SeriesEditedEvent(updatedSeries, storedSeries, episodeMonitoredChanged));
+@@ -227,7 +227,7 @@ public Series UpdateSeries(Series series, bool updateEpisodesToMatchSeason = tru
+             return updatedSeries;
+         }
+ 
+-        public List<Series> UpdateSeries(List<Series> series, bool useExistingRelativeFolder)
++        public List<Author> UpdateAuthor(List<Author> series, bool useExistingRelativeFolder)
+         {
+             _logger.Debug("Updating {0} series", series.Count);
+ 
+@@ -237,7 +237,7 @@ public List<Series> UpdateSeries(List<Series> series, bool useExistingRelativeFo
+ 
+                 if (!s.RootFolderPath.IsNullOrWhiteSpace())
+                 {
+-                    s.Path = _seriesPathBuilder.BuildPath(s, useExistingRelativeFolder);
++                    s.Path = _authorPathBuilder.BuildPath(s, useExistingRelativeFolder);
+ 
+                     _logger.Trace("Changing path for {0} to {1}", s.Title, s.Path);
+                 }
+@@ -249,24 +249,24 @@ public List<Series> UpdateSeries(List<Series> series, bool useExistingRelativeFo
+                 UpdateTags(s);
+             }
+ 
+-            _seriesRepository.UpdateMany(series);
++            _authorRepository.UpdateMany(series);
+             _logger.Debug("{0} series updated", series.Count);
+             _eventAggregator.PublishEvent(new SeriesBulkEditedEvent(series));
+ 
+             return series;
+         }
+ 
+-        public bool SeriesPathExists(string folder)
++        public bool AuthorPathExists(string folder)
+         {
+-            return _seriesRepository.SeriesPathExists(folder);
++            return _authorRepository.AuthorPathExists(folder);
+         }
+ 
+-        public void RemoveAddOptions(Series series)
++        public void RemoveAddOptions(Author author)
+         {
+-            _seriesRepository.SetFields(series, s => s.AddOptions);
++            _authorRepository.SetFields(series, s => s.AddOptions);
+         }
+ 
+-        public bool UpdateTags(Series series)
++        public bool UpdateTags(Author author)
+         {
+             _logger.Trace("Updating tags for {0}", series);
+ 
+diff --git a/src/NzbDrone.Core/Books/Commands/BulkMoveAuthorCommand.cs b/src/NzbDrone.Core/Books/Commands/BulkMoveAuthorCommand.cs
+index bc5d42ba8..702a50a65 100644
+--- a/src/NzbDrone.Core/Books/Commands/BulkMoveAuthorCommand.cs
++++ b/src/NzbDrone.Core/Books/Commands/BulkMoveAuthorCommand.cs
+@@ -4,28 +4,28 @@
+ 
+ namespace NzbDrone.Core.Books.Commands
+ {
+-    public class BulkMoveSeriesCommand : Command
++    public class BulkMoveAuthorCommand : Command
+     {
+-        public List<BulkMoveSeries> Series { get; set; }
++        public List<BulkMoveAuthor> Author { get; set; }
+         public string DestinationRootFolder { get; set; }
+ 
+         public override bool SendUpdatesToClient => true;
+         public override bool RequiresDiskAccess => true;
+     }
+ 
+-    public class BulkMoveSeries : IEquatable<BulkMoveSeries>
++    public class BulkMoveAuthor : IEquatable<BulkMoveAuthor>
+     {
+-        public int SeriesId { get; set; }
++        public int AuthorId { get; set; }
+         public string SourcePath { get; set; }
+ 
+-        public bool Equals(BulkMoveSeries other)
++        public bool Equals(BulkMoveAuthor other)
+         {
+             if (other == null)
+             {
+                 return false;
+             }
+ 
+-            return SeriesId.Equals(other.SeriesId);
++            return AuthorId.Equals(other.AuthorId);
+         }
+ 
+         public override bool Equals(object obj)
+@@ -40,12 +40,12 @@ public override bool Equals(object obj)
+                 return false;
+             }
+ 
+-            return SeriesId.Equals(((BulkMoveSeries)obj).SeriesId);
++            return AuthorId.Equals(((BulkMoveAuthor)obj).AuthorId);
+         }
+ 
+         public override int GetHashCode()
+         {
+-            return SeriesId.GetHashCode();
++            return AuthorId.GetHashCode();
+         }
+     }
+ }
+diff --git a/src/NzbDrone.Core/Books/Commands/MoveAuthorCommand.cs b/src/NzbDrone.Core/Books/Commands/MoveAuthorCommand.cs
+index 6aa889b6b..273b9e3a7 100644
+--- a/src/NzbDrone.Core/Books/Commands/MoveAuthorCommand.cs
++++ b/src/NzbDrone.Core/Books/Commands/MoveAuthorCommand.cs
+@@ -2,9 +2,9 @@
+ 
+ namespace NzbDrone.Core.Books.Commands
+ {
+-    public class MoveSeriesCommand : Command
++    public class MoveAuthorCommand : Command
+     {
+-        public int SeriesId { get; set; }
++        public int AuthorId { get; set; }
+         public string SourcePath { get; set; }
+         public string DestinationPath { get; set; }
+ 
+diff --git a/src/NzbDrone.Core/Books/Commands/RefreshAuthorCommand.cs b/src/NzbDrone.Core/Books/Commands/RefreshAuthorCommand.cs
+index 0248db521..6d5ef16e3 100644
+--- a/src/NzbDrone.Core/Books/Commands/RefreshAuthorCommand.cs
++++ b/src/NzbDrone.Core/Books/Commands/RefreshAuthorCommand.cs
+@@ -5,38 +5,38 @@
+ 
+ namespace NzbDrone.Core.Books.Commands
+ {
+-    public class RefreshSeriesCommand : Command
++    public class RefreshAuthorCommand : Command
+     {
+         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+-        public int SeriesId
++        public int AuthorId
+         {
+             get => 0;
+             set
+             {
+-                if (SeriesIds.Empty())
++                if (AuthorIds.Empty())
+                 {
+-                    SeriesIds.Add(value);
++                    AuthorIds.Add(value);
+                 }
+             }
+         }
+ 
+-        public List<int> SeriesIds { get; set; }
+-        public bool IsNewSeries { get; set; }
++        public List<int> AuthorIds { get; set; }
++        public bool IsNewAuthor { get; set; }
+ 
+-        public RefreshSeriesCommand()
++        public RefreshAuthorCommand()
+         {
+-            SeriesIds = new List<int>();
++            AuthorIds = new List<int>();
+         }
+ 
+-        public RefreshSeriesCommand(List<int> seriesIds, bool isNewSeries = false)
++        public RefreshAuthorCommand(List<int> authorIds, bool isNewAuthor = false)
+         {
+-            SeriesIds = seriesIds;
+-            IsNewSeries = isNewSeries;
++            AuthorIds = authorIds;
++            IsNewAuthor = isNewAuthor;
+         }
+ 
+         public override bool SendUpdatesToClient => true;
+ 
+-        public override bool UpdateScheduledTask => SeriesIds.Empty();
++        public override bool UpdateScheduledTask => AuthorIds.Empty();
+ 
+         public override bool IsLongRunning => true;
+ 
+diff --git a/src/NzbDrone.Core/Books/EditionMonitoredService.cs b/src/NzbDrone.Core/Books/EditionMonitoredService.cs
+index 0f1bbb7c9..315500b28 100644
+--- a/src/NzbDrone.Core/Books/EditionMonitoredService.cs
++++ b/src/NzbDrone.Core/Books/EditionMonitoredService.cs
+@@ -13,14 +13,14 @@ public interface IEpisodeMonitoredService
+ 
+     public class EpisodeMonitoredService : IEpisodeMonitoredService
+     {
+-        private readonly ISeriesService _seriesService;
+-        private readonly IEpisodeService _episodeService;
++        private readonly IAuthorService _authorService;
++        private readonly IEditionService _editionService;
+         private readonly Logger _logger;
+ 
+-        public EpisodeMonitoredService(ISeriesService seriesService, IEpisodeService episodeService, Logger logger)
++        public EpisodeMonitoredService(IAuthorService authorService, IEditionService editionService, Logger logger)
+         {
+-            _seriesService = seriesService;
+-            _episodeService = episodeService;
++            _authorService = authorService;
++            _editionService = editionService;
+             _logger = logger;
+         }
+ 
+@@ -29,7 +29,7 @@ public void SetEpisodeMonitoredStatus(Series series, MonitoringOptions monitorin
+             // Update the series without changing the episodes
+             if (monitoringOptions == null)
+             {
+-                _seriesService.UpdateSeries(series, false);
++                _authorService.UpdateSeries(series, false);
+                 return;
+             }
+ 
+@@ -48,7 +48,7 @@ public void SetEpisodeMonitoredStatus(Series series, MonitoringOptions monitorin
+ 
+             var firstSeason = series.Seasons.Select(s => s.SeasonNumber).Where(s => s > 0).MinOrDefault();
+             var lastSeason = series.Seasons.Select(s => s.SeasonNumber).MaxOrDefault();
+-            var episodes = _episodeService.GetEpisodeBySeries(series.Id);
++            var episodes = _editionService.GetEpisodeBySeries(series.Id);
+ 
+             switch (monitoringOptions.Monitor)
+             {
+@@ -168,15 +168,15 @@ public void SetEpisodeMonitoredStatus(Series series, MonitoringOptions monitorin
+                 }
+             }
+ 
+-            _episodeService.UpdateEpisodes(episodes);
+-            _seriesService.UpdateSeries(series, false);
++            _editionService.UpdateEpisodes(episodes);
++            _authorService.UpdateSeries(series, false);
+         }
+ 
+         private void LegacySetEpisodeMonitoredStatus(Series series, MonitoringOptions monitoringOptions)
+         {
+             _logger.Debug("[{0}] Setting episode monitored status.", series.Title);
+ 
+-            var episodes = _episodeService.GetEpisodeBySeries(series.Id);
++            var episodes = _editionService.GetEpisodeBySeries(series.Id);
+ 
+             if (monitoringOptions.IgnoreEpisodesWithFiles)
+             {
+@@ -226,9 +226,9 @@ private void LegacySetEpisodeMonitoredStatus(Series series, MonitoringOptions mo
+                 }
+             }
+ 
+-            _episodeService.UpdateEpisodes(episodes);
++            _editionService.UpdateEpisodes(episodes);
+ 
+-            _seriesService.UpdateSeries(series, false);
++            _authorService.UpdateSeries(series, false);
+         }
+ 
+         private void ToggleEpisodesMonitoredState(IEnumerable<Episode> episodes, bool monitored)
+diff --git a/src/NzbDrone.Core/Books/EditionRefreshedService.cs b/src/NzbDrone.Core/Books/EditionRefreshedService.cs
+index ab785b1ba..a6a8db61d 100644
+--- a/src/NzbDrone.Core/Books/EditionRefreshedService.cs
++++ b/src/NzbDrone.Core/Books/EditionRefreshedService.cs
+@@ -19,17 +19,17 @@ public interface IEpisodeRefreshedService
+     public class EpisodeRefreshedService : IEpisodeRefreshedService, IHandle<EpisodeInfoRefreshedEvent>
+     {
+         private readonly IManageCommandQueue _commandQueueManager;
+-        private readonly IEpisodeService _episodeService;
++        private readonly IEditionService _editionService;
+         private readonly Logger _logger;
+         private readonly ICached<List<int>> _searchCache;
+ 
+         public EpisodeRefreshedService(ICacheManager cacheManager,
+                                    IManageCommandQueue commandQueueManager,
+-                                   IEpisodeService episodeService,
++                                   IEditionService editionService,
+                                    Logger logger)
+         {
+             _commandQueueManager = commandQueueManager;
+-            _episodeService = episodeService;
++            _editionService = editionService;
+             _logger = logger;
+             _searchCache = cacheManager.GetCache<List<int>>(GetType());
+         }
+@@ -40,7 +40,7 @@ public void Search(int seriesId)
+ 
+             if (previouslyAired != null && previouslyAired.Any())
+             {
+-                var missing = previouslyAired.Select(e => _episodeService.GetEpisode(e)).Where(e => !e.HasFile).ToList();
++                var missing = previouslyAired.Select(e => _editionService.GetEpisode(e)).Where(e => !e.HasFile).ToList();
+ 
+                 if (missing.Any())
+                 {
+diff --git a/src/NzbDrone.Core/Books/EditionService.cs b/src/NzbDrone.Core/Books/EditionService.cs
+index cdbde9484..d0f9def18 100644
+--- a/src/NzbDrone.Core/Books/EditionService.cs
++++ b/src/NzbDrone.Core/Books/EditionService.cs
+@@ -12,222 +12,222 @@
+ 
+ namespace NzbDrone.Core.Books
+ {
+-    public interface IEpisodeService
++    public interface IEditionService
+     {
+-        Episode GetEpisode(int id);
+-        List<Episode> GetEpisodes(IEnumerable<int> ids);
+-        Episode FindEpisode(int seriesId, int seasonNumber, int episodeNumber);
+-        Episode FindEpisode(int seriesId, int absoluteEpisodeNumber);
+-        Episode FindEpisodeByTitle(int seriesId, int seasonNumber, string releaseTitle);
+-        List<Episode> FindEpisodesBySceneNumbering(int seriesId, int seasonNumber, int episodeNumber);
+-        List<Episode> FindEpisodesBySceneNumbering(int seriesId, int sceneAbsoluteEpisodeNumber);
+-        Episode FindEpisode(int seriesId, string date, int? part);
+-        List<Episode> GetEpisodeBySeries(int seriesId);
+-        List<Episode> GetEpisodesBySeries(List<int> seriesIds);
+-        List<Episode> GetEpisodesBySeason(int seriesId, int seasonNumber);
+-        List<Episode> GetEpisodesBySceneSeason(int seriesId, int sceneSeasonNumber);
+-        List<Episode> EpisodesWithFiles(int seriesId);
+-        PagingSpec<Episode> EpisodesWithoutFiles(PagingSpec<Episode> pagingSpec);
+-        List<Episode> GetEpisodesByFileId(int episodeFileId);
+-        void UpdateEpisode(Episode episode);
+-        void SetEpisodeMonitored(int episodeId, bool monitored);
++        Edition GetEdition(int id);
++        List<Edition> GetEditions(IEnumerable<int> ids);
++        Edition FindEdition(int authorId, int bookNumber, int editionNumber);
++        Edition FindEdition(int authorId, int absoluteEditionNumber);
++        Edition FindEditionByTitle(int authorId, int bookNumber, string releaseTitle);
++        List<Edition> FindEditionsBySceneNumbering(int authorId, int bookNumber, int editionNumber);
++        List<Edition> FindEditionsBySceneNumbering(int authorId, int sceneAbsoluteEditionNumber);
++        Edition FindEdition(int authorId, string date, int? part);
++        List<Edition> GetEditionBySeries(int authorId);
++        List<Edition> GetEditionsBySeries(List<int> authorIds);
++        List<Edition> GetEditionsBySeason(int authorId, int bookNumber);
++        List<Edition> GetEditionsBySceneSeason(int authorId, int sceneBookNumber);
++        List<Edition> EditionsWithFiles(int authorId);
++        PagingSpec<Edition> EditionsWithoutFiles(PagingSpec<Edition> pagingSpec);
++        List<Edition> GetEditionsByFileId(int episodeFileId);
++        void UpdateEdition(Edition episode);
++        void SetEditionMonitored(int episodeId, bool monitored);
+         void SetMonitored(IEnumerable<int> ids, bool monitored);
+-        void UpdateEpisodes(List<Episode> episodes);
+-        void UpdateLastSearchTime(List<Episode> episodes);
+-        List<Episode> EpisodesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored);
+-        void InsertMany(List<Episode> episodes);
+-        void UpdateMany(List<Episode> episodes);
+-        void DeleteMany(List<Episode> episodes);
+-        void SetEpisodeMonitoredBySeason(int seriesId, int seasonNumber, bool monitored);
++        void UpdateEditions(List<Edition> episodes);
++        void UpdateLastSearchTime(List<Edition> episodes);
++        List<Edition> EditionsBetweenDates(DateTime start, DateTime end, bool includeUnmonitored);
++        void InsertMany(List<Edition> episodes);
++        void UpdateMany(List<Edition> episodes);
++        void DeleteMany(List<Edition> episodes);
++        void SetEditionMonitoredBySeason(int authorId, int bookNumber, bool monitored);
+     }
+ 
+-    public class EpisodeService : IEpisodeService,
+-                                  IHandle<EpisodeFileDeletedEvent>,
+-                                  IHandle<EpisodeFileAddedEvent>,
++    public class EditionService : IEditionService,
++                                  IHandle<EditionFileDeletedEvent>,
++                                  IHandle<EditionFileAddedEvent>,
+                                   IHandleAsync<SeriesDeletedEvent>,
+                                   IHandleAsync<SeriesScannedEvent>
+     {
+-        private readonly IEpisodeRepository _episodeRepository;
++        private readonly IEditionRepository _editionRepository;
+         private readonly IConfigService _configService;
+         private readonly ICached<HashSet<int>> _cache;
+         private readonly Logger _logger;
+ 
+-        public EpisodeService(IEpisodeRepository episodeRepository, IConfigService configService, ICacheManager cacheManager, Logger logger)
++        public EditionService(IEditionRepository episodeRepository, IConfigService configService, ICacheManager cacheManager, Logger logger)
+         {
+-            _episodeRepository = episodeRepository;
++            _editionRepository = episodeRepository;
+             _configService = configService;
+             _cache = cacheManager.GetCache<HashSet<int>>(GetType());
+             _logger = logger;
+         }
+ 
+-        public Episode GetEpisode(int id)
++        public Edition GetEdition(int id)
+         {
+-            return _episodeRepository.Get(id);
++            return _editionRepository.Get(id);
+         }
+ 
+-        public List<Episode> GetEpisodes(IEnumerable<int> ids)
++        public List<Edition> GetEditions(IEnumerable<int> ids)
+         {
+-            return _episodeRepository.Get(ids).ToList();
++            return _editionRepository.Get(ids).ToList();
+         }
+ 
+-        public Episode FindEpisode(int seriesId, int seasonNumber, int episodeNumber)
++        public Edition FindEdition(int authorId, int bookNumber, int editionNumber)
+         {
+-            return _episodeRepository.Find(seriesId, seasonNumber, episodeNumber);
++            return _editionRepository.Find(authorId, bookNumber, editionNumber);
+         }
+ 
+-        public Episode FindEpisode(int seriesId, int absoluteEpisodeNumber)
++        public Edition FindEdition(int authorId, int absoluteEditionNumber)
+         {
+-            return _episodeRepository.Find(seriesId, absoluteEpisodeNumber);
++            return _editionRepository.Find(authorId, absoluteEditionNumber);
+         }
+ 
+-        public List<Episode> FindEpisodesBySceneNumbering(int seriesId, int seasonNumber, int episodeNumber)
++        public List<Edition> FindEditionsBySceneNumbering(int authorId, int bookNumber, int editionNumber)
+         {
+-            return _episodeRepository.FindEpisodesBySceneNumbering(seriesId, seasonNumber, episodeNumber);
++            return _editionRepository.FindEditionsBySceneNumbering(authorId, bookNumber, editionNumber);
+         }
+ 
+-        public List<Episode> FindEpisodesBySceneNumbering(int seriesId, int sceneAbsoluteEpisodeNumber)
++        public List<Edition> FindEditionsBySceneNumbering(int authorId, int sceneAbsoluteEditionNumber)
+         {
+-            return _episodeRepository.FindEpisodesBySceneNumbering(seriesId, sceneAbsoluteEpisodeNumber);
++            return _editionRepository.FindEditionsBySceneNumbering(authorId, sceneAbsoluteEditionNumber);
+         }
+ 
+-        public Episode FindEpisode(int seriesId, string date, int? part)
++        public Edition FindEdition(int authorId, string date, int? part)
+         {
+-            return FindOneByAirDate(seriesId, date, part);
++            return FindOneByAirDate(authorId, date, part);
+         }
+ 
+-        public List<Episode> GetEpisodeBySeries(int seriesId)
++        public List<Edition> GetEditionBySeries(int authorId)
+         {
+-            return _episodeRepository.GetEpisodes(seriesId).ToList();
++            return _editionRepository.GetEditions(authorId).ToList();
+         }
+ 
+-        public List<Episode> GetEpisodesBySeries(List<int> seriesIds)
++        public List<Edition> GetEditionsBySeries(List<int> authorIds)
+         {
+-            return _episodeRepository.GetEpisodesBySeriesIds(seriesIds).ToList();
++            return _editionRepository.GetEditionsByAuthorIds(authorIds).ToList();
+         }
+ 
+-        public List<Episode> GetEpisodesBySeason(int seriesId, int seasonNumber)
++        public List<Edition> GetEditionsBySeason(int authorId, int bookNumber)
+         {
+-            return _episodeRepository.GetEpisodes(seriesId, seasonNumber);
++            return _editionRepository.GetEditions(authorId, bookNumber);
+         }
+ 
+-        public List<Episode> GetEpisodesBySceneSeason(int seriesId, int sceneSeasonNumber)
++        public List<Edition> GetEditionsBySceneSeason(int authorId, int sceneBookNumber)
+         {
+-            return _episodeRepository.GetEpisodesBySceneSeason(seriesId, sceneSeasonNumber);
++            return _editionRepository.GetEditionsBySceneSeason(authorId, sceneBookNumber);
+         }
+ 
+-        public Episode FindEpisodeByTitle(int seriesId, int seasonNumber, string releaseTitle)
++        public Edition FindEditionByTitle(int authorId, int bookNumber, string releaseTitle)
+         {
+             // TODO: can replace this search mechanism with something smarter/faster/better
+-            var normalizedReleaseTitle = Parser.Parser.NormalizeEpisodeTitle(releaseTitle);
++            var normalizedReleaseTitle = Parser.Parser.NormalizeEditionTitle(releaseTitle);
+             var cleanNormalizedReleaseTitle = Parser.Parser.CleanSeriesTitle(normalizedReleaseTitle);
+-            var episodes = _episodeRepository.GetEpisodes(seriesId, seasonNumber);
++            var episodes = _editionRepository.GetEditions(authorId, bookNumber);
+ 
+             var possibleMatches = episodes.SelectMany(
+                 episode => new[]
+                 {
+                     new
+                     {
+-                        Position = normalizedReleaseTitle.IndexOf(Parser.Parser.NormalizeEpisodeTitle(episode.Title), StringComparison.CurrentCultureIgnoreCase),
+-                        Length = Parser.Parser.NormalizeEpisodeTitle(episode.Title).Length,
+-                        Episode = episode
++                        Position = normalizedReleaseTitle.IndexOf(Parser.Parser.NormalizeEditionTitle(episode.Title), StringComparison.CurrentCultureIgnoreCase),
++                        Length = Parser.Parser.NormalizeEditionTitle(episode.Title).Length,
++                        Edition = episode
+                     },
+                     new
+                     {
+-                        Position = cleanNormalizedReleaseTitle.IndexOf(Parser.Parser.CleanSeriesTitle(Parser.Parser.NormalizeEpisodeTitle(episode.Title)), StringComparison.CurrentCultureIgnoreCase),
+-                        Length = Parser.Parser.NormalizeEpisodeTitle(episode.Title).Length,
+-                        Episode = episode
++                        Position = cleanNormalizedReleaseTitle.IndexOf(Parser.Parser.CleanSeriesTitle(Parser.Parser.NormalizeEditionTitle(episode.Title)), StringComparison.CurrentCultureIgnoreCase),
++                        Length = Parser.Parser.NormalizeEditionTitle(episode.Title).Length,
++                        Edition = episode
+                     }
+                 });
+ 
+             var matches = possibleMatches
+-                                .Where(e => e.Episode.Title.Length > 0 && e.Position >= 0)
++                                .Where(e => e.Edition.Title.Length > 0 && e.Position >= 0)
+                                 .OrderBy(e => e.Position)
+                                 .ThenByDescending(e => e.Length)
+                                 .ToList();
+ 
+             if (matches.Any())
+             {
+-                return matches.First().Episode;
++                return matches.First().Edition;
+             }
+ 
+             return null;
+         }
+ 
+-        public List<Episode> EpisodesWithFiles(int seriesId)
++        public List<Edition> EditionsWithFiles(int authorId)
+         {
+-            return _episodeRepository.EpisodesWithFiles(seriesId);
++            return _editionRepository.EditionsWithFiles(authorId);
+         }
+ 
+-        public PagingSpec<Episode> EpisodesWithoutFiles(PagingSpec<Episode> pagingSpec)
++        public PagingSpec<Edition> EditionsWithoutFiles(PagingSpec<Edition> pagingSpec)
+         {
+-            var episodeResult = _episodeRepository.EpisodesWithoutFiles(pagingSpec, true);
++            var episodeResult = _editionRepository.EditionsWithoutFiles(pagingSpec, true);
+ 
+             return episodeResult;
+         }
+ 
+-        public List<Episode> GetEpisodesByFileId(int episodeFileId)
++        public List<Edition> GetEditionsByFileId(int episodeFileId)
+         {
+-            return _episodeRepository.GetEpisodeByFileId(episodeFileId);
++            return _editionRepository.GetEditionByFileId(episodeFileId);
+         }
+ 
+-        public void UpdateEpisode(Episode episode)
++        public void UpdateEdition(Edition episode)
+         {
+-            _episodeRepository.Update(episode);
++            _editionRepository.Update(episode);
+         }
+ 
+-        public void SetEpisodeMonitored(int episodeId, bool monitored)
++        public void SetEditionMonitored(int episodeId, bool monitored)
+         {
+-            var episode = _episodeRepository.Get(episodeId);
+-            _episodeRepository.SetMonitoredFlat(episode, monitored);
++            var episode = _editionRepository.Get(episodeId);
++            _editionRepository.SetMonitoredFlat(episode, monitored);
+ 
+-            _logger.Debug("Monitored flag for Episode:{0} was set to {1}", episodeId, monitored);
++            _logger.Debug("Monitored flag for Edition:{0} was set to {1}", episodeId, monitored);
+         }
+ 
+         public void SetMonitored(IEnumerable<int> ids, bool monitored)
+         {
+-            _episodeRepository.SetMonitored(ids, monitored);
++            _editionRepository.SetMonitored(ids, monitored);
+         }
+ 
+-        public void SetEpisodeMonitoredBySeason(int seriesId, int seasonNumber, bool monitored)
++        public void SetEditionMonitoredBySeason(int authorId, int bookNumber, bool monitored)
+         {
+-            _episodeRepository.SetMonitoredBySeason(seriesId, seasonNumber, monitored);
++            _editionRepository.SetMonitoredBySeason(authorId, bookNumber, monitored);
+         }
+ 
+-        public void UpdateEpisodes(List<Episode> episodes)
++        public void UpdateEditions(List<Edition> episodes)
+         {
+-            _episodeRepository.UpdateMany(episodes);
++            _editionRepository.UpdateMany(episodes);
+         }
+ 
+-        public void UpdateLastSearchTime(List<Episode> episodes)
++        public void UpdateLastSearchTime(List<Edition> episodes)
+         {
+-            _episodeRepository.SetFields(episodes, e => e.LastSearchTime);
++            _editionRepository.SetFields(episodes, e => e.LastSearchTime);
+         }
+ 
+-        public List<Episode> EpisodesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored)
++        public List<Edition> EditionsBetweenDates(DateTime start, DateTime end, bool includeUnmonitored)
+         {
+-            var episodes = _episodeRepository.EpisodesBetweenDates(start.ToUniversalTime(), end.ToUniversalTime(), includeUnmonitored);
++            var episodes = _editionRepository.EditionsBetweenDates(start.ToUniversalTime(), end.ToUniversalTime(), includeUnmonitored);
+ 
+             return episodes;
+         }
+ 
+-        public void InsertMany(List<Episode> episodes)
++        public void InsertMany(List<Edition> episodes)
+         {
+-            _episodeRepository.InsertMany(episodes);
++            _editionRepository.InsertMany(episodes);
+         }
+ 
+-        public void UpdateMany(List<Episode> episodes)
++        public void UpdateMany(List<Edition> episodes)
+         {
+-            _episodeRepository.UpdateMany(episodes);
++            _editionRepository.UpdateMany(episodes);
+         }
+ 
+-        public void DeleteMany(List<Episode> episodes)
++        public void DeleteMany(List<Edition> episodes)
+         {
+-            _episodeRepository.DeleteMany(episodes);
++            _editionRepository.DeleteMany(episodes);
+         }
+ 
+-        private Episode FindOneByAirDate(int seriesId, string date, int? part)
++        private Edition FindOneByAirDate(int authorId, string date, int? part)
+         {
+-            var episodes = _episodeRepository.Find(seriesId, date);
++            var episodes = _editionRepository.Find(authorId, date);
+ 
+             if (!episodes.Any())
+             {
+@@ -241,61 +241,61 @@ private Episode FindOneByAirDate(int seriesId, string date, int? part)
+ 
+             _logger.Debug("Multiple episodes with the same air date were found, will exclude specials");
+ 
+-            var regularEpisodes = episodes.Where(e => e.SeasonNumber > 0).ToList();
++            var regularEditions = episodes.Where(e => e.BookNumber > 0).ToList();
+ 
+-            if (regularEpisodes.Count == 1 && !part.HasValue)
++            if (regularEditions.Count == 1 && !part.HasValue)
+             {
+                 _logger.Debug("Left with one episode after excluding specials");
+-                return regularEpisodes.First();
++                return regularEditions.First();
+             }
+-            else if (part.HasValue && part.Value <= regularEpisodes.Count)
++            else if (part.HasValue && part.Value <= regularEditions.Count)
+             {
+-                var sortedEpisodes = regularEpisodes.OrderBy(e => e.SeasonNumber)
+-                                                               .ThenBy(e => e.EpisodeNumber)
++                var sortedEditions = regularEditions.OrderBy(e => e.BookNumber)
++                                                               .ThenBy(e => e.EditionNumber)
+                                                                 .ToList();
+ 
+-                return sortedEpisodes[part.Value - 1];
++                return sortedEditions[part.Value - 1];
+             }
+ 
+             throw new InvalidOperationException($"Multiple episodes with the same air date found. Date: {date}");
+         }
+ 
+-        public void Handle(EpisodeFileDeletedEvent message)
++        public void Handle(EditionFileDeletedEvent message)
+         {
+-            foreach (var episode in GetEpisodesByFileId(message.EpisodeFile.Id))
++            foreach (var episode in GetEditionsByFileId(message.EditionFile.Id))
+             {
+                 _logger.Debug("Detaching episode {0} from file.", episode.Id);
+ 
+-                var unmonitorEpisodes = _configService.AutoUnmonitorPreviouslyDownloadedEpisodes;
++                var unmonitorEditions = _configService.AutoUnmonitorPreviouslyDownloadedEditions;
+ 
+                 var unmonitorForReason = message.Reason != DeleteMediaFileReason.Upgrade &&
+                                          message.Reason != DeleteMediaFileReason.ManualOverride &&
+                                          message.Reason != DeleteMediaFileReason.MissingFromDisk;
+ 
+                 // If episode is being unlinked because it's missing from disk store it for
+-                if (message.Reason == DeleteMediaFileReason.MissingFromDisk && unmonitorEpisodes)
++                if (message.Reason == DeleteMediaFileReason.MissingFromDisk && unmonitorEditions)
+                 {
+                     lock (_cache)
+                     {
+-                        var ids = _cache.Get(episode.SeriesId.ToString(), () => new HashSet<int>());
++                        var ids = _cache.Get(episode.AuthorId.ToString(), () => new HashSet<int>());
+ 
+                         ids.Add(episode.Id);
+                     }
+                 }
+ 
+-                _episodeRepository.ClearFileId(episode, unmonitorForReason && unmonitorEpisodes);
++                _editionRepository.ClearFileId(episode, unmonitorForReason && unmonitorEditions);
+             }
+         }
+ 
+-        public void Handle(EpisodeFileAddedEvent message)
++        public void Handle(EditionFileAddedEvent message)
+         {
+-            foreach (var episode in message.EpisodeFile.Episodes.Value)
++            foreach (var episode in message.EditionFile.Editions.Value)
+             {
+-                _episodeRepository.SetFileId(episode, message.EpisodeFile.Id);
++                _editionRepository.SetFileId(episode, message.EditionFile.Id);
+ 
+                 lock (_cache)
+                 {
+-                    var ids = _cache.Find(episode.SeriesId.ToString());
++                    var ids = _cache.Find(episode.AuthorId.ToString());
+ 
+                     if (ids?.Contains(episode.Id) == true)
+                     {
+@@ -303,14 +303,14 @@ public void Handle(EpisodeFileAddedEvent message)
+                     }
+                 }
+ 
+-                _logger.Debug("Linking [{0}] > [{1}]", message.EpisodeFile.RelativePath, episode);
++                _logger.Debug("Linking [{0}] > [{1}]", message.EditionFile.RelativePath, episode);
+             }
+         }
+ 
+         public void HandleAsync(SeriesDeletedEvent message)
+         {
+-            var episodes = _episodeRepository.GetEpisodesBySeriesIds(message.Series.Select(s => s.Id).ToList());
+-            _episodeRepository.DeleteMany(episodes);
++            var episodes = _editionRepository.GetEditionsByAuthorIds(message.Series.Select(s => s.Id).ToList());
++            _editionRepository.DeleteMany(episodes);
+         }
+ 
+         public void HandleAsync(SeriesScannedEvent message)
+@@ -321,7 +321,7 @@ public void HandleAsync(SeriesScannedEvent message)
+ 
+                 if (ids?.Any() == true)
+                 {
+-                    _episodeRepository.SetMonitored(ids, false);
++                    _editionRepository.SetMonitored(ids, false);
+                 }
+ 
+                 _cache.Remove(message.Series.Id.ToString());
+diff --git a/src/NzbDrone.Core/Books/Events/AuthorAddCompletedEvent.cs b/src/NzbDrone.Core/Books/Events/AuthorAddCompletedEvent.cs
+index 77e1a30db..6486eee64 100644
+--- a/src/NzbDrone.Core/Books/Events/AuthorAddCompletedEvent.cs
++++ b/src/NzbDrone.Core/Books/Events/AuthorAddCompletedEvent.cs
+@@ -2,13 +2,13 @@
+ 
+ namespace NzbDrone.Core.Books.Events
+ {
+-    public class SeriesAddCompletedEvent : IEvent
++    public class AuthorAddCompletedEvent : IEvent
+     {
+-        public Series Series { get; private set; }
++        public Author Author { get; private set; }
+ 
+-        public SeriesAddCompletedEvent(Series series)
++        public AuthorAddCompletedEvent(Author series)
+         {
+-            Series = series;
++            Author = series;
+         }
+     }
+ }
+diff --git a/src/NzbDrone.Core/Books/Events/AuthorAddedEvent.cs b/src/NzbDrone.Core/Books/Events/AuthorAddedEvent.cs
+index 8f0a065bd..1b11484a0 100644
+--- a/src/NzbDrone.Core/Books/Events/AuthorAddedEvent.cs
++++ b/src/NzbDrone.Core/Books/Events/AuthorAddedEvent.cs
+@@ -2,13 +2,13 @@
+ 
+ namespace NzbDrone.Core.Books.Events
+ {
+-    public class SeriesAddedEvent : IEvent
++    public class AuthorAddedEvent : IEvent
+     {
+-        public Series Series { get; private set; }
++        public Author Author { get; private set; }
+ 
+-        public SeriesAddedEvent(Series series)
++        public AuthorAddedEvent(Author series)
+         {
+-            Series = series;
++            Author = series;
+         }
+     }
+ }
+diff --git a/src/NzbDrone.Core/Books/Events/AuthorBulkEditedEvent.cs b/src/NzbDrone.Core/Books/Events/AuthorBulkEditedEvent.cs
+index 4f4669b79..d9c085d35 100644
+--- a/src/NzbDrone.Core/Books/Events/AuthorBulkEditedEvent.cs
++++ b/src/NzbDrone.Core/Books/Events/AuthorBulkEditedEvent.cs
+@@ -3,13 +3,13 @@
+ 
+ namespace NzbDrone.Core.Books.Events
+ {
+-    public class SeriesBulkEditedEvent : IEvent
++    public class AuthorBulkEditedEvent : IEvent
+     {
+-        public List<Series> Series { get; private set; }
++        public List<Author> Author { get; private set; }
+ 
+-        public SeriesBulkEditedEvent(List<Series> series)
++        public AuthorBulkEditedEvent(List<Author> series)
+         {
+-            Series = series;
++            Author = series;
+         }
+     }
+ }
+diff --git a/src/NzbDrone.Core/Books/Events/AuthorDeletedEvent.cs b/src/NzbDrone.Core/Books/Events/AuthorDeletedEvent.cs
+index d1e431e30..5046c086c 100644
+--- a/src/NzbDrone.Core/Books/Events/AuthorDeletedEvent.cs
++++ b/src/NzbDrone.Core/Books/Events/AuthorDeletedEvent.cs
+@@ -3,15 +3,15 @@
+ 
+ namespace NzbDrone.Core.Books.Events
+ {
+-    public class SeriesDeletedEvent : IEvent
++    public class AuthorDeletedEvent : IEvent
+     {
+-        public List<Series> Series { get; private set; }
++        public List<Author> Author { get; private set; }
+         public bool DeleteFiles { get; private set; }
+         public bool AddImportListExclusion { get; private set; }
+ 
+-        public SeriesDeletedEvent(List<Series> series, bool deleteFiles, bool addImportListExclusion)
++        public AuthorDeletedEvent(List<Author> series, bool deleteFiles, bool addImportListExclusion)
+         {
+-            Series = series;
++            Author = series;
+             DeleteFiles = deleteFiles;
+             AddImportListExclusion = addImportListExclusion;
+         }
+diff --git a/src/NzbDrone.Core/Books/Events/AuthorEditedEvent.cs b/src/NzbDrone.Core/Books/Events/AuthorEditedEvent.cs
+index e467b52e9..2dc4d8bb2 100644
+--- a/src/NzbDrone.Core/Books/Events/AuthorEditedEvent.cs
++++ b/src/NzbDrone.Core/Books/Events/AuthorEditedEvent.cs
+@@ -2,17 +2,17 @@
+ 
+ namespace NzbDrone.Core.Books.Events
+ {
+-    public class SeriesEditedEvent : IEvent
++    public class AuthorEditedEvent : IEvent
+     {
+-        public Series Series { get; private set; }
+-        public Series OldSeries { get; private set; }
+-        public bool EpisodesChanged { get; private set; }
++        public Author Author { get; private set; }
++        public Author OldAuthor { get; private set; }
++        public bool EditionsChanged { get; private set; }
+ 
+-        public SeriesEditedEvent(Series series, Series oldSeries, bool episodesChanged = false)
++        public AuthorEditedEvent(Author series, Author oldAuthor, bool episodesChanged = false)
+         {
+-            Series = series;
+-            OldSeries = oldSeries;
+-            EpisodesChanged = episodesChanged;
++            Author = series;
++            OldAuthor = oldAuthor;
++            EditionsChanged = episodesChanged;
+         }
+     }
+ }
+diff --git a/src/NzbDrone.Core/Books/Events/AuthorImportedEvent.cs b/src/NzbDrone.Core/Books/Events/AuthorImportedEvent.cs
+index 156f846c4..b8bfbeb71 100644
+--- a/src/NzbDrone.Core/Books/Events/AuthorImportedEvent.cs
++++ b/src/NzbDrone.Core/Books/Events/AuthorImportedEvent.cs
+@@ -3,13 +3,13 @@
+ 
+ namespace NzbDrone.Core.Books.Events
+ {
+-    public class SeriesImportedEvent : IEvent
++    public class AuthorImportedEvent : IEvent
+     {
+-        public List<int> SeriesIds { get; private set; }
++        public List<int> AuthorIds { get; private set; }
+ 
+-        public SeriesImportedEvent(List<int> seriesIds)
++        public AuthorImportedEvent(List<int> seriesIds)
+         {
+-            SeriesIds = seriesIds;
++            AuthorIds = seriesIds;
+         }
+     }
+ }
+diff --git a/src/NzbDrone.Core/Books/Events/AuthorMovedEvent.cs b/src/NzbDrone.Core/Books/Events/AuthorMovedEvent.cs
+index e6c88274e..171e84f29 100644
+--- a/src/NzbDrone.Core/Books/Events/AuthorMovedEvent.cs
++++ b/src/NzbDrone.Core/Books/Events/AuthorMovedEvent.cs
+@@ -2,15 +2,15 @@
+ 
+ namespace NzbDrone.Core.Books.Events
+ {
+-    public class SeriesMovedEvent : IEvent
++    public class AuthorMovedEvent : IEvent
+     {
+-        public Series Series { get; set; }
++        public Author Author { get; set; }
+         public string SourcePath { get; set; }
+         public string DestinationPath { get; set; }
+ 
+-        public SeriesMovedEvent(Series series, string sourcePath, string destinationPath)
++        public AuthorMovedEvent(Author series, string sourcePath, string destinationPath)
+         {
+-            Series = series;
++            Author = series;
+             SourcePath = sourcePath;
+             DestinationPath = destinationPath;
+         }
+diff --git a/src/NzbDrone.Core/Books/Events/AuthorRefreshCompleteEvent.cs b/src/NzbDrone.Core/Books/Events/AuthorRefreshCompleteEvent.cs
+index 3be4e92cf..b53caffb3 100644
+--- a/src/NzbDrone.Core/Books/Events/AuthorRefreshCompleteEvent.cs
++++ b/src/NzbDrone.Core/Books/Events/AuthorRefreshCompleteEvent.cs
+@@ -2,7 +2,7 @@
+ 
+ namespace NzbDrone.Core.Books.Events
+ {
+-    public class SeriesRefreshCompleteEvent : IEvent
++    public class AuthorRefreshCompleteEvent : IEvent
+     {
+     }
+ }
+diff --git a/src/NzbDrone.Core/Books/Events/AuthorRefreshStartingEvent.cs b/src/NzbDrone.Core/Books/Events/AuthorRefreshStartingEvent.cs
+index db52164c2..c576b52b7 100644
+--- a/src/NzbDrone.Core/Books/Events/AuthorRefreshStartingEvent.cs
++++ b/src/NzbDrone.Core/Books/Events/AuthorRefreshStartingEvent.cs
+@@ -2,11 +2,11 @@
+ 
+ namespace NzbDrone.Core.Books.Events
+ {
+-    public class SeriesRefreshStartingEvent : IEvent
++    public class AuthorRefreshStartingEvent : IEvent
+     {
+         public bool ManualTrigger { get; set; }
+ 
+-        public SeriesRefreshStartingEvent(bool manualTrigger)
++        public AuthorRefreshStartingEvent(bool manualTrigger)
+         {
+             ManualTrigger = manualTrigger;
+         }
+diff --git a/src/NzbDrone.Core/Books/Events/AuthorUpdatedEvent.cs b/src/NzbDrone.Core/Books/Events/AuthorUpdatedEvent.cs
+index 5b8df8caa..5bbe97450 100644
+--- a/src/NzbDrone.Core/Books/Events/AuthorUpdatedEvent.cs
++++ b/src/NzbDrone.Core/Books/Events/AuthorUpdatedEvent.cs
+@@ -2,13 +2,13 @@
+ 
+ namespace NzbDrone.Core.Books.Events
+ {
+-    public class SeriesUpdatedEvent : IEvent
++    public class AuthorUpdatedEvent : IEvent
+     {
+-        public Series Series { get; private set; }
++        public Author Author { get; private set; }
+ 
+-        public SeriesUpdatedEvent(Series series)
++        public AuthorUpdatedEvent(Author series)
+         {
+-            Series = series;
++            Author = series;
+         }
+     }
+ }
+diff --git a/src/NzbDrone.Core/Books/Events/EditionInfoRefreshedEvent.cs b/src/NzbDrone.Core/Books/Events/EditionInfoRefreshedEvent.cs
+index 7d907e677..5ad3a4a07 100644
+--- a/src/NzbDrone.Core/Books/Events/EditionInfoRefreshedEvent.cs
++++ b/src/NzbDrone.Core/Books/Events/EditionInfoRefreshedEvent.cs
+@@ -4,19 +4,19 @@
+ 
+ namespace NzbDrone.Core.Books.Events
+ {
+-    public class EpisodeInfoRefreshedEvent : IEvent
++    public class EditionInfoRefreshedEvent : IEvent
+     {
+-        public Series Series { get; set; }
+-        public ReadOnlyCollection<Episode> Added { get; private set; }
+-        public ReadOnlyCollection<Episode> Updated { get; private set; }
+-        public ReadOnlyCollection<Episode> Removed { get; private set; }
++        public Author Author { get; set; }
++        public ReadOnlyCollection<Edition> Added { get; private set; }
++        public ReadOnlyCollection<Edition> Updated { get; private set; }
++        public ReadOnlyCollection<Edition> Removed { get; private set; }
+ 
+-        public EpisodeInfoRefreshedEvent(Series series, IList<Episode> added, IList<Episode> updated, IList<Episode> removed)
++        public EditionInfoRefreshedEvent(Author series, IList<Edition> added, IList<Edition> updated, IList<Edition> removed)
+         {
+-            Series = series;
+-            Added = new ReadOnlyCollection<Episode>(added);
+-            Updated = new ReadOnlyCollection<Episode>(updated);
+-            Removed = new ReadOnlyCollection<Episode>(removed);
++            Author = series;
++            Added = new ReadOnlyCollection<Edition>(added);
++            Updated = new ReadOnlyCollection<Edition>(updated);
++            Removed = new ReadOnlyCollection<Edition>(removed);
+         }
+     }
+ }
+diff --git a/src/NzbDrone.Core/DataAugmentation/Xem/XemService.cs b/src/NzbDrone.Core/DataAugmentation/Xem/XemService.cs
+index a8c13b7d8..6ab6742b5 100644
+--- a/src/NzbDrone.Core/DataAugmentation/Xem/XemService.cs
++++ b/src/NzbDrone.Core/DataAugmentation/Xem/XemService.cs
+@@ -12,21 +12,21 @@ namespace NzbDrone.Core.DataAugmentation.Xem
+ {
+     public class XemService : ISceneMappingProvider, IHandle<SeriesUpdatedEvent>, IHandle<SeriesRefreshStartingEvent>
+     {
+-        private readonly IEpisodeService _episodeService;
++        private readonly IEditionService _editionService;
+         private readonly IXemProxy _xemProxy;
+-        private readonly ISeriesService _seriesService;
++        private readonly IAuthorService _authorService;
+         private readonly Logger _logger;
+         private readonly ICachedDictionary<bool> _cache;
+ 
+-        public XemService(IEpisodeService episodeService,
++        public XemService(IEditionService editionService,
+                            IXemProxy xemProxy,
+-                           ISeriesService seriesService,
++                           IAuthorService authorService,
+                            ICacheManager cacheManager,
+                            Logger logger)
+         {
+-            _episodeService = episodeService;
++            _editionService = editionService;
+             _xemProxy = xemProxy;
+-            _seriesService = seriesService;
++            _authorService = authorService;
+             _logger = logger;
+             _cache = cacheManager.GetCacheDictionary<bool>(GetType(), "mappedTvdbid");
+         }
+@@ -45,7 +45,7 @@ private void PerformUpdate(Series series)
+                     return;
+                 }
+ 
+-                var episodes = _episodeService.GetEpisodeBySeries(series.Id);
++                var episodes = _editionService.GetEpisodeBySeries(series.Id);
+ 
+                 foreach (var episode in episodes)
+                 {
+@@ -85,9 +85,9 @@ private void PerformUpdate(Series series)
+                     ExtrapolateMappings(series, episodes, mappings);
+                 }
+ 
+-                _episodeService.UpdateEpisodes(episodes);
++                _editionService.UpdateEpisodes(episodes);
+                 series.UseSceneNumbering = mappings.Any();
+-                _seriesService.UpdateSeries(series);
++                _authorService.UpdateSeries(series);
+ 
+                 _logger.Debug("XEM mapping updated for {0}", series);
+             }
+diff --git a/src/NzbDrone.Core/DiskSpace/DiskSpaceService.cs b/src/NzbDrone.Core/DiskSpace/DiskSpaceService.cs
+index ea0212d4c..426e7b90e 100644
+--- a/src/NzbDrone.Core/DiskSpace/DiskSpaceService.cs
++++ b/src/NzbDrone.Core/DiskSpace/DiskSpaceService.cs
+@@ -18,16 +18,16 @@ public interface IDiskSpaceService
+ 
+     public class DiskSpaceService : IDiskSpaceService
+     {
+-        private readonly ISeriesService _seriesService;
++        private readonly IAuthorService _authorService;
+         private readonly IRootFolderService _rootFolderService;
+         private readonly IDiskProvider _diskProvider;
+         private readonly Logger _logger;
+ 
+         private static readonly Regex _regexSpecialDrive = new Regex(@"^/var/lib/(docker|rancher|kubelet)(/|$)|^/(boot|etc)(/|$)|/docker(/var)?/aufs(/|$)|/\.timemachine", RegexOptions.Compiled);
+ 
+-        public DiskSpaceService(ISeriesService seriesService, IRootFolderService rootFolderService, IDiskProvider diskProvider, Logger logger)
++        public DiskSpaceService(IAuthorService authorService, IRootFolderService rootFolderService, IDiskProvider diskProvider, Logger logger)
+         {
+-            _seriesService = seriesService;
++            _authorService = authorService;
+             _rootFolderService = rootFolderService;
+             _diskProvider = diskProvider;
+             _logger = logger;
+@@ -52,7 +52,7 @@ private IEnumerable<string> GetSeriesRootPaths()
+             // Get all author paths and find the correct root folder for each. For each unique root folder path,
+             // ensure the path exists and get its path root and return all unique path roots.
+ 
+-            return _seriesService.GetAllSeriesPaths()
++            return _authorService.GetAllSeriesPaths()
+                 .Where(s => s.Value.IsPathValid(PathValidationType.CurrentOs))
+                 .Select(s => _rootFolderService.GetBestRootFolderPath(s.Value))
+                 .Distinct()
+diff --git a/src/NzbDrone.Core/Download/CompletedDownloadService.cs b/src/NzbDrone.Core/Download/CompletedDownloadService.cs
+index ffb7b60be..b91431539 100644
+--- a/src/NzbDrone.Core/Download/CompletedDownloadService.cs
++++ b/src/NzbDrone.Core/Download/CompletedDownloadService.cs
+@@ -31,9 +31,9 @@ public class CompletedDownloadService : ICompletedDownloadService
+         private readonly IProvideImportItemService _provideImportItemService;
+         private readonly IDownloadedEpisodesImportService _downloadedEpisodesImportService;
+         private readonly IParsingService _parsingService;
+-        private readonly ISeriesService _seriesService;
++        private readonly IAuthorService _authorService;
+         private readonly ITrackedDownloadAlreadyImported _trackedDownloadAlreadyImported;
+-        private readonly IEpisodeService _episodeService;
++        private readonly IEditionService _editionService;
+         private readonly IMediaFileService _mediaFileService;
+         private readonly IRejectedImportService _rejectedImportService;
+         private readonly Logger _logger;
+@@ -43,9 +43,9 @@ public CompletedDownloadService(IEventAggregator eventAggregator,
+                                         IProvideImportItemService provideImportItemService,
+                                         IDownloadedEpisodesImportService downloadedEpisodesImportService,
+                                         IParsingService parsingService,
+-                                        ISeriesService seriesService,
++                                        IAuthorService authorService,
+                                         ITrackedDownloadAlreadyImported trackedDownloadAlreadyImported,
+-                                        IEpisodeService episodeService,
++                                        IEditionService editionService,
+                                         IMediaFileService mediaFileService,
+                                         IRejectedImportService rejectedImportService,
+                                         Logger logger)
+@@ -55,9 +55,9 @@ public CompletedDownloadService(IEventAggregator eventAggregator,
+             _provideImportItemService = provideImportItemService;
+             _downloadedEpisodesImportService = downloadedEpisodesImportService;
+             _parsingService = parsingService;
+-            _seriesService = seriesService;
++            _authorService = authorService;
+             _trackedDownloadAlreadyImported = trackedDownloadAlreadyImported;
+-            _episodeService = episodeService;
++            _editionService = editionService;
+             _mediaFileService = mediaFileService;
+             _rejectedImportService = rejectedImportService;
+             _logger = logger;
+@@ -98,7 +98,7 @@ public void Check(TrackedDownload trackedDownload)
+             {
+                 if (historyItem != null)
+                 {
+-                    series = _seriesService.GetSeries(historyItem.SeriesId);
++                    series = _authorService.GetSeries(historyItem.SeriesId);
+                 }
+ 
+                 if (series == null)
+@@ -257,7 +257,7 @@ public bool VerifyImport(TrackedDownload trackedDownload, List<ImportResult> imp
+                            .Log();
+                 }
+ 
+-                var episodes = _episodeService.GetEpisodes(trackedDownload.RemoteEpisode.Episodes.Select(e => e.Id));
++                var episodes = _editionService.GetEpisodes(trackedDownload.RemoteEpisode.Episodes.Select(e => e.Id));
+                 var files = _mediaFileService.GetFiles(episodes.Select(e => e.EpisodeFileId).Where(i => i > 0).Distinct());
+ 
+                 trackedDownload.State = TrackedDownloadState.Imported;
+diff --git a/src/NzbDrone.Core/Download/Pending/PendingReleaseService.cs b/src/NzbDrone.Core/Download/Pending/PendingReleaseService.cs
+index 67cc05842..fc3c9df1b 100644
+--- a/src/NzbDrone.Core/Download/Pending/PendingReleaseService.cs
++++ b/src/NzbDrone.Core/Download/Pending/PendingReleaseService.cs
+@@ -40,7 +40,7 @@ public class PendingReleaseService : IPendingReleaseService,
+     {
+         private readonly IIndexerStatusService _indexerStatusService;
+         private readonly IPendingReleaseRepository _repository;
+-        private readonly ISeriesService _seriesService;
++        private readonly IAuthorService _authorService;
+         private readonly IParsingService _parsingService;
+         private readonly IDelayProfileService _delayProfileService;
+         private readonly ITaskManager _taskManager;
+@@ -54,7 +54,7 @@ public class PendingReleaseService : IPendingReleaseService,
+ 
+         public PendingReleaseService(IIndexerStatusService indexerStatusService,
+                                     IPendingReleaseRepository repository,
+-                                    ISeriesService seriesService,
++                                    IAuthorService authorService,
+                                     IParsingService parsingService,
+                                     IDelayProfileService delayProfileService,
+                                     ITaskManager taskManager,
+@@ -68,7 +68,7 @@ public PendingReleaseService(IIndexerStatusService indexerStatusService,
+         {
+             _indexerStatusService = indexerStatusService;
+             _repository = repository;
+-            _seriesService = seriesService;
++            _authorService = authorService;
+             _parsingService = parsingService;
+             _delayProfileService = delayProfileService;
+             _taskManager = taskManager;
+@@ -279,7 +279,7 @@ private List<PendingRelease> IncludeRemoteEpisodes(List<PendingRelease> releases
+                 }
+             }
+ 
+-            foreach (var series in _seriesService.GetSeries(releases.Select(v => v.SeriesId).Distinct().Where(v => !seriesMap.ContainsKey(v))))
++            foreach (var series in _authorService.GetSeries(releases.Select(v => v.SeriesId).Distinct().Where(v => !seriesMap.ContainsKey(v))))
+             {
+                 seriesMap[series.Id] = series;
+             }
+diff --git a/src/NzbDrone.Core/Download/RedownloadFailedDownloadService.cs b/src/NzbDrone.Core/Download/RedownloadFailedDownloadService.cs
+index 4a431de6c..0f38bf57d 100644
+--- a/src/NzbDrone.Core/Download/RedownloadFailedDownloadService.cs
++++ b/src/NzbDrone.Core/Download/RedownloadFailedDownloadService.cs
+@@ -13,17 +13,17 @@ namespace NzbDrone.Core.Download
+     public class RedownloadFailedDownloadService : IHandle<DownloadFailedEvent>
+     {
+         private readonly IConfigService _configService;
+-        private readonly IEpisodeService _episodeService;
++        private readonly IEditionService _editionService;
+         private readonly IManageCommandQueue _commandQueueManager;
+         private readonly Logger _logger;
+ 
+         public RedownloadFailedDownloadService(IConfigService configService,
+-                                               IEpisodeService episodeService,
++                                               IEditionService editionService,
+                                                IManageCommandQueue commandQueueManager,
+                                                Logger logger)
+         {
+             _configService = configService;
+-            _episodeService = episodeService;
++            _editionService = editionService;
+             _commandQueueManager = commandQueueManager;
+             _logger = logger;
+         }
+@@ -58,8 +58,8 @@ public void Handle(DownloadFailedEvent message)
+                 return;
+             }
+ 
+-            var seasonNumber = _episodeService.GetEpisode(message.EpisodeIds.First()).SeasonNumber;
+-            var episodesInSeason = _episodeService.GetEpisodesBySeason(message.SeriesId, seasonNumber);
++            var seasonNumber = _editionService.GetEpisode(message.EpisodeIds.First()).SeasonNumber;
++            var episodesInSeason = _editionService.GetEpisodesBySeason(message.SeriesId, seasonNumber);
+ 
+             if (message.EpisodeIds.Count == episodesInSeason.Count)
+             {
+diff --git a/src/NzbDrone.Core/Extras/ExtraService.cs b/src/NzbDrone.Core/Extras/ExtraService.cs
+index a49012bc3..5f1eaeaa9 100644
+--- a/src/NzbDrone.Core/Extras/ExtraService.cs
++++ b/src/NzbDrone.Core/Extras/ExtraService.cs
+@@ -30,21 +30,21 @@ public class ExtraService : IExtraService,
+                                 IHandle<DownloadsProcessedEvent>
+     {
+         private readonly IMediaFileService _mediaFileService;
+-        private readonly IEpisodeService _episodeService;
++        private readonly IEditionService _editionService;
+         private readonly IDiskProvider _diskProvider;
+         private readonly IConfigService _configService;
+         private readonly List<IManageExtraFiles> _extraFileManagers;
+         private readonly Dictionary<int, Author> _seriesWithImportedFiles;
+ 
+         public ExtraService(IMediaFileService mediaFileService,
+-                            IEpisodeService episodeService,
++                            IEditionService editionService,
+                             IDiskProvider diskProvider,
+                             IConfigService configService,
+                             IEnumerable<IManageExtraFiles> extraFileManagers,
+                             Logger logger)
+         {
+             _mediaFileService = mediaFileService;
+-            _episodeService = episodeService;
++            _editionService = editionService;
+             _diskProvider = diskProvider;
+             _configService = configService;
+             _extraFileManagers = extraFileManagers.OrderBy(e => e.Order).ToList();
+@@ -193,7 +193,7 @@ public void Handle(DownloadsProcessedEvent message)
+         private List<EditionFile> GetEditionFiles(int seriesId)
+         {
+             var editionFiles = _mediaFileService.GetFilesBySeries(seriesId);
+-            var editions = _episodeService.GetEpisodeBySeries(seriesId);
++            var editions = _editionService.GetEpisodeBySeries(seriesId);
+ 
+             foreach (var editionFile in editionFiles)
+             {
+diff --git a/src/NzbDrone.Core/Extras/Files/ExtraFileService.cs b/src/NzbDrone.Core/Extras/Files/ExtraFileService.cs
+index 3c7f1d4ef..b0ac435d0 100644
+--- a/src/NzbDrone.Core/Extras/Files/ExtraFileService.cs
++++ b/src/NzbDrone.Core/Extras/Files/ExtraFileService.cs
+@@ -31,19 +31,19 @@ public abstract class ExtraFileService<TExtraFile> : IExtraFileService<TExtraFil
+         where TExtraFile : ExtraFile, new()
+     {
+         private readonly IExtraFileRepository<TExtraFile> _repository;
+-        private readonly ISeriesService _seriesService;
++        private readonly IAuthorService _authorService;
+         private readonly IDiskProvider _diskProvider;
+         private readonly IRecycleBinProvider _recycleBinProvider;
+         private readonly Logger _logger;
+ 
+         public ExtraFileService(IExtraFileRepository<TExtraFile> repository,
+-                                ISeriesService seriesService,
++                                IAuthorService authorService,
+                                 IDiskProvider diskProvider,
+                                 IRecycleBinProvider recycleBinProvider,
+                                 Logger logger)
+         {
+             _repository = repository;
+-            _seriesService = seriesService;
++            _authorService = authorService;
+             _diskProvider = diskProvider;
+             _recycleBinProvider = recycleBinProvider;
+             _logger = logger;
+@@ -111,7 +111,7 @@ public void Handle(EditionFileDeletedEvent message)
+             }
+             else
+             {
+-                var author = _seriesService.GetSeries(message.EditionFile.SeriesId);
++                var author = _authorService.GetSeries(message.EditionFile.SeriesId);
+ 
+                 foreach (var extra in _repository.GetFilesByEditionFile(editionFile.Id))
+                 {
+diff --git a/src/NzbDrone.Core/Extras/Metadata/Files/MetadataFileService.cs b/src/NzbDrone.Core/Extras/Metadata/Files/MetadataFileService.cs
+index b83bf0c90..855dbd09f 100644
+--- a/src/NzbDrone.Core/Extras/Metadata/Files/MetadataFileService.cs
++++ b/src/NzbDrone.Core/Extras/Metadata/Files/MetadataFileService.cs
+@@ -12,8 +12,8 @@ public interface IMetadataFileService : IExtraFileService<MetadataFile>
+ 
+     public class MetadataFileService : ExtraFileService<MetadataFile>, IMetadataFileService
+     {
+-        public MetadataFileService(IExtraFileRepository<MetadataFile> repository, ISeriesService seriesService, IDiskProvider diskProvider, IRecycleBinProvider recycleBinProvider, Logger logger)
+-            : base(repository, seriesService, diskProvider, recycleBinProvider, logger)
++        public MetadataFileService(IExtraFileRepository<MetadataFile> repository, IAuthorService authorService, IDiskProvider diskProvider, IRecycleBinProvider recycleBinProvider, Logger logger)
++            : base(repository, authorService, diskProvider, recycleBinProvider, logger)
+         {
+         }
+     }
+diff --git a/src/NzbDrone.Core/Extras/Others/OtherExtraFileService.cs b/src/NzbDrone.Core/Extras/Others/OtherExtraFileService.cs
+index 51782ffac..7c59327e1 100644
+--- a/src/NzbDrone.Core/Extras/Others/OtherExtraFileService.cs
++++ b/src/NzbDrone.Core/Extras/Others/OtherExtraFileService.cs
+@@ -12,8 +12,8 @@ public interface IOtherExtraFileService : IExtraFileService<OtherExtraFile>
+ 
+     public class OtherExtraFileService : ExtraFileService<OtherExtraFile>, IOtherExtraFileService
+     {
+-        public OtherExtraFileService(IExtraFileRepository<OtherExtraFile> repository, ISeriesService seriesService, IDiskProvider diskProvider, IRecycleBinProvider recycleBinProvider, Logger logger)
+-            : base(repository, seriesService, diskProvider, recycleBinProvider, logger)
++        public OtherExtraFileService(IExtraFileRepository<OtherExtraFile> repository, IAuthorService authorService, IDiskProvider diskProvider, IRecycleBinProvider recycleBinProvider, Logger logger)
++            : base(repository, authorService, diskProvider, recycleBinProvider, logger)
+         {
+         }
+     }
+diff --git a/src/NzbDrone.Core/Extras/Subtitles/SubtitleFileService.cs b/src/NzbDrone.Core/Extras/Subtitles/SubtitleFileService.cs
+index ac7d4da2b..458a9067e 100644
+--- a/src/NzbDrone.Core/Extras/Subtitles/SubtitleFileService.cs
++++ b/src/NzbDrone.Core/Extras/Subtitles/SubtitleFileService.cs
+@@ -12,8 +12,8 @@ public interface ISubtitleFileService : IExtraFileService<SubtitleFile>
+ 
+     public class SubtitleFileService : ExtraFileService<SubtitleFile>, ISubtitleFileService
+     {
+-        public SubtitleFileService(IExtraFileRepository<SubtitleFile> repository, ISeriesService seriesService, IDiskProvider diskProvider, IRecycleBinProvider recycleBinProvider, Logger logger)
+-            : base(repository, seriesService, diskProvider, recycleBinProvider, logger)
++        public SubtitleFileService(IExtraFileRepository<SubtitleFile> repository, IAuthorService authorService, IDiskProvider diskProvider, IRecycleBinProvider recycleBinProvider, Logger logger)
++            : base(repository, authorService, diskProvider, recycleBinProvider, logger)
+         {
+         }
+     }
+diff --git a/src/NzbDrone.Core/ImportLists/ImportListSyncService.cs b/src/NzbDrone.Core/ImportLists/ImportListSyncService.cs
+index c58419743..ae3def086 100644
+--- a/src/NzbDrone.Core/ImportLists/ImportListSyncService.cs
++++ b/src/NzbDrone.Core/ImportLists/ImportListSyncService.cs
+@@ -24,7 +24,7 @@ public class ImportListSyncService : IExecute<ImportListSyncCommand>, IHandleAsy
+         private readonly IImportListItemService _importListItemService;
+         private readonly IFetchAndParseImportList _listFetcherAndParser;
+         private readonly ISearchForNewSeries _seriesSearchService;
+-        private readonly ISeriesService _seriesService;
++        private readonly IAuthorService _authorService;
+         private readonly IAddSeriesService _addSeriesService;
+         private readonly IConfigService _configService;
+         private readonly ITaskManager _taskManager;
+@@ -36,7 +36,7 @@ public ImportListSyncService(IImportListFactory importListFactory,
+                               IImportListItemService importListItemService,
+                               IFetchAndParseImportList listFetcherAndParser,
+                               ISearchForNewSeries seriesSearchService,
+-                              ISeriesService seriesService,
++                              IAuthorService authorService,
+                               IAddSeriesService addSeriesService,
+                               IConfigService configService,
+                               ITaskManager taskManager,
+@@ -48,7 +48,7 @@ public ImportListSyncService(IImportListFactory importListFactory,
+             _importListItemService = importListItemService;
+             _listFetcherAndParser = listFetcherAndParser;
+             _seriesSearchService = seriesSearchService;
+-            _seriesService = seriesService;
++            _authorService = authorService;
+             _addSeriesService = addSeriesService;
+             _configService = configService;
+             _taskManager = taskManager;
+@@ -132,7 +132,7 @@ private void ProcessListItems(List<ImportListItemInfo> items)
+ 
+             var listExclusions = _importListExclusionService.All();
+             var importLists = _importListFactory.All();
+-            var existingTvdbIds = _seriesService.AllSeriesTvdbIds();
++            var existingTvdbIds = _authorService.AllSeriesTvdbIds();
+ 
+             foreach (var item in items)
+             {
+@@ -296,7 +296,7 @@ private void CleanLibrary()
+             }
+ 
+             var seriesToUpdate = new List<Series>();
+-            var seriesInLibrary = _seriesService.GetAllSeries();
++            var seriesInLibrary = _authorService.GetAllSeries();
+             var allListItems = _importListItemService.All();
+ 
+             foreach (var series in seriesInLibrary)
+@@ -331,7 +331,7 @@ private void CleanLibrary()
+                 }
+             }
+ 
+-            _seriesService.UpdateSeries(seriesToUpdate, true);
++            _authorService.UpdateSeries(seriesToUpdate, true);
+             _importListStatusService.MarkListsAsCleaned();
+         }
+ 
+diff --git a/src/NzbDrone.Core/IndexerSearch/EpisodeSearchService.cs b/src/NzbDrone.Core/IndexerSearch/EpisodeSearchService.cs
+index b4ee4932f..a70c4f9f1 100644
+--- a/src/NzbDrone.Core/IndexerSearch/EpisodeSearchService.cs
++++ b/src/NzbDrone.Core/IndexerSearch/EpisodeSearchService.cs
+@@ -20,21 +20,21 @@ public class EpisodeSearchService : IExecute<EpisodeSearchCommand>,
+     {
+         private readonly ISearchForReleases _releaseSearchService;
+         private readonly IProcessDownloadDecisions _processDownloadDecisions;
+-        private readonly IEpisodeService _episodeService;
++        private readonly IEditionService _editionService;
+         private readonly IEpisodeCutoffService _episodeCutoffService;
+         private readonly IQueueService _queueService;
+         private readonly Logger _logger;
+ 
+         public EpisodeSearchService(ISearchForReleases releaseSearchService,
+                                     IProcessDownloadDecisions processDownloadDecisions,
+-                                    IEpisodeService episodeService,
++                                    IEditionService editionService,
+                                     IEpisodeCutoffService episodeCutoffService,
+                                     IQueueService queueService,
+                                     Logger logger)
+         {
+             _releaseSearchService = releaseSearchService;
+             _processDownloadDecisions = processDownloadDecisions;
+-            _episodeService = episodeService;
++            _editionService = editionService;
+             _episodeCutoffService = episodeCutoffService;
+             _queueService = queueService;
+             _logger = logger;
+@@ -125,7 +125,7 @@ public void Execute(MissingEpisodeSearchCommand message)
+ 
+             if (message.SeriesId.HasValue)
+             {
+-                episodes = _episodeService.GetEpisodeBySeries(message.SeriesId.Value)
++                episodes = _editionService.GetEpisodeBySeries(message.SeriesId.Value)
+                                           .Where(e => e.Monitored == monitored &&
+                                                  !e.HasFile &&
+                                                  e.AirDateUtc.HasValue &&
+@@ -151,7 +151,7 @@ public void Execute(MissingEpisodeSearchCommand message)
+                     pagingSpec.FilterExpressions.Add(v => v.Monitored == false || v.Series.Monitored == false);
+                 }
+ 
+-                episodes = _episodeService.EpisodesWithoutFiles(pagingSpec).Records.ToList();
++                episodes = _editionService.EpisodesWithoutFiles(pagingSpec).Records.ToList();
+             }
+ 
+             var queue = _queueService.GetQueue().Where(q => q.Episode != null).Select(q => q.Episode.Id);
+diff --git a/src/NzbDrone.Core/IndexerSearch/ReleaseSearchService.cs b/src/NzbDrone.Core/IndexerSearch/ReleaseSearchService.cs
+index 6625015c7..84208c0a7 100644
+--- a/src/NzbDrone.Core/IndexerSearch/ReleaseSearchService.cs
++++ b/src/NzbDrone.Core/IndexerSearch/ReleaseSearchService.cs
+@@ -29,36 +29,36 @@ public class ReleaseSearchService : ISearchForReleases
+     {
+         private readonly IIndexerFactory _indexerFactory;
+         private readonly ISceneMappingService _sceneMapping;
+-        private readonly ISeriesService _seriesService;
+-        private readonly IEpisodeService _episodeService;
++        private readonly IAuthorService _authorService;
++        private readonly IEditionService _editionService;
+         private readonly IMakeDownloadDecision _makeDownloadDecision;
+         private readonly Logger _logger;
+ 
+         public ReleaseSearchService(IIndexerFactory indexerFactory,
+                                 ISceneMappingService sceneMapping,
+-                                ISeriesService seriesService,
+-                                IEpisodeService episodeService,
++                                IAuthorService authorService,
++                                IEditionService editionService,
+                                 IMakeDownloadDecision makeDownloadDecision,
+                                 Logger logger)
+         {
+             _indexerFactory = indexerFactory;
+             _sceneMapping = sceneMapping;
+-            _seriesService = seriesService;
+-            _episodeService = episodeService;
++            _authorService = authorService;
++            _editionService = editionService;
+             _makeDownloadDecision = makeDownloadDecision;
+             _logger = logger;
+         }
+ 
+         public async Task<List<DownloadDecision>> EpisodeSearch(int episodeId, bool userInvokedSearch, bool interactiveSearch)
+         {
+-            var episode = _episodeService.GetEpisode(episodeId);
++            var episode = _editionService.GetEpisode(episodeId);
+ 
+             return await EpisodeSearch(episode, userInvokedSearch, interactiveSearch);
+         }
+ 
+         public async Task<List<DownloadDecision>> EpisodeSearch(Episode episode, bool userInvokedSearch, bool interactiveSearch)
+         {
+-            var series = _seriesService.GetSeries(episode.SeriesId);
++            var series = _authorService.GetSeries(episode.SeriesId);
+ 
+             if (series.SeriesType == SeriesTypes.Daily)
+             {
+@@ -95,7 +95,7 @@ public async Task<List<DownloadDecision>> EpisodeSearch(Episode episode, bool us
+ 
+         public async Task<List<DownloadDecision>> SeasonSearch(int seriesId, int seasonNumber, bool missingOnly, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+         {
+-            var episodes = _episodeService.GetEpisodesBySeason(seriesId, seasonNumber);
++            var episodes = _editionService.GetEpisodesBySeason(seriesId, seasonNumber);
+ 
+             if (missingOnly)
+             {
+@@ -107,7 +107,7 @@ public async Task<List<DownloadDecision>> SeasonSearch(int seriesId, int seasonN
+ 
+         public async Task<List<DownloadDecision>> SeasonSearch(int seriesId, int seasonNumber, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+         {
+-            var series = _seriesService.GetSeries(seriesId);
++            var series = _authorService.GetSeries(seriesId);
+ 
+             if (series.SeriesType == SeriesTypes.Anime)
+             {
+@@ -537,7 +537,7 @@ private async Task<List<DownloadDecision>> Dispatch(Func<IIndexer, Task<IList<Re
+                 _logger.Debug("Setting last search time to: {0}", lastSearchTime);
+ 
+                 criteriaBase.Episodes.ForEach(e => e.LastSearchTime = lastSearchTime);
+-                _episodeService.UpdateLastSearchTime(criteriaBase.Episodes);
++                _editionService.UpdateLastSearchTime(criteriaBase.Episodes);
+             }
+ 
+             return _makeDownloadDecision.GetSearchDecision(reports, criteriaBase).ToList();
+diff --git a/src/NzbDrone.Core/IndexerSearch/SeriesSearchService.cs b/src/NzbDrone.Core/IndexerSearch/SeriesSearchService.cs
+index 4f4f6b9ad..deb9b943d 100644
+--- a/src/NzbDrone.Core/IndexerSearch/SeriesSearchService.cs
++++ b/src/NzbDrone.Core/IndexerSearch/SeriesSearchService.cs
+@@ -11,20 +11,20 @@ namespace NzbDrone.Core.IndexerSearch
+ {
+     public class SeriesSearchService : IExecute<SeriesSearchCommand>
+     {
+-        private readonly ISeriesService _seriesService;
+-        private readonly IEpisodeService _episodeService;
++        private readonly IAuthorService _authorService;
++        private readonly IEditionService _editionService;
+         private readonly ISearchForReleases _releaseSearchService;
+         private readonly IProcessDownloadDecisions _processDownloadDecisions;
+         private readonly Logger _logger;
+ 
+-        public SeriesSearchService(ISeriesService seriesService,
+-                                   IEpisodeService episodeService,
++        public SeriesSearchService(IAuthorService authorService,
++                                   IEditionService editionService,
+                                    ISearchForReleases releaseSearchService,
+                                    IProcessDownloadDecisions processDownloadDecisions,
+                                    Logger logger)
+         {
+-            _seriesService = seriesService;
+-            _episodeService = episodeService;
++            _authorService = authorService;
++            _editionService = editionService;
+             _releaseSearchService = releaseSearchService;
+             _processDownloadDecisions = processDownloadDecisions;
+             _logger = logger;
+@@ -32,7 +32,7 @@ public SeriesSearchService(ISeriesService seriesService,
+ 
+         public void Execute(SeriesSearchCommand message)
+         {
+-            var series = _seriesService.GetSeries(message.SeriesId);
++            var series = _authorService.GetSeries(message.SeriesId);
+             var downloadedCount = 0;
+             var userInvokedSearch = message.Trigger == CommandTrigger.Manual;
+ 
+@@ -40,7 +40,7 @@ public void Execute(SeriesSearchCommand message)
+             {
+                 _logger.Debug("No seasons of {0} are monitored, searching for all monitored episodes", series.Title);
+ 
+-                var episodes = _episodeService.GetEpisodeBySeries(series.Id)
++                var episodes = _editionService.GetEpisodeBySeries(series.Id)
+                     .Where(e => e.Monitored &&
+                                 !e.HasFile &&
+                                 e.AirDateUtc.HasValue &&
+diff --git a/src/NzbDrone.Core/MediaFiles/DiskScanService.cs b/src/NzbDrone.Core/MediaFiles/DiskScanService.cs
+index 82237aad9..307c7b588 100644
+--- a/src/NzbDrone.Core/MediaFiles/DiskScanService.cs
++++ b/src/NzbDrone.Core/MediaFiles/DiskScanService.cs
+@@ -36,7 +36,7 @@ public class DiskScanService :
+         private readonly IMakeImportDecision _importDecisionMaker;
+         private readonly IImportApprovedEpisodes _importApprovedEpisodes;
+         private readonly IConfigService _configService;
+-        private readonly ISeriesService _seriesService;
++        private readonly IAuthorService _authorService;
+         private readonly IMediaFileService _mediaFileService;
+         private readonly IMediaFileTableCleanupService _mediaFileTableCleanupService;
+         private readonly IRootFolderService _rootFolderService;
+@@ -48,7 +48,7 @@ public DiskScanService(IDiskProvider diskProvider,
+                                IMakeImportDecision importDecisionMaker,
+                                IImportApprovedEpisodes importApprovedEpisodes,
+                                IConfigService configService,
+-                               ISeriesService seriesService,
++                               IAuthorService authorService,
+                                IMediaFileService mediaFileService,
+                                IMediaFileTableCleanupService mediaFileTableCleanupService,
+                                IRootFolderService rootFolderService,
+@@ -60,7 +60,7 @@ public DiskScanService(IDiskProvider diskProvider,
+             _importDecisionMaker = importDecisionMaker;
+             _importApprovedEpisodes = importApprovedEpisodes;
+             _configService = configService;
+-            _seriesService = seriesService;
++            _authorService = authorService;
+             _mediaFileService = mediaFileService;
+             _mediaFileTableCleanupService = mediaFileTableCleanupService;
+             _rootFolderService = rootFolderService;
+@@ -280,12 +280,12 @@ public void Execute(RescanSeriesCommand message)
+         {
+             if (message.SeriesId.HasValue)
+             {
+-                var series = _seriesService.GetSeries(message.SeriesId.Value);
++                var series = _authorService.GetSeries(message.SeriesId.Value);
+                 Scan(series);
+             }
+             else
+             {
+-                var allSeries = _seriesService.GetAllSeries();
++                var allSeries = _authorService.GetAllSeries();
+ 
+                 foreach (var series in allSeries)
+                 {
+diff --git a/src/NzbDrone.Core/MediaFiles/DownloadedEpisodesImportService.cs b/src/NzbDrone.Core/MediaFiles/DownloadedEpisodesImportService.cs
+index 3584851ab..d02f1f90f 100644
+--- a/src/NzbDrone.Core/MediaFiles/DownloadedEpisodesImportService.cs
++++ b/src/NzbDrone.Core/MediaFiles/DownloadedEpisodesImportService.cs
+@@ -26,7 +26,7 @@ public class DownloadedEpisodesImportService : IDownloadedEpisodesImportService
+     {
+         private readonly IDiskProvider _diskProvider;
+         private readonly IDiskScanService _diskScanService;
+-        private readonly ISeriesService _seriesService;
++        private readonly IAuthorService _authorService;
+         private readonly IParsingService _parsingService;
+         private readonly IMakeImportDecision _importDecisionMaker;
+         private readonly IImportApprovedEpisodes _importApprovedEpisodes;
+@@ -37,7 +37,7 @@ public class DownloadedEpisodesImportService : IDownloadedEpisodesImportService
+ 
+         public DownloadedEpisodesImportService(IDiskProvider diskProvider,
+                                                IDiskScanService diskScanService,
+-                                               ISeriesService seriesService,
++                                               IAuthorService authorService,
+                                                IParsingService parsingService,
+                                                IMakeImportDecision importDecisionMaker,
+                                                IImportApprovedEpisodes importApprovedEpisodes,
+@@ -48,7 +48,7 @@ public DownloadedEpisodesImportService(IDiskProvider diskProvider,
+         {
+             _diskProvider = diskProvider;
+             _diskScanService = diskScanService;
+-            _seriesService = seriesService;
++            _authorService = authorService;
+             _parsingService = parsingService;
+             _importDecisionMaker = importDecisionMaker;
+             _importApprovedEpisodes = importApprovedEpisodes;
+@@ -176,7 +176,7 @@ private List<ImportResult> ProcessFolder(DirectoryInfo directoryInfo, ImportMode
+ 
+         private List<ImportResult> ProcessFolder(DirectoryInfo directoryInfo, ImportMode importMode, Series series, DownloadClientItem downloadClientItem)
+         {
+-            if (_seriesService.SeriesPathExists(directoryInfo.FullName))
++            if (_authorService.SeriesPathExists(directoryInfo.FullName))
+             {
+                 _logger.Warn("Unable to process folder that is mapped to an existing series");
+                 return new List<ImportResult>
+diff --git a/src/NzbDrone.Core/MediaFiles/EditionImport/Manual/ManualImportService.cs b/src/NzbDrone.Core/MediaFiles/EditionImport/Manual/ManualImportService.cs
+index 5e605e5bd..d29fe6744 100644
+--- a/src/NzbDrone.Core/MediaFiles/EditionImport/Manual/ManualImportService.cs
++++ b/src/NzbDrone.Core/MediaFiles/EditionImport/Manual/ManualImportService.cs
+@@ -33,8 +33,8 @@ public class ManualImportService : IExecute<ManualImportCommand>, IManualImportS
+         private readonly IParsingService _parsingService;
+         private readonly IDiskScanService _diskScanService;
+         private readonly IMakeImportDecision _importDecisionMaker;
+-        private readonly ISeriesService _seriesService;
+-        private readonly IEpisodeService _episodeService;
++        private readonly IAuthorService _authorService;
++        private readonly IEditionService _editionService;
+         private readonly IImportApprovedEpisodes _importApprovedEpisodes;
+         private readonly IAggregationService _aggregationService;
+         private readonly ITrackedDownloadService _trackedDownloadService;
+@@ -48,8 +48,8 @@ public ManualImportService(IDiskProvider diskProvider,
+                                    IParsingService parsingService,
+                                    IDiskScanService diskScanService,
+                                    IMakeImportDecision importDecisionMaker,
+-                                   ISeriesService seriesService,
+-                                   IEpisodeService episodeService,
++                                   IAuthorService authorService,
++                                   IEditionService editionService,
+                                    IAggregationService aggregationService,
+                                    IImportApprovedEpisodes importApprovedEpisodes,
+                                    ITrackedDownloadService trackedDownloadService,
+@@ -63,8 +63,8 @@ public ManualImportService(IDiskProvider diskProvider,
+             _parsingService = parsingService;
+             _diskScanService = diskScanService;
+             _importDecisionMaker = importDecisionMaker;
+-            _seriesService = seriesService;
+-            _episodeService = episodeService;
++            _authorService = authorService;
++            _editionService = editionService;
+             _aggregationService = aggregationService;
+             _importApprovedEpisodes = importApprovedEpisodes;
+             _trackedDownloadService = trackedDownloadService;
+@@ -77,10 +77,10 @@ public ManualImportService(IDiskProvider diskProvider,
+ 
+         public List<ManualImportItem> GetMediaFiles(int seriesId, int? seasonNumber)
+         {
+-            var series = _seriesService.GetSeries(seriesId);
++            var series = _authorService.GetSeries(seriesId);
+             var directoryInfo = new DirectoryInfo(series.Path);
+             var seriesFiles = seasonNumber.HasValue ? _mediaFileService.GetFilesBySeason(seriesId, seasonNumber.Value) : _mediaFileService.GetFilesBySeries(seriesId);
+-            var episodes = _episodeService.GetEpisodeBySeries(series.Id);
++            var episodes = _editionService.GetEpisodeBySeries(series.Id);
+ 
+             var items = seriesFiles.Select(episodeFile => MapItem(episodeFile, series, directoryInfo.Name, episodes)).ToList();
+ 
+@@ -141,7 +141,7 @@ public List<ManualImportItem> GetMediaFiles(string path, string downloadId, int?
+         public ManualImportItem ReprocessItem(string path, string downloadId, int seriesId, int? seasonNumber, List<int> episodeIds, string releaseGroup, QualityModel quality, List<Language> languages, int indexerFlags, ReleaseType releaseType)
+         {
+             var rootFolder = Path.GetDirectoryName(path);
+-            var series = _seriesService.GetSeries(seriesId);
++            var series = _authorService.GetSeries(seriesId);
+ 
+             var languageParse = LanguageParser.ParseLanguages(path);
+ 
+@@ -154,7 +154,7 @@ public ManualImportItem ReprocessItem(string path, string downloadId, int series
+             if (episodeIds.Any())
+             {
+                 var downloadClientItem = GetTrackedDownload(downloadId)?.DownloadItem;
+-                var episodes = _episodeService.GetEpisodes(episodeIds);
++                var episodes = _editionService.GetEpisodes(episodeIds);
+                 var finalReleaseGroup = releaseGroup.IsNullOrWhiteSpace()
+                     ? Parser.Parser.ParseReleaseGroup(path)
+                     : releaseGroup;
+@@ -240,7 +240,7 @@ private List<ManualImportItem> ProcessFolder(string rootFolder, string baseFolde
+ 
+             if (seriesId.HasValue)
+             {
+-                series = _seriesService.GetSeries(seriesId.Value);
++                series = _authorService.GetSeries(seriesId.Value);
+             }
+             else
+             {
+@@ -323,7 +323,7 @@ private ManualImportItem ProcessFile(string rootFolder, string baseFolder, strin
+ 
+                     if (relativeParseInfo != null)
+                     {
+-                        series = _seriesService.FindByTitle(relativeParseInfo.SeriesTitle);
++                        series = _authorService.FindByTitle(relativeParseInfo.SeriesTitle);
+                     }
+                 }
+ 
+@@ -490,8 +490,8 @@ public void Execute(ManualImportCommand message)
+                 _logger.ProgressTrace("Processing file {0} of {1}", i + 1, message.Files.Count);
+ 
+                 var file = message.Files[i];
+-                var series = _seriesService.GetSeries(file.SeriesId);
+-                var episodes = _episodeService.GetEpisodes(file.EpisodeIds);
++                var series = _authorService.GetSeries(file.SeriesId);
++                var episodes = _editionService.GetEpisodes(file.EpisodeIds);
+                 var fileEpisodeInfo = Parser.Parser.ParsePath(file.Path) ?? new ParsedEpisodeInfo();
+                 var existingFile = series.Path.IsParentPath(file.Path);
+ 
+diff --git a/src/NzbDrone.Core/MediaFiles/EpisodeFileMovingService.cs b/src/NzbDrone.Core/MediaFiles/EpisodeFileMovingService.cs
+index 6bf474d94..9559772e3 100644
+--- a/src/NzbDrone.Core/MediaFiles/EpisodeFileMovingService.cs
++++ b/src/NzbDrone.Core/MediaFiles/EpisodeFileMovingService.cs
+@@ -26,7 +26,7 @@ public interface IMoveEpisodeFiles
+ 
+     public class EpisodeFileMovingService : IMoveEpisodeFiles
+     {
+-        private readonly IEpisodeService _episodeService;
++        private readonly IEditionService _editionService;
+         private readonly IUpdateEpisodeFileService _updateEpisodeFileService;
+         private readonly IBuildFileNames _buildFileNames;
+         private readonly IDiskTransferService _diskTransferService;
+@@ -38,7 +38,7 @@ public class EpisodeFileMovingService : IMoveEpisodeFiles
+         private readonly IConfigService _configService;
+         private readonly Logger _logger;
+ 
+-        public EpisodeFileMovingService(IEpisodeService episodeService,
++        public EpisodeFileMovingService(IEditionService editionService,
+                                 IUpdateEpisodeFileService updateEpisodeFileService,
+                                 IBuildFileNames buildFileNames,
+                                 IDiskTransferService diskTransferService,
+@@ -50,7 +50,7 @@ public EpisodeFileMovingService(IEpisodeService episodeService,
+                                 IConfigService configService,
+                                 Logger logger)
+         {
+-            _episodeService = episodeService;
++            _editionService = editionService;
+             _updateEpisodeFileService = updateEpisodeFileService;
+             _buildFileNames = buildFileNames;
+             _diskTransferService = diskTransferService;
+@@ -65,7 +65,7 @@ public EpisodeFileMovingService(IEpisodeService episodeService,
+ 
+         public EpisodeFile MoveEpisodeFile(EpisodeFile episodeFile, Series series)
+         {
+-            var episodes = _episodeService.GetEpisodesByFileId(episodeFile.Id);
++            var episodes = _editionService.GetEpisodesByFileId(episodeFile.Id);
+             return MoveEpisodeFile(episodeFile, series, episodes);
+         }
+ 
+diff --git a/src/NzbDrone.Core/MediaFiles/MediaFileDeletionService.cs b/src/NzbDrone.Core/MediaFiles/MediaFileDeletionService.cs
+index bd8d66025..f6d8a2ea6 100644
+--- a/src/NzbDrone.Core/MediaFiles/MediaFileDeletionService.cs
++++ b/src/NzbDrone.Core/MediaFiles/MediaFileDeletionService.cs
+@@ -26,7 +26,7 @@ public class MediaFileDeletionService : IDeleteMediaFiles,
+         private readonly IDiskProvider _diskProvider;
+         private readonly IRecycleBinProvider _recycleBinProvider;
+         private readonly IMediaFileService _mediaFileService;
+-        private readonly ISeriesService _seriesService;
++        private readonly IAuthorService _authorService;
+         private readonly IConfigService _configService;
+         private readonly IEventAggregator _eventAggregator;
+         private readonly Logger _logger;
+@@ -34,7 +34,7 @@ public class MediaFileDeletionService : IDeleteMediaFiles,
+         public MediaFileDeletionService(IDiskProvider diskProvider,
+                                         IRecycleBinProvider recycleBinProvider,
+                                         IMediaFileService mediaFileService,
+-                                        ISeriesService seriesService,
++                                        IAuthorService authorService,
+                                         IConfigService configService,
+                                         IEventAggregator eventAggregator,
+                                         Logger logger)
+@@ -42,7 +42,7 @@ public MediaFileDeletionService(IDiskProvider diskProvider,
+             _diskProvider = diskProvider;
+             _recycleBinProvider = recycleBinProvider;
+             _mediaFileService = mediaFileService;
+-            _seriesService = seriesService;
++            _authorService = authorService;
+             _configService = configService;
+             _eventAggregator = eventAggregator;
+             _logger = logger;
+@@ -92,7 +92,7 @@ public void HandleAsync(SeriesDeletedEvent message)
+         {
+             if (message.DeleteFiles)
+             {
+-                var allSeries = _seriesService.GetAllSeriesPaths();
++                var allSeries = _authorService.GetAllSeriesPaths();
+ 
+                 foreach (var series in message.Series)
+                 {
+diff --git a/src/NzbDrone.Core/MediaFiles/MediaFileTableCleanupService.cs b/src/NzbDrone.Core/MediaFiles/MediaFileTableCleanupService.cs
+index efe4215ee..0032d06c5 100644
+--- a/src/NzbDrone.Core/MediaFiles/MediaFileTableCleanupService.cs
++++ b/src/NzbDrone.Core/MediaFiles/MediaFileTableCleanupService.cs
+@@ -16,22 +16,22 @@ public interface IMediaFileTableCleanupService
+     public class MediaFileTableCleanupService : IMediaFileTableCleanupService
+     {
+         private readonly IMediaFileService _mediaFileService;
+-        private readonly IEpisodeService _episodeService;
++        private readonly IEditionService _editionService;
+         private readonly Logger _logger;
+ 
+         public MediaFileTableCleanupService(IMediaFileService mediaFileService,
+-                                            IEpisodeService episodeService,
++                                            IEditionService editionService,
+                                             Logger logger)
+         {
+             _mediaFileService = mediaFileService;
+-            _episodeService = episodeService;
++            _editionService = editionService;
+             _logger = logger;
+         }
+ 
+         public void Clean(Series series, List<string> filesOnDisk)
+         {
+             var seriesFiles = _mediaFileService.GetFilesBySeries(series.Id);
+-            var episodes = _episodeService.GetEpisodeBySeries(series.Id);
++            var episodes = _editionService.GetEpisodeBySeries(series.Id);
+ 
+             var filesOnDiskKeys = new HashSet<string>(filesOnDisk, PathEqualityComparer.Instance);
+ 
+@@ -78,7 +78,7 @@ public void Clean(Series series, List<string> filesOnDisk)
+                 if (episode.EpisodeFileId > 0 && seriesFiles.None(f => f.Id == episode.EpisodeFileId))
+                 {
+                     episode.EpisodeFileId = 0;
+-                    _episodeService.UpdateEpisode(episode);
++                    _editionService.UpdateEpisode(episode);
+                 }
+             }
+         }
+diff --git a/src/NzbDrone.Core/MediaFiles/RenameEpisodeFileService.cs b/src/NzbDrone.Core/MediaFiles/RenameEpisodeFileService.cs
+index 9502bb1a4..128efc789 100644
+--- a/src/NzbDrone.Core/MediaFiles/RenameEpisodeFileService.cs
++++ b/src/NzbDrone.Core/MediaFiles/RenameEpisodeFileService.cs
+@@ -26,29 +26,29 @@ public class RenameEpisodeFileService : IRenameEpisodeFileService,
+                                             IExecute<RenameFilesCommand>,
+                                             IExecute<RenameSeriesCommand>
+     {
+-        private readonly ISeriesService _seriesService;
++        private readonly IAuthorService _authorService;
+         private readonly IMediaFileService _mediaFileService;
+         private readonly IMoveEpisodeFiles _episodeFileMover;
+         private readonly IEventAggregator _eventAggregator;
+-        private readonly IEpisodeService _episodeService;
++        private readonly IEditionService _editionService;
+         private readonly IBuildFileNames _filenameBuilder;
+         private readonly IDiskProvider _diskProvider;
+         private readonly Logger _logger;
+ 
+-        public RenameEpisodeFileService(ISeriesService seriesService,
++        public RenameEpisodeFileService(IAuthorService authorService,
+                                         IMediaFileService mediaFileService,
+                                         IMoveEpisodeFiles episodeFileMover,
+                                         IEventAggregator eventAggregator,
+-                                        IEpisodeService episodeService,
++                                        IEditionService editionService,
+                                         IBuildFileNames filenameBuilder,
+                                         IDiskProvider diskProvider,
+                                         Logger logger)
+         {
+-            _seriesService = seriesService;
++            _authorService = authorService;
+             _mediaFileService = mediaFileService;
+             _episodeFileMover = episodeFileMover;
+             _eventAggregator = eventAggregator;
+-            _episodeService = episodeService;
++            _editionService = editionService;
+             _filenameBuilder = filenameBuilder;
+             _diskProvider = diskProvider;
+             _logger = logger;
+@@ -56,8 +56,8 @@ public RenameEpisodeFileService(ISeriesService seriesService,
+ 
+         public List<RenameEpisodeFilePreview> GetRenamePreviews(int seriesId)
+         {
+-            var series = _seriesService.GetSeries(seriesId);
+-            var episodes = _episodeService.GetEpisodeBySeries(seriesId);
++            var series = _authorService.GetSeries(seriesId);
++            var episodes = _editionService.GetEpisodeBySeries(seriesId);
+             var files = _mediaFileService.GetFilesBySeries(seriesId);
+ 
+             return GetPreviews(series, episodes, files)
+@@ -68,8 +68,8 @@ public List<RenameEpisodeFilePreview> GetRenamePreviews(int seriesId)
+ 
+         public List<RenameEpisodeFilePreview> GetRenamePreviews(int seriesId, int seasonNumber)
+         {
+-            var series = _seriesService.GetSeries(seriesId);
+-            var episodes = _episodeService.GetEpisodesBySeason(seriesId, seasonNumber);
++            var series = _authorService.GetSeries(seriesId);
++            var episodes = _editionService.GetEpisodesBySeason(seriesId, seasonNumber);
+             var files = _mediaFileService.GetFilesBySeason(seriesId, seasonNumber);
+ 
+             return GetPreviews(series, episodes, files)
+@@ -78,8 +78,8 @@ public List<RenameEpisodeFilePreview> GetRenamePreviews(int seriesId, int season
+ 
+         public List<RenameEpisodeFilePreview> GetRenamePreviews(List<int> seriesIds)
+         {
+-            var seriesList = _seriesService.GetSeries(seriesIds);
+-            var episodesList = _episodeService.GetEpisodesBySeries(seriesIds).ToLookup(e => e.SeriesId);
++            var seriesList = _authorService.GetSeries(seriesIds);
++            var episodesList = _editionService.GetEpisodesBySeries(seriesIds).ToLookup(e => e.SeriesId);
+             var filesList = _mediaFileService.GetFilesBySeriesIds(seriesIds).ToLookup(f => f.SeriesId);
+ 
+             return seriesList.SelectMany(series =>
+@@ -180,7 +180,7 @@ private List<RenamedEpisodeFile> RenameFiles(List<EpisodeFile> episodeFiles, Ser
+ 
+         public void Execute(RenameFilesCommand message)
+         {
+-            var series = _seriesService.GetSeries(message.SeriesId);
++            var series = _authorService.GetSeries(message.SeriesId);
+             var episodeFiles = _mediaFileService.Get(message.Files);
+ 
+             _logger.ProgressInfo("Renaming {0} files for {1}", episodeFiles.Count, series.Title);
+@@ -193,7 +193,7 @@ public void Execute(RenameFilesCommand message)
+         public void Execute(RenameSeriesCommand message)
+         {
+             _logger.Debug("Renaming all files for selected series");
+-            var seriesToRename = _seriesService.GetSeries(message.SeriesIds);
++            var seriesToRename = _authorService.GetSeries(message.SeriesIds);
+ 
+             foreach (var series in seriesToRename)
+             {
+diff --git a/src/NzbDrone.Core/MediaFiles/UpdateEpisodeFileService.cs b/src/NzbDrone.Core/MediaFiles/UpdateEpisodeFileService.cs
+index 539cc1f64..31406556d 100644
+--- a/src/NzbDrone.Core/MediaFiles/UpdateEpisodeFileService.cs
++++ b/src/NzbDrone.Core/MediaFiles/UpdateEpisodeFileService.cs
+@@ -24,18 +24,18 @@ public class UpdateEpisodeFileService : IUpdateEpisodeFileService,
+     {
+         private readonly IDiskProvider _diskProvider;
+         private readonly IConfigService _configService;
+-        private readonly IEpisodeService _episodeService;
++        private readonly IEditionService _editionService;
+         private readonly Logger _logger;
+         private static readonly DateTime EpochTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+ 
+         public UpdateEpisodeFileService(IDiskProvider diskProvider,
+                                         IConfigService configService,
+-                                        IEpisodeService episodeService,
++                                        IEditionService editionService,
+                                         Logger logger)
+         {
+             _diskProvider = diskProvider;
+             _configService = configService;
+-            _episodeService = episodeService;
++            _editionService = editionService;
+             _logger = logger;
+         }
+ 
+@@ -150,7 +150,7 @@ public void Handle(SeriesScannedEvent message)
+                 return;
+             }
+ 
+-            var episodes = _episodeService.EpisodesWithFiles(message.Series.Id);
++            var episodes = _editionService.EpisodesWithFiles(message.Series.Id);
+ 
+             var episodeFiles = new List<EpisodeFile>();
+             var updated = new List<EpisodeFile>();
+diff --git a/src/NzbDrone.Core/Organizer/FileNameBuilder.cs b/src/NzbDrone.Core/Organizer/FileNameBuilder.cs
+index be7d307ec..8298cf80d 100644
+--- a/src/NzbDrone.Core/Organizer/FileNameBuilder.cs
++++ b/src/NzbDrone.Core/Organizer/FileNameBuilder.cs
+@@ -24,7 +24,7 @@ public interface IBuildFileNames
+         string BuildFileName(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension = "", NamingConfig namingConfig = null, List<CustomFormat> customFormats = null);
+         string BuildFilePath(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null);
+         string BuildSeasonPath(Series series, int seasonNumber);
+-        string GetSeriesFolder(Series series, NamingConfig namingConfig = null);
++        string GetAuthorFolder(Author author, NamingConfig namingConfig = null);
+         string GetSeasonFolder(Series series, int seasonNumber, NamingConfig namingConfig = null);
+         bool RequiresEpisodeTitle(Series series, List<Episode> episodes);
+         bool RequiresAbsoluteEpisodeNumber();
+@@ -256,7 +256,7 @@ public string BuildSeasonPath(Series series, int seasonNumber)
+             return path;
+         }
+ 
+-        public string GetSeriesFolder(Series series, NamingConfig namingConfig = null)
++        public string GetAuthorFolder(Author author, NamingConfig namingConfig = null)
+         {
+             if (namingConfig == null)
+             {
+diff --git a/src/NzbDrone.Core/Parser/ParsingService.cs b/src/NzbDrone.Core/Parser/ParsingService.cs
+index 7cbff94f1..5c454ae36 100644
+--- a/src/NzbDrone.Core/Parser/ParsingService.cs
++++ b/src/NzbDrone.Core/Parser/ParsingService.cs
+@@ -24,18 +24,18 @@ public interface IParsingService
+ 
+     public class ParsingService : IParsingService
+     {
+-        private readonly IEpisodeService _episodeService;
+-        private readonly ISeriesService _seriesService;
++        private readonly IEditionService _editionService;
++        private readonly IAuthorService _authorService;
+         private readonly ISceneMappingService _sceneMappingService;
+         private readonly Logger _logger;
+ 
+-        public ParsingService(IEpisodeService episodeService,
+-                              ISeriesService seriesService,
++        public ParsingService(IEditionService editionService,
++                              IAuthorService authorService,
+                               ISceneMappingService sceneMappingService,
+                               Logger logger)
+         {
+-            _episodeService = episodeService;
+-            _seriesService = seriesService;
++            _editionService = editionService;
++            _authorService = authorService;
+             _sceneMappingService = sceneMappingService;
+             _logger = logger;
+         }
+@@ -46,17 +46,17 @@ public Series GetSeries(string title)
+ 
+             if (parsedEpisodeInfo == null)
+             {
+-                return _seriesService.FindByTitle(title);
++                return _authorService.FindByTitle(title);
+             }
+ 
+             var tvdbId = _sceneMappingService.FindTvdbId(parsedEpisodeInfo.SeriesTitle, parsedEpisodeInfo.ReleaseTitle, parsedEpisodeInfo.SeasonNumber);
+ 
+             if (tvdbId.HasValue)
+             {
+-                return _seriesService.FindByTvdbId(tvdbId.Value);
++                return _authorService.FindByTvdbId(tvdbId.Value);
+             }
+ 
+-            var series = _seriesService.FindByTitle(parsedEpisodeInfo.SeriesTitle);
++            var series = _authorService.FindByTitle(parsedEpisodeInfo.SeriesTitle);
+ 
+             if (series == null && parsedEpisodeInfo.SeriesTitleInfo.AllTitles != null)
+             {
+@@ -65,7 +65,7 @@ public Series GetSeries(string title)
+ 
+             if (series == null)
+             {
+-                series = _seriesService.FindByTitle(parsedEpisodeInfo.SeriesTitleInfo.TitleWithoutYear,
++                series = _authorService.FindByTitle(parsedEpisodeInfo.SeriesTitleInfo.TitleWithoutYear,
+                                                     parsedEpisodeInfo.SeriesTitleInfo.Year);
+             }
+ 
+@@ -80,7 +80,7 @@ private Series GetSeriesByAllTitles(ParsedEpisodeInfo parsedEpisodeInfo)
+             // Match each title individually, they must all resolve to the same tvdbid
+             foreach (var title in parsedEpisodeInfo.SeriesTitleInfo.AllTitles)
+             {
+-                var series = _seriesService.FindByTitle(title);
++                var series = _authorService.FindByTitle(title);
+                 var tvdbId = series?.TvdbId;
+ 
+                 if (series == null)
+@@ -110,7 +110,7 @@ private Series GetSeriesByAllTitles(ParsedEpisodeInfo parsedEpisodeInfo)
+ 
+             if (foundSeries == null && foundTvdbId.HasValue)
+             {
+-                foundSeries = _seriesService.FindByTvdbId(foundTvdbId.Value);
++                foundSeries = _authorService.FindByTvdbId(foundTvdbId.Value);
+             }
+ 
+             return foundSeries;
+@@ -131,8 +131,8 @@ public RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int seriesId, IEnu
+             return new RemoteEpisode
+                    {
+                        ParsedEpisodeInfo = parsedEpisodeInfo,
+-                       Series = _seriesService.GetSeries(seriesId),
+-                       Episodes = _episodeService.GetEpisodes(episodeIds)
++                       Series = _authorService.GetSeries(seriesId),
++                       Episodes = _editionService.GetEpisodes(episodeIds)
+                    };
+         }
+ 
+@@ -225,7 +225,7 @@ private List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series se
+             {
+                 if (series.UseSceneNumbering && sceneSource)
+                 {
+-                    var episodes = _episodeService.GetEpisodesBySceneSeason(series.Id, mappedSeasonNumber);
++                    var episodes = _editionService.GetEpisodesBySceneSeason(series.Id, mappedSeasonNumber);
+ 
+                     // If episodes were found by the scene season number return them, otherwise fallback to look-up by season number
+                     if (episodes.Any())
+@@ -234,7 +234,7 @@ private List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series se
+                     }
+                 }
+ 
+-                return _episodeService.GetEpisodesBySeason(series.Id, mappedSeasonNumber);
++                return _editionService.GetEpisodesBySeason(series.Id, mappedSeasonNumber);
+             }
+ 
+             if (parsedEpisodeInfo.IsDaily)
+@@ -297,22 +297,22 @@ public ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisod
+ 
+             if (series == null)
+             {
+-                series = _seriesService.FindByTitleInexact(releaseTitle);
++                series = _authorService.FindByTitleInexact(releaseTitle);
+             }
+ 
+             if (series == null && tvdbId > 0)
+             {
+-                series = _seriesService.FindByTvdbId(tvdbId);
++                series = _authorService.FindByTvdbId(tvdbId);
+             }
+ 
+             if (series == null && tvRageId > 0)
+             {
+-                series = _seriesService.FindByTvRageId(tvRageId);
++                series = _authorService.FindByTvRageId(tvRageId);
+             }
+ 
+             if (series == null && imdbId.IsNotNullOrWhiteSpace())
+             {
+-                series = _seriesService.FindByImdbId(imdbId);
++                series = _authorService.FindByImdbId(imdbId);
+             }
+ 
+             if (series == null)
+@@ -329,14 +329,14 @@ public ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisod
+             // SxxE00 episodes are sometimes mapped via TheXEM, don't use episode title parsing in that case.
+             if (parsedEpisodeInfo != null && parsedEpisodeInfo.IsPossibleSceneSeasonSpecial && series.UseSceneNumbering)
+             {
+-                if (_episodeService.FindEpisodesBySceneNumbering(series.Id, parsedEpisodeInfo.SeasonNumber, 0).Any())
++                if (_editionService.FindEpisodesBySceneNumbering(series.Id, parsedEpisodeInfo.SeasonNumber, 0).Any())
+                 {
+                     return parsedEpisodeInfo;
+                 }
+             }
+ 
+             // find special episode in series season 0
+-            var episode = _episodeService.FindEpisodeByTitle(series.Id, 0, releaseTitle);
++            var episode = _editionService.FindEpisodeByTitle(series.Id, 0, releaseTitle);
+ 
+             if (episode != null)
+             {
+@@ -376,7 +376,7 @@ private FindSeriesResult FindSeries(ParsedEpisodeInfo parsedEpisodeInfo, int tvd
+                     return new FindSeriesResult(searchCriteria.Series, SeriesMatchType.Alias);
+                 }
+ 
+-                series = _seriesService.FindByTvdbId(sceneMapping.TvdbId);
++                series = _authorService.FindByTvdbId(sceneMapping.TvdbId);
+ 
+                 if (series == null)
+                 {
+@@ -432,7 +432,7 @@ private FindSeriesResult FindSeries(ParsedEpisodeInfo parsedEpisodeInfo, int tvd
+             }
+ 
+             var matchType = SeriesMatchType.Unknown;
+-            series = _seriesService.FindByTitle(parsedEpisodeInfo.SeriesTitle);
++            series = _authorService.FindByTitle(parsedEpisodeInfo.SeriesTitle);
+ 
+             if (series != null)
+             {
+@@ -447,13 +447,13 @@ private FindSeriesResult FindSeries(ParsedEpisodeInfo parsedEpisodeInfo, int tvd
+ 
+             if (series == null && parsedEpisodeInfo.SeriesTitleInfo.Year > 0)
+             {
+-                series = _seriesService.FindByTitle(parsedEpisodeInfo.SeriesTitleInfo.TitleWithoutYear, parsedEpisodeInfo.SeriesTitleInfo.Year);
++                series = _authorService.FindByTitle(parsedEpisodeInfo.SeriesTitleInfo.TitleWithoutYear, parsedEpisodeInfo.SeriesTitleInfo.Year);
+                 matchType = SeriesMatchType.Title;
+             }
+ 
+             if (series == null && tvdbId > 0)
+             {
+-                series = _seriesService.FindByTvdbId(tvdbId);
++                series = _authorService.FindByTvdbId(tvdbId);
+ 
+                 if (series != null)
+                 {
+@@ -470,7 +470,7 @@ private FindSeriesResult FindSeries(ParsedEpisodeInfo parsedEpisodeInfo, int tvd
+ 
+             if (series == null && tvRageId > 0 && tvdbId <= 0)
+             {
+-                series = _seriesService.FindByTvRageId(tvRageId);
++                series = _authorService.FindByTvRageId(tvRageId);
+ 
+                 if (series != null)
+                 {
+@@ -487,7 +487,7 @@ private FindSeriesResult FindSeries(ParsedEpisodeInfo parsedEpisodeInfo, int tvd
+ 
+             if (series == null && imdbId.IsNotNullOrWhiteSpace() && tvdbId <= 0)
+             {
+-                series = _seriesService.FindByImdbId(imdbId);
++                series = _authorService.FindByImdbId(imdbId);
+ 
+                 if (series != null)
+                 {
+@@ -523,7 +523,7 @@ private Episode GetDailyEpisode(Series series, string airDate, int? part, Search
+ 
+             if (episodeInfo == null)
+             {
+-                episodeInfo = _episodeService.FindEpisode(series.Id, airDate, part);
++                episodeInfo = _editionService.FindEpisode(series.Id, airDate, part);
+             }
+ 
+             return episodeInfo;
+@@ -541,7 +541,7 @@ private List<Episode> GetAnimeEpisodes(Series series, ParsedEpisodeInfo parsedEp
+ 
+                 if (parsedEpisodeInfo.Special)
+                 {
+-                    var episode = _episodeService.FindEpisode(series.Id, 0, absoluteEpisodeNumber);
++                    var episode = _editionService.FindEpisode(series.Id, 0, absoluteEpisodeNumber);
+                     episodes.AddIfNotNull(episode);
+                 }
+                 else if (sceneSource)
+@@ -551,27 +551,27 @@ private List<Episode> GetAnimeEpisodes(Series series, ParsedEpisodeInfo parsedEp
+                     // If this needs to be reverted tests will need to be added
+                     if (sceneSeasonNumber.HasValue)
+                     {
+-                        episodes = _episodeService.FindEpisodesBySceneNumbering(series.Id, sceneSeasonNumber.Value, absoluteEpisodeNumber);
++                        episodes = _editionService.FindEpisodesBySceneNumbering(series.Id, sceneSeasonNumber.Value, absoluteEpisodeNumber);
+ 
+                         if (episodes.Empty())
+                         {
+-                            var episode = _episodeService.FindEpisode(series.Id, sceneSeasonNumber.Value, absoluteEpisodeNumber);
++                            var episode = _editionService.FindEpisode(series.Id, sceneSeasonNumber.Value, absoluteEpisodeNumber);
+                             episodes.AddIfNotNull(episode);
+                         }
+                     }
+                     else if (parsedEpisodeInfo.SeasonNumber > 1 && parsedEpisodeInfo.EpisodeNumbers.Empty())
+                     {
+-                        episodes = _episodeService.FindEpisodesBySceneNumbering(series.Id, parsedEpisodeInfo.SeasonNumber, absoluteEpisodeNumber);
++                        episodes = _editionService.FindEpisodesBySceneNumbering(series.Id, parsedEpisodeInfo.SeasonNumber, absoluteEpisodeNumber);
+ 
+                         if (episodes.Empty())
+                         {
+-                            var episode = _episodeService.FindEpisode(series.Id, parsedEpisodeInfo.SeasonNumber, absoluteEpisodeNumber);
++                            var episode = _editionService.FindEpisode(series.Id, parsedEpisodeInfo.SeasonNumber, absoluteEpisodeNumber);
+                             episodes.AddIfNotNull(episode);
+                         }
+                     }
+                     else
+                     {
+-                        episodes = _episodeService.FindEpisodesBySceneNumbering(series.Id, absoluteEpisodeNumber);
++                        episodes = _editionService.FindEpisodesBySceneNumbering(series.Id, absoluteEpisodeNumber);
+ 
+                         // Don't allow multiple results without a scene name mapping.
+                         if (episodes.Count > 1)
+@@ -583,7 +583,7 @@ private List<Episode> GetAnimeEpisodes(Series series, ParsedEpisodeInfo parsedEp
+ 
+                 if (episodes.Empty())
+                 {
+-                    var episode = _episodeService.FindEpisode(series.Id, absoluteEpisodeNumber);
++                    var episode = _editionService.FindEpisode(series.Id, absoluteEpisodeNumber);
+                     episodes.AddIfNotNull(episode);
+                 }
+ 
+@@ -625,7 +625,7 @@ private List<Episode> GetStandardEpisodes(Series series, ParsedEpisodeInfo parse
+ 
+                     if (!episodes.Any())
+                     {
+-                        episodes = _episodeService.FindEpisodesBySceneNumbering(series.Id, mappedSeasonNumber, episodeNumber);
++                        episodes = _editionService.FindEpisodesBySceneNumbering(series.Id, mappedSeasonNumber, episodeNumber);
+                     }
+ 
+                     if (episodes != null && episodes.Any())
+@@ -650,7 +650,7 @@ private List<Episode> GetStandardEpisodes(Series series, ParsedEpisodeInfo parse
+ 
+                 if (episodeInfo == null)
+                 {
+-                    episodeInfo = _episodeService.FindEpisode(series.Id, mappedSeasonNumber, episodeNumber);
++                    episodeInfo = _editionService.FindEpisode(series.Id, mappedSeasonNumber, episodeNumber);
+                 }
+ 
+                 if (episodeInfo != null)
+diff --git a/src/NzbDrone.Core/Profiles/Qualities/QualityProfileService.cs b/src/NzbDrone.Core/Profiles/Qualities/QualityProfileService.cs
+index 0df442393..7a105d27d 100644
+--- a/src/NzbDrone.Core/Profiles/Qualities/QualityProfileService.cs
++++ b/src/NzbDrone.Core/Profiles/Qualities/QualityProfileService.cs
+@@ -32,19 +32,19 @@ public class QualityProfileService : IQualityProfileService,
+         private readonly IQualityProfileRepository _qualityProfileRepository;
+         private readonly IImportListFactory _importListFactory;
+         private readonly ICustomFormatService _formatService;
+-        private readonly ISeriesService _seriesService;
++        private readonly IAuthorService _authorService;
+         private readonly Logger _logger;
+ 
+         public QualityProfileService(IQualityProfileRepository qualityProfileRepository,
+                                      IImportListFactory importListFactory,
+                                      ICustomFormatService formatService,
+-                                     ISeriesService seriesService,
++                                     IAuthorService authorService,
+                                      Logger logger)
+         {
+             _qualityProfileRepository = qualityProfileRepository;
+             _importListFactory = importListFactory;
+             _formatService = formatService;
+-            _seriesService = seriesService;
++            _authorService = authorService;
+             _logger = logger;
+         }
+ 
+@@ -60,7 +60,7 @@ public void Update(QualityProfile profile)
+ 
+         public void Delete(int id)
+         {
+-            if (_seriesService.GetAllSeries().Any(c => c.QualityProfileId == id) || _importListFactory.All().Any(c => c.QualityProfileId == id))
++            if (_authorService.GetAllSeries().Any(c => c.QualityProfileId == id) || _importListFactory.All().Any(c => c.QualityProfileId == id))
+             {
+                 var profile = _qualityProfileRepository.Get(id);
+                 throw new QualityProfileInUseException(profile.Name);
+diff --git a/src/NzbDrone.Core/Tags/TagService.cs b/src/NzbDrone.Core/Tags/TagService.cs
+index fb9d6712d..b63721b00 100644
+--- a/src/NzbDrone.Core/Tags/TagService.cs
++++ b/src/NzbDrone.Core/Tags/TagService.cs
+@@ -35,7 +35,7 @@ public class TagService : ITagService
+         private readonly IImportListFactory _importListFactory;
+         private readonly INotificationFactory _notificationFactory;
+         private readonly IReleaseProfileService _releaseProfileService;
+-        private readonly ISeriesService _seriesService;
++        private readonly IAuthorService _authorService;
+         private readonly IIndexerFactory _indexerService;
+         private readonly IAutoTaggingService _autoTaggingService;
+         private readonly IDownloadClientFactory _downloadClientFactory;
+@@ -46,7 +46,7 @@ public TagService(ITagRepository repo,
+                           IImportListFactory importListFactory,
+                           INotificationFactory notificationFactory,
+                           IReleaseProfileService releaseProfileService,
+-                          ISeriesService seriesService,
++                          IAuthorService authorService,
+                           IIndexerFactory indexerService,
+                           IAutoTaggingService autoTaggingService,
+                           IDownloadClientFactory downloadClientFactory)
+@@ -57,7 +57,7 @@ public TagService(ITagRepository repo,
+             _importListFactory = importListFactory;
+             _notificationFactory = notificationFactory;
+             _releaseProfileService = releaseProfileService;
+-            _seriesService = seriesService;
++            _authorService = authorService;
+             _indexerService = indexerService;
+             _autoTaggingService = autoTaggingService;
+             _downloadClientFactory = downloadClientFactory;
+@@ -92,7 +92,7 @@ public TagDetails Details(int tagId)
+             var importLists = _importListFactory.AllForTag(tagId);
+             var notifications = _notificationFactory.AllForTag(tagId);
+             var restrictions = _releaseProfileService.AllForTag(tagId);
+-            var series = _seriesService.AllForTag(tagId);
++            var series = _authorService.AllForTag(tagId);
+             var indexers = _indexerService.AllForTag(tagId);
+             var autoTags = _autoTaggingService.AllForTag(tagId);
+             var downloadClients = _downloadClientFactory.AllForTag(tagId);
+@@ -119,7 +119,7 @@ public List<TagDetails> Details()
+             var importLists = _importListFactory.All();
+             var notifications = _notificationFactory.All();
+             var restrictions = _releaseProfileService.All();
+-            var series = _seriesService.GetAllSeriesTags();
++            var series = _authorService.GetAllSeriesTags();
+             var indexers = _indexerService.All();
+             var autoTags = _autoTaggingService.All();
+             var downloadClients = _downloadClientFactory.All();
+-- 
+2.48.1
+
