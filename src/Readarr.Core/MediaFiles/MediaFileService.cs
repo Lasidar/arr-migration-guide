@@ -76,10 +76,9 @@ namespace Readarr.Core.MediaFiles
             return _mediaFileRepository.GetFilesWithoutMediaInfo();
         }
 
-        public List<string> FilterExistingFiles(List<string> files, Series series)
+        public List<string> FilterExistingFiles(List<string> files, Tv.Series series)
         {
             var seriesFiles = GetFilesBySeries(series.Id);
-
             return FilterExistingFiles(files, seriesFiles, series);
         }
 
@@ -96,11 +95,6 @@ namespace Readarr.Core.MediaFiles
         public List<EpisodeFile> GetFilesWithRelativePath(int seriesId, string relativePath)
         {
             return _mediaFileRepository.GetFilesWithRelativePath(seriesId, relativePath);
-        }
-
-        public void Update(EpisodeFile episodeFile)
-        {
-            _mediaFileRepository.Update(episodeFile);
         }
 
         public void HandleAsync(SeriesDeletedEvent message)
@@ -149,6 +143,12 @@ namespace Readarr.Core.MediaFiles
         public void UpdateMediaInfo(List<BookFile> bookFiles)
         {
             // TODO: Implement update media info
+            throw new NotImplementedException();
+        }
+
+        public void Update(BookFile bookFile)
+        {
+            // TODO: Implement book file update
             throw new NotImplementedException();
         }
 

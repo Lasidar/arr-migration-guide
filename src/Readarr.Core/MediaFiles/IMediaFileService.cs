@@ -22,6 +22,6 @@ namespace Readarr.Core.MediaFiles
         void Update(EpisodeFile episodeFile);
         void Update(BookFile bookFile);
         List<EpisodeFile> GetFilesWithRelativePath(int seriesId, string relativePath);
-        List<string> FilterExistingFiles(List<string> files, Series series);
+        List<string> FilterExistingFiles(List<string> files, Tv.Series series);
     }
 }
