@@ -5,57 +5,49 @@ using NLog;
 using Readarr.Common.Extensions;
 using Readarr.Common.Instrumentation.Extensions;
 using Readarr.Common.Serializer;
-using Readarr.Core.CustomFormats;
-using Readarr.Core.DataAugmentation.Scene;
+using Readarr.Core.Configuration;
 using Readarr.Core.DecisionEngine.Specifications;
-using Readarr.Core.Download.Aggregation;
 using Readarr.Core.IndexerSearch.Definitions;
 using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
 
 namespace Readarr.Core.DecisionEngine
 {
-    public interface IMakeDownloadDecision
+    public interface IDownloadDecisionMaker
     {
-        List<DownloadDecision> GetRssDecision(List<ReleaseInfo> reports, bool pushedRelease = false);
+        List<DownloadDecision> GetRssDecision(List<ReleaseInfo> reports);
         List<DownloadDecision> GetSearchDecision(List<ReleaseInfo> reports, SearchCriteriaBase searchCriteriaBase);
     }
 
-    public class DownloadDecisionMaker : IMakeDownloadDecision
+    public class DownloadDecisionMaker : IDownloadDecisionMaker
     {
-        private readonly IEnumerable<IDownloadDecisionEngineSpecification> _specifications;
+        private readonly IEnumerable<IDecisionEngineSpecification> _specifications;
         private readonly IParsingService _parsingService;
-        private readonly ICustomFormatCalculationService _formatCalculator;
-        private readonly IRemoteEpisodeAggregationService _aggregationService;
-        private readonly ISceneMappingService _sceneMappingService;
+        private readonly IConfigService _configService;
         private readonly Logger _logger;
 
-        public DownloadDecisionMaker(IEnumerable<IDownloadDecisionEngineSpecification> specifications,
-                                     IParsingService parsingService,
-                                     ICustomFormatCalculationService formatService,
-                                     IRemoteEpisodeAggregationService aggregationService,
-                                     ISceneMappingService sceneMappingService,
-                                     Logger logger)
+        public DownloadDecisionMaker(IEnumerable<IDecisionEngineSpecification> specifications,
+                                    IParsingService parsingService,
+                                    IConfigService configService,
+                                    Logger logger)
         {
             _specifications = specifications;
             _parsingService = parsingService;
-            _formatCalculator = formatService;
-            _aggregationService = aggregationService;
-            _sceneMappingService = sceneMappingService;
+            _configService = configService;
             _logger = logger;
         }
 
-        public List<DownloadDecision> GetRssDecision(List<ReleaseInfo> reports, bool pushedRelease = false)
+        public List<DownloadDecision> GetRssDecision(List<ReleaseInfo> reports)
         {
-            return GetDecisions(reports, pushedRelease).ToList();
+            return GetDecisions(reports).ToList();
         }
 
         public List<DownloadDecision> GetSearchDecision(List<ReleaseInfo> reports, SearchCriteriaBase searchCriteriaBase)
         {
-            return GetDecisions(reports, false, searchCriteriaBase).ToList();
+            return GetDecisions(reports, searchCriteriaBase).ToList();
         }
 
-        private IEnumerable<DownloadDecision> GetDecisions(List<ReleaseInfo> reports, bool pushedRelease, SearchCriteriaBase searchCriteria = null)
+        private IEnumerable<DownloadDecision> GetDecisions(List<ReleaseInfo> reports, SearchCriteriaBase searchCriteria = null)
         {
             if (reports.Any())
             {
@@ -76,100 +68,94 @@ namespace Readarr.Core.DecisionEngine
 
                 try
                 {
-                    var parsedEpisodeInfo = Parser.Parser.ParseTitle(report.Title);
+                    var parsedBookInfo = Parser.Parser.ParseBookTitle(report.Title);
 
-                    if (parsedEpisodeInfo == null || parsedEpisodeInfo.IsPossibleSpecialEpisode)
+                    if (parsedBookInfo == null || parsedBookInfo.BookTitle.IsNullOrWhiteSpace())
                     {
-                        var specialEpisodeInfo = _parsingService.ParseSpecialEpisodeTitle(parsedEpisodeInfo, report.Title, report.TvdbId, report.TvRageId, report.ImdbId, searchCriteria);
-
-                        if (specialEpisodeInfo != null)
+                        _logger.Debug("Unable to parse release title");
+                        parsedBookInfo = new BookInfo
                         {
-                            parsedEpisodeInfo = specialEpisodeInfo;
-                        }
+                            BookTitle = report.Title
+                        };
                     }
 
-                    if (parsedEpisodeInfo != null && !parsedEpisodeInfo.SeriesTitle.IsNullOrWhiteSpace())
+                    var remoteBook = _parsingService.Map(parsedBookInfo, searchCriteria);
+
+                    // Ensure that the parsed book title matches
+                    if (remoteBook.Author == null)
                     {
-                        var remoteEpisode = _parsingService.Map(parsedEpisodeInfo, report.TvdbId, report.TvRageId, report.ImdbId, searchCriteria);
-                        remoteEpisode.Release = report;
-                        remoteEpisode.ReleaseSource = GetReleaseSource(pushedRelease, searchCriteria);
+                        _logger.Debug("Couldn't find author in {0}", report.Title);
+                        
+                        decision = new DownloadDecision(remoteBook, new Rejection("Unknown Author"));
+                    }
+                    else if (remoteBook.Books.Empty())
+                    {
+                        _logger.Debug("Couldn't find book in {0}", report.Title);
+                        
+                        decision = new DownloadDecision(remoteBook, new Rejection("Unknown Book"));
+                    }
+                    else
+                    {
+                        remoteBook.Release = report;
 
-                        if (remoteEpisode.Series == null)
+                        if (remoteBook.Author == null)
                         {
-                            var matchingTvdbId = _sceneMappingService.FindTvdbId(parsedEpisodeInfo.SeriesTitle, parsedEpisodeInfo.ReleaseTitle, parsedEpisodeInfo.SeasonNumber);
-
-                            if (matchingTvdbId.HasValue)
-                            {
-                                decision = new DownloadDecision(remoteEpisode, new DownloadRejection(DownloadRejectionReason.MatchesAnotherSeries, $"{parsedEpisodeInfo.SeriesTitle} matches an alias for series with TVDB ID: {matchingTvdbId}"));
-                            }
-                            else
-                            {
-                                decision = new DownloadDecision(remoteEpisode, new DownloadRejection(DownloadRejectionReason.UnknownSeries, "Unknown Series"));
-                            }
-                        }
-                        else if (remoteEpisode.Episodes.Empty())
-                        {
-                            decision = new DownloadDecision(remoteEpisode, new DownloadRejection(DownloadRejectionReason.UnknownEpisode, "Unable to identify correct episode(s) using release name and scene mappings"));
+                            decision = GetDecisionForReport(remoteBook, searchCriteria);
                         }
                         else
                         {
-                            _aggregationService.Augment(remoteEpisode);
-
-                            remoteEpisode.CustomFormats = _formatCalculator.ParseCustomFormat(remoteEpisode, remoteEpisode.Release.Size);
-                            remoteEpisode.CustomFormatScore = remoteEpisode?.Series?.QualityProfile?.Value.CalculateCustomFormatScore(remoteEpisode.CustomFormats) ?? 0;
-
-                            _logger.Trace("Custom Format Score of '{0}' [{1}] calculated for '{2}'", remoteEpisode.CustomFormatScore, remoteEpisode.CustomFormats?.ConcatToString(), report.Title);
-
-                            remoteEpisode.DownloadAllowed = remoteEpisode.Episodes.Any();
-                            decision = GetDecisionForReport(remoteEpisode, new ReleaseDecisionInformation(pushedRelease, searchCriteria));
-                        }
-                    }
-
-                    if (searchCriteria != null)
-                    {
-                        if (parsedEpisodeInfo == null)
-                        {
-                            parsedEpisodeInfo = new ParsedEpisodeInfo
+                            // Check if any book matches the search criteria
+                            if (searchCriteria != null)
                             {
-                                Languages = LanguageParser.ParseLanguages(report.Title),
-                                Quality = QualityParser.ParseQuality(report.Title)
-                            };
-                        }
+                                if (!MatchesSearchCriteria(remoteBook, searchCriteria))
+                                {
+                                    decision = new DownloadDecision(remoteBook, new Rejection("Book does not match search criteria"));
+                                }
+                            }
 
-                        if (parsedEpisodeInfo.SeriesTitle.IsNullOrWhiteSpace())
-                        {
-                            var remoteEpisode = new RemoteEpisode
+                            if (decision == null)
                             {
-                                Release = report,
-                                ReleaseSource = GetReleaseSource(pushedRelease, searchCriteria),
-                                ParsedEpisodeInfo = parsedEpisodeInfo,
-                                Languages = parsedEpisodeInfo.Languages,
-                            };
-
-                            decision = new DownloadDecision(remoteEpisode, new DownloadRejection(DownloadRejectionReason.UnableToParse, "Unable to parse release"));
+                                decision = GetDecisionForReport(remoteBook, searchCriteria);
+                            }
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    _logger.Error(e, "Couldn't process release.");
+                    _logger.Error(e, "Couldn't process release {0}", report.Title);
 
-                    var remoteEpisode = new RemoteEpisode { Release = report, ReleaseSource = GetReleaseSource(pushedRelease, searchCriteria) };
-
-                    decision = new DownloadDecision(remoteEpisode, new DownloadRejection(DownloadRejectionReason.Error, "Unexpected error processing release"));
+                    var remoteBook = new RemoteBook { Release = report };
+                    decision = new DownloadDecision(remoteBook, new Rejection("Unexpected error processing release"));
                 }
 
                 reportNumber++;
 
                 if (decision != null)
                 {
+                    var source = report.Indexer;
+                    
+                    if (searchCriteria != null)
+                    {
+                        if (searchCriteria.InteractiveSearch)
+                        {
+                            source = "Interactive Search";
+                        }
+                        else if (searchCriteria.UserInvokedSearch)
+                        {
+                            source = "User Search";
+                        }
+                    }
+
                     if (decision.Rejections.Any())
                     {
-                        _logger.Debug("Release '{0}' from '{1}' rejected for the following reasons: {2}", report.Title, report.Indexer, string.Join(", ", decision.Rejections));
+                        _logger.Debug("Release '{0}' from '{1}' rejected for the following reasons: {2}",
+                            report.Title,
+                            source,
+                            string.Join(", ", decision.Rejections));
                     }
                     else
                     {
-                        _logger.Debug("Release '{0}' from '{1}' accepted", report.Title, report.Indexer);
+                        _logger.Debug("Release '{0}' from '{1}' accepted", report.Title, source);
                     }
 
                     yield return decision;
@@ -177,66 +163,61 @@ namespace Readarr.Core.DecisionEngine
             }
         }
 
-        private DownloadDecision GetDecisionForReport(RemoteEpisode remoteEpisode, ReleaseDecisionInformation information)
+        private DownloadDecision GetDecisionForReport(RemoteBook remoteBook, SearchCriteriaBase searchCriteria = null)
         {
-            var reasons = Array.Empty<DownloadRejection>();
+            var reasons = new Rejection[0];
 
-            foreach (var specifications in _specifications.GroupBy(v => v.Priority).OrderBy(v => v.Key))
+            foreach (var specification in _specifications)
             {
-                reasons = specifications.Select(c => EvaluateSpec(c, remoteEpisode, information))
-                                        .Where(c => c != null)
-                                        .ToArray();
-
-                if (reasons.Any())
+                try
                 {
-                    break;
+                    var result = specification.IsSatisfiedBy(remoteBook, searchCriteria);
+
+                    if (!result.Accepted)
+                    {
+                        reasons = reasons.Union(result.Rejections).ToArray();
+                    }
+                }
+                catch (NotImplementedException)
+                {
+                    _logger.Trace("Spec {0} not implemented", specification.GetType().Name);
+                }
+                catch (Exception e)
+                {
+                    e.Data.Add("report", remoteBook.Release.ToJson());
+                    e.Data.Add("parsed", remoteBook.ParsedBookInfo.ToJson());
+                    _logger.Error(e, "Couldn't evaluate decision on '{0}'", remoteBook.Release.Title);
+                    return new DownloadDecision(remoteBook, new Rejection($"{specification.GetType().Name}: {e.Message}"));
                 }
             }
 
-            return new DownloadDecision(remoteEpisode, reasons.ToArray());
+            return new DownloadDecision(remoteBook, reasons.ToArray());
         }
 
-        private DownloadRejection EvaluateSpec(IDownloadDecisionEngineSpecification spec, RemoteEpisode remoteEpisode, ReleaseDecisionInformation information)
+        private bool MatchesSearchCriteria(RemoteBook remoteBook, SearchCriteriaBase searchCriteria)
         {
-            try
+            if (searchCriteria is BookSearchCriteria bookSearch)
             {
-                var result = spec.IsSatisfiedBy(remoteEpisode, information);
-
-                if (!result.Accepted)
+                if (bookSearch.Author != null && remoteBook.Author.Id != bookSearch.Author.Id)
                 {
-                    return new DownloadRejection(result.Reason, result.Message, spec.Type);
+                    return false;
+                }
+
+                if (bookSearch.Books.Any() && !remoteBook.Books.Any(b => bookSearch.Books.Any(sb => sb.Id == b.Id)))
+                {
+                    return false;
                 }
             }
-            catch (Exception e)
+            else if (searchCriteria is AuthorSearchCriteria authorSearch)
             {
-                e.Data.Add("report", remoteEpisode.Release.ToJson());
-                e.Data.Add("parsed", remoteEpisode.ParsedEpisodeInfo.ToJson());
-                _logger.Error(e, "Couldn't evaluate decision on {0}", remoteEpisode.Release.Title);
-                return new DownloadRejection(DownloadRejectionReason.DecisionError, $"{spec.GetType().Name}: {e.Message}");
+                if (authorSearch.AuthorName.IsNotNullOrWhiteSpace() && 
+                    !remoteBook.Author.Name.ContainsIgnoreCase(authorSearch.AuthorName))
+                {
+                    return false;
+                }
             }
 
-            return null;
-        }
-
-        private ReleaseSourceType GetReleaseSource(bool pushedRelease, SearchCriteriaBase searchCriteria = null)
-        {
-            if (searchCriteria == null)
-            {
-                return pushedRelease ? ReleaseSourceType.ReleasePush : ReleaseSourceType.Rss;
-            }
-
-            if (searchCriteria.InteractiveSearch)
-            {
-                return ReleaseSourceType.InteractiveSearch;
-            }
-            else if (searchCriteria.UserInvokedSearch)
-            {
-                return ReleaseSourceType.UserInvokedSearch;
-            }
-            else
-            {
-                return ReleaseSourceType.Search;
-            }
+            return true;
         }
     }
 }

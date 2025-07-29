@@ -6,53 +6,56 @@ using Readarr.Core.ThingiProvider;
 
 namespace Readarr.Core.Download
 {
-    [DebuggerDisplay("{DownloadClientInfo?.Name}:{Title}")]
     public class DownloadClientItem
     {
-        public DownloadClientItemClientInfo DownloadClientInfo { get; set; }
         public string DownloadId { get; set; }
-        public string Category { get; set; }
         public string Title { get; set; }
         public long TotalSize { get; set; }
         public long RemainingSize { get; set; }
         public TimeSpan? RemainingTime { get; set; }
-        public double? SeedRatio { get; set; }
-        public OsPath OutputPath { get; set; }
-        public string Message { get; set; }
+        public DateTime? CompletedTime { get; set; }
+        public string OutputPath { get; set; }
+        public string Category { get; set; }
         public DownloadItemStatus Status { get; set; }
         public bool IsEncrypted { get; set; }
         public bool CanMoveFiles { get; set; }
         public bool CanBeRemoved { get; set; }
         public bool Removed { get; set; }
 
-        public DownloadClientItem Clone()
-        {
-            return MemberwiseClone() as DownloadClientItem;
-        }
+        public DownloadClientInfo DownloadClientInfo { get; set; }
     }
 
-    public class DownloadClientItemClientInfo
+    public class DownloadClientInfo
     {
         public DownloadProtocol Protocol { get; set; }
         public string Type { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
-        public bool RemoveCompletedDownloads { get; set; }
-        public bool HasPostImportCategory { get; set; }
+    }
 
-        public static DownloadClientItemClientInfo FromDownloadClient<TSettings>(
-            DownloadClientBase<TSettings> downloadClient, bool hasPostImportCategory)
-            where TSettings : IProviderConfig, new()
-        {
-            return new DownloadClientItemClientInfo
-            {
-                Protocol = downloadClient.Protocol,
-                Type = downloadClient.Name,
-                Id = downloadClient.Definition.Id,
-                Name = downloadClient.Definition.Name,
-                RemoveCompletedDownloads = downloadClient.Definition is DownloadClientDefinition { RemoveCompletedDownloads: true },
-                HasPostImportCategory = hasPostImportCategory
-            };
-        }
+    public enum DownloadItemStatus
+    {
+        Queued,
+        Paused,
+        Downloading,
+        Completed,
+        Failed,
+        Warning,
+        Removed
+    }
+
+    public enum DownloadProtocol
+    {
+        Unknown = 0,
+        Usenet = 1,
+        Torrent = 2
+    }
+
+    public enum DownloadClientType
+    {
+        Usenet,
+        Torrent,
+        Pneumatic,
+        Other
     }
 }

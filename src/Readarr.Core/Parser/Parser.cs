@@ -108,7 +108,7 @@ namespace Readarr.Core.Parser
                           RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Anime - [SubGroup] Title Absolute Episode Number + Season+Episode
-                new Regex(@"^(?:\[(?<subgroup>.+?)\](?:_|-|\s|\.)?)(?<title>.+?)(?:(?:[-_\W](?<![()\[!]))+(?<absoluteepisode>\d{2,3}(\.\d{1,2})?))+(?:_|-|\s|\.)+(?:S?(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:(?:\-|[ex]|\W[ex]){1,2}(?<episode>\d{2}(?!\d+)))+).*?(?<hash>[(\[]\w{8}[)\]])?(?:$|\.)",
+                new Regex(@"^(?:\[(?<subgroup>.+?)\](?:_|-|\s|\.)?)(?<title>.+?)(?:(?:[-_\W](?<![()\[!]))+(?<absoluteepisode>\d{2,3}(\.\d{1,2})?))+(?:_|-|\s|\.)+(?:S?(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:(?:\-|[ex]|\W[ex]){1,2}(?<episode>\d{2}(?!\d+)))+).*?(?<hash>[(\[]\w{8}[)\]])?(?: $|\.)",
                           RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Anime - [SubGroup] Title Season+Episode + Absolute Episode Number
@@ -116,39 +116,39 @@ namespace Readarr.Core.Parser
                           RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Anime - [SubGroup] Title with trailing number Absolute Episode Number - Batch separated with tilde
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>.+?[^-]+?)(?:(?<![-_. ]|\b[0]\d+) - )[-_. ]?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+))\s?~\s?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+))(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?:$|\.mkv)",
+                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>.+?[^-]+?)(?:(?<![-_. ]|\b[0]\d+) - )[-_. ]?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+))\s?~\s?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+))(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?: $|\.mkv)",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Anime - [SubGroup] Title with season number in brackets Absolute Episode Number
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>[^-]+?)[_. ]+?\(Season[_. ](?<season>\d+)\)[-_. ]+?(?:[-_. ]?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+)))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?:$|\.mkv)",
+                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>[^-]+?)[_. ]+?\(Season[_. ](?<season>\d+)\)[-_. ]+?(?:[-_. ]?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+)))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?: $|\.mkv)",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Anime - [SubGroup] Title with trailing 3-digit number and sub title - Absolute Episode Number
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>[^]]+?)(?:[-_. ]{3}?(?<absoluteepisode>\d{2}(\.\d{1,2})?(?!-?\d+|-[a-z]+)))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?:$|\.mkv)",
+                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>[^]]+?)(?:[-_. ]{3}?(?<absoluteepisode>\d{2}(\.\d{1,2})?(?!-?\d+|-[a-z]+)))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?: $|\.mkv)",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Anime - [SubGroup] Title with trailing number Absolute Episode Number
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>[^-]+?)(?:(?<![-_. ]|\b[0]\d+) - )(?:[-_. ]?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+)))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?:$|\.mkv)",
+                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>[^-]+?)(?:(?<![-_. ]|\b[0]\d+) - )(?:[-_. ]?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+)))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?: $|\.mkv)",
                           RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Anime - [SubGroup] Title with trailing number S## (Full season)
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>.+?)[-_. ]+(?:S(?<season>(?<!\d+)(?:\d{1,2}|\d{4})(?![ex]?\d+))).+?(?:$|\.mkv)",
+                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>.+?)[-_. ]+(?:S(?<season>(?<!\d+)(?:\d{1,2}|\d{4})(?![ex]?\d+))).+?(?: $|\.mkv)",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Anime - [SubGroup] Title with trailing number Absolute Episode Number
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>[^-]+?)(?:(?<![-_. ]|\b[0]\d+)[_ ]+)(?:[-_. ]?(?<absoluteepisode>\d{3}(\.\d{1,2})?(?!\d+|-[a-z]+)))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?:$|\.mkv)",
+                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>[^-]+?)(?:(?<![-_. ]|\b[0]\d+)[_ ]+)(?:[-_. ]?(?<absoluteepisode>\d{3}(\.\d{1,2})?(?!\d+|-[a-z]+)))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?: $|\.mkv)",
                           RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Anime - [SubGroup] Title - Absolute Episode Number
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>.+?)(?:(?<!\b[0]\d+))(?:[. ]-[. ](?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+|[-])))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?:$|\.mkv)",
+                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>.+?)(?:(?<!\b[0]\d+))(?:[. ]-[. ](?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+|[-])))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?: $|\.mkv)",
                           RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Anime - [SubGroup] Title Absolute Episode Number - Absolute Episode Number (batches without full separator between title and absolute episode numbers)
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>.+?)(?:(?<!\b[0]\d+))(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+|[-]))[. ]-[. ](?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+|[-]))(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?:$|\.mkv)",
+                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>.+?)(?:(?<!\b[0]\d+))(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+|[-]))[. ]-[. ](?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+|[-]))(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?: $|\.mkv)",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Anime - [SubGroup] Title Absolute Episode Number
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>.+?)[-_. ]+\(?(?:[-_. ]?#?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+|-[a-z]+)))+\)?(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?:$|\.mkv)",
+                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>.+?)[-_. ]+\(?(?:[-_. ]?#?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+|-[a-z]+)))+\)?(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])?(?: $|\.mkv)",
                           RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Multi-episode Repeated (S01E05 - S01E06)
@@ -168,7 +168,7 @@ namespace Readarr.Core.Parser
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Anime - Title Season EpisodeNumber + Absolute Episode Number [SubGroup]
-                new Regex(@"^(?<title>.+?)(?:[-_\W](?<![()\[!]))+(?:S?(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:(?:[ex]|\W[ex]|-){1,2}(?<episode>(?<!\d+)\d{2}(?!\d+)))+)[-_. (]+?(?:[-_. ]?(?<absoluteepisode>(?<!\d+)\d{3}(\.\d{1,2})?(?!\d+|[pi])))+.+?\[(?<subgroup>.+?)\](?:$|\.mkv)",
+                new Regex(@"^(?<title>.+?)(?:[-_\W](?<![()\[!]))+(?:S?(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:(?:[ex]|\W[ex]|-){1,2}(?<episode>(?<!\d+)\d{2}(?!\d+)))+)[-_. (]+?(?:[-_. ]?(?<absoluteepisode>(?<!\d+)\d{3}(\.\d{1,2})?(?!\d+|[pi])))+.+?\[(?<subgroup>.+?)\](?: $|\.mkv)",
                           RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Multi-Episode with a title (S01E05E06, S01E05-06, S01E05 E06, etc) and trailing info in slashes
@@ -188,7 +188,7 @@ namespace Readarr.Core.Parser
                             RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Anime - Title with trailing number, Absolute Episode Number and hash
-                new Regex(@"^(?<title>[^-]+?)(?:(?<![-_. ]|\b[0]\d+) - )(?:[-_. ]?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+)))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])(?:$|\.mkv)",
+                new Regex(@"^(?<title>[^-]+?)(?:(?<![-_. ]|\b[0]\d+) - )(?:[-_. ]?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+)))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>[(\[]\w{8}[)\]])(?: $|\.mkv)",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Anime - Title Absolute Episode Number [Hash]
@@ -932,6 +932,66 @@ namespace Readarr.Core.Parser
             }
 
             return null;
+        }
+
+        public static BookInfo ParseBookTitle(string title)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(title))
+                {
+                    return null;
+                }
+
+                Logger.Debug("Parsing book title: {0}", title);
+
+                // Try to parse as a book release
+                var bookInfo = new BookInfo
+                {
+                    ReleaseTitle = title
+                };
+
+                // Extract author and book title using common patterns
+                // Pattern: Author - Book Title
+                var authorBookMatch = Regex.Match(title, @"^(?<author>[^-]+?)\s*-\s*(?<book>[^(\[]+)", RegexOptions.IgnoreCase);
+                if (authorBookMatch.Success)
+                {
+                    bookInfo.AuthorName = authorBookMatch.Groups["author"].Value.Trim();
+                    bookInfo.BookTitle = authorBookMatch.Groups["book"].Value.Trim();
+                }
+                else
+                {
+                    // If no author separator found, use the whole title as book title
+                    bookInfo.BookTitle = title;
+                }
+
+                // Extract format
+                var formatMatch = Regex.Match(title, @"\[(?<format>epub|mobi|azw3?|pdf|djvu|fb2)\]", RegexOptions.IgnoreCase);
+                if (formatMatch.Success)
+                {
+                    bookInfo.BookFormat = formatMatch.Groups["format"].Value.ToUpperInvariant();
+                }
+
+                // Extract year
+                var yearMatch = Regex.Match(title, @"[\(\[]?(?<year>19\d{2}|20\d{2})[\)\]]?", RegexOptions.IgnoreCase);
+                if (yearMatch.Success && int.TryParse(yearMatch.Groups["year"].Value, out var year))
+                {
+                    bookInfo.Year = year;
+                }
+
+                // Extract quality
+                bookInfo.Quality = QualityParser.ParseQuality(title);
+
+                // Extract release group
+                bookInfo.ReleaseGroup = ParseReleaseGroup(title);
+
+                return bookInfo;
+            }
+            catch (Exception ex)
+            {
+                Logger.Debug(ex, "Failed to parse book title: {0}", title);
+                return null;
+            }
         }
 
         public static string ParseReleaseGroup(string title)

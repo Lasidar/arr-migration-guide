@@ -8,6 +8,7 @@ namespace Readarr.Core.Parser.Model
         public string BookTitle { get; set; }
         public string AuthorName { get; set; }
         public string AuthorTitle { get; set; }  // Combined author and title
+        public string ReleaseTitle { get; set; }
         public int? Year { get; set; }
         public string Isbn { get; set; }
         public string Asin { get; set; }

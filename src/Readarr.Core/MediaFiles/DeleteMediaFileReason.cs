@@ -2,8 +2,8 @@ namespace Readarr.Core.MediaFiles
 {
     public enum DeleteMediaFileReason
     {
-        MissingFromDisk,
         Manual,
+        MissingFromDisk,
         Upgrade,
         NoLinkedEpisodes,
         ManualOverride
