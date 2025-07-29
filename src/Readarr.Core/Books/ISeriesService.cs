@@ -15,5 +15,11 @@ namespace Readarr.Core.Books
         void LinkBookToSeries(int seriesId, int bookId, string position);
         void UnlinkBookFromSeries(int seriesId, int bookId);
         List<SeriesBookLink> GetSeriesBookLinks(int seriesId);
+        
+        // Search methods
+        Series FindByForeignSeriesId(string foreignSeriesId);
+        Series FindByTitle(string title);
+        List<Series> FindByTitleInexact(string title);
+        Dictionary<int, List<int>> GetAllSeriesBookIds();
     }
 }
