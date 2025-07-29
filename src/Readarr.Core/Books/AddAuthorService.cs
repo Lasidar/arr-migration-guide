@@ -126,14 +126,15 @@ namespace Readarr.Core.Books
                                  IAuthorAncestorValidator authorAncestorValidator,
                                  IAuthorPathValidator pathExistsValidator)
         {
-            RuleFor(a => a.Metadata).NotNull().SetValidator(new AuthorMetadataValidator());
-            RuleFor(a => a.Path).Cascade(CascadeMode.StopOnFirstFailure)
-                                .IsValidPath()
+            RuleFor(a => a.Metadata.Value).NotNull().SetValidator(new AuthorMetadataValidator());
+            RuleFor(a => a.Path).Cascade(CascadeMode.Stop)
+                                .IsValidPath(PathValidationType.CurrentOs)
                                 .SetValidator(authorAncestorValidator)
                                 .SetValidator(pathExistsValidator);
                                 // TODO: Fix QualityProfileExistsValidator
                     // RuleFor(a => a.QualityProfileId).SetValidator(new QualityProfileExistsValidator());
-            RuleFor(a => a.MetadataProfileId).SetValidator(new MetadataProfileExistsValidator());
+            // TODO: Fix MetadataProfileExistsValidator
+            // RuleFor(a => a.MetadataProfileId).SetValidator(new MetadataProfileExistsValidator());
         }
     }
 

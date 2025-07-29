@@ -32,6 +32,7 @@ namespace Readarr.Core.Backup
         private readonly IAppFolderInfo _appFolderInfo;
         private readonly IConfigService _configService;
         private readonly IDiskProvider _diskProvider;
+        private readonly IArchiveService _archiveService;
         private readonly IDiskTransferService _diskTransferService;
         private readonly IMainDatabase _maindDb;
         private readonly IEventAggregator _eventAggregator;
@@ -42,6 +43,7 @@ namespace Readarr.Core.Backup
         public BackupService(IAppFolderInfo appFolderInfo,
                             IConfigService configService,
                             IDiskProvider diskProvider,
+                            IArchiveService archiveService,
                             IDiskTransferService diskTransferService,
                             IMainDatabase maindDb,
                             IEventAggregator eventAggregator,
@@ -50,6 +52,7 @@ namespace Readarr.Core.Backup
             _appFolderInfo = appFolderInfo;
             _configService = configService;
             _diskProvider = diskProvider;
+            _archiveService = archiveService;
             _diskTransferService = diskTransferService;
             _maindDb = maindDb;
             _eventAggregator = eventAggregator;
@@ -76,7 +79,10 @@ namespace Readarr.Core.Backup
 
                 _logger.ProgressInfo("Creating backup zip");
                 _diskProvider.CreateFolder(_backupTempFolder);
-                _diskProvider.CreateZipArchive(_backupTempFolder, backupPath);
+                
+                // Get all files in the backup temp folder
+                var files = _diskProvider.GetFiles(_backupTempFolder, true);
+                _archiveService.CreateZip(backupPath, files);
 
                 _logger.ProgressInfo("Backup completed. File: {0}", backupPath);
                 _eventAggregator.PublishEvent(new BackupCompleteEvent(backupPath));
@@ -103,7 +109,8 @@ namespace Readarr.Core.Backup
                 var folder = GetBackupFolder(backupType);
                 if (_diskProvider.FolderExists(folder))
                 {
-                    var files = _diskProvider.GetFiles(folder, "readarr_backup_*.zip");
+                    var files = _diskProvider.GetFiles(folder, false)
+                        .Where(f => Path.GetFileName(f).StartsWith("readarr_backup_") && f.EndsWith(".zip"));
                     
                     backups.AddRange(files.Select(f => new BackupResource
                     {
@@ -149,7 +156,7 @@ namespace Readarr.Core.Backup
         {
             _logger.ProgressDebug("Backing up database");
 
-            var databaseFile = _maindDb.GetDatabasePath();
+            var databaseFile = _appFolderInfo.GetDatabase();
             var tempDatabaseFile = Path.Combine(_backupTempFolder, Path.GetFileName(databaseFile));
 
             _diskProvider.CreateFolder(_backupTempFolder);
@@ -208,7 +215,8 @@ namespace Readarr.Core.Backup
                 return;
             }
 
-            var files = _diskProvider.GetFiles(backupFolder, "readarr_backup_*.zip")
+            var files = _diskProvider.GetFiles(backupFolder, false)
+                                    .Where(f => Path.GetFileName(f).StartsWith("readarr_backup_") && f.EndsWith(".zip"))
                                     .OrderByDescending(f => _diskProvider.FileGetLastWrite(f))
                                     .Skip(retention)
                                     .ToList();

@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
+using Readarr.Common.Extensions;
 using Readarr.Core.Books.Commands;
 using Readarr.Core.Books.Events;
+using Readarr.Core.Exceptions;
 using Readarr.Core.MediaCover;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.MetadataSource;
+using Readarr.Core.Parser;
 
 namespace Readarr.Core.Books
 {
@@ -55,7 +58,7 @@ namespace Readarr.Core.Books
         {
             var updated = false;
 
-            _logger.ProgressInfo("Updating info for {0}", book.Title);
+            _logger.ProgressInfo("Updating info for {0}", book.Metadata.Value?.Title ?? "Unknown");
 
             Book bookInfo;
 
@@ -67,7 +70,7 @@ namespace Readarr.Core.Books
                 }
                 catch (BookNotFoundException)
                 {
-                    _logger.Error($"Book '{book.Title}' (GoodreadsId {book.Metadata.Value.ForeignBookId}) was not found, it may have been removed from Goodreads.");
+                    _logger.Error($"Book '{book.Metadata.Value?.Title}' (GoodreadsId {book.Metadata.Value.ForeignBookId}) was not found, it may have been removed from Goodreads.");
                     
                     _eventAggregator.PublishEvent(new BookDeletedEvent(book, false, false));
                     
@@ -81,7 +84,7 @@ namespace Readarr.Core.Books
 
             if (book.Metadata.Value.ForeignBookId != bookInfo.Metadata.Value.ForeignBookId)
             {
-                _logger.Warn($"Book '{book.Title}' (GoodreadsId {book.Metadata.Value.ForeignBookId}) was replaced with '{bookInfo.Title}' (GoodreadsId {bookInfo.Metadata.Value.ForeignBookId})");
+                _logger.Warn($"Book '{book.Metadata.Value?.Title}' (GoodreadsId {book.Metadata.Value.ForeignBookId}) was replaced with '{bookInfo.Metadata.Value?.Title}' (GoodreadsId {bookInfo.Metadata.Value.ForeignBookId})");
                 
                 book.Metadata.Value.ForeignBookId = bookInfo.Metadata.Value.ForeignBookId;
             }
@@ -104,11 +107,11 @@ namespace Readarr.Core.Books
 
             if (forceUpdateFileTags)
             {
-                _logger.Debug("Updating file tags for book {0}", book.Title);
+                _logger.Debug("Updating file tags for book {0}", book.Metadata.Value?.Title ?? "Unknown");
                 // TODO: Implement file tag updating
             }
 
-            _logger.Debug("Finished book refresh for {0}", book.Title);
+            _logger.Debug("Finished book refresh for {0}", book.Metadata.Value?.Title ?? "Unknown");
 
             return updated;
         }
@@ -172,7 +175,7 @@ namespace Readarr.Core.Books
             
             if (newEditions.Any())
             {
-                _logger.Info($"Adding {newEditions.Count} new editions for book {book.Title}");
+                _logger.Info($"Adding {newEditions.Count} new editions for book {book.Metadata.Value?.Title ?? "Unknown"}");
                 
                 foreach (var newEdition in newEditions)
                 {
@@ -189,7 +192,7 @@ namespace Readarr.Core.Books
             
             if (editionsToDelete.Any())
             {
-                _logger.Info($"Removing {editionsToDelete.Count} editions for book {book.Title}");
+                _logger.Info($"Removing {editionsToDelete.Count} editions for book {book.Metadata.Value?.Title ?? "Unknown"}");
                 _editionService.DeleteMany(editionsToDelete);
                 updated = true;
             }
@@ -213,18 +216,18 @@ namespace Readarr.Core.Books
                     }
                     catch (Exception e)
                     {
-                        _logger.Error(e, $"Couldn't refresh info for {book.Title}");
+                        _logger.Error(e, $"Couldn't refresh info for {book.Metadata.Value?.Title ?? "Unknown"}");
                         throw;
                     }
                 }
                 else
                 {
-                    _logger.Info($"Skipping refresh of book: {book.Title}");
+                    _logger.Info($"Skipping refresh of book: {book.Metadata.Value?.Title ?? "Unknown"}");
                 }
             }
             else
             {
-                var books = _bookService.GetAllBooks().OrderBy(b => b.Title).ToList();
+                var books = _bookService.GetAllBooks().OrderBy(b => b.Metadata.Value?.Title).ToList();
 
                 foreach (var book in books)
                 {
@@ -236,12 +239,12 @@ namespace Readarr.Core.Books
                         }
                         catch (Exception e)
                         {
-                            _logger.Error(e, $"Couldn't refresh info for {book.Title}");
+                            _logger.Error(e, $"Couldn't refresh info for {book.Metadata.Value?.Title ?? "Unknown"}");
                         }
                     }
                     else
                     {
-                        _logger.Info($"Skipping refresh of book: {book.Title}");
+                        _logger.Info($"Skipping refresh of book: {book.Metadata.Value?.Title ?? "Unknown"}");
                     }
                 }
             }
