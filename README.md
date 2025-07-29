@@ -1,4 +1,4 @@
-# <img width="24px" src="./Logo/256.png" alt="Readarr"></img> Readarr v2
+# <img width="24px" src="./Logo/256.png" alt="Readarr"></img> Readarr v2 - Backend Complete 🎉
 
 [![Translated](https://translate.servarr.com/widget/servarr/readarr/svg-badge.svg)](https://translate.servarr.com/engage/servarr/)
 [![Backers on Open Collective](https://opencollective.com/Readarr/backers/badge.svg)](#backers)
@@ -6,6 +6,10 @@
 [![Mega Sponsors on Open Collective](https://opencollective.com/Readarr/megasponsors/badge.svg)](#mega-sponsors)
 
 Readarr v2 is a PVR for Usenet and BitTorrent users. It can monitor multiple RSS feeds for new books from your favorite authors and will grab, sort and rename them. It can also be configured to automatically upgrade the quality of files already downloaded when a better quality format becomes available.
+
+## 🚀 Migration Status: COMPLETE
+
+This branch (`readarrv2-dev2`) contains the **fully transformed backend** from Sonarr to Readarr v2. All core backend functionality has been successfully implemented through 7 phases of development.
 
 ## Getting Started
 
