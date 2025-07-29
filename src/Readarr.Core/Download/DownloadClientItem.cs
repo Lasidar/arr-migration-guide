@@ -21,8 +21,15 @@ namespace Readarr.Core.Download
         public bool CanMoveFiles { get; set; }
         public bool CanBeRemoved { get; set; }
         public bool Removed { get; set; }
+        public string Message { get; set; }
+        public double? SeedRatio { get; set; }
 
         public DownloadClientInfo DownloadClientInfo { get; set; }
+        
+        public DownloadClientItem Clone()
+        {
+            return (DownloadClientItem)MemberwiseClone();
+        }
     }
 
     public class DownloadClientItemClientInfo
@@ -31,5 +38,17 @@ namespace Readarr.Core.Download
         public string Type { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
+        
+        public static DownloadClientItemClientInfo FromDownloadClient<TSettings>(DownloadClientBase<TSettings> downloadClient)
+            where TSettings : IProviderConfig, new()
+        {
+            return new DownloadClientItemClientInfo
+            {
+                Protocol = downloadClient.Protocol,
+                Type = downloadClient.Name,
+                Id = downloadClient.Definition.Id,
+                Name = downloadClient.Definition.Name
+            };
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace Readarr.Core.MediaFiles
         public string Path { get; set; }
         public long Size { get; set; }
         public DateTime DateAdded { get; set; }
+        public DateTime Modified { get; set; }
         public string OriginalFilePath { get; set; }
         public string SceneName { get; set; }
         public string ReleaseGroup { get; set; }

@@ -98,6 +98,11 @@ namespace Readarr.Core.MediaFiles
             return _mediaFileRepository.GetFilesWithRelativePath(seriesId, relativePath);
         }
 
+        public void Update(EpisodeFile episodeFile)
+        {
+            _mediaFileRepository.Update(episodeFile);
+        }
+
         public void HandleAsync(SeriesDeletedEvent message)
         {
             var files = GetFilesBySeries(message.Series.Id);
@@ -144,6 +149,12 @@ namespace Readarr.Core.MediaFiles
         public void UpdateMediaInfo(List<BookFile> bookFiles)
         {
             // TODO: Implement update media info
+            throw new NotImplementedException();
+        }
+
+        public void Update(BookFile bookFile)
+        {
+            // TODO: Implement book file update
             throw new NotImplementedException();
         }
 

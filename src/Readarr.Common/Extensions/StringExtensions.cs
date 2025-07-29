@@ -99,14 +99,19 @@ namespace Readarr.Common.Extensions
             return CollapseSpace.Replace(text, " ").Trim();
         }
 
-        public static bool IsNullOrWhiteSpace(this string text)
+        public static bool IsNullOrWhiteSpace(this string target)
         {
-            return string.IsNullOrWhiteSpace(text);
+            return string.IsNullOrWhiteSpace(target);
         }
 
-        public static bool IsNotNullOrWhiteSpace(this string text)
+        public static bool IsNotNullOrWhiteSpace(this string target)
         {
-            return !string.IsNullOrWhiteSpace(text);
+            return !string.IsNullOrWhiteSpace(target);
+        }
+
+        public static bool IsEmpty(this string target)
+        {
+            return string.IsNullOrEmpty(target);
         }
 
         public static bool StartsWithIgnoreCase(this string text, string startsWith)

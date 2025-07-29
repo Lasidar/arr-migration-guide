@@ -2,9 +2,10 @@ namespace Readarr.Core.Download
 {
     public enum DownloadClientType
     {
-        Sabnzbd = 0,
-        Blackhole = 1,
-        Pneumatic = 2,
-        Nzbget = 3
+        Usenet = 0,
+        Sabnzbd = 1,
+        Blackhole = 2,
+        Pneumatic = 3,
+        Nzbget = 4
     }
 }

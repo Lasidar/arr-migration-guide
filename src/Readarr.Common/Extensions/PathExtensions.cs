@@ -82,6 +82,48 @@ namespace Readarr.Common.Extensions
             return path.Substring(idx);
         }
 
+        public static bool IsWindowsPath(this string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return false;
+            }
+            
+            var osPath = new OsPath(path);
+            return osPath.IsWindowsPath;
+        }
+
+        public static bool IsUnixPath(this string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return false;
+            }
+            
+            var osPath = new OsPath(path);
+            return osPath.IsUnixPath;
+        }
+
+        public static string Directory(this string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return null;
+            }
+            
+            return Path.GetDirectoryName(path);
+        }
+
+        public static string FullPath(this string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return null;
+            }
+            
+            return Path.GetFullPath(path);
+        }
+
         public static string GetRelativePath(this string parentPath, string childPath)
         {
             if (!parentPath.IsParentPath(childPath))

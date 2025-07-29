@@ -213,6 +213,15 @@ namespace Readarr.Common.Http
             return SetQuery(builder.ToString());
         }
 
+        public HttpUri SetQueryParam(string key, string value)
+        {
+            var query = Query ?? "";
+            var queryParams = System.Web.HttpUtility.ParseQueryString(query);
+            queryParams[key] = value;
+            
+            return new HttpUri(Scheme, Host, Port, Path, queryParams.ToString(), Fragment);
+        }
+
         public override int GetHashCode()
         {
             return _uri.GetHashCode();
