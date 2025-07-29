@@ -686,5 +686,17 @@ namespace Readarr.Core.Parser
             // TODO: Implement book retrieval
             throw new NotImplementedException();
         }
+
+        public ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, int tvdbId, int tvRageId, SearchCriteriaBase searchCriteria = null)
+        {
+            // This is already implemented in the existing code
+            return ParseSpecialEpisodeTitle(releaseTitle, tvdbId, tvRageId, searchCriteria);
+        }
+
+        public List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Tv.Series series, bool sceneSource, SearchCriteriaBase searchCriteria = null)
+        {
+            // This is already implemented in the existing code
+            return GetEpisodes(parsedEpisodeInfo, series, sceneSource);
+        }
     }
 }

@@ -13,12 +13,12 @@ namespace Readarr.Core.Organizer
         string GetBookFileName(Book book, BookFile bookFile);
         
         // TV methods (for compatibility)
-        string GetSeriesFolder(Series series);
-        string GetSeasonFolder(Series series, int seasonNumber);
-        string BuildFileName(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension = "", NamingConfig namingConfig = null, List<string> preferredWords = null);
-        string BuildFilePath(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension = "", NamingConfig namingConfig = null, List<string> preferredWords = null);
-        string BuildSeasonPath(Series series, int seasonNumber);
-        bool RequiresEpisodeTitle(Series series, List<Episode> episodes);
-        bool RequiresAbsoluteEpisodeNumber(Series series, List<Episode> episodes);
+        string GetSeriesFolder(Tv.Series series);
+        string GetSeasonFolder(Tv.Series series, int seasonNumber);
+        string BuildFileName(List<Episode> episodes, Tv.Series series, EpisodeFile episodeFile, string extension = "", NamingConfig namingConfig = null, List<string> preferredWords = null);
+        string BuildFilePath(List<Episode> episodes, Tv.Series series, EpisodeFile episodeFile, string extension = "", NamingConfig namingConfig = null, List<string> preferredWords = null);
+        string BuildSeasonPath(Tv.Series series, int seasonNumber);
+        bool RequiresEpisodeTitle(Tv.Series series, List<Episode> episodes);
+        bool RequiresAbsoluteEpisodeNumber(Tv.Series series, List<Episode> episodes);
     }
 }

@@ -104,7 +104,7 @@ namespace Readarr.Common.Extensions
             return osPath.IsUnixPath;
         }
 
-        public static string Directory(this string path)
+        public static string GetDirectory(this string path)
         {
             if (string.IsNullOrWhiteSpace(path))
             {

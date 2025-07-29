@@ -233,9 +233,9 @@ namespace Readarr.Core.MediaFiles.EpisodeImport
         {
             var path = localEpisode.Path;
 
-            if (downloadClientItem != null && !downloadClientItem.OutputPath.IsEmpty)
+            if (downloadClientItem != null && !downloadClientItem.OutputPath.IsEmpty())
             {
-                var outputDirectory = downloadClientItem.OutputPath.Directory.ToString();
+                var outputDirectory = new OsPath(downloadClientItem.OutputPath).Directory.ToString();
 
                 if (outputDirectory.IsParentPath(path))
                 {

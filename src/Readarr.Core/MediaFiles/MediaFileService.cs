@@ -152,12 +152,6 @@ namespace Readarr.Core.MediaFiles
             throw new NotImplementedException();
         }
 
-        public void Update(BookFile bookFile)
-        {
-            // TODO: Implement book file update
-            throw new NotImplementedException();
-        }
-
         public static List<string> FilterExistingFiles(List<string> files, List<EpisodeFile> seriesFiles, Series series)
         {
             var seriesFilePaths = seriesFiles.Select(f => Path.Combine(series.Path, f.RelativePath)).ToList();

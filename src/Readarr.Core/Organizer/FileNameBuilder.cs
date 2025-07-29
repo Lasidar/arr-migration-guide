@@ -1224,6 +1224,51 @@ namespace Readarr.Core.Organizer
             return maxCustomLength;
         }
 
+        // TV interface implementations (delegate to existing methods)
+        string IBuildFileNames.GetSeriesFolder(Tv.Series series)
+        {
+            return GetSeriesFolder(series, _namingConfigService.GetConfig());
+        }
+
+        string IBuildFileNames.GetSeasonFolder(Tv.Series series, int seasonNumber)
+        {
+            return GetSeasonFolder(series, seasonNumber, _namingConfigService.GetConfig());
+        }
+
+        string IBuildFileNames.BuildFileName(List<Episode> episodes, Tv.Series series, EpisodeFile episodeFile, string extension, NamingConfig namingConfig, List<string> preferredWords)
+        {
+            return BuildFileName(episodes, series, episodeFile, extension, namingConfig);
+        }
+
+        string IBuildFileNames.BuildFilePath(List<Episode> episodes, Tv.Series series, EpisodeFile episodeFile, string extension, NamingConfig namingConfig, List<string> preferredWords)
+        {
+            return BuildFilePath(episodes, series, episodeFile, extension, namingConfig);
+        }
+
+        string IBuildFileNames.BuildSeasonPath(Tv.Series series, int seasonNumber)
+        {
+            var path = series.Path;
+            var seasonFolder = GetSeasonFolder(series, seasonNumber);
+
+            return Path.Combine(path, seasonFolder);
+        }
+
+        bool IBuildFileNames.RequiresEpisodeTitle(Tv.Series series, List<Episode> episodes)
+        {
+            var namingConfig = _namingConfigService.GetConfig();
+            var pattern = namingConfig.StandardEpisodeFormat;
+
+            return pattern.Contains("{Episode Title}") || pattern.Contains("{Episode CleanTitle}");
+        }
+
+        bool IBuildFileNames.RequiresAbsoluteEpisodeNumber(Tv.Series series, List<Episode> episodes)
+        {
+            var namingConfig = _namingConfigService.GetConfig();
+            var pattern = namingConfig.AnimeEpisodeFormat;
+
+            return pattern.Contains("{Absolute}");
+        }
+
         // Book interface implementations (stubs for now)
         public string GetAuthorFolder(Author author)
         {
