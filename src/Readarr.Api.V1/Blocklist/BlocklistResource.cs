@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
-using NzbDrone.Core.CustomFormats;
-using NzbDrone.Core.Indexers;
-using NzbDrone.Core.Languages;
-using NzbDrone.Core.Qualities;
+using Readarr.Core.CustomFormats;
+using Readarr.Core.Indexers;
+using Readarr.Core.Languages;
+using Readarr.Core.Qualities;
 using Readarr.Api.V3.CustomFormats;
 using Readarr.Api.V3.Series;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Blocklist
+namespace Readarr.Api.V1.Blocklist
 {
     public class BlocklistResource : RestResource
     {
@@ -28,7 +28,7 @@ namespace Readarr.Api.V3.Blocklist
 
     public static class BlocklistResourceMapper
     {
-        public static BlocklistResource MapToResource(this NzbDrone.Core.Blocklisting.Blocklist model, ICustomFormatCalculationService formatCalculator)
+        public static BlocklistResource MapToResource(this Readarr.Core.Blocklisting.Blocklist model, ICustomFormatCalculationService formatCalculator)
         {
             if (model == null)
             {

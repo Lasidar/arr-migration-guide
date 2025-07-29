@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using NzbDrone.Core.CustomFormats;
+using Readarr.Core.CustomFormats;
 using Readarr.Http.ClientSchema;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.CustomFormats
+namespace Readarr.Api.V1.CustomFormats
 {
     public class CustomFormatSpecificationSchema : RestResource
     {

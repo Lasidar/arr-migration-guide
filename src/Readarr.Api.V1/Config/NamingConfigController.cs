@@ -3,13 +3,13 @@ using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Organizer;
+using Readarr.Common.Extensions;
+using Readarr.Core.Organizer;
 using Readarr.Http;
 using Readarr.Http.REST;
 using Readarr.Http.REST.Attributes;
 
-namespace Readarr.Api.V3.Config
+namespace Readarr.Api.V1.Config
 {
     [V3ApiController("config/naming")]
     public class NamingConfigController : RestController<NamingConfigResource>

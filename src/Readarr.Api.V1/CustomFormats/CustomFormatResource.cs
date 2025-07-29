@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
-using NzbDrone.Core.CustomFormats;
+using Readarr.Core.CustomFormats;
 using Readarr.Http.ClientSchema;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.CustomFormats
+namespace Readarr.Api.V1.CustomFormats
 {
     public class CustomFormatResource : RestResource
     {

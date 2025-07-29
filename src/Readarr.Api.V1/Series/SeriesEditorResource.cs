@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using NzbDrone.Core.Tv;
+using Readarr.Core.Tv;
 
-namespace Readarr.Api.V3.Series
+namespace Readarr.Api.V1.Series
 {
     public class SeriesEditorResource
     {

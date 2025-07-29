@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using NzbDrone.Core.SeriesStats;
+using Readarr.Core.SeriesStats;
 
-namespace Readarr.Api.V3.Series
+namespace Readarr.Api.V1.Series
 {
     public class SeriesStatisticsResource
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 
-namespace NzbDrone.Http
+namespace Readarr.Http
 {
     public class ApiInfoController : Controller
     {

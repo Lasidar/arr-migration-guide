@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using NLog;
-using NzbDrone.Common.Extensions;
+using Readarr.Common.Extensions;
 using Readarr.Http.ErrorManagement;
 using Readarr.Http.Extensions;
 

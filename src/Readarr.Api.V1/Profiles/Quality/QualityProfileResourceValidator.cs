@@ -1,7 +1,7 @@
 using FluentValidation;
-using NzbDrone.Core.Qualities;
+using Readarr.Core.Qualities;
 
-namespace Readarr.Api.V3.Profiles.Quality;
+namespace Readarr.Api.V1.Profiles.Quality;
 
 public class QualityProfileResourceValidator : AbstractValidator<QualityProfileResource>
 {

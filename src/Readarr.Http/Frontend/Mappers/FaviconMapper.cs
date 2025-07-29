@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using NLog;
-using NzbDrone.Common.Disk;
-using NzbDrone.Common.EnvironmentInfo;
-using NzbDrone.Core.Configuration;
+using Readarr.Common.Disk;
+using Readarr.Common.EnvironmentInfo;
+using Readarr.Core.Configuration;
 
 namespace Readarr.Http.Frontend.Mappers
 {

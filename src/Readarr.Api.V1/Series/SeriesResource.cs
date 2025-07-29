@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Languages;
-using NzbDrone.Core.MediaCover;
-using NzbDrone.Core.Tv;
+using Readarr.Common.Extensions;
+using Readarr.Core.Languages;
+using Readarr.Core.MediaCover;
+using Readarr.Core.Tv;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Series
+namespace Readarr.Api.V1.Series
 {
     public class SeriesResource : RestResource
     {
@@ -77,7 +77,7 @@ namespace Readarr.Api.V3.Series
 
     public static class SeriesResourceMapper
     {
-        public static SeriesResource ToResource(this NzbDrone.Core.Tv.Series model, bool includeSeasonImages = false)
+        public static SeriesResource ToResource(this Readarr.Core.Tv.Series model, bool includeSeasonImages = false)
         {
             if (model == null)
             {
@@ -144,14 +144,14 @@ namespace Readarr.Api.V3.Series
                    };
         }
 
-        public static NzbDrone.Core.Tv.Series ToModel(this SeriesResource resource)
+        public static Readarr.Core.Tv.Series ToModel(this SeriesResource resource)
         {
             if (resource == null)
             {
                 return null;
             }
 
-            return new NzbDrone.Core.Tv.Series
+            return new Readarr.Core.Tv.Series
                    {
                        Id = resource.Id,
 
@@ -205,7 +205,7 @@ namespace Readarr.Api.V3.Series
                    };
         }
 
-        public static NzbDrone.Core.Tv.Series ToModel(this SeriesResource resource, NzbDrone.Core.Tv.Series series)
+        public static Readarr.Core.Tv.Series ToModel(this SeriesResource resource, Readarr.Core.Tv.Series series)
         {
             var updatedSeries = resource.ToModel();
 
@@ -214,12 +214,12 @@ namespace Readarr.Api.V3.Series
             return series;
         }
 
-        public static List<SeriesResource> ToResource(this IEnumerable<NzbDrone.Core.Tv.Series> series, bool includeSeasonImages = false)
+        public static List<SeriesResource> ToResource(this IEnumerable<Readarr.Core.Tv.Series> series, bool includeSeasonImages = false)
         {
             return series.Select(s => ToResource(s, includeSeasonImages)).ToList();
         }
 
-        public static List<NzbDrone.Core.Tv.Series> ToModel(this IEnumerable<SeriesResource> resources)
+        public static List<Readarr.Core.Tv.Series> ToModel(this IEnumerable<SeriesResource> resources)
         {
             return resources.Select(ToModel).ToList();
         }

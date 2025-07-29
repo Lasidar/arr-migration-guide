@@ -2,9 +2,9 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using NzbDrone.Core.Configuration;
+using Readarr.Core.Configuration;
 
-namespace NzbDrone.Http.Authentication
+namespace Readarr.Http.Authentication
 {
     public class UiAuthorizationPolicyProvider : IAuthorizationPolicyProvider
     {

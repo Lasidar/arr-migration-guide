@@ -3,17 +3,17 @@ using System.Linq;
 using System.Reflection;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Authentication;
-using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Update;
-using NzbDrone.Core.Validation;
-using NzbDrone.Core.Validation.Paths;
+using Readarr.Common.Extensions;
+using Readarr.Core.Authentication;
+using Readarr.Core.Configuration;
+using Readarr.Core.Update;
+using Readarr.Core.Validation;
+using Readarr.Core.Validation.Paths;
 using Readarr.Http;
 using Readarr.Http.REST;
 using Readarr.Http.REST.Attributes;
 
-namespace Readarr.Api.V3.Config
+namespace Readarr.Api.V1.Config
 {
     [V3ApiController("config/host")]
     public class HostConfigController : RestController<HostConfigResource>

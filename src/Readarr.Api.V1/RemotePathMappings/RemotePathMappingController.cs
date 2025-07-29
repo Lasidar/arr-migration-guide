@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.RemotePathMappings;
-using NzbDrone.Core.Validation.Paths;
+using Readarr.Common.Extensions;
+using Readarr.Core.RemotePathMappings;
+using Readarr.Core.Validation.Paths;
 using Readarr.Http;
 using Readarr.Http.REST;
 using Readarr.Http.REST.Attributes;
 
-namespace Readarr.Api.V3.RemotePathMappings
+namespace Readarr.Api.V1.RemotePathMappings
 {
     [V3ApiController]
     public class RemotePathMappingController : RestController<RemotePathMappingResource>

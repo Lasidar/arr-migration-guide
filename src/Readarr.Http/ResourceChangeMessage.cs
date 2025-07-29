@@ -1,5 +1,5 @@
 using System;
-using NzbDrone.Core.Datastore.Events;
+using Readarr.Core.Datastore.Events;
 using Readarr.Http.REST;
 
 namespace Readarr.Http

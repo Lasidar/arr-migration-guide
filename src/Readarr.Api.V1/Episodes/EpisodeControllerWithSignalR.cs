@@ -1,18 +1,18 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.CustomFormats;
-using NzbDrone.Core.Datastore.Events;
-using NzbDrone.Core.DecisionEngine.Specifications;
-using NzbDrone.Core.Download;
-using NzbDrone.Core.MediaFiles.Events;
-using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Tv;
-using NzbDrone.SignalR;
+using Readarr.Core.CustomFormats;
+using Readarr.Core.Datastore.Events;
+using Readarr.Core.DecisionEngine.Specifications;
+using Readarr.Core.Download;
+using Readarr.Core.MediaFiles.Events;
+using Readarr.Core.Messaging.Events;
+using Readarr.Core.Tv;
+using Readarr.SignalR;
 using Readarr.Api.V3.EpisodeFiles;
 using Readarr.Api.V3.Series;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Episodes
+namespace Readarr.Api.V1.Episodes
 {
     public abstract class EpisodeControllerWithSignalR : RestControllerWithSignalR<EpisodeResource, Episode>,
                                                          IHandle<EpisodeGrabbedEvent>,
@@ -91,7 +91,7 @@ namespace Readarr.Api.V3.Episodes
 
             if (includeSeries || includeEpisodeFile || includeImages)
             {
-                var seriesDict = new Dictionary<int, NzbDrone.Core.Tv.Series>();
+                var seriesDict = new Dictionary<int, Readarr.Core.Tv.Series>();
                 for (var i = 0; i < episodes.Count; i++)
                 {
                     var episode = episodes[i];

@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.MediaCover;
-using NzbDrone.Core.MetadataSource;
-using NzbDrone.Core.Organizer;
-using NzbDrone.Core.SeriesStats;
+using Readarr.Core.MediaCover;
+using Readarr.Core.MetadataSource;
+using Readarr.Core.Organizer;
+using Readarr.Core.SeriesStats;
 using Readarr.Http;
 
-namespace Readarr.Api.V3.Series
+namespace Readarr.Api.V1.Series
 {
     [V3ApiController("series/lookup")]
     public class SeriesLookupController : Controller
@@ -30,7 +30,7 @@ namespace Readarr.Api.V3.Series
             return MapToResource(tvDbResults);
         }
 
-        private IEnumerable<SeriesResource> MapToResource(IEnumerable<NzbDrone.Core.Tv.Series> series)
+        private IEnumerable<SeriesResource> MapToResource(IEnumerable<Readarr.Core.Tv.Series> series)
         {
             foreach (var currentSeries in series)
             {

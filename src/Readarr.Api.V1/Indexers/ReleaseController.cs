@@ -4,23 +4,23 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
-using NzbDrone.Common.Cache;
-using NzbDrone.Common.EnsureThat;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.DecisionEngine;
-using NzbDrone.Core.Download;
-using NzbDrone.Core.Exceptions;
-using NzbDrone.Core.Indexers;
-using NzbDrone.Core.IndexerSearch;
-using NzbDrone.Core.Parser;
-using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Profiles.Qualities;
-using NzbDrone.Core.Tv;
-using NzbDrone.Core.Validation;
+using Readarr.Common.Cache;
+using Readarr.Common.EnsureThat;
+using Readarr.Common.Extensions;
+using Readarr.Core.DecisionEngine;
+using Readarr.Core.Download;
+using Readarr.Core.Exceptions;
+using Readarr.Core.Indexers;
+using Readarr.Core.IndexerSearch;
+using Readarr.Core.Parser;
+using Readarr.Core.Parser.Model;
+using Readarr.Core.Profiles.Qualities;
+using Readarr.Core.Tv;
+using Readarr.Core.Validation;
 using Readarr.Http;
 using HttpStatusCode = System.Net.HttpStatusCode;
 
-namespace Readarr.Api.V3.Indexers
+namespace Readarr.Api.V1.Indexers
 {
     [V3ApiController]
     public class ReleaseController : ReleaseControllerBase

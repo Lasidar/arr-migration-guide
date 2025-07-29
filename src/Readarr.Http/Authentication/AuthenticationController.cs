@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
-using NzbDrone.Common.EnvironmentInfo;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Authentication;
-using NzbDrone.Core.Configuration;
+using Readarr.Common.EnvironmentInfo;
+using Readarr.Common.Extensions;
+using Readarr.Core.Authentication;
+using Readarr.Core.Configuration;
 
 namespace Readarr.Http.Authentication
 {

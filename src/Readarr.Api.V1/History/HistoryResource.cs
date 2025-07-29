@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
-using NzbDrone.Core.CustomFormats;
-using NzbDrone.Core.History;
-using NzbDrone.Core.Languages;
-using NzbDrone.Core.Qualities;
+using Readarr.Core.CustomFormats;
+using Readarr.Core.History;
+using Readarr.Core.Languages;
+using Readarr.Core.Qualities;
 using Readarr.Api.V3.CustomFormats;
 using Readarr.Api.V3.Episodes;
 using Readarr.Api.V3.Series;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.History
+namespace Readarr.Api.V1.History
 {
     public class HistoryResource : RestResource
     {

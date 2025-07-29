@@ -1,9 +1,9 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.Tv;
+using Readarr.Core.Tv;
 using Readarr.Http;
 
-namespace Readarr.Api.V3.SeasonPass
+namespace Readarr.Api.V1.SeasonPass
 {
     [V3ApiController]
     public class SeasonPassController : Controller

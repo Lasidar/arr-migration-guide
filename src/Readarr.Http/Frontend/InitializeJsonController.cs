@@ -1,10 +1,10 @@
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common;
-using NzbDrone.Common.EnvironmentInfo;
-using NzbDrone.Core.Analytics;
-using NzbDrone.Core.Configuration;
+using Readarr.Common;
+using Readarr.Common.EnvironmentInfo;
+using Readarr.Core.Analytics;
+using Readarr.Core.Configuration;
 
 namespace Readarr.Http.Frontend
 {

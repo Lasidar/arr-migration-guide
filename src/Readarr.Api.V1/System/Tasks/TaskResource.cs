@@ -1,7 +1,7 @@
 ﻿using System;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.System.Tasks
+namespace Readarr.Api.V1.System.Tasks
 {
     public class TaskResource : RestResource
     {

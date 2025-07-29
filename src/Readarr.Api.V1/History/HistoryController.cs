@@ -2,19 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.CustomFormats;
-using NzbDrone.Core.Datastore;
-using NzbDrone.Core.DecisionEngine.Specifications;
-using NzbDrone.Core.Download;
-using NzbDrone.Core.History;
-using NzbDrone.Core.Tv;
+using Readarr.Common.Extensions;
+using Readarr.Core.CustomFormats;
+using Readarr.Core.Datastore;
+using Readarr.Core.DecisionEngine.Specifications;
+using Readarr.Core.Download;
+using Readarr.Core.History;
+using Readarr.Core.Tv;
 using Readarr.Api.V3.Episodes;
 using Readarr.Api.V3.Series;
 using Readarr.Http;
 using Readarr.Http.Extensions;
 
-namespace Readarr.Api.V3.History
+namespace Readarr.Api.V1.History
 {
     [V3ApiController]
     public class HistoryController : Controller

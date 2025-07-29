@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using NzbDrone.Common.Serializer;
-using NzbDrone.Core.CustomFilters;
+using Readarr.Common.Serializer;
+using Readarr.Core.CustomFilters;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.CustomFilters
+namespace Readarr.Api.V1.CustomFilters
 {
     public class CustomFilterResource : RestResource
     {

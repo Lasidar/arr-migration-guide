@@ -4,8 +4,8 @@ using Diacritical;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.DependencyInjection;
-using NzbDrone.Core.Authentication;
-using NzbDrone.Core.Configuration;
+using Readarr.Core.Authentication;
+using Readarr.Core.Configuration;
 
 namespace Readarr.Http.Authentication
 {

@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Net.Http.Headers;
 using NLog;
-using NzbDrone.Common.Disk;
-using NzbDrone.Common.EnvironmentInfo;
+using Readarr.Common.Disk;
+using Readarr.Common.EnvironmentInfo;
 
 namespace Readarr.Http.Frontend.Mappers
 {

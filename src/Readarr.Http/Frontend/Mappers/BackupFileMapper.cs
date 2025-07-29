@@ -1,7 +1,7 @@
 using System.IO;
 using NLog;
-using NzbDrone.Common.Disk;
-using NzbDrone.Core.Backup;
+using Readarr.Common.Disk;
+using Readarr.Core.Backup;
 
 namespace Readarr.Http.Frontend.Mappers
 {

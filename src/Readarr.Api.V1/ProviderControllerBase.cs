@@ -3,18 +3,18 @@ using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Common.Serializer;
-using NzbDrone.Core.Datastore.Events;
-using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.ThingiProvider;
-using NzbDrone.Core.ThingiProvider.Events;
-using NzbDrone.Core.Validation;
-using NzbDrone.SignalR;
+using Readarr.Common.Extensions;
+using Readarr.Common.Serializer;
+using Readarr.Core.Datastore.Events;
+using Readarr.Core.Messaging.Events;
+using Readarr.Core.ThingiProvider;
+using Readarr.Core.ThingiProvider.Events;
+using Readarr.Core.Validation;
+using Readarr.SignalR;
 using Readarr.Http.REST;
 using Readarr.Http.REST.Attributes;
 
-namespace Readarr.Api.V3
+namespace Readarr.Api.V1
 {
     public abstract class ProviderControllerBase<TProviderResource, TBulkProviderResource, TProvider, TProviderDefinition> : RestControllerWithSignalR<TProviderResource, TProviderDefinition>,
         IHandle<ProviderAddedEvent<TProvider>>,

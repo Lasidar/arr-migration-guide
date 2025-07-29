@@ -5,9 +5,9 @@ using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using NLog;
-using NzbDrone.Common.Serializer;
-using NzbDrone.Core.Datastore;
-using NzbDrone.Core.Exceptions;
+using Readarr.Common.Serializer;
+using Readarr.Core.Datastore;
+using Readarr.Core.Exceptions;
 using Readarr.Http.Exceptions;
 
 namespace Readarr.Http.ErrorManagement

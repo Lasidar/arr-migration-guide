@@ -14,7 +14,7 @@
     <PackageReference Remove="StyleCop.Analyzers" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NzbDrone.Core\Sonarr.Core.csproj" />
+    <ProjectReference Include="..\Readarr.Core\Readarr.Core.csproj" />
     <ProjectReference Include="..\Readarr.Http\Readarr.Http.csproj" />
   </ItemGroup>
 </Project>

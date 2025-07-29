@@ -3,15 +3,15 @@ using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.AutoTagging;
-using NzbDrone.Core.AutoTagging.Specifications;
-using NzbDrone.Core.Validation;
+using Readarr.Common.Extensions;
+using Readarr.Core.AutoTagging;
+using Readarr.Core.AutoTagging.Specifications;
+using Readarr.Core.Validation;
 using Readarr.Http;
 using Readarr.Http.REST;
 using Readarr.Http.REST.Attributes;
 
-namespace Readarr.Api.V3.AutoTagging
+namespace Readarr.Api.V1.AutoTagging
 {
     [V3ApiController]
     public class AutoTaggingController : RestController<AutoTaggingResource>

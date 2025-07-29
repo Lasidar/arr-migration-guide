@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using NzbDrone.Core.Annotations;
+using Readarr.Core.Annotations;
 
 namespace Readarr.Http.ClientSchema
 {

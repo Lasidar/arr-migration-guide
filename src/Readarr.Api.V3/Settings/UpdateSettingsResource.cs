@@ -1,7 +1,7 @@
-using NzbDrone.Core.Update;
+using Readarr.Core.Update;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V5.Settings;
+namespace Readarr.Api.V3.Settings;
 
 public class UpdateSettingsResource : RestResource
 {

@@ -2,7 +2,7 @@
 using System.Linq;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Episodes
+namespace Readarr.Api.V1.Episodes
 {
     public class RenameEpisodeResource : RestResource
     {
@@ -16,7 +16,7 @@ namespace Readarr.Api.V3.Episodes
 
     public static class RenameEpisodeResourceMapper
     {
-        public static RenameEpisodeResource ToResource(this NzbDrone.Core.MediaFiles.RenameEpisodeFilePreview model)
+        public static RenameEpisodeResource ToResource(this Readarr.Core.MediaFiles.RenameEpisodeFilePreview model)
         {
             if (model == null)
             {
@@ -34,7 +34,7 @@ namespace Readarr.Api.V3.Episodes
             };
         }
 
-        public static List<RenameEpisodeResource> ToResource(this IEnumerable<NzbDrone.Core.MediaFiles.RenameEpisodeFilePreview> models)
+        public static List<RenameEpisodeResource> ToResource(this IEnumerable<Readarr.Core.MediaFiles.RenameEpisodeFilePreview> models)
         {
             return models.Select(ToResource).ToList();
         }

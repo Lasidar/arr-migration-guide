@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Indexers
+namespace Readarr.Api.V1.Indexers
 {
     public class IndexerFlagResource : RestResource
     {

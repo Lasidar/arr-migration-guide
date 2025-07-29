@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.Parser.Model;
+using Readarr.Core.Parser.Model;
 using Readarr.Http;
 
-namespace Readarr.Api.V3.Indexers
+namespace Readarr.Api.V1.Indexers
 {
     [V3ApiController]
     public class IndexerFlagController : Controller

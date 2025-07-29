@@ -2,18 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.Datastore.Events;
-using NzbDrone.Core.Download.Pending;
-using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Queue;
-using NzbDrone.SignalR;
+using Readarr.Core.Datastore.Events;
+using Readarr.Core.Download.Pending;
+using Readarr.Core.Messaging.Events;
+using Readarr.Core.Queue;
+using Readarr.SignalR;
 using Readarr.Http;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Queue
+namespace Readarr.Api.V1.Queue
 {
     [V3ApiController("queue/details")]
-    public class QueueDetailsController : RestControllerWithSignalR<QueueResource, NzbDrone.Core.Queue.Queue>,
+    public class QueueDetailsController : RestControllerWithSignalR<QueueResource, Readarr.Core.Queue.Queue>,
                                IHandle<QueueUpdatedEvent>, IHandle<PendingReleasesUpdatedEvent>
     {
         private readonly IQueueService _queueService;

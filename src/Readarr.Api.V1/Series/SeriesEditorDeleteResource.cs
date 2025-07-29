@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Readarr.Api.V3.Series
+namespace Readarr.Api.V1.Series
 {
     public class SeriesEditorDeleteResource
     {

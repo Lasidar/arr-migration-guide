@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NzbDrone.Core.RemotePathMappings;
+using Readarr.Core.RemotePathMappings;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.RemotePathMappings
+namespace Readarr.Api.V1.RemotePathMappings
 {
     public class RemotePathMappingResource : RestResource
     {

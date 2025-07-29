@@ -1,8 +1,8 @@
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using NzbDrone.Common.EnvironmentInfo;
-using NzbDrone.Common.Serializer;
+using Readarr.Common.EnvironmentInfo;
+using Readarr.Common.Serializer;
 using Readarr.Http.Extensions;
 
 namespace Readarr.Http.Middleware

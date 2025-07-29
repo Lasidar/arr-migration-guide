@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NzbDrone.Core.Download.TrackedDownloads;
-using NzbDrone.Core.Indexers;
-using NzbDrone.Core.Languages;
-using NzbDrone.Core.Qualities;
-using NzbDrone.Core.Queue;
+using Readarr.Core.Download.TrackedDownloads;
+using Readarr.Core.Indexers;
+using Readarr.Core.Languages;
+using Readarr.Core.Qualities;
+using Readarr.Core.Queue;
 using Readarr.Api.V3.CustomFormats;
 using Readarr.Api.V3.Episodes;
 using Readarr.Api.V3.Series;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Queue
+namespace Readarr.Api.V1.Queue
 {
     public class QueueResource : RestResource
     {
@@ -55,7 +55,7 @@ namespace Readarr.Api.V3.Queue
 
     public static class QueueResourceMapper
     {
-        public static QueueResource ToResource(this NzbDrone.Core.Queue.Queue model, bool includeSeries, bool includeEpisode)
+        public static QueueResource ToResource(this Readarr.Core.Queue.Queue model, bool includeSeries, bool includeEpisode)
         {
             if (model == null)
             {
@@ -106,7 +106,7 @@ namespace Readarr.Api.V3.Queue
             };
         }
 
-        public static List<QueueResource> ToResource(this IEnumerable<NzbDrone.Core.Queue.Queue> models, bool includeSeries, bool includeEpisode)
+        public static List<QueueResource> ToResource(this IEnumerable<Readarr.Core.Queue.Queue> models, bool includeSeries, bool includeEpisode)
         {
             return models.Select((m) => ToResource(m, includeSeries, includeEpisode)).ToList();
         }

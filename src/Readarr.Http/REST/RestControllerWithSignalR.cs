@@ -1,9 +1,9 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.Datastore;
-using NzbDrone.Core.Datastore.Events;
-using NzbDrone.Core.Messaging.Events;
-using NzbDrone.SignalR;
+using Readarr.Core.Datastore;
+using Readarr.Core.Datastore.Events;
+using Readarr.Core.Messaging.Events;
+using Readarr.SignalR;
 
 namespace Readarr.Http.REST
 {

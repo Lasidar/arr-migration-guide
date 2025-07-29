@@ -1,14 +1,14 @@
 using System;
 using System.Linq;
 using FluentValidation;
-using NzbDrone.Common.EnvironmentInfo;
-using NzbDrone.Core.Configuration;
-using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Validation;
-using NzbDrone.Core.Validation.Paths;
+using Readarr.Common.EnvironmentInfo;
+using Readarr.Core.Configuration;
+using Readarr.Core.MediaFiles;
+using Readarr.Core.Validation;
+using Readarr.Core.Validation.Paths;
 using Readarr.Http;
 
-namespace Readarr.Api.V3.Config
+namespace Readarr.Api.V1.Config
 {
     [V3ApiController("config/mediamanagement")]
     public class MediaManagementConfigController : ConfigController<MediaManagementConfigResource>

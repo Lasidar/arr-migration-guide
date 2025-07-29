@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.EnvironmentInfo;
-using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Update;
-using NzbDrone.Core.Update.History;
+using Readarr.Common.EnvironmentInfo;
+using Readarr.Core.Configuration;
+using Readarr.Core.Update;
+using Readarr.Core.Update.History;
 using Readarr.Http;
 
-namespace Readarr.Api.V3.Update
+namespace Readarr.Api.V1.Update
 {
     [V3ApiController]
     public class UpdateController : Controller

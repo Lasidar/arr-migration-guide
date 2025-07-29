@@ -1,0 +1,57 @@
+using System;
+using System.Collections.Generic;
+using FluentAssertions;
+using Moq;
+using NUnit.Framework;
+using Readarr.Core.DecisionEngine;
+using Readarr.Core.Download.Pending;
+using Readarr.Core.Indexers;
+using Readarr.Core.Parser.Model;
+using Readarr.Core.Test.Framework;
+
+namespace Readarr.Core.Test.Download.Pending.PendingReleaseServiceTests
+{
+    [TestFixture]
+    public class PendingReleaseServiceFixture : CoreTest<PendingReleaseService>
+    {
+        private void GivenPendingRelease()
+        {
+            Mocker.GetMock<IPendingReleaseRepository>()
+                              .Setup(v => v.All())
+                              .Returns(new List<PendingRelease>
+                                {
+                                      new PendingRelease { Release = new ReleaseInfo { IndexerId = 1 } }
+                                });
+        }
+
+        [Test]
+        public void should_not_ignore_pending_items_from_available_indexer()
+        {
+            Mocker.GetMock<IIndexerStatusService>()
+                .Setup(v => v.GetBlockedProviders())
+                .Returns(new List<IndexerStatus>());
+
+            GivenPendingRelease();
+
+            var results = Subject.GetPending();
+
+            results.Should().NotBeEmpty();
+            Mocker.GetMock<IMakeDownloadDecision>()
+                  .Verify(v => v.GetRssDecision(It.Is<List<ReleaseInfo>>(d => d.Count == 0), It.IsAny<bool>()), Times.Never());
+        }
+
+        [Test]
+        public void should_ignore_pending_items_from_unavailable_indexer()
+        {
+            Mocker.GetMock<IIndexerStatusService>()
+                .Setup(v => v.GetBlockedProviders())
+                .Returns(new List<IndexerStatus> { new IndexerStatus { ProviderId = 1, DisabledTill = DateTime.UtcNow.AddHours(2) } });
+
+            GivenPendingRelease();
+
+            var results = Subject.GetPending();
+
+            results.Should().BeEmpty();
+        }
+    }
+}

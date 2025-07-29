@@ -1,11 +1,11 @@
 using FluentValidation;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Validation;
-using NzbDrone.Core.Validation.Paths;
+using Readarr.Common.Extensions;
+using Readarr.Core.Validation;
+using Readarr.Core.Validation.Paths;
 
-namespace Readarr.Api.V3.Series
+namespace Readarr.Api.V1.Series
 {
-    public class SeriesEditorValidator : AbstractValidator<NzbDrone.Core.Tv.Series>
+    public class SeriesEditorValidator : AbstractValidator<Readarr.Core.Tv.Series>
     {
         public SeriesEditorValidator(RootFolderExistsValidator rootFolderExistsValidator, QualityProfileExistsValidator qualityProfileExistsValidator)
         {

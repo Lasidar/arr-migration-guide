@@ -1,8 +1,8 @@
 using System;
-using NzbDrone.Core.Instrumentation;
+using Readarr.Core.Instrumentation;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Logs
+namespace Readarr.Api.V1.Logs
 {
     public class LogResource : RestResource
     {

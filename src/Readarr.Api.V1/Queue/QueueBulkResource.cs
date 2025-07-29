@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Readarr.Api.V3.Queue
+namespace Readarr.Api.V1.Queue
 {
     public class QueueBulkResource
     {

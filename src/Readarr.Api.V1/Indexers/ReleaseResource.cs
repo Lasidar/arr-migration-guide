@@ -2,17 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
-using NzbDrone.Core.DecisionEngine;
-using NzbDrone.Core.Indexers;
-using NzbDrone.Core.Languages;
-using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Qualities;
-using NzbDrone.Core.Tv;
+using Readarr.Core.DecisionEngine;
+using Readarr.Core.Indexers;
+using Readarr.Core.Languages;
+using Readarr.Core.Parser.Model;
+using Readarr.Core.Qualities;
+using Readarr.Core.Tv;
 using Readarr.Api.V3.CustomFormats;
 using Readarr.Api.V3.Series;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Indexers
+namespace Readarr.Api.V1.Indexers
 {
     public class ReleaseResource : RestResource
     {

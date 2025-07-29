@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Common.Http;
-using NzbDrone.Core.Messaging.Commands;
+using Readarr.Common.Extensions;
+using Readarr.Common.Http;
+using Readarr.Core.Messaging.Commands;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Commands
+namespace Readarr.Api.V1.Commands
 {
     public class CommandResource : RestResource
     {

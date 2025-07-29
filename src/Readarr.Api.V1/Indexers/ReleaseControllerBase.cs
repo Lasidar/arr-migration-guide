@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.DecisionEngine;
-using NzbDrone.Core.Profiles.Qualities;
+using Readarr.Core.DecisionEngine;
+using Readarr.Core.Profiles.Qualities;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Indexers
+namespace Readarr.Api.V1.Indexers
 {
     public abstract class ReleaseControllerBase : RestController<ReleaseResource>
     {

@@ -6,12 +6,12 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Tags;
-using NzbDrone.Core.Tv;
+using Readarr.Common.Extensions;
+using Readarr.Core.Tags;
+using Readarr.Core.Tv;
 using Readarr.Http;
 
-namespace Readarr.Api.V3.Calendar
+namespace Readarr.Api.V1.Calendar
 {
     [V3FeedController("calendar")]
     public class CalendarFeedController : Controller

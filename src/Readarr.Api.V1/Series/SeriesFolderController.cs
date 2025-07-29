@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.Organizer;
-using NzbDrone.Core.Tv;
+using Readarr.Core.Organizer;
+using Readarr.Core.Tv;
 using Readarr.Http;
 
-namespace Readarr.Api.V3.Series;
+namespace Readarr.Api.V1.Series;
 
 [V3ApiController("series")]
 public class SeriesFolderController : Controller

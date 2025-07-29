@@ -2,12 +2,12 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
-using NzbDrone.Common.Disk;
-using NzbDrone.Common.EnvironmentInfo;
-using NzbDrone.Common.Extensions;
+using Readarr.Common.Disk;
+using Readarr.Common.EnvironmentInfo;
+using Readarr.Common.Extensions;
 using Readarr.Http;
 
-namespace Readarr.Api.V3.MediaCovers
+namespace Readarr.Api.V1.MediaCovers
 {
     [V3ApiController]
     public class MediaCoverController : Controller

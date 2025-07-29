@@ -1,10 +1,10 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.Notifications;
-using NzbDrone.SignalR;
+using Readarr.Core.Notifications;
+using Readarr.SignalR;
 using Readarr.Http;
 
-namespace Readarr.Api.V3.Notifications
+namespace Readarr.Api.V1.Notifications
 {
     [V3ApiController]
     public class NotificationController : ProviderControllerBase<NotificationResource, NotificationBulkResource, INotification, NotificationDefinition>

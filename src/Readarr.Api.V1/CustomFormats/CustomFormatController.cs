@@ -3,14 +3,14 @@ using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.CustomFormats;
-using NzbDrone.Core.Validation;
+using Readarr.Common.Extensions;
+using Readarr.Core.CustomFormats;
+using Readarr.Core.Validation;
 using Readarr.Http;
 using Readarr.Http.REST;
 using Readarr.Http.REST.Attributes;
 
-namespace Readarr.Api.V3.CustomFormats
+namespace Readarr.Api.V1.CustomFormats
 {
     [V3ApiController]
     public class CustomFormatController : RestController<CustomFormatResource>

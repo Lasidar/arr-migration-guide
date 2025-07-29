@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
-using NzbDrone.Core.Datastore;
+using Readarr.Core.Datastore;
 
 namespace Readarr.Http
 {

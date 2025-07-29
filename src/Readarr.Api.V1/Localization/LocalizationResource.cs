@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Localization
+namespace Readarr.Api.V1.Localization
 {
     public class LocalizationResourceSerializer : JsonConverter<Dictionary<string, string>>
     {

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using NzbDrone.Core.ImportLists.Exclusions;
+using Readarr.Core.ImportLists.Exclusions;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.ImportLists
+namespace Readarr.Api.V1.ImportLists
 {
     public class ImportListExclusionResource : RestResource
     {

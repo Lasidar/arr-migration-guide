@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Profiles.Languages
+namespace Readarr.Api.V1.Profiles.Languages
 {
     public class LanguageResource : RestResource
     {

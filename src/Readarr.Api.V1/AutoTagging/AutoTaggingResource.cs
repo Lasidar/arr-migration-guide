@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
-using NzbDrone.Core.AutoTagging;
-using NzbDrone.Core.AutoTagging.Specifications;
+using Readarr.Core.AutoTagging;
+using Readarr.Core.AutoTagging.Specifications;
 using Readarr.Http.ClientSchema;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.AutoTagging
+namespace Readarr.Api.V1.AutoTagging
 {
     public class AutoTaggingResource : RestResource
     {

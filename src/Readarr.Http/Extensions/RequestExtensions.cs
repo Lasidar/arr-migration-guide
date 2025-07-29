@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
-using NzbDrone.Common.EnvironmentInfo;
-using NzbDrone.Core.Datastore;
+using Readarr.Common.EnvironmentInfo;
+using Readarr.Core.Datastore;
 
 namespace Readarr.Http.Extensions
 {

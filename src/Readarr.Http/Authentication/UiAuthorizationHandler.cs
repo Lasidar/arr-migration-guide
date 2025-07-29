@@ -2,14 +2,14 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Authentication;
-using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Configuration.Events;
-using NzbDrone.Core.Messaging.Events;
+using Readarr.Common.Extensions;
+using Readarr.Core.Authentication;
+using Readarr.Core.Configuration;
+using Readarr.Core.Configuration.Events;
+using Readarr.Core.Messaging.Events;
 using Readarr.Http.Extensions;
 
-namespace NzbDrone.Http.Authentication
+namespace Readarr.Http.Authentication
 {
     public class UiAuthorizationHandler : AuthorizationHandler<BypassableDenyAnonymousAuthorizationRequirement>, IAuthorizationRequirement, IHandle<ConfigSavedEvent>
     {

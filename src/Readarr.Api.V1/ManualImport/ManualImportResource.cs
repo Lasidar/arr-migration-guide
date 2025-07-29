@@ -1,18 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
-using NzbDrone.Common.Crypto;
-using NzbDrone.Core.DecisionEngine;
-using NzbDrone.Core.Languages;
-using NzbDrone.Core.MediaFiles.EpisodeImport;
-using NzbDrone.Core.MediaFiles.EpisodeImport.Manual;
-using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Qualities;
+using Readarr.Common.Crypto;
+using Readarr.Core.DecisionEngine;
+using Readarr.Core.Languages;
+using Readarr.Core.MediaFiles.EpisodeImport;
+using Readarr.Core.MediaFiles.EpisodeImport.Manual;
+using Readarr.Core.Parser.Model;
+using Readarr.Core.Qualities;
 using Readarr.Api.V3.CustomFormats;
 using Readarr.Api.V3.Episodes;
 using Readarr.Api.V3.Series;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.ManualImport
+namespace Readarr.Api.V1.ManualImport
 {
     public class ManualImportResource : RestResource
     {

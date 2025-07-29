@@ -1,4 +1,4 @@
-namespace Readarr.Api.V3.Localization
+namespace Readarr.Api.V1.Localization
 {
     public class LocalizationLanguageResource
     {

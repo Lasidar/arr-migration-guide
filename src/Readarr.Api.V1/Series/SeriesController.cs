@@ -2,32 +2,32 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.DataAugmentation.Scene;
-using NzbDrone.Core.Datastore;
-using NzbDrone.Core.Datastore.Events;
-using NzbDrone.Core.MediaCover;
-using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.MediaFiles.Events;
-using NzbDrone.Core.Messaging.Commands;
-using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.RootFolders;
-using NzbDrone.Core.SeriesStats;
-using NzbDrone.Core.Tv;
-using NzbDrone.Core.Tv.Commands;
-using NzbDrone.Core.Tv.Events;
-using NzbDrone.Core.Validation;
-using NzbDrone.Core.Validation.Paths;
-using NzbDrone.SignalR;
+using Readarr.Common.Extensions;
+using Readarr.Core.DataAugmentation.Scene;
+using Readarr.Core.Datastore;
+using Readarr.Core.Datastore.Events;
+using Readarr.Core.MediaCover;
+using Readarr.Core.MediaFiles;
+using Readarr.Core.MediaFiles.Events;
+using Readarr.Core.Messaging.Commands;
+using Readarr.Core.Messaging.Events;
+using Readarr.Core.RootFolders;
+using Readarr.Core.SeriesStats;
+using Readarr.Core.Tv;
+using Readarr.Core.Tv.Commands;
+using Readarr.Core.Tv.Events;
+using Readarr.Core.Validation;
+using Readarr.Core.Validation.Paths;
+using Readarr.SignalR;
 using Readarr.Http;
 using Readarr.Http.Extensions;
 using Readarr.Http.REST;
 using Readarr.Http.REST.Attributes;
 
-namespace Readarr.Api.V3.Series
+namespace Readarr.Api.V1.Series
 {
     [V3ApiController]
-    public class SeriesController : RestControllerWithSignalR<SeriesResource, NzbDrone.Core.Tv.Series>,
+    public class SeriesController : RestControllerWithSignalR<SeriesResource, Readarr.Core.Tv.Series>,
                                 IHandle<EpisodeImportedEvent>,
                                 IHandle<EpisodeFileDeletedEvent>,
                                 IHandle<SeriesUpdatedEvent>,
@@ -211,7 +211,7 @@ namespace Readarr.Api.V3.Series
             _seriesService.DeleteSeries(new List<int> { id }, deleteFiles, addImportListExclusion);
         }
 
-        private SeriesResource GetSeriesResource(NzbDrone.Core.Tv.Series series, bool includeSeasonImages)
+        private SeriesResource GetSeriesResource(Readarr.Core.Tv.Series series, bool includeSeasonImages)
         {
             if (series == null)
             {

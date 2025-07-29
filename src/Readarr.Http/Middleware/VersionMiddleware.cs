@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using NzbDrone.Common.EnvironmentInfo;
+using Readarr.Common.EnvironmentInfo;
 using Readarr.Http.Extensions;
 
 namespace Readarr.Http.Middleware

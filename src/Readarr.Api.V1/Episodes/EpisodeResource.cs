@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
-using NzbDrone.Core.MediaCover;
-using NzbDrone.Core.Tv;
+using Readarr.Core.MediaCover;
+using Readarr.Core.Tv;
 using Readarr.Api.V3.EpisodeFiles;
 using Readarr.Api.V3.Series;
 using Readarr.Http.REST;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Readarr.Api.V3.Episodes
+namespace Readarr.Api.V1.Episodes
 {
     public class EpisodeResource : RestResource
     {

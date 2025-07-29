@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using FluentValidation.Results;
-using NzbDrone.Common.Extensions;
+using Readarr.Common.Extensions;
 
-namespace Readarr.Api.V3
+namespace Readarr.Api.V1
 {
     public class ProviderTestAllResult
     {

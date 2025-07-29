@@ -1,6 +1,6 @@
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Queue
+namespace Readarr.Api.V1.Queue
 {
     public class QueueStatusResource : RestResource
     {

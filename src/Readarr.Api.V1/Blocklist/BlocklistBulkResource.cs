@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Readarr.Api.V3.Blocklist
+namespace Readarr.Api.V1.Blocklist
 {
     public class BlocklistBulkResource
     {

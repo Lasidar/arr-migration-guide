@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using FluentValidation.Validators;
-using NzbDrone.Common.Extensions;
+using Readarr.Common.Extensions;
 
-namespace Readarr.Api.V3.Profiles.Quality
+namespace Readarr.Api.V1.Profiles.Quality
 {
     public static class QualityItemsValidator
     {
@@ -182,7 +182,7 @@ namespace Readarr.Api.V3.Profiles.Quality
                 }
             }
 
-            var allQualityIds = NzbDrone.Core.Qualities.Quality.All;
+            var allQualityIds = Readarr.Core.Qualities.Quality.All;
 
             foreach (var quality in allQualityIds)
             {

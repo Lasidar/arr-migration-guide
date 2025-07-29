@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.Download;
-using NzbDrone.Core.Download.Pending;
+using Readarr.Core.Download;
+using Readarr.Core.Download.Pending;
 using Readarr.Http;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Queue
+namespace Readarr.Api.V1.Queue
 {
     [V3ApiController("queue")]
     public class QueueActionController : Controller

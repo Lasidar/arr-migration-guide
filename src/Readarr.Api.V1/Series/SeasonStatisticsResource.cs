@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using NzbDrone.Core.SeriesStats;
+using Readarr.Core.SeriesStats;
 
-namespace Readarr.Api.V3.Series
+namespace Readarr.Api.V1.Series
 {
     public class SeasonStatisticsResource
     {

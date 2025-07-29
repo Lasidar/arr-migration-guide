@@ -13,7 +13,7 @@
     <PackageReference Remove="StyleCop.Analyzers" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NzbDrone.Core\Sonarr.Core.csproj" />
-    <ProjectReference Include="..\NzbDrone.SignalR\Sonarr.SignalR.csproj" />
+    <ProjectReference Include="..\Readarr.Core\Readarr.Core.csproj" />
+    <ProjectReference Include="..\Readarr.SignalR\Readarr.SignalR.csproj" />
   </ItemGroup>
 </Project>

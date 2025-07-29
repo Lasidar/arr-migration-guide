@@ -1,8 +1,8 @@
 ﻿using System;
-using NzbDrone.Core.Backup;
+using Readarr.Core.Backup;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.System.Backup
+namespace Readarr.Api.V1.System.Backup
 {
     public class BackupResource : RestResource
     {

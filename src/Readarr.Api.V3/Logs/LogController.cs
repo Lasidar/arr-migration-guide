@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Instrumentation;
+using Readarr.Common.Extensions;
+using Readarr.Core.Configuration;
+using Readarr.Core.Instrumentation;
 using Readarr.Http;
 using Readarr.Http.Extensions;
 
-namespace Readarr.Api.V5.Logs
+namespace Readarr.Api.V3.Logs
 {
     [V5ApiController]
     public class LogController : Controller

@@ -1,6 +1,6 @@
 ﻿using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.DiskSpace
+namespace Readarr.Api.V1.DiskSpace
 {
     public class DiskSpaceResource : RestResource
     {
@@ -12,7 +12,7 @@ namespace Readarr.Api.V3.DiskSpace
 
     public static class DiskSpaceResourceMapper
     {
-        public static DiskSpaceResource MapToResource(this NzbDrone.Core.DiskSpace.DiskSpace model)
+        public static DiskSpaceResource MapToResource(this Readarr.Core.DiskSpace.DiskSpace model)
         {
             if (model == null)
             {

@@ -3,7 +3,7 @@ using System.Linq;
 using FluentValidation;
 using FluentValidation.Validators;
 
-namespace Readarr.Api.V3.Profiles.Quality
+namespace Readarr.Api.V1.Profiles.Quality
 {
     public static class QualityCutoffValidator
     {

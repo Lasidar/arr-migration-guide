@@ -3,15 +3,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Internal;
-using NzbDrone.Common.EnvironmentInfo;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Datastore;
-using NzbDrone.Core.Lifecycle;
+using Readarr.Common.EnvironmentInfo;
+using Readarr.Common.Extensions;
+using Readarr.Core.Configuration;
+using Readarr.Core.Datastore;
+using Readarr.Core.Lifecycle;
 using Readarr.Http;
 using Readarr.Http.Validation;
 
-namespace Readarr.Api.V3.System
+namespace Readarr.Api.V1.System
 {
     [V3ApiController]
     public class SystemController : Controller

@@ -4,16 +4,16 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Datastore;
-using NzbDrone.Core.DecisionEngine;
-using NzbDrone.Core.Download;
-using NzbDrone.Core.Indexers;
-using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Profiles.Qualities;
+using Readarr.Common.Extensions;
+using Readarr.Core.Datastore;
+using Readarr.Core.DecisionEngine;
+using Readarr.Core.Download;
+using Readarr.Core.Indexers;
+using Readarr.Core.Parser.Model;
+using Readarr.Core.Profiles.Qualities;
 using Readarr.Http;
 
-namespace Readarr.Api.V3.Indexers
+namespace Readarr.Api.V1.Indexers
 {
     [V3ApiController("release/push")]
     public class ReleasePushController : ReleaseControllerBase

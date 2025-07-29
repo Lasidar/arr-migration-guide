@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using NLog;
-using NzbDrone.Core.Authentication;
-using NzbDrone.Core.Configuration;
+using Readarr.Core.Authentication;
+using Readarr.Core.Configuration;
 using Readarr.Http.Extensions;
 
 namespace Readarr.Http.Authentication

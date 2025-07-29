@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.Datastore;
-using NzbDrone.Core.ImportLists.Exclusions;
+using Readarr.Core.Datastore;
+using Readarr.Core.ImportLists.Exclusions;
 using Readarr.Http;
 using Readarr.Http.Extensions;
 using Readarr.Http.REST;
 using Readarr.Http.REST.Attributes;
 
-namespace Readarr.Api.V3.ImportLists
+namespace Readarr.Api.V1.ImportLists
 {
     [V3ApiController]
     public class ImportListExclusionController : RestController<ImportListExclusionResource>

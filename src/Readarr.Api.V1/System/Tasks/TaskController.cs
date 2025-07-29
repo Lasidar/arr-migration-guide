@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Datastore.Events;
-using NzbDrone.Core.Jobs;
-using NzbDrone.Core.Messaging.Events;
-using NzbDrone.SignalR;
+using Readarr.Common.Extensions;
+using Readarr.Core.Datastore.Events;
+using Readarr.Core.Jobs;
+using Readarr.Core.Messaging.Events;
+using Readarr.SignalR;
 using Readarr.Http;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.System.Tasks
+namespace Readarr.Api.V1.System.Tasks
 {
     [V3ApiController("system/task")]
     public class TaskController : RestControllerWithSignalR<TaskResource, ScheduledTask>, IHandle<CommandExecutedEvent>

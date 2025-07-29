@@ -1,13 +1,13 @@
 using System.Reflection;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Update;
-using NzbDrone.Core.Validation.Paths;
+using Readarr.Core.Configuration;
+using Readarr.Core.Update;
+using Readarr.Core.Validation.Paths;
 using Readarr.Http;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V5.Settings;
+namespace Readarr.Api.V3.Settings;
 
 [V5ApiController("settings/update")]
 public class UpdateSettingsController : RestController<UpdateSettingsResource>

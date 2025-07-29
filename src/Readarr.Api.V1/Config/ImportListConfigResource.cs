@@ -1,8 +1,8 @@
-using NzbDrone.Core.Configuration;
-using NzbDrone.Core.ImportLists;
+using Readarr.Core.Configuration;
+using Readarr.Core.ImportLists;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Config
+namespace Readarr.Api.V1.Config
 {
     public class ImportListConfigResource : RestResource
     {

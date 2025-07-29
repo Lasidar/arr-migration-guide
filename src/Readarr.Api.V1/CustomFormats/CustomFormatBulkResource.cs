@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Readarr.Api.V3.CustomFormats
+namespace Readarr.Api.V1.CustomFormats
 {
     public class CustomFormatBulkResource
     {

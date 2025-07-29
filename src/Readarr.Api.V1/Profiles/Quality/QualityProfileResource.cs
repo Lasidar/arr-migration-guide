@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using NzbDrone.Core.CustomFormats;
-using NzbDrone.Core.Profiles;
-using NzbDrone.Core.Profiles.Qualities;
+using Readarr.Core.CustomFormats;
+using Readarr.Core.Profiles;
+using Readarr.Core.Profiles.Qualities;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Profiles.Quality
+namespace Readarr.Api.V1.Profiles.Quality
 {
     public class QualityProfileResource : RestResource
     {
@@ -22,7 +22,7 @@ namespace Readarr.Api.V3.Profiles.Quality
     public class QualityProfileQualityItemResource : RestResource
     {
         public string Name { get; set; }
-        public NzbDrone.Core.Qualities.Quality Quality { get; set; }
+        public Readarr.Core.Qualities.Quality Quality { get; set; }
         public List<QualityProfileQualityItemResource> Items { get; set; }
         public bool Allowed { get; set; }
         public double? MinSize { get; set; }
@@ -127,7 +127,7 @@ namespace Readarr.Api.V3.Profiles.Quality
             {
                 Id = resource.Id,
                 Name = resource.Name,
-                Quality = resource.Quality != null ? (NzbDrone.Core.Qualities.Quality)resource.Quality.Id : null,
+                Quality = resource.Quality != null ? (Readarr.Core.Qualities.Quality)resource.Quality.Id : null,
                 Items = resource.Items.ConvertAll(ToModel),
                 Allowed = resource.Allowed,
                 MinSize = resource.MinSize,

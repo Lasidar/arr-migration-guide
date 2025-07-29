@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.CustomFormats;
-using NzbDrone.Core.Datastore.Events;
-using NzbDrone.Core.DecisionEngine.Specifications;
-using NzbDrone.Core.Exceptions;
-using NzbDrone.Core.Languages;
-using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.MediaFiles.Events;
-using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Parser;
-using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Tv;
-using NzbDrone.SignalR;
+using Readarr.Core.CustomFormats;
+using Readarr.Core.Datastore.Events;
+using Readarr.Core.DecisionEngine.Specifications;
+using Readarr.Core.Exceptions;
+using Readarr.Core.Languages;
+using Readarr.Core.MediaFiles;
+using Readarr.Core.MediaFiles.Events;
+using Readarr.Core.Messaging.Events;
+using Readarr.Core.Parser;
+using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
+using Readarr.SignalR;
 using Readarr.Http;
 using Readarr.Http.REST;
 using Readarr.Http.REST.Attributes;
-using BadRequestException = Sonarr.Http.REST.BadRequestException;
+using BadRequestException = Readarr.Http.REST.BadRequestException;
 
-namespace Readarr.Api.V3.EpisodeFiles
+namespace Readarr.Api.V1.EpisodeFiles
 {
     [V3ApiController]
     public class EpisodeFileController : RestControllerWithSignalR<EpisodeFileResource, EpisodeFile>,

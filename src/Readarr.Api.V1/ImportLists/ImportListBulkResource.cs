@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using NzbDrone.Core.ImportLists;
+using Readarr.Core.ImportLists;
 
-namespace Readarr.Api.V3.ImportLists
+namespace Readarr.Api.V1.ImportLists
 {
     public class ImportListBulkResource : ProviderBulkResource<ImportListBulkResource>
     {

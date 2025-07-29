@@ -2,12 +2,12 @@ using System.Linq;
 using System.Reflection;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Languages;
+using Readarr.Core.Configuration;
+using Readarr.Core.Languages;
 using Readarr.Http;
 using Readarr.Http.REST.Attributes;
 
-namespace Readarr.Api.V3.Config
+namespace Readarr.Api.V1.Config
 {
     [V3ApiController("config/ui")]
     public class UiConfigController : ConfigController<UiConfigResource>

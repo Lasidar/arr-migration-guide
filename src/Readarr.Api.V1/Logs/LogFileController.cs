@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
-using NzbDrone.Common.Disk;
-using NzbDrone.Common.EnvironmentInfo;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Configuration;
+using Readarr.Common.Disk;
+using Readarr.Common.EnvironmentInfo;
+using Readarr.Common.Extensions;
+using Readarr.Core.Configuration;
 using Readarr.Http;
 
-namespace Readarr.Api.V3.Logs
+namespace Readarr.Api.V1.Logs
 {
     [V3ApiController("log/file")]
     public class LogFileController : LogFileControllerBase

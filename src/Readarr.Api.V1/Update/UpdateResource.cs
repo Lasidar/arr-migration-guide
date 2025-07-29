@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NzbDrone.Core.Update;
+using Readarr.Core.Update;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Update
+namespace Readarr.Api.V1.Update
 {
     public class UpdateResource : RestResource
     {

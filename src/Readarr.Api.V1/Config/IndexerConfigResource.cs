@@ -1,7 +1,7 @@
-using NzbDrone.Core.Configuration;
+using Readarr.Core.Configuration;
 using Readarr.Http.REST;
 
-namespace Readarr.Api.V3.Config
+namespace Readarr.Api.V1.Config
 {
     public class IndexerConfigResource : RestResource
     {

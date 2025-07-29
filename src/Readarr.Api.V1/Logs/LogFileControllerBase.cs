@@ -3,10 +3,10 @@ using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
-using NzbDrone.Common.Disk;
-using NzbDrone.Core.Configuration;
+using Readarr.Common.Disk;
+using Readarr.Core.Configuration;
 
-namespace Readarr.Api.V3.Logs
+namespace Readarr.Api.V1.Logs
 {
     public abstract class LogFileControllerBase : Controller
     {

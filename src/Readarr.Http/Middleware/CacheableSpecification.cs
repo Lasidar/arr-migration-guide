@@ -1,7 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Http;
-using NzbDrone.Common.EnvironmentInfo;
-using NzbDrone.Common.Extensions;
+using Readarr.Common.EnvironmentInfo;
+using Readarr.Common.Extensions;
 
 namespace Readarr.Http.Middleware
 {

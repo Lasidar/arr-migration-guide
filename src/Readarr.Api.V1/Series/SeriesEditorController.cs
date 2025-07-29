@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Messaging.Commands;
-using NzbDrone.Core.Tv;
-using NzbDrone.Core.Tv.Commands;
+using Readarr.Common.Extensions;
+using Readarr.Core.Messaging.Commands;
+using Readarr.Core.Tv;
+using Readarr.Core.Tv.Commands;
 using Readarr.Http;
 
-namespace Readarr.Api.V3.Series
+namespace Readarr.Api.V1.Series
 {
     [V3ApiController("series/editor")]
     public class SeriesEditorController : Controller

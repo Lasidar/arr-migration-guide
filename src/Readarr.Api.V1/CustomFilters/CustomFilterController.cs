@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.CustomFilters;
+using Readarr.Core.CustomFilters;
 using Readarr.Http;
 using Readarr.Http.REST;
 using Readarr.Http.REST.Attributes;
 
-namespace Readarr.Api.V3.CustomFilters
+namespace Readarr.Api.V1.CustomFilters
 {
     [V3ApiController]
     public class CustomFilterController : RestController<CustomFilterResource>
