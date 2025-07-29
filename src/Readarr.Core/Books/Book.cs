@@ -8,7 +8,6 @@ namespace Readarr.Core.Books
     {
         public Book()
         {
-            Editions = new List<Edition>();
         }
 
         // Foreign Keys
@@ -30,7 +29,7 @@ namespace Readarr.Core.Books
         
         // Relationships
         public LazyLoaded<Author> Author { get; set; }
-        public List<Edition> Editions { get; set; }
+        public LazyLoaded<List<Edition>> Editions { get; set; }
         
         // System
         public DateTime Added { get; set; }
@@ -46,7 +45,6 @@ namespace Readarr.Core.Books
         {
             BookMetadataId = otherBook.BookMetadataId;
             
-            Editions = otherBook.Editions;
             Monitored = otherBook.Monitored;
             AnyEditionOk = otherBook.AnyEditionOk;
             

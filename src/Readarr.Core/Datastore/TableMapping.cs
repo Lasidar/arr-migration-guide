@@ -39,6 +39,7 @@ using Readarr.Core.RemotePathMappings;
 using Readarr.Core.RootFolders;
 using Readarr.Core.Tags;
 using Readarr.Core.ThingiProvider;
+using Readarr.Core.Books;
 using Readarr.Core.Tv;
 using Readarr.Core.Update.History;
 using static Dapper.SqlMapper;
@@ -113,7 +114,70 @@ namespace Readarr.Core.Datastore
 
             Mapper.Entity<EpisodeHistory>("History").RegisterModel();
 
-            Mapper.Entity<Series>("Series").RegisterModel()
+            // Book domain mappings
+            Mapper.Entity<Author>("Authors").RegisterModel()
+                  .Ignore(a => a.RootFolderPath)
+                  .HasOne(a => a.QualityProfile, a => a.QualityProfileId)
+                  .LazyLoad(a => a.Metadata, 
+                            (db, parent) => db.Query<AuthorMetadata>(new SqlBuilder(db.DatabaseType).Where<AuthorMetadata>(m => m.Id == parent.AuthorMetadataId)).SingleOrDefault(),
+                            a => a.AuthorMetadataId > 0)
+                  .LazyLoad(a => a.Books,
+                            (db, parent) => db.Query<Book>(new SqlBuilder(db.DatabaseType).Where<Book>(b => b.AuthorId == parent.Id)).ToList(),
+                            a => a.Id > 0)
+                  .LazyLoad(a => a.Series,
+                            (db, parent) => db.Query<Series>(new SqlBuilder(db.DatabaseType).Where<Series>(s => s.AuthorId == parent.Id)).ToList(),
+                            a => a.Id > 0);
+
+            Mapper.Entity<AuthorMetadata>("AuthorMetadata").RegisterModel();
+
+            Mapper.Entity<Book>("Books").RegisterModel()
+                  .LazyLoad(b => b.Author,
+                            (db, parent) => db.Query<Author>(new SqlBuilder(db.DatabaseType).Where<Author>(a => a.Id == parent.AuthorId)).SingleOrDefault(),
+                            b => b.AuthorId > 0)
+                  .LazyLoad(b => b.Metadata,
+                            (db, parent) => db.Query<BookMetadata>(new SqlBuilder(db.DatabaseType).Where<BookMetadata>(m => m.Id == parent.BookMetadataId)).SingleOrDefault(),
+                            b => b.BookMetadataId > 0)
+                  .LazyLoad(b => b.Editions,
+                            (db, parent) => db.Query<Edition>(new SqlBuilder(db.DatabaseType).Where<Edition>(e => e.BookId == parent.Id)).ToList(),
+                            b => b.Id > 0);
+
+            Mapper.Entity<BookMetadata>("BookMetadata").RegisterModel();
+
+            Mapper.Entity<Edition>("Editions").RegisterModel()
+                  .Ignore(e => e.HasFile)
+                  .LazyLoad(e => e.Book,
+                            (db, parent) => db.Query<Book>(new SqlBuilder(db.DatabaseType).Where<Book>(b => b.Id == parent.BookId)).SingleOrDefault(),
+                            e => e.BookId > 0)
+                  .LazyLoad(e => e.BookFile,
+                            (db, parent) => db.Query<BookFile>(new SqlBuilder(db.DatabaseType).Where<BookFile>(f => f.Id == parent.BookFileId)).SingleOrDefault(),
+                            e => e.BookFileId > 0);
+
+            Mapper.Entity<Books.Series>("Series").RegisterModel()
+                  .LazyLoad(s => s.Author,
+                            (db, parent) => db.Query<Author>(new SqlBuilder(db.DatabaseType).Where<Author>(a => a.Id == parent.AuthorId)).SingleOrDefault(),
+                            s => s.AuthorId > 0)
+                  .LazyLoad(s => s.Books,
+                            (db, parent) => db.Query<SeriesBookLink>(new SqlBuilder(db.DatabaseType).Where<SeriesBookLink>(l => l.SeriesId == parent.Id)).ToList(),
+                            s => s.Id > 0);
+
+            Mapper.Entity<SeriesBookLink>("SeriesBookLink").RegisterModel()
+                  .LazyLoad(l => l.Series,
+                            (db, parent) => db.Query<Books.Series>(new SqlBuilder(db.DatabaseType).Where<Books.Series>(s => s.Id == parent.SeriesId)).SingleOrDefault(),
+                            l => l.SeriesId > 0)
+                  .LazyLoad(l => l.Book,
+                            (db, parent) => db.Query<Book>(new SqlBuilder(db.DatabaseType).Where<Book>(b => b.Id == parent.BookId)).SingleOrDefault(),
+                            l => l.BookId > 0);
+
+            Mapper.Entity<BookFile>("BookFiles").RegisterModel()
+                  .HasOne(f => f.Author, f => f.AuthorId)
+                  .HasOne(f => f.Book, f => f.BookId)
+                  .LazyLoad(f => f.Edition,
+                            (db, parent) => db.Query<Edition>(new SqlBuilder(db.DatabaseType).Where<Edition>(e => e.BookFileId == parent.Id)).SingleOrDefault(),
+                            f => f.Id > 0)
+                  .Ignore(f => f.Path);
+
+            // Keep legacy TV mappings for now (can be removed later)
+            Mapper.Entity<Tv.Series>("Series_Legacy").RegisterModel()
                   .Ignore(s => s.RootFolderPath)
                   .HasOne(s => s.QualityProfile, s => s.QualityProfileId);
 

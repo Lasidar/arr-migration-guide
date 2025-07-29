@@ -10,8 +10,6 @@ namespace Readarr.Core.Books
     {
         public Author()
         {
-            Books = new List<Book>();
-            Series = new List<Series>();
             Tags = new HashSet<int>();
         }
 
@@ -39,8 +37,8 @@ namespace Readarr.Core.Books
         public LazyLoaded<QualityProfile> QualityProfile { get; set; }
         
         // Relationships
-        public List<Book> Books { get; set; }
-        public List<Series> Series { get; set; }
+        public LazyLoaded<List<Book>> Books { get; set; }
+        public LazyLoaded<List<Series>> Series { get; set; }
         public HashSet<int> Tags { get; set; }
         public AddAuthorOptions AddOptions { get; set; }
 
@@ -53,8 +51,6 @@ namespace Readarr.Core.Books
         {
             AuthorMetadataId = otherAuthor.AuthorMetadataId;
             
-            Books = otherAuthor.Books;
-            Series = otherAuthor.Series;
             Path = otherAuthor.Path;
             QualityProfileId = otherAuthor.QualityProfileId;
             MetadataProfileId = otherAuthor.MetadataProfileId;
