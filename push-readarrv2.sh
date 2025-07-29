@@ -1,0 +1,23 @@
+#!/bin/bash
+# Script to push the readarrv2 branch to your fork
+
+echo "This script will help you push the readarrv2 branch to your fork"
+echo "Run these commands in your local environment:"
+echo ""
+echo "# 1. Clone your fork if you haven't already"
+echo "git clone https://github.com/Lasidar/Readarrv2_test.git"
+echo "cd Readarrv2_test"
+echo ""
+echo "# 2. Add this repository as a remote (if needed)"
+echo "git remote add cursor https://github.com/Lasidar/Readarrv2_test.git"
+echo ""
+echo "# 3. Fetch the readarrv2 branch"
+echo "git fetch cursor readarrv2:readarrv2"
+echo ""
+echo "# 4. Push to your fork"
+echo "git push -u origin readarrv2"
+echo ""
+echo "The branch contains these commits:"
+echo "- 516b3a504 Phase 2.1 Complete: Domain model transformation"
+echo "- 575d6642e Phase 1 Complete: Core transformation from Sonarr to Readarr"
+echo "- 3246a581a Initial Readarr v2 transformation setup"
