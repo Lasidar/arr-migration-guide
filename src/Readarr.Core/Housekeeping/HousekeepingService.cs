@@ -1,50 +1,55 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using NLog;
-using Readarr.Core.Datastore;
 using Readarr.Core.Messaging.Commands;
 
 namespace Readarr.Core.Housekeeping
 {
-    public class HousekeepingService : IExecute<HousekeepingCommand>
+    public interface IHousekeepingService
     {
-        private readonly IEnumerable<IHousekeepingTask> _housekeepers;
-        private readonly Logger _logger;
-        private readonly IMainDatabase _mainDb;
+        void Clean();
+    }
 
-        public HousekeepingService(IEnumerable<IHousekeepingTask> housekeepers, IMainDatabase mainDb, Logger logger)
+    public class HousekeepingService : IHousekeepingService, IExecute<HousekeepingCommand>
+    {
+        private readonly IEnumerable<IHousekeepingTask> _housekeepingTasks;
+        private readonly Logger _logger;
+
+        public HousekeepingService(IEnumerable<IHousekeepingTask> housekeepingTasks, Logger logger)
         {
-            _housekeepers = housekeepers;
+            _housekeepingTasks = housekeepingTasks;
             _logger = logger;
-            _mainDb = mainDb;
         }
 
-        private void Clean()
+        public void Clean()
         {
-            _logger.Info("Running housecleaning tasks");
+            _logger.Info("Running housekeeping tasks");
 
-            foreach (var housekeeper in _housekeepers)
+            foreach (var task in _housekeepingTasks)
             {
                 try
                 {
-                    _logger.Debug("Starting {0}", housekeeper.GetType().Name);
-                    housekeeper.Clean();
-                    _logger.Debug("Completed {0}", housekeeper.GetType().Name);
+                    _logger.Debug("Starting housekeeping task: {0}", task.GetType().Name);
+                    task.Clean();
+                    _logger.Debug("Completed housekeeping task: {0}", task.GetType().Name);
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error(ex, "Error running housekeeping task: {0}", housekeeper.GetType().Name);
+                    _logger.Error(ex, "Error running housekeeping task: {0}", task.GetType().Name);
                 }
             }
 
-            // Vacuuming the log db isn't needed since that's done in a separate housekeeping task
-            _logger.Debug("Compressing main database after housekeeping");
-            _mainDb.Vacuum();
+            _logger.Info("Housekeeping completed");
         }
 
         public void Execute(HousekeepingCommand message)
         {
             Clean();
         }
+    }
+
+    public interface IHousekeepingTask
+    {
+        void Clean();
     }
 }

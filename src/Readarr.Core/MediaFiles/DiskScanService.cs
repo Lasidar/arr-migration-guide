@@ -8,9 +8,10 @@ using NLog;
 using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Common.Instrumentation.Extensions;
+using Readarr.Core.Books;
 using Readarr.Core.Configuration;
+using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.MediaFiles.Commands;
-using Readarr.Core.MediaFiles.EpisodeImport;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Messaging.Commands;
@@ -229,9 +230,9 @@ namespace Readarr.Core.MediaFiles
             return mediaFileList.ToArray();
         }
 
-        public List<string> FilterPaths(string basePath, IEnumerable<string> paths, bool filterExtras = true)
+        public List<string> FilterPaths(string basePath, IEnumerable<string> files, bool filterExtras = true)
         {
-            var filteredPaths = paths.Where(path => !ExcludedSubFoldersRegex.IsMatch(basePath.GetRelativePath(path)))
+            var filteredPaths = files.Where(path => !ExcludedSubFoldersRegex.IsMatch(basePath.GetRelativePath(path)))
                         .Where(path => !ExcludedFilesRegex.IsMatch(Path.GetFileName(path)))
                         .ToList();
 
@@ -293,5 +294,10 @@ namespace Readarr.Core.MediaFiles
                 }
             }
         }
+    }
+
+    public interface IMediaFileTableCleanupService
+    {
+        void Clean(int authorId, IEnumerable<string> filesOnDisk);
     }
 }

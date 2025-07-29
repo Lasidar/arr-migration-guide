@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Threading.Tasks;
 using NLog;
 using Readarr.Common.Instrumentation.Extensions;
@@ -13,14 +13,14 @@ namespace Readarr.Core.Indexers
     public class RssSyncService : IExecute<RssSyncCommand>
     {
         private readonly IFetchAndParseRss _rssFetcherAndParser;
-        private readonly IMakeDownloadDecision _downloadDecisionMaker;
+        private readonly IDownloadDecisionMaker _downloadDecisionMaker;
         private readonly IProcessDownloadDecisions _processDownloadDecisions;
         private readonly IPendingReleaseService _pendingReleaseService;
         private readonly IEventAggregator _eventAggregator;
         private readonly Logger _logger;
 
         public RssSyncService(IFetchAndParseRss rssFetcherAndParser,
-                              IMakeDownloadDecision downloadDecisionMaker,
+                              IDownloadDecisionMaker downloadDecisionMaker,
                               IProcessDownloadDecisions processDownloadDecisions,
                               IPendingReleaseService pendingReleaseService,
                               IEventAggregator eventAggregator,
