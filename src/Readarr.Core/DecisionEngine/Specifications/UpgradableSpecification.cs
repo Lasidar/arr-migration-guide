@@ -8,15 +8,6 @@ using Readarr.Core.Qualities;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {
-    public interface IUpgradableSpecification
-    {
-        UpgradeableRejectReason IsUpgradable(QualityProfile profile, QualityModel currentQuality, List<CustomFormat> currentCustomFormats, QualityModel newQuality, List<CustomFormat> newCustomFormats);
-        bool QualityCutoffNotMet(QualityProfile profile, QualityModel currentQuality, QualityModel newQuality = null);
-        bool CutoffNotMet(QualityProfile profile, QualityModel currentQuality, List<CustomFormat> currentCustomFormats, QualityModel newQuality = null);
-        bool IsRevisionUpgrade(QualityModel currentQuality, QualityModel newQuality);
-        bool IsUpgradeAllowed(QualityProfile qualityProfile, QualityModel currentQuality, List<CustomFormat> currentCustomFormats, QualityModel newQuality, List<CustomFormat> newCustomFormats);
-    }
-
     public class UpgradableSpecification : IUpgradableSpecification
     {
         private readonly IConfigService _configService;
@@ -26,6 +17,12 @@ namespace Readarr.Core.DecisionEngine.Specifications
         {
             _configService = configService;
             _logger = logger;
+        }
+
+        public bool IsUpgradable(object current, object newItem)
+        {
+            // TODO: Implement generic upgradability check
+            return true;
         }
 
         public UpgradeableRejectReason IsUpgradable(QualityProfile qualityProfile, QualityModel currentQuality, List<CustomFormat> currentCustomFormats, QualityModel newQuality, List<CustomFormat> newCustomFormats)

@@ -12,6 +12,7 @@ using Readarr.Common.Disk;
 using Readarr.Common.EnsureThat;
 using Readarr.Common.Extensions;
 using Readarr.Core.CustomFormats;
+using Readarr.Core.Books;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Qualities;
@@ -19,17 +20,6 @@ using Readarr.Core.Tv;
 
 namespace Readarr.Core.Organizer
 {
-    public interface IBuildFileNames
-    {
-        string BuildFileName(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension = "", NamingConfig namingConfig = null, List<CustomFormat> customFormats = null);
-        string BuildFilePath(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null);
-        string BuildSeasonPath(Series series, int seasonNumber);
-        string GetSeriesFolder(Series series, NamingConfig namingConfig = null);
-        string GetSeasonFolder(Series series, int seasonNumber, NamingConfig namingConfig = null);
-        bool RequiresEpisodeTitle(Series series, List<Episode> episodes);
-        bool RequiresAbsoluteEpisodeNumber();
-    }
-
     public class FileNameBuilder : IBuildFileNames
     {
         private const string MediaInfoVideoDynamicRangeToken = "{MediaInfo VideoDynamicRange}";
@@ -134,7 +124,7 @@ namespace Readarr.Core.Organizer
             _logger = logger;
         }
 
-        private string BuildFileName(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension, int maxPath, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
+        private string BuildFileName(List<Episode> episodes, Tv.Series series, EpisodeFile episodeFile, string extension, int maxPath, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
         {
             if (namingConfig == null)
             {
@@ -224,12 +214,12 @@ namespace Readarr.Core.Organizer
             return string.Join(Path.DirectorySeparatorChar.ToString(), components) + extension;
         }
 
-        public string BuildFileName(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension = "", NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
+        public string BuildFileName(List<Episode> episodes, Tv.Series series, EpisodeFile episodeFile, string extension = "", NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
         {
             return BuildFileName(episodes, series, episodeFile, extension, LongPathSupport.MaxFilePathLength, namingConfig, customFormats);
         }
 
-        public string BuildFilePath(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
+        public string BuildFilePath(List<Episode> episodes, Tv.Series series, EpisodeFile episodeFile, string extension, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
         {
             Ensure.That(extension, () => extension).IsNotNullOrWhiteSpace();
 
@@ -240,7 +230,7 @@ namespace Readarr.Core.Organizer
             return Path.Combine(seasonPath, fileName);
         }
 
-        public string BuildSeasonPath(Series series, int seasonNumber)
+        public string BuildSeasonPath(Tv.Series series, int seasonNumber)
         {
             var path = series.Path;
 
@@ -256,7 +246,7 @@ namespace Readarr.Core.Organizer
             return path;
         }
 
-        public string GetSeriesFolder(Series series, NamingConfig namingConfig = null)
+        public string GetSeriesFolder(Tv.Series series, NamingConfig namingConfig = null)
         {
             if (namingConfig == null)
             {
@@ -277,7 +267,7 @@ namespace Readarr.Core.Organizer
             return folderName;
         }
 
-        public string GetSeasonFolder(Series series, int seasonNumber, NamingConfig namingConfig = null)
+        public string GetSeasonFolder(Tv.Series series, int seasonNumber, NamingConfig namingConfig = null)
         {
             if (namingConfig == null)
             {
@@ -397,7 +387,7 @@ namespace Readarr.Core.Organizer
             return name.Trim(' ', '.');
         }
 
-        public bool RequiresEpisodeTitle(Series series, List<Episode> episodes)
+        public bool RequiresEpisodeTitle(Tv.Series series, List<Episode> episodes)
         {
             var namingConfig = _namingConfigService.GetConfig();
             var pattern = namingConfig.StandardEpisodeFormat;
@@ -449,7 +439,7 @@ namespace Readarr.Core.Organizer
             });
         }
 
-        private void AddSeriesTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series)
+        private void AddSeriesTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Tv.Series series)
         {
             tokenHandlers["{Series Title}"] = m => Truncate(series.Title, m.CustomFormat);
             tokenHandlers["{Series CleanTitle}"] = m => Truncate(CleanTitle(series.Title), m.CustomFormat);
@@ -530,7 +520,7 @@ namespace Readarr.Core.Organizer
             return pattern;
         }
 
-        private string AddAbsoluteNumberingTokens(string pattern, Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series, List<Episode> episodes, NamingConfig namingConfig)
+        private string AddAbsoluteNumberingTokens(string pattern, Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Tv.Series series, List<Episode> episodes, NamingConfig namingConfig)
         {
             var absoluteEpisodeFormats = GetAbsoluteFormat(pattern).DistinctBy(v => v.AbsoluteEpisodePattern).ToList();
 
@@ -630,7 +620,7 @@ namespace Readarr.Core.Organizer
             tokenHandlers["{Release Hash}"] = m => episodeFile.ReleaseHash ?? string.Empty;
         }
 
-        private void AddQualityTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series, EpisodeFile episodeFile)
+        private void AddQualityTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Tv.Series series, EpisodeFile episodeFile)
         {
             var qualityTitle = _qualityDefinitionService.Get(episodeFile.Quality.Quality).Title;
             var qualityProper = GetQualityProper(series, episodeFile.Quality);
@@ -694,7 +684,7 @@ namespace Readarr.Core.Organizer
                 m => MediaInfoFormatter.FormatVideoDynamicRangeType(episodeFile.MediaInfo);
         }
 
-        private void AddCustomFormats(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series, EpisodeFile episodeFile, List<CustomFormat> customFormats = null)
+        private void AddCustomFormats(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Tv.Series series, EpisodeFile episodeFile, List<CustomFormat> customFormats = null)
         {
             if (customFormats == null)
             {
@@ -714,7 +704,7 @@ namespace Readarr.Core.Organizer
             };
         }
 
-        private void AddIdTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series)
+        private void AddIdTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Tv.Series series)
         {
             tokenHandlers["{ImdbId}"] = m => series.ImdbId ?? string.Empty;
             tokenHandlers["{TvdbId}"] = m => series.TvdbId.ToString();
@@ -814,7 +804,7 @@ namespace Readarr.Core.Organizer
             }
         }
 
-        private void UpdateMediaInfoIfNeeded(string pattern, EpisodeFile episodeFile, Series series)
+        private void UpdateMediaInfoIfNeeded(string pattern, EpisodeFile episodeFile, Tv.Series series)
         {
             if (series.Path.IsNullOrWhiteSpace())
             {
@@ -1089,7 +1079,7 @@ namespace Readarr.Core.Organizer
             return MultiPartCleanupRegex.Replace(title, string.Empty).Trim();
         }
 
-        private string GetQualityProper(Series series, QualityModel quality)
+        private string GetQualityProper(Tv.Series series, QualityModel quality)
         {
             if (quality.Revision.Version > 1)
             {
@@ -1104,7 +1094,7 @@ namespace Readarr.Core.Organizer
             return string.Empty;
         }
 
-        private string GetQualityReal(Series series, QualityModel quality)
+        private string GetQualityReal(Tv.Series series, QualityModel quality)
         {
             if (quality.Revision.Real > 0)
             {
@@ -1232,6 +1222,25 @@ namespace Readarr.Core.Organizer
             int.TryParse(formatter, out var maxCustomLength);
 
             return maxCustomLength;
+        }
+
+        // Book interface implementations (stubs for now)
+        public string GetAuthorFolder(Author author)
+        {
+            // TODO: Implement author folder naming
+            return author.Name.CleanFileName();
+        }
+
+        public string GetBookFolder(Book book)
+        {
+            // TODO: Implement book folder naming
+            return book.Title.CleanFileName();
+        }
+
+        public string GetBookFileName(Book book, BookFile bookFile)
+        {
+            // TODO: Implement book file naming
+            return $"{book.Author.Value?.Name} - {book.Title}".CleanFileName();
         }
     }
 

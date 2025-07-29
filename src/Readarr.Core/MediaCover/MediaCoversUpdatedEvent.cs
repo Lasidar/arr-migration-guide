@@ -6,12 +6,12 @@ namespace Readarr.Core.MediaCover
 {
     public class MediaCoversUpdatedEvent : IEvent
     {
-        public Series Series { get; set; }
+        public Tv.Series Series { get; set; }
         public Author Author { get; set; }
         public Book Book { get; set; }
         public bool Updated { get; set; }
 
-        public MediaCoversUpdatedEvent(Series series, bool updated)
+        public MediaCoversUpdatedEvent(Tv.Series series, bool updated)
         {
             Series = series;
             Updated = updated;

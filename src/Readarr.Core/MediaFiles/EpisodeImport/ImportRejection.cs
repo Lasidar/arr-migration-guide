@@ -1,11 +1,12 @@
 using Readarr.Core.DecisionEngine;
 
-namespace Readarr.Core.MediaFiles.EpisodeImport;
-
-public class ImportRejection : Rejection<ImportRejectionReason>
+namespace Readarr.Core.MediaFiles.EpisodeImport
 {
-    public ImportRejection(ImportRejectionReason reason, string message, RejectionType type = RejectionType.Permanent)
-        : base(reason, message, type)
+    public class ImportRejection : Rejection
     {
+        public ImportRejection(string reason, RejectionType type = RejectionType.Permanent)
+            : base(reason, type)
+        {
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using NLog;
 using Readarr.Common.Extensions;
 using Readarr.Common.Instrumentation.Extensions;
+using Readarr.Core.Books;
 using Readarr.Core.DataAugmentation.Scene;
 using Readarr.Core.IndexerSearch.Definitions;
 using Readarr.Core.Parser.Model;
@@ -11,26 +12,15 @@ using Readarr.Core.Tv;
 
 namespace Readarr.Core.Parser
 {
-    public interface IParsingService
-    {
-        Series GetSeries(string title);
-        RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, int tvRageId, string imdbId, SearchCriteriaBase searchCriteria = null);
-        RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, Series series);
-        RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int seriesId, IEnumerable<int> episodeIds);
-        List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, bool sceneSource, SearchCriteriaBase searchCriteria = null);
-        ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, int tvdbId, int tvRageId, string imdbId, SearchCriteriaBase searchCriteria = null);
-        ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, Series series);
-    }
-
     public class ParsingService : IParsingService
     {
         private readonly IEpisodeService _episodeService;
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
         private readonly ISceneMappingService _sceneMappingService;
         private readonly Logger _logger;
 
         public ParsingService(IEpisodeService episodeService,
-                              ISeriesService seriesService,
+                              Tv.ISeriesService seriesService,
                               ISceneMappingService sceneMappingService,
                               Logger logger)
         {
@@ -40,7 +30,7 @@ namespace Readarr.Core.Parser
             _logger = logger;
         }
 
-        public Series GetSeries(string title)
+        public Tv.Series GetSeries(string title)
         {
             var parsedEpisodeInfo = Parser.ParseTitle(title);
 
@@ -72,9 +62,9 @@ namespace Readarr.Core.Parser
             return series;
         }
 
-        private Series GetSeriesByAllTitles(ParsedEpisodeInfo parsedEpisodeInfo)
+        private Tv.Series GetSeriesByAllTitles(ParsedEpisodeInfo parsedEpisodeInfo)
         {
-            Series foundSeries = null;
+            Tv.Series foundSeries = null;
             int? foundTvdbId = null;
 
             // Match each title individually, they must all resolve to the same tvdbid
@@ -121,7 +111,7 @@ namespace Readarr.Core.Parser
             return Map(parsedEpisodeInfo, tvdbId, tvRageId, imdbId, null, searchCriteria);
         }
 
-        public RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, Series series)
+        public RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, Tv.Series series)
         {
             return Map(parsedEpisodeInfo, 0, 0, null, series, null);
         }
@@ -136,7 +126,7 @@ namespace Readarr.Core.Parser
                    };
         }
 
-        private RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, int tvRageId, string imdbId, Series series, SearchCriteriaBase searchCriteria)
+        private RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, int tvRageId, string imdbId, Tv.Series series, SearchCriteriaBase searchCriteria)
         {
             var sceneMapping = _sceneMappingService.FindSceneMapping(parsedEpisodeInfo.SeriesTitle, parsedEpisodeInfo.ReleaseTitle, parsedEpisodeInfo.SeasonNumber);
 
@@ -207,7 +197,7 @@ namespace Readarr.Core.Parser
             return remoteEpisode;
         }
 
-        public List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, bool sceneSource, SearchCriteriaBase searchCriteria = null)
+        public List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Tv.Series series, bool sceneSource, SearchCriteriaBase searchCriteria = null)
         {
             if (sceneSource)
             {
@@ -219,7 +209,7 @@ namespace Readarr.Core.Parser
             return GetEpisodes(parsedEpisodeInfo, series, parsedEpisodeInfo.SeasonNumber, sceneSource, searchCriteria);
         }
 
-        private List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, int mappedSeasonNumber, bool sceneSource, SearchCriteriaBase searchCriteria)
+        private List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Tv.Series series, int mappedSeasonNumber, bool sceneSource, SearchCriteriaBase searchCriteria)
         {
             if (parsedEpisodeInfo.FullSeason)
             {
@@ -324,7 +314,7 @@ namespace Readarr.Core.Parser
             return ParseSpecialEpisodeTitle(parsedEpisodeInfo, releaseTitle, series);
         }
 
-        public ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, Series series)
+        public ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, Tv.Series series)
         {
             // SxxE00 episodes are sometimes mapped via TheXEM, don't use episode title parsing in that case.
             if (parsedEpisodeInfo != null && parsedEpisodeInfo.IsPossibleSceneSeasonSpecial && series.UseSceneNumbering)
@@ -367,7 +357,7 @@ namespace Readarr.Core.Parser
 
         private FindSeriesResult FindSeries(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, int tvRageId, string imdbId, SceneMapping sceneMapping, SearchCriteriaBase searchCriteria)
         {
-            Series series = null;
+            Tv.Series series = null;
 
             if (sceneMapping != null)
             {
@@ -511,7 +501,7 @@ namespace Readarr.Core.Parser
             return new FindSeriesResult(series, matchType);
         }
 
-        private Episode GetDailyEpisode(Series series, string airDate, int? part, SearchCriteriaBase searchCriteria)
+        private Episode GetDailyEpisode(Tv.Series series, string airDate, int? part, SearchCriteriaBase searchCriteria)
         {
             Episode episodeInfo = null;
 
@@ -529,7 +519,7 @@ namespace Readarr.Core.Parser
             return episodeInfo;
         }
 
-        private List<Episode> GetAnimeEpisodes(Series series, ParsedEpisodeInfo parsedEpisodeInfo, int seasonNumber, bool sceneSource, SearchCriteriaBase searchCriteria)
+        private List<Episode> GetAnimeEpisodes(Tv.Series series, ParsedEpisodeInfo parsedEpisodeInfo, int seasonNumber, bool sceneSource, SearchCriteriaBase searchCriteria)
         {
             var result = new List<Episode>();
 
@@ -602,7 +592,7 @@ namespace Readarr.Core.Parser
             return result;
         }
 
-        private List<Episode> GetStandardEpisodes(Series series, ParsedEpisodeInfo parsedEpisodeInfo, int mappedSeasonNumber, bool sceneSource, SearchCriteriaBase searchCriteria)
+        private List<Episode> GetStandardEpisodes(Tv.Series series, ParsedEpisodeInfo parsedEpisodeInfo, int mappedSeasonNumber, bool sceneSource, SearchCriteriaBase searchCriteria)
         {
             var result = new List<Episode>();
 
@@ -664,6 +654,37 @@ namespace Readarr.Core.Parser
             }
 
             return result;
+        }
+
+        // Book interface implementations (stubs for now)
+        public Author GetAuthor(string title)
+        {
+            // TODO: Implement author parsing
+            throw new NotImplementedException();
+        }
+
+        public Author GetAuthorFromTag(string tag)
+        {
+            // TODO: Implement author from tag parsing
+            throw new NotImplementedException();
+        }
+
+        public RemoteBook Map(BookInfo parsedBookInfo, SearchCriteriaBase searchCriteria = null)
+        {
+            // TODO: Implement book mapping
+            throw new NotImplementedException();
+        }
+
+        public RemoteBook Map(BookInfo parsedBookInfo, int authorId, IEnumerable<int> bookIds)
+        {
+            // TODO: Implement book mapping with IDs
+            throw new NotImplementedException();
+        }
+
+        public Book GetBook(Author author, string bookTitle)
+        {
+            // TODO: Implement book retrieval
+            throw new NotImplementedException();
         }
     }
 }

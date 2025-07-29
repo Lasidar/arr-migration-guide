@@ -7,26 +7,10 @@ using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Tv;
 using Readarr.Core.Tv.Events;
+using System;
 
 namespace Readarr.Core.MediaFiles
 {
-    public interface IMediaFileService
-    {
-        EpisodeFile Add(EpisodeFile episodeFile);
-        void Update(EpisodeFile episodeFile);
-        void Update(List<EpisodeFile> episodeFiles);
-        void Delete(EpisodeFile episodeFile, DeleteMediaFileReason reason);
-        List<EpisodeFile> GetFilesBySeries(int seriesId);
-        List<EpisodeFile> GetFilesBySeriesIds(List<int> seriesIds);
-        List<EpisodeFile> GetFilesBySeason(int seriesId, int seasonNumber);
-        List<EpisodeFile> GetFiles(IEnumerable<int> ids);
-        List<EpisodeFile> GetFilesWithoutMediaInfo();
-        List<string> FilterExistingFiles(List<string> files, Series series);
-        EpisodeFile Get(int id);
-        List<EpisodeFile> Get(IEnumerable<int> ids);
-        List<EpisodeFile> GetFilesWithRelativePath(int seriesId, string relativePath);
-    }
-
     public class MediaFileService : IMediaFileService, IHandleAsync<SeriesDeletedEvent>
     {
         private readonly IEventAggregator _eventAggregator;
@@ -116,7 +100,51 @@ namespace Readarr.Core.MediaFiles
 
         public void HandleAsync(SeriesDeletedEvent message)
         {
-            _mediaFileRepository.DeleteForSeries(message.Series.Select(s => s.Id).ToList());
+            var files = GetFilesBySeries(message.Series.Id);
+            _mediaFileRepository.DeleteMany(files);
+        }
+
+        // Book interface implementations (stubs for now)
+        public void Delete(BookFile bookFile)
+        {
+            // TODO: Implement book file deletion
+            throw new NotImplementedException();
+        }
+
+        BookFile IMediaFileService.Get(int id)
+        {
+            // TODO: Implement book file retrieval
+            throw new NotImplementedException();
+        }
+
+        List<BookFile> IMediaFileService.Get(IEnumerable<int> ids)
+        {
+            // TODO: Implement book files retrieval
+            throw new NotImplementedException();
+        }
+
+        public List<BookFile> GetFilesByAuthor(int authorId)
+        {
+            // TODO: Implement get files by author
+            throw new NotImplementedException();
+        }
+
+        public List<BookFile> GetFilesByBook(int bookId)
+        {
+            // TODO: Implement get files by book
+            throw new NotImplementedException();
+        }
+
+        public List<BookFile> GetUnmappedFiles()
+        {
+            // TODO: Implement get unmapped files
+            throw new NotImplementedException();
+        }
+
+        public void UpdateMediaInfo(List<BookFile> bookFiles)
+        {
+            // TODO: Implement update media info
+            throw new NotImplementedException();
         }
 
         public static List<string> FilterExistingFiles(List<string> files, List<EpisodeFile> seriesFiles, Series series)

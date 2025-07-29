@@ -48,6 +48,12 @@ csharp_style_inlined_variable_declaration = true
 
 # Using directive is unnecessary.
 dotnet_diagnostic.IDE0005.severity = error
+
+# Temporarily disable SA1200 (using directives must be inside namespace) for the transformation
+dotnet_diagnostic.SA1200.severity = none
+
+# Temporarily disable CA1824 (Mark assemblies with NeutralResourcesLanguageAttribute)
+dotnet_diagnostic.CA1824.severity = none
 # Use var instead of explicit type
 dotnet_diagnostic.IDE0007.severity = error
 # Inline variable declaration

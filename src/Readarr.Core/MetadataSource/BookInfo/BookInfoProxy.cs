@@ -364,9 +364,9 @@ namespace Readarr.Core.MetadataSource.BookInfo
             };
         }
 
-        private MediaCover MapImage(ImageResource resource)
+        private MediaCover.MediaCover MapImage(ImageResource resource)
         {
-            return new MediaCover
+            return new MediaCover.MediaCover
             {
                 Url = resource.Url,
                 CoverType = MapCoverType(resource.CoverType)

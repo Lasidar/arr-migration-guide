@@ -47,9 +47,4 @@ namespace Readarr.Core.Housekeeping
             Clean();
         }
     }
-
-    public interface IHousekeepingTask
-    {
-        void Clean();
-    }
 }

@@ -3,16 +3,13 @@ using System.Linq;
 using NLog;
 using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
+using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.MediaFiles.EpisodeImport;
 using Readarr.Core.Parser.Model;
+using System;
 
 namespace Readarr.Core.MediaFiles
 {
-    public interface IUpgradeMediaFiles
-    {
-        EpisodeFileMoveResult UpgradeEpisodeFile(EpisodeFile episodeFile, LocalEpisode localEpisode, bool copyOnly = false);
-    }
-
     public class UpgradeMediaFileService : IUpgradeMediaFiles
     {
         private readonly IRecycleBinProvider _recycleBinProvider;
@@ -85,6 +82,13 @@ namespace Readarr.Core.MediaFiles
             }
 
             return moveFileResult;
+        }
+
+        // Book interface implementation (stub for now)
+        public BookFileUpgradeResult UpgradeBookFile(BookFile bookFile, LocalBook localBook, bool copyOnly = false)
+        {
+            // TODO: Implement book file upgrade
+            throw new NotImplementedException();
         }
     }
 }

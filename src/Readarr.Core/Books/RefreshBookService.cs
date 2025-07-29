@@ -247,9 +247,4 @@ namespace Readarr.Core.Books
             }
         }
     }
-
-    public interface ICheckIfBookShouldBeRefreshed
-    {
-        bool ShouldRefresh(int? bookId);
-    }
 }

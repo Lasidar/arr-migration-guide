@@ -25,37 +25,11 @@ namespace Readarr.Core.Download
         public DownloadClientInfo DownloadClientInfo { get; set; }
     }
 
-    public class DownloadClientInfo
+    public class DownloadClientItemClientInfo
     {
         public DownloadProtocol Protocol { get; set; }
         public string Type { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
-    }
-
-    public enum DownloadItemStatus
-    {
-        Queued,
-        Paused,
-        Downloading,
-        Completed,
-        Failed,
-        Warning,
-        Removed
-    }
-
-    public enum DownloadProtocol
-    {
-        Unknown = 0,
-        Usenet = 1,
-        Torrent = 2
-    }
-
-    public enum DownloadClientType
-    {
-        Usenet,
-        Torrent,
-        Pneumatic,
-        Other
     }
 }

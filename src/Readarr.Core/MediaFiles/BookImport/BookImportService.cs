@@ -7,6 +7,7 @@ using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Core.Books;
 using Readarr.Core.Books.Events;
+using Readarr.Core.Download;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Qualities;

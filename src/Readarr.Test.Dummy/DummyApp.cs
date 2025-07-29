@@ -1,8 +1,7 @@
-using System;
-using System.Diagnostics;
-
 namespace Readarr.Test.Dummy
 {
+    using System;
+    using System.Diagnostics;
     public class DummyApp
     {
         public const string DUMMY_PROCCESS_NAME = "Sonarr.Test.Dummy";

@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Text.Json;
 using NLog;
+using Readarr.Common;
 using Readarr.Common.Disk;
 using Readarr.Common.EnvironmentInfo;
 using Readarr.Common.Extensions;
+using Readarr.Common.Instrumentation.Extensions;
 using Readarr.Core.Backup.Commands;
 using Readarr.Core.Configuration;
 using Readarr.Core.Datastore;
@@ -236,12 +240,5 @@ namespace Readarr.Core.Backup
     {
         public string Version { get; set; }
         public DateTime CreatedOn { get; set; }
-    }
-
-    public enum BackupType
-    {
-        Scheduled = 0,
-        Manual = 1,
-        Update = 2
     }
 }

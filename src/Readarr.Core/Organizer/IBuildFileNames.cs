@@ -1,4 +1,5 @@
 using Readarr.Core.Books;
+using Readarr.Core.MediaFiles;
 
 namespace Readarr.Core.Organizer
 {

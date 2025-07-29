@@ -11,6 +11,7 @@ using Readarr.Common.Instrumentation.Extensions;
 using Readarr.Core.Books;
 using Readarr.Core.Configuration;
 using Readarr.Core.MediaFiles.BookImport;
+using Readarr.Core.MediaFiles.EpisodeImport;
 using Readarr.Core.MediaFiles.Commands;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.MediaFiles.MediaInfo;
@@ -23,7 +24,7 @@ namespace Readarr.Core.MediaFiles
 {
     public interface IDiskScanService
     {
-        void Scan(Series series);
+        void Scan(Tv.Series series);
         string[] GetVideoFiles(string path, bool allDirectories = true);
         string[] GetNonVideoFiles(string path, bool allDirectories = true);
         List<string> FilterPaths(string basePath, IEnumerable<string> files, bool filterExtras = true);
@@ -37,7 +38,7 @@ namespace Readarr.Core.MediaFiles
         private readonly IMakeImportDecision _importDecisionMaker;
         private readonly IImportApprovedEpisodes _importApprovedEpisodes;
         private readonly IConfigService _configService;
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
         private readonly IMediaFileService _mediaFileService;
         private readonly IMediaFileTableCleanupService _mediaFileTableCleanupService;
         private readonly IRootFolderService _rootFolderService;
@@ -49,7 +50,7 @@ namespace Readarr.Core.MediaFiles
                                IMakeImportDecision importDecisionMaker,
                                IImportApprovedEpisodes importApprovedEpisodes,
                                IConfigService configService,
-                               ISeriesService seriesService,
+                               Tv.ISeriesService seriesService,
                                IMediaFileService mediaFileService,
                                IMediaFileTableCleanupService mediaFileTableCleanupService,
                                IRootFolderService rootFolderService,
@@ -75,7 +76,7 @@ namespace Readarr.Core.MediaFiles
         private static readonly Regex ExcludedExtraFilesRegex = new Regex(@"(-(trailer|other|behindthescenes|deleted|featurette|interview|scene|short)\.[^.]+$)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex ExcludedFilesRegex = new Regex(@"^\.(_|unmanic|DS_Store$)|^Thumbs\.db$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        public void Scan(Series series)
+        public void Scan(Tv.Series series)
         {
             var rootFolder = _rootFolderService.GetBestRootFolderPath(series.Path);
 
@@ -188,13 +189,13 @@ namespace Readarr.Core.MediaFiles
             CompletedScanning(series, possibleExtraFiles);
         }
 
-        private void CleanMediaFiles(Series series, List<string> mediaFileList)
+        private void CleanMediaFiles(Tv.Series series, List<string> mediaFileList)
         {
             _logger.Debug("{0} Cleaning up media files in DB", series);
             _mediaFileTableCleanupService.Clean(series, mediaFileList);
         }
 
-        private void CompletedScanning(Series series, List<string> possibleExtraFiles)
+        private void CompletedScanning(Tv.Series series, List<string> possibleExtraFiles)
         {
             _logger.Info("Completed scanning disk for {0}", series.Title);
             _eventAggregator.PublishEvent(new SeriesScannedEvent(series, possibleExtraFiles));
@@ -294,10 +295,5 @@ namespace Readarr.Core.MediaFiles
                 }
             }
         }
-    }
-
-    public interface IMediaFileTableCleanupService
-    {
-        void Clean(int authorId, IEnumerable<string> filesOnDisk);
     }
 }

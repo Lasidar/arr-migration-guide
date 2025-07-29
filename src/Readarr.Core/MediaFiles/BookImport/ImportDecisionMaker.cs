@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+
 using System.Linq;
 using NLog;
 using Readarr.Common.Disk;
@@ -17,9 +18,9 @@ namespace Readarr.Core.MediaFiles.BookImport
 {
     public interface IImportDecisionMaker
     {
-        List<ImportDecision<LocalBook>> GetImportDecisions(List<IFileInfo> bookFiles, Author author);
-        List<ImportDecision<LocalBook>> GetImportDecisions(List<IFileInfo> bookFiles, Author author, FilterFilesType filter);
-        List<ImportDecision<LocalBook>> GetImportDecisions(List<IFileInfo> bookFiles, Author author, FilterFilesType filter, bool includeExisting);
+        List<ImportDecision<LocalBook>> GetImportDecisions(List<FileInfo> bookFiles, Author author);
+        List<ImportDecision<LocalBook>> GetImportDecisions(List<FileInfo> bookFiles, Author author, FilterFilesType filter);
+        List<ImportDecision<LocalBook>> GetImportDecisions(List<FileInfo> bookFiles, Author author, FilterFilesType filter, bool includeExisting);
     }
 
     public class ImportDecisionMaker : IImportDecisionMaker
@@ -49,17 +50,17 @@ namespace Readarr.Core.MediaFiles.BookImport
             _logger = logger;
         }
 
-        public List<ImportDecision<LocalBook>> GetImportDecisions(List<IFileInfo> bookFiles, Author author)
+        public List<ImportDecision<LocalBook>> GetImportDecisions(List<FileInfo> bookFiles, Author author)
         {
             return GetImportDecisions(bookFiles, author, FilterFilesType.None);
         }
 
-        public List<ImportDecision<LocalBook>> GetImportDecisions(List<IFileInfo> bookFiles, Author author, FilterFilesType filter)
+        public List<ImportDecision<LocalBook>> GetImportDecisions(List<FileInfo> bookFiles, Author author, FilterFilesType filter)
         {
             return GetImportDecisions(bookFiles, author, filter, false);
         }
 
-        public List<ImportDecision<LocalBook>> GetImportDecisions(List<IFileInfo> bookFiles, Author author, FilterFilesType filter, bool includeExisting)
+        public List<ImportDecision<LocalBook>> GetImportDecisions(List<FileInfo> bookFiles, Author author, FilterFilesType filter, bool includeExisting)
         {
             var decisions = new List<ImportDecision<LocalBook>>();
 

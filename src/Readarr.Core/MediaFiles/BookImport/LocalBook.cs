@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Readarr.Common.Disk;
 using Readarr.Core.Books;
 using Readarr.Core.Languages;
@@ -19,7 +20,7 @@ namespace Readarr.Core.MediaFiles.BookImport
         public string Name { get; set; }
         public long Size { get; set; }
         public DateTime Modified { get; set; }
-        public IFileInfo FileInfo { get; set; }
+        public FileInfo FileInfo { get; set; }
         public BookInfo BookInfo { get; set; }
         public Author Author { get; set; }
         public Book Book { get; set; }

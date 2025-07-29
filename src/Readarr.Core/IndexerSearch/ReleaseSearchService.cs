@@ -31,14 +31,14 @@ namespace Readarr.Core.IndexerSearch
         private readonly ISceneMappingService _sceneMapping;
         private readonly ISeriesService _seriesService;
         private readonly IEpisodeService _episodeService;
-        private readonly IMakeDownloadDecision _makeDownloadDecision;
+        private readonly IDownloadDecisionMaker _makeDownloadDecision;
         private readonly Logger _logger;
 
         public ReleaseSearchService(IIndexerFactory indexerFactory,
                                 ISceneMappingService sceneMapping,
                                 ISeriesService seriesService,
                                 IEpisodeService episodeService,
-                                IMakeDownloadDecision makeDownloadDecision,
+                                                                    IDownloadDecisionMaker makeDownloadDecision,
                                 Logger logger)
         {
             _indexerFactory = indexerFactory;

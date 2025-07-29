@@ -33,7 +33,7 @@ namespace Readarr.Core.Parser.Model
         public List<Language> Languages { get; set; }
         public IndexerFlags IndexerFlags { get; set; }
         public ReleaseType ReleaseType { get; set; }
-        public MediaInfoModel MediaInfo { get; set; }
+        public MediaFiles.MediaInfo.MediaInfoModel MediaInfo { get; set; }
         public bool ExistingFile { get; set; }
         public bool SceneSource { get; set; }
         public string ReleaseGroup { get; set; }

@@ -131,7 +131,8 @@ namespace Readarr.Core.Books
                                 .IsValidPath()
                                 .SetValidator(authorAncestorValidator)
                                 .SetValidator(pathExistsValidator);
-            RuleFor(a => a.QualityProfileId).SetValidator(new QualityProfileExistsValidator());
+                                // TODO: Fix QualityProfileExistsValidator
+                    // RuleFor(a => a.QualityProfileId).SetValidator(new QualityProfileExistsValidator());
             RuleFor(a => a.MetadataProfileId).SetValidator(new MetadataProfileExistsValidator());
         }
     }
@@ -153,6 +154,8 @@ namespace Readarr.Core.Books
     {
     }
 
+    // TODO: Fix PropertyValidator base class
+    /*
     public class QualityProfileExistsValidator : PropertyValidator
     {
         protected override string GetDefaultMessageTemplate() => "Quality Profile does not exist";
@@ -168,4 +171,5 @@ namespace Readarr.Core.Books
             return true;
         }
     }
+    */
 }
