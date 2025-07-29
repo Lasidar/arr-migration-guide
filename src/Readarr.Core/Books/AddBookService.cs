@@ -9,6 +9,9 @@ using Readarr.Core.Books.Events;
 using Readarr.Core.Exceptions;
 using Readarr.Core.MetadataSource;
 using Readarr.Core.Messaging.Events;
+using Readarr.Core.Parser;
+using Readarr.Core.Validation;
+using Readarr.Core.Validation.Paths;
 
 namespace Readarr.Core.Books
 {
@@ -123,7 +126,7 @@ namespace Readarr.Core.Books
     {
         public AddBookValidator()
         {
-            RuleFor(b => b.Metadata).NotNull().SetValidator(new BookMetadataValidator());
+            RuleFor(b => b.Metadata.Value).NotNull().SetValidator(new BookMetadataValidator());
             RuleFor(b => b.AuthorId).GreaterThan(0);
         }
     }

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using NLog;
 using Readarr.Common.Cloud;
 using Readarr.Common.Http;
 

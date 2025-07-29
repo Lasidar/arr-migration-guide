@@ -102,13 +102,13 @@ namespace Readarr.Core.Tv
 
         public Series FindByTitle(string title)
         {
-            return _seriesRepository.FindByTitle(title.CleanSeriesTitle());
+            return _seriesRepository.FindByTitle(Parser.Parser.CleanSeriesTitle(title));
         }
 
         public Series FindByTitleInexact(string title)
         {
             // find any series clean title within the provided release title
-            var cleanTitle = title.CleanSeriesTitle();
+            var cleanTitle = Parser.Parser.CleanSeriesTitle(title);
             var list = _seriesRepository.FindByTitleInexact(cleanTitle);
             if (!list.Any())
             {
@@ -156,7 +156,7 @@ namespace Readarr.Core.Tv
 
         public Series FindByTitle(string title, int year)
         {
-            return _seriesRepository.FindByTitle(title.CleanSeriesTitle(), year);
+            return _seriesRepository.FindByTitle(Parser.Parser.CleanSeriesTitle(title), year);
         }
 
         public void DeleteSeries(List<int> seriesIds, bool deleteFiles, bool addImportListExclusion)

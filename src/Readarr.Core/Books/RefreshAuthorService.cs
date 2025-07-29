@@ -231,7 +231,7 @@ namespace Readarr.Core.Books
             }
             else
             {
-                var authors = _authorService.GetAllAuthors().OrderBy(a => a.Name).ToList();
+                var authors = _authorService.GetAllAuthors().OrderBy(a => a.Metadata.Value?.Name).ToList();
 
                 foreach (var author in authors)
                 {

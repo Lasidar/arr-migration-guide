@@ -125,7 +125,7 @@ namespace Readarr.Core.Datastore
                             (db, parent) => db.Query<Book>(new SqlBuilder(db.DatabaseType).Where<Book>(b => b.AuthorId == parent.Id)).ToList(),
                             a => a.Id > 0)
                   .LazyLoad(a => a.Series,
-                            (db, parent) => db.Query<Series>(new SqlBuilder(db.DatabaseType).Where<Series>(s => s.AuthorId == parent.Id)).ToList(),
+                            (db, parent) => db.Query<Books.Series>(new SqlBuilder(db.DatabaseType).Where<Books.Series>(s => s.AuthorId == parent.Id)).ToList(),
                             a => a.Id > 0);
 
             Mapper.Entity<AuthorMetadata>("AuthorMetadata").RegisterModel();

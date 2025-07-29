@@ -131,7 +131,7 @@ namespace Readarr.Core.Books
         {
             RuleFor(a => a.Metadata.Value).NotNull().SetValidator(new AuthorMetadataValidator());
             RuleFor(a => a.Path).Cascade(CascadeMode.Stop)
-                                .IsValidPath(PathValidationType.CurrentOs)
+                                .NotEmpty()
                                 .SetValidator(authorAncestorValidator)
                                 .SetValidator(pathExistsValidator);
                                 // TODO: Fix QualityProfileExistsValidator

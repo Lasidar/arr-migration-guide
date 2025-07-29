@@ -27,7 +27,7 @@ namespace Readarr.Core.Update
         {
             _platformInfo = platformInfo;
             _analyticsService = analyticsService;
-            _requestBuilder = requestBuilder.Services;
+            _requestBuilder = requestBuilder.BookInfo;
             _httpClient = httpClient;
             _mainDatabase = mainDatabase;
         }
