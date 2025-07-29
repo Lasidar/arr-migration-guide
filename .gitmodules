@@ -1,0 +1,9 @@
+[submodule "repo_references/sonarr"]
+	path = repo_references/sonarr
+	url = https://github.com/Sonarr/Sonarr.git
+[submodule "repo_references/lidarr"]
+	path = repo_references/lidarr
+	url = https://github.com/Lidarr/Lidarr.git
+[submodule "repo_references/readarr"]
+	path = repo_references/readarr
+	url = https://github.com/Readarr/Readarr.git

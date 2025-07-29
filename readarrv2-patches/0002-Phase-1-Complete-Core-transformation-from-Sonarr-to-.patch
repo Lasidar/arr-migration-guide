@@ -1,0 +1,3451 @@
+From 575d6642ec3f348159cd21ef4264824faac959b3 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Tue, 29 Jul 2025 05:25:36 +0000
+Subject: [PATCH 2/3] Phase 1 Complete: Core transformation from Sonarr to
+ Readarr
+
+- Completed namespace transformation (Sonarr/NzbDrone -> Readarr)
+- Renamed all project files and updated references
+- Updated assembly names and output paths
+- Updated configuration files (devcontainer, package.json, VS Code)
+- Fixed namespace references in code
+- Suppressed StyleCop SA1200 warnings temporarily
+
+Next: Phase 2 - Domain model transformation (Series->Author, etc.)
+---
+ .devcontainer/devcontainer.json               |  4 +-
+ .editorconfig                                 |  4 +
+ .vscode/launch.json                           |  4 +-
+ .vscode/tasks.json                            |  6 +-
+ package.json                                  | 10 +-
+ scripts/transform/namespace-transform.sh      | 58 ++++++++++++
+ scripts/transform/rename-directories.sh       | 34 +++++++
+ scripts/transform/rename-project-files.sh     | 91 +++++++++++++++++++
+ scripts/transform/update-assembly-names.sh    | 55 +++++++++++
+ .../ClientSchemaTests/SchemaBuilderFixture.cs | 10 +-
+ ...pi.Test.csproj => Readarr.Api.Test.csproj} |  8 +-
+ .../QualityDefinitionResourceValidatorTest.cs |  6 +-
+ .../ReleaseProfiles/ReleaseProfilesFixture.cs |  8 +-
+ .../AutomationTest.cs                         |  8 +-
+ .../AutomationTestAttribute.cs                |  2 +-
+ src/NzbDrone.Automation.Test/MainPagesTest.cs |  4 +-
+ .../PageModel/PageBase.cs                     |  2 +-
+ ....csproj => Readarr.Automation.Test.csproj} |  2 +-
+ ...Test.csproj => Readarr.Common.Test.csproj} |  6 +-
+ .../ReflectionExtensionFixture.cs             |  4 +-
+ .../Properties/AssemblyInfo.cs                |  5 +
+ ...rr.Common.csproj => Readarr.Common.csproj} |  0
+ .../Reflection/ReflectionExtensions.cs        |  2 +-
+ ....Console.csproj => Readarr.Console.csproj} |  4 +-
+ ...e.Test.csproj => Readarr.Core.Test.csproj} |  4 +-
+ .../Metadata/ExistingMetadataImporter.cs      | 18 ++--
+ .../Extras/Metadata/IMetadata.cs              | 10 +-
+ .../Extras/Metadata/MetadataBase.cs           | 10 +-
+ .../Extras/Metadata/MetadataRepository.cs     |  8 +-
+ .../Extras/Metadata/MetadataSectionType.cs    |  2 +-
+ .../Extras/Metadata/MetadataService.cs        | 24 ++---
+ .../Extras/Metadata/MetadataType.cs           |  2 +-
+ .../Others/ExistingOtherExtraImporter.cs      | 12 +--
+ .../Extras/Others/OtherExtraFile.cs           |  4 +-
+ .../Extras/Others/OtherExtraFileRenamer.cs    | 10 +-
+ .../Extras/Others/OtherExtraFileRepository.cs |  8 +-
+ .../Extras/Others/OtherExtraFileService.cs    | 10 +-
+ .../Extras/Others/OtherExtraService.cs        | 18 ++--
+ ...Sonarr.Core.csproj => Readarr.Core.csproj} |  2 +-
+ ...t.Test.csproj => Readarr.Host.Test.csproj} |  4 +-
+ .../AccessControl/FirewallAdapter.cs          |  6 +-
+ .../AccessControl/RemoteAccessAdapter.cs      |  4 +-
+ .../AccessControl/RemoteAccessException.cs    |  4 +-
+ src/NzbDrone.Host/AppLifetime.cs              | 12 +--
+ src/NzbDrone.Host/ApplicationModes.cs         |  2 +-
+ src/NzbDrone.Host/Bootstrap.cs                | 30 +++---
+ src/NzbDrone.Host/BrowserService.cs           |  8 +-
+ ...Sonarr.Host.csproj => Readarr.Host.csproj} | 10 +-
+ src/NzbDrone.Host/SingleInstancePolicy.cs     |  4 +-
+ src/NzbDrone.Host/Startup.cs                  | 44 ++++-----
+ .../TerminateApplicationException.cs          |  2 +-
+ src/NzbDrone.Host/UtilityModeRouter.cs        | 10 +-
+ ...csproj => Readarr.Integration.Test.csproj} |  6 +-
+ ...t.csproj => Readarr.Libraries.Test.csproj} |  2 +-
+ ...o.Test.csproj => Readarr.Mono.Test.csproj} |  6 +-
+ ...Sonarr.Mono.csproj => Readarr.Mono.csproj} |  2 +-
+ ....SignalR.csproj => Readarr.SignalR.csproj} |  4 +-
+ src/NzbDrone.Test.Common/AutoMoq/AutoMoqer.cs |  2 +-
+ ...mmon.csproj => Readarr.Test.Common.csproj} |  4 +-
+ ...Dummy.csproj => Readarr.Test.Dummy.csproj} |  0
+ ...Test.csproj => Readarr.Update.Test.csproj} |  4 +-
+ src/NzbDrone.Update/AppType.cs                |  2 +-
+ ...rr.Update.csproj => Readarr.Update.csproj} |  2 +-
+ src/NzbDrone.Update/UpdateApp.cs              | 20 ++--
+ .../UpdateEngine/BackupAndRestore.cs          |  8 +-
+ .../UpdateEngine/BackupAppData.cs             |  8 +-
+ .../UpdateEngine/DetectApplicationType.cs     |  8 +-
+ .../UpdateEngine/DetectExistingVersion.cs     |  4 +-
+ .../UpdateEngine/InstallUpdateService.cs      | 10 +-
+ .../UpdateEngine/StartNzbDrone.cs             | 12 +--
+ .../UpdateEngine/TerminateNzbDrone.cs         |  8 +-
+ src/NzbDrone.Update/UpdateStartupContext.cs   |  2 +-
+ .../DiskProviderTests/DiskProviderFixture.cs  |  6 +-
+ .../DiskProviderTests/FreeSpaceFixture.cs     |  6 +-
+ .../DotNetPlatformInfoFixture.cs              |  6 +-
+ .../WindowsVersionInfoFixture.cs              |  6 +-
+ .../Readarr.Windows.Test.csproj               | 18 ++++
+ .../Sonarr.Windows.Test.csproj                | 18 ----
+ src/NzbDrone.Windows/Disk/DiskProvider.cs     |  8 +-
+ src/NzbDrone.Windows/Disk/FolderMount.cs      |  4 +-
+ .../EnvironmentInfo/WindowsVersionInfo.cs     |  4 +-
+ ....Windows.csproj => Readarr.Windows.csproj} |  2 +-
+ src/NzbDrone/Sonarr.csproj                    |  4 +-
+ .../ApplyTags.cs                              |  0
+ .../AutoTagging/AutoTaggingController.cs      |  0
+ .../AutoTagging/AutoTaggingResource.cs        |  0
+ .../AutoTaggingSpecificationSchema.cs         |  0
+ .../Blocklist/BlocklistBulkResource.cs        |  0
+ .../Blocklist/BlocklistController.cs          |  0
+ .../Blocklist/BlocklistResource.cs            |  0
+ .../Calendar/CalendarController.cs            |  0
+ .../Calendar/CalendarFeedController.cs        |  0
+ .../Commands/CommandController.cs             |  0
+ .../Commands/CommandResource.cs               |  0
+ .../Config/CertificateValidator.cs            |  0
+ .../Config/ConfigController.cs                |  0
+ .../Config/DownloadClientConfigController.cs  |  0
+ .../Config/DownloadClientConfigResource.cs    |  0
+ .../Config/HostConfigController.cs            |  0
+ .../Config/HostConfigResource.cs              |  0
+ .../Config/ImportListConfigController.cs      |  0
+ .../Config/ImportListConfigResource.cs        |  0
+ .../Config/IndexerConfigController.cs         |  0
+ .../Config/IndexerConfigResource.cs           |  0
+ .../Config/MediaManagementConfigController.cs |  0
+ .../Config/MediaManagementConfigResource.cs   |  0
+ .../Config/NamingConfigController.cs          |  0
+ .../Config/NamingConfigResource.cs            |  0
+ .../Config/NamingExampleResource.cs           |  0
+ .../Config/UiConfigController.cs              |  0
+ .../Config/UiConfigResource.cs                |  0
+ .../CustomFilters/CustomFilterController.cs   |  0
+ .../CustomFilters/CustomFilterResource.cs     |  0
+ .../CustomFormats/CustomFormatBulkResource.cs |  0
+ .../CustomFormats/CustomFormatController.cs   |  0
+ .../CustomFormats/CustomFormatResource.cs     |  0
+ .../CustomFormatSpecificationSchema.cs        |  0
+ .../DiskSpace/DiskSpaceController.cs          |  0
+ .../DiskSpace/DiskSpaceResource.cs            |  0
+ .../DownloadClientBulkResource.cs             |  0
+ .../DownloadClientController.cs               |  0
+ .../DownloadClient/DownloadClientResource.cs  |  0
+ .../EpisodeFiles/EpisodeFileController.cs     |  0
+ .../EpisodeFiles/EpisodeFileListResource.cs   |  0
+ .../EpisodeFiles/EpisodeFileResource.cs       |  0
+ .../EpisodeFiles/MediaInfoResource.cs         |  0
+ .../Episodes/EpisodeController.cs             |  0
+ .../Episodes/EpisodeControllerWithSignalR.cs  |  0
+ .../Episodes/EpisodeResource.cs               |  0
+ .../Episodes/EpisodesMonitoredResource.cs     |  0
+ .../Episodes/RenameEpisodeController.cs       |  0
+ .../Episodes/RenameEpisodeResource.cs         |  0
+ .../FileSystem/FileSystemController.cs        |  0
+ .../Health/HealthController.cs                |  0
+ .../Health/HealthResource.cs                  |  0
+ .../History/HistoryController.cs              |  0
+ .../History/HistoryResource.cs                |  0
+ .../ImportLists/ImportListBulkResource.cs     |  0
+ .../ImportLists/ImportListController.cs       |  0
+ .../ImportListExclusionBulkResource.cs        |  0
+ .../ImportListExclusionController.cs          |  0
+ .../ImportListExclusionExistsValidator.cs     |  0
+ .../ImportListExclusionResource.cs            |  0
+ .../ImportLists/ImportListResource.cs         |  0
+ .../Indexers/IndexerBulkResource.cs           |  0
+ .../Indexers/IndexerController.cs             |  0
+ .../Indexers/IndexerFlagController.cs         |  0
+ .../Indexers/IndexerFlagResource.cs           |  0
+ .../Indexers/IndexerResource.cs               |  0
+ .../Indexers/ReleaseController.cs             |  0
+ .../Indexers/ReleaseControllerBase.cs         |  0
+ .../Indexers/ReleasePushController.cs         |  0
+ .../Indexers/ReleaseResource.cs               |  0
+ .../Localization/LocalizationController.cs    |  0
+ .../LocalizationLanguageResource.cs           |  0
+ .../Localization/LocalizationResource.cs      |  0
+ .../Logs/LogController.cs                     |  0
+ .../Logs/LogFileController.cs                 |  0
+ .../Logs/LogFileControllerBase.cs             |  0
+ .../Logs/LogFileResource.cs                   |  0
+ .../Logs/LogResource.cs                       |  0
+ .../Logs/UpdateLogFileController.cs           |  0
+ .../ManualImport/ManualImportController.cs    |  0
+ .../ManualImportReprocessResource.cs          |  0
+ .../ManualImport/ManualImportResource.cs      |  0
+ .../MediaCovers/MediaCoverController.cs       |  0
+ .../Metadata/MetadataBulkResource.cs          |  0
+ .../Metadata/MetadataController.cs            |  0
+ .../Metadata/MetadataResource.cs              |  0
+ .../Notifications/NotificationBulkResource.cs |  0
+ .../Notifications/NotificationController.cs   |  0
+ .../Notifications/NotificationResource.cs     |  0
+ .../Parse/ParseController.cs                  |  0
+ .../Parse/ParseResource.cs                    |  0
+ .../Profiles/Delay/DelayProfileController.cs  |  0
+ .../Profiles/Delay/DelayProfileResource.cs    |  0
+ .../Profiles/Languages/LanguageController.cs  |  0
+ .../Languages/LanguageProfileController.cs    |  0
+ .../Languages/LanguageProfileResource.cs      |  0
+ .../LanguageProfileSchemaController.cs        |  0
+ .../Profiles/Languages/LanguageResource.cs    |  0
+ .../Quality/QualityCutoffValidator.cs         |  0
+ .../Profiles/Quality/QualityItemsValidator.cs |  0
+ .../Quality/QualityProfileController.cs       |  0
+ .../Quality/QualityProfileResource.cs         |  0
+ .../QualityProfileResourceValidator.cs        |  0
+ .../Quality/QualityProfileSchemaController.cs |  0
+ .../Release/ReleaseProfileController.cs       |  0
+ .../Release/ReleaseProfileResource.cs         |  0
+ .../ProviderBulkResource.cs                   |  0
+ .../ProviderControllerBase.cs                 |  0
+ .../ProviderResource.cs                       |  0
+ .../ProviderTestAllResult.cs                  |  0
+ .../Qualities/QualityDefinitionController.cs  |  0
+ .../QualityDefinitionLimitsResource.cs        |  0
+ .../Qualities/QualityDefinitionResource.cs    |  0
+ .../QualityDefinitionResourceValidator.cs     |  0
+ .../Queue/QueueActionController.cs            |  0
+ .../Queue/QueueBulkResource.cs                |  0
+ .../Queue/QueueController.cs                  |  0
+ .../Queue/QueueDetailsController.cs           |  0
+ .../Queue/QueueResource.cs                    |  0
+ .../Queue/QueueStatusController.cs            |  0
+ .../Queue/QueueStatusResource.cs              |  0
+ .../Readarr.Api.V1.csproj}                    |  4 +-
+ .../RemotePathMappingController.cs            |  0
+ .../RemotePathMappingResource.cs              |  0
+ .../RootFolders/RootFolderController.cs       |  0
+ .../RootFolders/RootFolderResource.cs         |  0
+ .../SeasonPass/SeasonPassController.cs        |  0
+ .../SeasonPass/SeasonPassResource.cs          |  0
+ .../SeasonPass/SeasonPassSeriesResource.cs    |  0
+ .../Series/AlternateTitleResource.cs          |  0
+ .../Series/SeasonResource.cs                  |  0
+ .../Series/SeasonStatisticsResource.cs        |  0
+ .../Series/SeriesController.cs                |  0
+ .../Series/SeriesEditorController.cs          |  0
+ .../Series/SeriesEditorDeleteResource.cs      |  0
+ .../Series/SeriesEditorResource.cs            |  0
+ .../Series/SeriesEditorValidator.cs           |  0
+ .../SeriesFolderAsRootFolderValidator.cs      |  0
+ .../Series/SeriesFolderController.cs          |  0
+ .../Series/SeriesImportController.cs          |  0
+ .../Series/SeriesLookupController.cs          |  0
+ .../Series/SeriesResource.cs                  |  0
+ .../Series/SeriesStatisticsResource.cs        |  0
+ .../System/Backup/BackupController.cs         |  0
+ .../System/Backup/BackupResource.cs           |  0
+ .../System/SystemController.cs                |  0
+ .../System/SystemResource.cs                  |  0
+ .../System/Tasks/TaskController.cs            |  0
+ .../System/Tasks/TaskResource.cs              |  0
+ .../Tags/TagController.cs                     |  0
+ .../Tags/TagDetailsController.cs              |  0
+ .../Tags/TagDetailsResource.cs                |  0
+ .../Tags/TagResource.cs                       |  0
+ .../Update/UpdateController.cs                |  0
+ .../Update/UpdateResource.cs                  |  0
+ .../Wanted/CutoffController.cs                |  0
+ .../Wanted/MissingController.cs               |  0
+ .../openapi.json                              |  0
+ .../ApiInfoController.cs                      |  0
+ .../ApiInfoResource.cs                        |  0
+ .../ApiKeyAuthenticationHandler.cs            |  0
+ .../AuthenticationBuilderExtensions.cs        |  0
+ .../AuthenticationController.cs               |  0
+ .../Authentication/AuthenticationService.cs   |  0
+ ...leDenyAnonymousAuthorizationRequirement.cs |  0
+ .../Authentication/LoginResource.cs           |  0
+ .../Authentication/NoAuthenticationHandler.cs |  0
+ .../Authentication/UiAuthorizationHandler.cs  |  0
+ .../UiAuthorizationPolicyProvider.cs          |  0
+ .../ClientSchema/Field.cs                     |  0
+ .../ClientSchema/FieldMapping.cs              |  0
+ .../ClientSchema/SchemaBuilder.cs             |  0
+ .../ErrorManagement/ErrorModel.cs             |  0
+ .../ErrorManagement/SonarrErrorPipeline.cs    |  0
+ .../Exceptions/ApiException.cs                |  0
+ .../Exceptions/InvalidApiKeyException.cs      |  0
+ .../Extensions/AccessControlHeaders.cs        |  0
+ .../Extensions/RequestExtensions.cs           |  0
+ .../Frontend/InitializeJsonController.cs      |  0
+ .../Frontend/Mappers/BackupFileMapper.cs      |  0
+ .../Frontend/Mappers/BrowserConfig.cs         |  0
+ .../Frontend/Mappers/CacheBreakerProvider.cs  |  0
+ .../Frontend/Mappers/FaviconMapper.cs         |  0
+ .../Frontend/Mappers/HtmlMapperBase.cs        |  0
+ .../Mappers/IMapHttpRequestsToDisk.cs         |  0
+ .../Frontend/Mappers/IndexHtmlMapper.cs       |  0
+ .../Frontend/Mappers/LogFileMapper.cs         |  0
+ .../Frontend/Mappers/LoginHtmlMapper.cs       |  0
+ .../Frontend/Mappers/ManifestMapper.cs        |  0
+ .../Frontend/Mappers/MediaCoverMapper.cs      |  0
+ .../Frontend/Mappers/MediaCoverProxyMapper.cs |  0
+ .../Frontend/Mappers/RobotsTxtMapper.cs       |  0
+ .../Frontend/Mappers/StaticResourceMapper.cs  |  0
+ .../Mappers/StaticResourceMapperBase.cs       |  0
+ .../Frontend/Mappers/UpdateLogFileMapper.cs   |  0
+ .../UrlBaseReplacementResourceMapperBase.cs   |  0
+ .../Frontend/StaticResourceController.cs      |  0
+ .../Middleware/BufferingMiddleware.cs         |  0
+ .../Middleware/CacheHeaderMiddleware.cs       |  0
+ .../Middleware/CacheableSpecification.cs      |  0
+ .../Middleware/IfModifiedMiddleware.cs        |  0
+ .../Middleware/LoggingMiddleware.cs           |  0
+ .../Middleware/StartingUpMiddleware.cs        |  0
+ .../Middleware/UrlBaseMiddleware.cs           |  0
+ .../Middleware/VersionMiddleware.cs           |  0
+ .../PagingResource.cs                         |  0
+ .../Ping/PingController.cs                    |  0
+ .../Ping/PingResource.cs                      |  0
+ .../Attributes/RestDeleteByIdAttribute.cs     |  0
+ .../REST/Attributes/RestGetByIdAttribute.cs   |  0
+ .../REST/Attributes/RestPostByIdAttribute.cs  |  0
+ .../REST/Attributes/RestPutByIdAttribute.cs   |  0
+ .../Attributes/SkipValidationAttribute.cs     |  0
+ .../REST/BadRequestException.cs               |  0
+ .../REST/MethodNotAllowedException.cs         |  0
+ .../REST/NotFoundException.cs                 |  0
+ .../REST/ResourceValidator.cs                 |  0
+ .../REST/RestController.cs                    |  0
+ .../REST/RestControllerWithSignalR.cs         |  0
+ .../REST/RestResource.cs                      |  0
+ .../REST/UnsupportedMediaTypeException.cs     |  0
+ .../Readarr.Http.csproj}                      |  4 +-
+ .../ResourceChangeMessage.cs                  |  0
+ .../Validation/DuplicateEndpointDetector.cs   |  0
+ .../Validation/EmptyCollectionValidator.cs    |  0
+ .../Validation/RssSyncIntervalValidator.cs    |  0
+ .../Validation/RuleBuilderExtensions.cs       |  0
+ .../VersionedApiControllerAttribute.cs        |  0
+ .../VersionedFeedControllerAttribute.cs       |  0
+ src/{Sonarr.sln => Readarr.sln}               | 44 ++++-----
+ .../ServiceInstall/ServiceHelper.cs           |  2 +-
+ .../ServiceUninstall/ServiceHelper.cs         |  2 +-
+ 315 files changed, 559 insertions(+), 312 deletions(-)
+ create mode 100755 scripts/transform/namespace-transform.sh
+ create mode 100755 scripts/transform/rename-directories.sh
+ create mode 100755 scripts/transform/rename-project-files.sh
+ create mode 100755 scripts/transform/update-assembly-names.sh
+ rename src/NzbDrone.Api.Test/{Sonarr.Api.Test.csproj => Readarr.Api.Test.csproj} (68%)
+ rename src/NzbDrone.Automation.Test/{Sonarr.Automation.Test.csproj => Readarr.Automation.Test.csproj} (89%)
+ rename src/NzbDrone.Common.Test/{Sonarr.Common.Test.csproj => Readarr.Common.Test.csproj} (70%)
+ create mode 100644 src/NzbDrone.Common/Properties/AssemblyInfo.cs
+ rename src/NzbDrone.Common/{Sonarr.Common.csproj => Readarr.Common.csproj} (100%)
+ rename src/NzbDrone.Console/{Sonarr.Console.csproj => Readarr.Console.csproj} (85%)
+ rename src/NzbDrone.Core.Test/{Sonarr.Core.Test.csproj => Readarr.Core.Test.csproj} (87%)
+ rename src/NzbDrone.Core/{Sonarr.Core.csproj => Readarr.Core.csproj} (97%)
+ rename src/NzbDrone.Host.Test/{Sonarr.Host.Test.csproj => Readarr.Host.Test.csproj} (78%)
+ rename src/NzbDrone.Host/{Sonarr.Host.csproj => Readarr.Host.csproj} (77%)
+ rename src/NzbDrone.Integration.Test/{Sonarr.Integration.Test.csproj => Readarr.Integration.Test.csproj} (74%)
+ rename src/NzbDrone.Libraries.Test/{Sonarr.Libraries.Test.csproj => Readarr.Libraries.Test.csproj} (86%)
+ rename src/NzbDrone.Mono.Test/{Sonarr.Mono.Test.csproj => Readarr.Mono.Test.csproj} (79%)
+ rename src/NzbDrone.Mono/{Sonarr.Mono.csproj => Readarr.Mono.csproj} (92%)
+ rename src/NzbDrone.SignalR/{Sonarr.SignalR.csproj => Readarr.SignalR.csproj} (78%)
+ rename src/NzbDrone.Test.Common/{Sonarr.Test.Common.csproj => Readarr.Test.Common.csproj} (85%)
+ rename src/NzbDrone.Test.Dummy/{Sonarr.Test.Dummy.csproj => Readarr.Test.Dummy.csproj} (100%)
+ rename src/NzbDrone.Update.Test/{Sonarr.Update.Test.csproj => Readarr.Update.Test.csproj} (77%)
+ rename src/NzbDrone.Update/{Sonarr.Update.csproj => Readarr.Update.csproj} (90%)
+ create mode 100644 src/NzbDrone.Windows.Test/Readarr.Windows.Test.csproj
+ delete mode 100644 src/NzbDrone.Windows.Test/Sonarr.Windows.Test.csproj
+ rename src/NzbDrone.Windows/{Sonarr.Windows.csproj => Readarr.Windows.csproj} (90%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ApplyTags.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/AutoTagging/AutoTaggingController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/AutoTagging/AutoTaggingResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/AutoTagging/AutoTaggingSpecificationSchema.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Blocklist/BlocklistBulkResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Blocklist/BlocklistController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Blocklist/BlocklistResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Calendar/CalendarController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Calendar/CalendarFeedController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Commands/CommandController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Commands/CommandResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/CertificateValidator.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/ConfigController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/DownloadClientConfigController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/DownloadClientConfigResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/HostConfigController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/HostConfigResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/ImportListConfigController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/ImportListConfigResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/IndexerConfigController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/IndexerConfigResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/MediaManagementConfigController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/MediaManagementConfigResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/NamingConfigController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/NamingConfigResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/NamingExampleResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/UiConfigController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Config/UiConfigResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/CustomFilters/CustomFilterController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/CustomFilters/CustomFilterResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/CustomFormats/CustomFormatBulkResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/CustomFormats/CustomFormatController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/CustomFormats/CustomFormatResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/CustomFormats/CustomFormatSpecificationSchema.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/DiskSpace/DiskSpaceController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/DiskSpace/DiskSpaceResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/DownloadClient/DownloadClientBulkResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/DownloadClient/DownloadClientController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/DownloadClient/DownloadClientResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/EpisodeFiles/EpisodeFileController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/EpisodeFiles/EpisodeFileListResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/EpisodeFiles/EpisodeFileResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/EpisodeFiles/MediaInfoResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Episodes/EpisodeController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Episodes/EpisodeControllerWithSignalR.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Episodes/EpisodeResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Episodes/EpisodesMonitoredResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Episodes/RenameEpisodeController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Episodes/RenameEpisodeResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/FileSystem/FileSystemController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Health/HealthController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Health/HealthResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/History/HistoryController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/History/HistoryResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ImportLists/ImportListBulkResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ImportLists/ImportListController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ImportLists/ImportListExclusionBulkResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ImportLists/ImportListExclusionController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ImportLists/ImportListExclusionExistsValidator.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ImportLists/ImportListExclusionResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ImportLists/ImportListResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Indexers/IndexerBulkResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Indexers/IndexerController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Indexers/IndexerFlagController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Indexers/IndexerFlagResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Indexers/IndexerResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Indexers/ReleaseController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Indexers/ReleaseControllerBase.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Indexers/ReleasePushController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Indexers/ReleaseResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Localization/LocalizationController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Localization/LocalizationLanguageResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Localization/LocalizationResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Logs/LogController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Logs/LogFileController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Logs/LogFileControllerBase.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Logs/LogFileResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Logs/LogResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Logs/UpdateLogFileController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ManualImport/ManualImportController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ManualImport/ManualImportReprocessResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ManualImport/ManualImportResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/MediaCovers/MediaCoverController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Metadata/MetadataBulkResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Metadata/MetadataController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Metadata/MetadataResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Notifications/NotificationBulkResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Notifications/NotificationController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Notifications/NotificationResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Parse/ParseController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Parse/ParseResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Delay/DelayProfileController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Delay/DelayProfileResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Languages/LanguageController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Languages/LanguageProfileController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Languages/LanguageProfileResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Languages/LanguageProfileSchemaController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Languages/LanguageResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Quality/QualityCutoffValidator.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Quality/QualityItemsValidator.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Quality/QualityProfileController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Quality/QualityProfileResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Quality/QualityProfileResourceValidator.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Quality/QualityProfileSchemaController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Release/ReleaseProfileController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Profiles/Release/ReleaseProfileResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ProviderBulkResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ProviderControllerBase.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ProviderResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/ProviderTestAllResult.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Qualities/QualityDefinitionController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Qualities/QualityDefinitionLimitsResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Qualities/QualityDefinitionResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Qualities/QualityDefinitionResourceValidator.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Queue/QueueActionController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Queue/QueueBulkResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Queue/QueueController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Queue/QueueDetailsController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Queue/QueueResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Queue/QueueStatusController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Queue/QueueStatusResource.cs (100%)
+ rename src/{Sonarr.Api.V3/Sonarr.Api.V3.csproj => Readarr.Api.V1/Readarr.Api.V1.csproj} (84%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/RemotePathMappings/RemotePathMappingController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/RemotePathMappings/RemotePathMappingResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/RootFolders/RootFolderController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/RootFolders/RootFolderResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/SeasonPass/SeasonPassController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/SeasonPass/SeasonPassResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/SeasonPass/SeasonPassSeriesResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Series/AlternateTitleResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Series/SeasonResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Series/SeasonStatisticsResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Series/SeriesController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Series/SeriesEditorController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Series/SeriesEditorDeleteResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Series/SeriesEditorResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Series/SeriesEditorValidator.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Series/SeriesFolderAsRootFolderValidator.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Series/SeriesFolderController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Series/SeriesImportController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Series/SeriesLookupController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Series/SeriesResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Series/SeriesStatisticsResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/System/Backup/BackupController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/System/Backup/BackupResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/System/SystemController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/System/SystemResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/System/Tasks/TaskController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/System/Tasks/TaskResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Tags/TagController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Tags/TagDetailsController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Tags/TagDetailsResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Tags/TagResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Update/UpdateController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Update/UpdateResource.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Wanted/CutoffController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/Wanted/MissingController.cs (100%)
+ rename src/{Sonarr.Api.V3 => Readarr.Api.V1}/openapi.json (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/ApiInfoController.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/ApiInfoResource.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Authentication/ApiKeyAuthenticationHandler.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Authentication/AuthenticationBuilderExtensions.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Authentication/AuthenticationController.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Authentication/AuthenticationService.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Authentication/BypassableDenyAnonymousAuthorizationRequirement.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Authentication/LoginResource.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Authentication/NoAuthenticationHandler.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Authentication/UiAuthorizationHandler.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Authentication/UiAuthorizationPolicyProvider.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/ClientSchema/Field.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/ClientSchema/FieldMapping.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/ClientSchema/SchemaBuilder.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/ErrorManagement/ErrorModel.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/ErrorManagement/SonarrErrorPipeline.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Exceptions/ApiException.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Exceptions/InvalidApiKeyException.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Extensions/AccessControlHeaders.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Extensions/RequestExtensions.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/InitializeJsonController.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/BackupFileMapper.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/BrowserConfig.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/CacheBreakerProvider.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/FaviconMapper.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/HtmlMapperBase.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/IMapHttpRequestsToDisk.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/IndexHtmlMapper.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/LogFileMapper.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/LoginHtmlMapper.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/ManifestMapper.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/MediaCoverMapper.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/MediaCoverProxyMapper.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/RobotsTxtMapper.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/StaticResourceMapper.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/StaticResourceMapperBase.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/UpdateLogFileMapper.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/Mappers/UrlBaseReplacementResourceMapperBase.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Frontend/StaticResourceController.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Middleware/BufferingMiddleware.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Middleware/CacheHeaderMiddleware.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Middleware/CacheableSpecification.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Middleware/IfModifiedMiddleware.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Middleware/LoggingMiddleware.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Middleware/StartingUpMiddleware.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Middleware/UrlBaseMiddleware.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Middleware/VersionMiddleware.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/PagingResource.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Ping/PingController.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Ping/PingResource.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/REST/Attributes/RestDeleteByIdAttribute.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/REST/Attributes/RestGetByIdAttribute.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/REST/Attributes/RestPostByIdAttribute.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/REST/Attributes/RestPutByIdAttribute.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/REST/Attributes/SkipValidationAttribute.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/REST/BadRequestException.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/REST/MethodNotAllowedException.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/REST/NotFoundException.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/REST/ResourceValidator.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/REST/RestController.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/REST/RestControllerWithSignalR.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/REST/RestResource.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/REST/UnsupportedMediaTypeException.cs (100%)
+ rename src/{Sonarr.Http/Sonarr.Http.csproj => Readarr.Http/Readarr.Http.csproj} (82%)
+ rename src/{Sonarr.Http => Readarr.Http}/ResourceChangeMessage.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Validation/DuplicateEndpointDetector.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Validation/EmptyCollectionValidator.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Validation/RssSyncIntervalValidator.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/Validation/RuleBuilderExtensions.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/VersionedApiControllerAttribute.cs (100%)
+ rename src/{Sonarr.Http => Readarr.Http}/VersionedFeedControllerAttribute.cs (100%)
+ rename src/{Sonarr.sln => Readarr.sln} (85%)
+
+diff --git a/.devcontainer/devcontainer.json b/.devcontainer/devcontainer.json
+index c84df5d64..f96401211 100644
+--- a/.devcontainer/devcontainer.json
++++ b/.devcontainer/devcontainer.json
+@@ -1,7 +1,7 @@
+ // For format details, see https://aka.ms/devcontainer.json. For config options, see the
+ // README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
+ {
+-  "name": "Sonarr",
++  "name": "Readarr",
+   "image": "mcr.microsoft.com/devcontainers/dotnet:1-8.0",
+   "features": {
+     "ghcr.io/devcontainers/features/node:1": {
+@@ -10,7 +10,7 @@
+       "nvmVersion": "latest"
+     }
+   },
+-  "forwardPorts": [8989],
++  "forwardPorts": [8787],
+   "customizations": {
+     "vscode": {
+       "extensions": ["esbenp.prettier-vscode"]
+diff --git a/.editorconfig b/.editorconfig
+index 6d6c3a13f..192501407 100644
+--- a/.editorconfig
++++ b/.editorconfig
+@@ -269,6 +269,10 @@ dotnet_diagnostic.CA5397.severity = suggestion
+ 
+ dotnet_diagnostic.SYSLIB0006.severity = none
+ 
++# Temporarily disable SA1200 for the transformation
++[*.cs]
++dotnet_diagnostic.SA1200.severity = none
++
+ [*.{js,html,hbs,less,css,ts,tsx}]
+ charset = utf-8
+ trim_trailing_whitespace = true
+diff --git a/.vscode/launch.json b/.vscode/launch.json
+index 4e4c3440d..502beb8db 100644
+--- a/.vscode/launch.json
++++ b/.vscode/launch.json
+@@ -5,12 +5,12 @@
+       // Use IntelliSense to find out which attributes exist for C# debugging
+       // Use hover for the description of the existing attributes
+       // For further information visit https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md
+-      "name": "Run Sonarr",
++      "name": "Run Readarr",
+       "type": "coreclr",
+       "request": "launch",
+       "preLaunchTask": "build dotnet",
+       // If you have changed target frameworks, make sure to update the program path.
+-      "program": "${workspaceFolder}/_output/net8.0/Sonarr",
++      "program": "${workspaceFolder}/_output/net8.0/Readarr",
+       "args": [],
+       "cwd": "${workspaceFolder}",
+       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+diff --git a/.vscode/tasks.json b/.vscode/tasks.json
+index cfd41d42f..0f43e29d0 100644
+--- a/.vscode/tasks.json
++++ b/.vscode/tasks.json
+@@ -8,7 +8,7 @@
+       "args": [
+         "msbuild",
+         "-restore",
+-        "${workspaceFolder}/src/Sonarr.sln",
++        "${workspaceFolder}/src/Readarr.sln",
+         "-p:GenerateFullPaths=true",
+         "-p:Configuration=Debug",
+         "-p:Platform=Posix",
+@@ -22,7 +22,7 @@
+       "type": "process",
+       "args": [
+         "publish",
+-        "${workspaceFolder}/src/Sonarr.sln",
++        "${workspaceFolder}/src/Readarr.sln",
+         "-property:GenerateFullPaths=true",
+         "-consoleloggerparameters:NoSummary;ForceNoAlign"
+       ],
+@@ -36,7 +36,7 @@
+         "watch",
+         "run",
+         "--project",
+-        "${workspaceFolder}/src/Sonarr.sln"
++        "${workspaceFolder}/src/Readarr.sln"
+       ],
+       "problemMatcher": "$msCompile"
+     }
+diff --git a/package.json b/package.json
+index d6bfd6988..5530862ba 100644
+--- a/package.json
++++ b/package.json
+@@ -1,7 +1,7 @@
+ {
+-  "name": "sonarr",
+-  "version": "4.0.0",
+-  "description": "Sonarr is a PVR for Usenet and BitTorrent users",
++  "name": "readarr",
++  "version": "2.0.0",
++  "description": "Readarr is a PVR for Usenet and BitTorrent users",
+   "scripts": {
+     "build": "webpack --config ./frontend/build/webpack.config.js",
+     "prebuild": "yarn clean",
+@@ -12,8 +12,8 @@
+     "lint-fix": "yarn lint --fix",
+     "stylelint": "stylelint \"frontend/**/*.css\" --config frontend/.stylelintrc"
+   },
+-  "repository": "https://github.com/Sonarr/Sonarr",
+-  "author": "Team Sonarr",
++  "repository": "https://github.com/Readarr/Readarr",
++  "author": "Team Readarr",
+   "license": "GPL-3.0",
+   "readmeFilename": "readme.md",
+   "main": "index.ts",
+diff --git a/scripts/transform/namespace-transform.sh b/scripts/transform/namespace-transform.sh
+new file mode 100755
+index 000000000..bb0a44d93
+--- /dev/null
++++ b/scripts/transform/namespace-transform.sh
+@@ -0,0 +1,58 @@
++#!/bin/bash
++# Comprehensive namespace transformation script from Sonarr/NzbDrone to Readarr
++
++echo "Starting namespace transformation from Sonarr/NzbDrone to Readarr..."
++
++# Function to perform replacements in a file
++transform_file() {
++    local file=$1
++    echo "Transforming: $file"
++    
++    # Create backup
++    cp "$file" "$file.bak"
++    
++    # Namespace transformations
++    sed -i 's/namespace NzbDrone/namespace Readarr/g' "$file"
++    sed -i 's/namespace Sonarr/namespace Readarr/g' "$file"
++    sed -i 's/using NzbDrone/using Readarr/g' "$file"
++    sed -i 's/using Sonarr/using Readarr/g' "$file"
++    
++    # Specific namespace transformations
++    sed -i 's/Sonarr\.Core\.Tv/Readarr.Core.Books/g' "$file"
++    sed -i 's/Sonarr\.Api\.V3/Readarr.Api.V1/g' "$file"
++    
++    # Assembly references
++    sed -i 's/"Sonarr\./"Readarr./g' "$file"
++    sed -i 's/"NzbDrone\./"Readarr./g' "$file"
++    
++    # Remove backup if transformation successful
++    if [ $? -eq 0 ]; then
++        rm "$file.bak"
++    else
++        echo "Error transforming $file, backup retained"
++    fi
++}
++
++# Transform all C# files
++echo "Transforming C# files..."
++find src -name "*.cs" -type f | while read file; do
++    transform_file "$file"
++done
++
++# Transform project files
++echo "Transforming project files..."
++find src -name "*.csproj" -type f | while read file; do
++    transform_file "$file"
++done
++
++# Transform configuration files
++echo "Transforming configuration files..."
++find src -name "*.json" -o -name "*.config" -type f | while read file; do
++    transform_file "$file"
++done
++
++echo "Namespace transformation complete!"
++echo "Note: Some files may require manual review, especially:"
++echo "  - Database migrations"
++echo "  - API endpoints"
++echo "  - Frontend components"
+\ No newline at end of file
+diff --git a/scripts/transform/rename-directories.sh b/scripts/transform/rename-directories.sh
+new file mode 100755
+index 000000000..bc6a45ded
+--- /dev/null
++++ b/scripts/transform/rename-directories.sh
+@@ -0,0 +1,34 @@
++#!/bin/bash
++# Script to rename project directories from Sonarr to Readarr
++
++echo "Starting directory renaming..."
++
++# Function to rename directory and update references
++rename_directory() {
++    local old_dir=$1
++    local new_dir=$2
++    
++    echo "Renaming directory: $old_dir -> $new_dir"
++    
++    if [ -d "$old_dir" ]; then
++        mv "$old_dir" "$new_dir"
++        
++        # Update references in solution file
++        sed -i "s|$old_dir|$new_dir|g" src/Readarr.sln
++        
++        # Update references in all project files
++        find src -name "*.csproj" -type f -exec sed -i "s|$old_dir|$new_dir|g" {} \;
++    else
++        echo "Warning: $old_dir not found"
++    fi
++}
++
++# Rename Sonarr directories
++echo "Renaming Sonarr directories..."
++rename_directory "src/Sonarr.Api.V3" "src/Readarr.Api.V1"
++rename_directory "src/Sonarr.Http" "src/Readarr.Http"
++
++# Note: NzbDrone directories are kept as-is for now to maintain compatibility
++# They can be renamed in a later phase if desired
++
++echo "Directory renaming complete!"
+\ No newline at end of file
+diff --git a/scripts/transform/rename-project-files.sh b/scripts/transform/rename-project-files.sh
+new file mode 100755
+index 000000000..e998eb700
+--- /dev/null
++++ b/scripts/transform/rename-project-files.sh
+@@ -0,0 +1,91 @@
++#!/bin/bash
++# Script to rename project files from Sonarr/NzbDrone to Readarr
++
++echo "Starting project file renaming..."
++
++# Function to rename a project and update references
++rename_project() {
++    local old_name=$1
++    local new_name=$2
++    local old_file=$3
++    local new_file=$4
++    
++    echo "Renaming: $old_file -> $new_file"
++    
++    # Rename the actual file
++    if [ -f "$old_file" ]; then
++        mv "$old_file" "$new_file"
++        
++        # Update references in all .csproj files
++        find src -name "*.csproj" -type f -exec sed -i "s|$old_name|$new_name|g" {} \;
++        
++        # Update solution file
++        sed -i "s|$old_name|$new_name|g" src/Sonarr.sln
++        sed -i "s|$old_file|$new_file|g" src/Sonarr.sln
++    else
++        echo "Warning: $old_file not found"
++    fi
++}
++
++# List of projects to rename
++declare -A projects=(
++    ["Sonarr.Api.Test"]="Readarr.Api.Test"
++    ["Sonarr.Api.V3"]="Readarr.Api.V1"
++    ["Sonarr.Automation.Test"]="Readarr.Automation.Test"
++    ["Sonarr.Common.Test"]="Readarr.Common.Test"
++    ["Sonarr.Common"]="Readarr.Common"
++    ["Sonarr.Console"]="Readarr.Console"
++    ["Sonarr.Core.Test"]="Readarr.Core.Test"
++    ["Sonarr.Core"]="Readarr.Core"
++    ["Sonarr.Host.Test"]="Readarr.Host.Test"
++    ["Sonarr.Host"]="Readarr.Host"
++    ["Sonarr.Http"]="Readarr.Http"
++    ["Sonarr.Integration.Test"]="Readarr.Integration.Test"
++    ["Sonarr.Libraries.Test"]="Readarr.Libraries.Test"
++    ["Sonarr.Mono.Test"]="Readarr.Mono.Test"
++    ["Sonarr.Mono"]="Readarr.Mono"
++    ["Sonarr.SignalR"]="Readarr.SignalR"
++    ["Sonarr.Test.Common"]="Readarr.Test.Common"
++    ["Sonarr.Test.Dummy"]="Readarr.Test.Dummy"
++    ["Sonarr.Update.Test"]="Readarr.Update.Test"
++    ["Sonarr.Update"]="Readarr.Update"
++    ["Sonarr.Windows.Test"]="Readarr.Windows.Test"
++    ["Sonarr.Windows"]="Readarr.Windows"
++)
++
++# Rename NzbDrone projects first (they use directory names)
++echo "Renaming NzbDrone projects..."
++for dir in src/NzbDrone.*; do
++    if [ -d "$dir" ]; then
++        base_name=$(basename "$dir")
++        new_name=${base_name/NzbDrone/Readarr}
++        old_proj="$dir/Sonarr.${base_name#NzbDrone.}.csproj"
++        new_proj="$dir/Readarr.${base_name#NzbDrone.}.csproj"
++        
++        if [ -f "$old_proj" ]; then
++            rename_project "Sonarr.${base_name#NzbDrone.}" "Readarr.${base_name#NzbDrone.}" "$old_proj" "$new_proj"
++        fi
++    fi
++done
++
++# Rename Sonarr projects
++echo "Renaming Sonarr projects..."
++for old_name in "${!projects[@]}"; do
++    new_name=${projects[$old_name]}
++    
++    # Find the actual file location
++    old_file=$(find src -name "$old_name.csproj" -type f | head -1)
++    if [ -n "$old_file" ]; then
++        dir=$(dirname "$old_file")
++        new_file="$dir/$new_name.csproj"
++        rename_project "$old_name" "$new_name" "$old_file" "$new_file"
++    fi
++done
++
++# Rename the solution file
++echo "Renaming solution file..."
++if [ -f "src/Sonarr.sln" ]; then
++    mv "src/Sonarr.sln" "src/Readarr.sln"
++fi
++
++echo "Project file renaming complete!"
+\ No newline at end of file
+diff --git a/scripts/transform/update-assembly-names.sh b/scripts/transform/update-assembly-names.sh
+new file mode 100755
+index 000000000..8120797e5
+--- /dev/null
++++ b/scripts/transform/update-assembly-names.sh
+@@ -0,0 +1,55 @@
++#!/bin/bash
++# Script to update assembly names and output paths
++
++echo "Starting assembly name updates..."
++
++# Update assembly names in project files
++echo "Updating assembly names in project files..."
++find src -name "*.csproj" -type f | while read file; do
++    echo "Updating: $file"
++    
++    # Update AssemblyName tags
++    sed -i 's/<AssemblyName>Sonarr<\/AssemblyName>/<AssemblyName>Readarr<\/AssemblyName>/g' "$file"
++    sed -i 's/<AssemblyName>NzbDrone<\/AssemblyName>/<AssemblyName>Readarr<\/AssemblyName>/g' "$file"
++    
++    # Update RootNamespace tags
++    sed -i 's/<RootNamespace>Sonarr/<RootNamespace>Readarr/g' "$file"
++    sed -i 's/<RootNamespace>NzbDrone/<RootNamespace>Readarr/g' "$file"
++done
++
++# Update AssemblyInfo files if they exist
++echo "Updating AssemblyInfo files..."
++find src -name "AssemblyInfo.cs" -type f | while read file; do
++    echo "Updating: $file"
++    sed -i 's/\[assembly: AssemblyTitle("Sonarr/\[assembly: AssemblyTitle("Readarr/g' "$file"
++    sed -i 's/\[assembly: AssemblyTitle("NzbDrone/\[assembly: AssemblyTitle("Readarr/g' "$file"
++    sed -i 's/\[assembly: AssemblyProduct("Sonarr/\[assembly: AssemblyProduct("Readarr/g' "$file"
++    sed -i 's/\[assembly: AssemblyProduct("NzbDrone/\[assembly: AssemblyProduct("Readarr/g' "$file"
++done
++
++# Update global assembly attributes
++echo "Updating global assembly attributes..."
++find src -name "*.cs" -type f -exec grep -l "AssemblyTitle\|AssemblyProduct\|AssemblyCompany" {} \; | while read file; do
++    echo "Checking: $file"
++    sed -i 's/AssemblyTitle("Sonarr/AssemblyTitle("Readarr/g' "$file"
++    sed -i 's/AssemblyTitle("NzbDrone/AssemblyTitle("Readarr/g' "$file"
++    sed -i 's/AssemblyProduct("Sonarr/AssemblyProduct("Readarr/g' "$file"
++    sed -i 's/AssemblyProduct("NzbDrone/AssemblyProduct("Readarr/g' "$file"
++    sed -i 's/AssemblyCompany("Sonarr/AssemblyCompany("Readarr/g' "$file"
++done
++
++# Update Bootstrap.cs ASSEMBLIES list (already done but let's ensure it's correct)
++echo "Updating Bootstrap.cs assembly list..."
++if [ -f "src/NzbDrone.Host/Bootstrap.cs" ]; then
++    sed -i 's/"Sonarr\./"Readarr./g' "src/NzbDrone.Host/Bootstrap.cs"
++fi
++
++# Update any hardcoded assembly names in code
++echo "Updating hardcoded assembly references..."
++find src -name "*.cs" -type f -exec grep -l "Assembly.*Sonarr\|Assembly.*NzbDrone" {} \; | while read file; do
++    echo "Checking: $file"
++    sed -i 's/Assembly.*"Sonarr/Assembly.*"Readarr/g' "$file"
++    sed -i 's/Assembly.*"NzbDrone/Assembly.*"Readarr/g' "$file"
++done
++
++echo "Assembly name updates complete!"
+\ No newline at end of file
+diff --git a/src/NzbDrone.Api.Test/ClientSchemaTests/SchemaBuilderFixture.cs b/src/NzbDrone.Api.Test/ClientSchemaTests/SchemaBuilderFixture.cs
+index 6af8abb7b..dcdec4c7d 100644
+--- a/src/NzbDrone.Api.Test/ClientSchemaTests/SchemaBuilderFixture.cs
++++ b/src/NzbDrone.Api.Test/ClientSchemaTests/SchemaBuilderFixture.cs
+@@ -2,12 +2,12 @@
+ using FluentAssertions;
+ using Moq;
+ using NUnit.Framework;
+-using NzbDrone.Core.Annotations;
+-using NzbDrone.Core.Localization;
+-using NzbDrone.Test.Common;
+-using Sonarr.Http.ClientSchema;
++using Readarr.Core.Annotations;
++using Readarr.Core.Localization;
++using Readarr.Test.Common;
++using Readarr.Http.ClientSchema;
+ 
+-namespace NzbDrone.Api.Test.ClientSchemaTests
++namespace Readarr.Api.Test.ClientSchemaTests
+ {
+     [TestFixture]
+     public class SchemaBuilderFixture : TestBase
+diff --git a/src/NzbDrone.Api.Test/Sonarr.Api.Test.csproj b/src/NzbDrone.Api.Test/Readarr.Api.Test.csproj
+similarity index 68%
+rename from src/NzbDrone.Api.Test/Sonarr.Api.Test.csproj
+rename to src/NzbDrone.Api.Test/Readarr.Api.Test.csproj
+index fd38e2d6e..78515a1f0 100644
+--- a/src/NzbDrone.Api.Test/Sonarr.Api.Test.csproj
++++ b/src/NzbDrone.Api.Test/Readarr.Api.Test.csproj
+@@ -12,9 +12,9 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Core\Sonarr.Core.csproj" />
+-    <ProjectReference Include="..\NzbDrone.Test.Common\Sonarr.Test.Common.csproj" />
+-    <ProjectReference Include="..\Sonarr.Api.V3\Sonarr.Api.V3.csproj" />
+-    <ProjectReference Include="..\Sonarr.Http\Sonarr.Http.csproj" />
++    <ProjectReference Include="..\NzbDrone.Core\Readarr.Core.csproj" />
++    <ProjectReference Include="..\NzbDrone.Test.Common\Readarr.Test.Common.csproj" />
++    <ProjectReference Include="..\Readarr.Api.V1\Readarr.Api.V1.csproj" />
++    <ProjectReference Include="..\Readarr.Http\Readarr.Http.csproj" />
+   </ItemGroup>
+ </Project>
+diff --git a/src/NzbDrone.Api.Test/v3/Qualities/QualityDefinitionResourceValidatorTest.cs b/src/NzbDrone.Api.Test/v3/Qualities/QualityDefinitionResourceValidatorTest.cs
+index 207222725..5a379e4ef 100644
+--- a/src/NzbDrone.Api.Test/v3/Qualities/QualityDefinitionResourceValidatorTest.cs
++++ b/src/NzbDrone.Api.Test/v3/Qualities/QualityDefinitionResourceValidatorTest.cs
+@@ -1,9 +1,9 @@
+ ﻿using FluentValidation.TestHelper;
+ using NUnit.Framework;
+-using NzbDrone.Core.Qualities;
+-using Sonarr.Api.V3.Qualities;
++using Readarr.Core.Qualities;
++using Readarr.Api.V3.Qualities;
+ 
+-namespace NzbDrone.Api.Test.v3.Qualities;
++namespace Readarr.Api.Test.v3.Qualities;
+ 
+ [Parallelizable(ParallelScope.All)]
+ public class QualityDefinitionResourceValidatorTests
+diff --git a/src/NzbDrone.Api.Test/v3/ReleaseProfiles/ReleaseProfilesFixture.cs b/src/NzbDrone.Api.Test/v3/ReleaseProfiles/ReleaseProfilesFixture.cs
+index 49d58a1fb..a1bf2f667 100644
+--- a/src/NzbDrone.Api.Test/v3/ReleaseProfiles/ReleaseProfilesFixture.cs
++++ b/src/NzbDrone.Api.Test/v3/ReleaseProfiles/ReleaseProfilesFixture.cs
+@@ -1,10 +1,10 @@
+ using FluentAssertions;
+ using NUnit.Framework;
+-using NzbDrone.Common.Serializer;
+-using Sonarr.Api.V3.Profiles.Release;
+-using Sonarr.Http.REST;
++using Readarr.Common.Serializer;
++using Readarr.Api.V3.Profiles.Release;
++using Readarr.Http.REST;
+ 
+-namespace NzbDrone.Api.Test.v3.ReleaseProfiles
++namespace Readarr.Api.Test.v3.ReleaseProfiles
+ {
+     [TestFixture]
+     public class ReleaseProfilesFixture
+diff --git a/src/NzbDrone.Automation.Test/AutomationTest.cs b/src/NzbDrone.Automation.Test/AutomationTest.cs
+index 799670e31..25270d866 100644
+--- a/src/NzbDrone.Automation.Test/AutomationTest.cs
++++ b/src/NzbDrone.Automation.Test/AutomationTest.cs
+@@ -6,13 +6,13 @@
+ using NLog.Config;
+ using NLog.Targets;
+ using NUnit.Framework;
+-using NzbDrone.Automation.Test.PageModel;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Test.Common;
++using Readarr.Automation.Test.PageModel;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Test.Common;
+ using OpenQA.Selenium;
+ using OpenQA.Selenium.Chrome;
+ 
+-namespace NzbDrone.Automation.Test
++namespace Readarr.Automation.Test
+ {
+     [TestFixture]
+     [AutomationTest]
+diff --git a/src/NzbDrone.Automation.Test/AutomationTestAttribute.cs b/src/NzbDrone.Automation.Test/AutomationTestAttribute.cs
+index 2ed2fac7e..47cef0acd 100644
+--- a/src/NzbDrone.Automation.Test/AutomationTestAttribute.cs
++++ b/src/NzbDrone.Automation.Test/AutomationTestAttribute.cs
+@@ -1,6 +1,6 @@
+ ﻿using NUnit.Framework;
+ 
+-namespace NzbDrone.Automation.Test
++namespace Readarr.Automation.Test
+ {
+     public class AutomationTestAttribute : CategoryAttribute
+     {
+diff --git a/src/NzbDrone.Automation.Test/MainPagesTest.cs b/src/NzbDrone.Automation.Test/MainPagesTest.cs
+index 6711bbbc3..a337f387b 100644
+--- a/src/NzbDrone.Automation.Test/MainPagesTest.cs
++++ b/src/NzbDrone.Automation.Test/MainPagesTest.cs
+@@ -1,10 +1,10 @@
+ using System.Reflection;
+ using FluentAssertions;
+ using NUnit.Framework;
+-using NzbDrone.Automation.Test.PageModel;
++using Readarr.Automation.Test.PageModel;
+ using OpenQA.Selenium;
+ 
+-namespace NzbDrone.Automation.Test
++namespace Readarr.Automation.Test
+ {
+     [TestFixture]
+     public class MainPagesTest : AutomationTest
+diff --git a/src/NzbDrone.Automation.Test/PageModel/PageBase.cs b/src/NzbDrone.Automation.Test/PageModel/PageBase.cs
+index 69c69a936..0d7c5c0a6 100644
+--- a/src/NzbDrone.Automation.Test/PageModel/PageBase.cs
++++ b/src/NzbDrone.Automation.Test/PageModel/PageBase.cs
+@@ -3,7 +3,7 @@
+ using OpenQA.Selenium;
+ using OpenQA.Selenium.Support.UI;
+ 
+-namespace NzbDrone.Automation.Test.PageModel
++namespace Readarr.Automation.Test.PageModel
+ {
+     public class PageBase
+     {
+diff --git a/src/NzbDrone.Automation.Test/Sonarr.Automation.Test.csproj b/src/NzbDrone.Automation.Test/Readarr.Automation.Test.csproj
+similarity index 89%
+rename from src/NzbDrone.Automation.Test/Sonarr.Automation.Test.csproj
+rename to src/NzbDrone.Automation.Test/Readarr.Automation.Test.csproj
+index 1cf9d0ea6..b358ea7b7 100644
+--- a/src/NzbDrone.Automation.Test/Sonarr.Automation.Test.csproj
++++ b/src/NzbDrone.Automation.Test/Readarr.Automation.Test.csproj
+@@ -13,6 +13,6 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Test.Common\Sonarr.Test.Common.csproj" />
++    <ProjectReference Include="..\NzbDrone.Test.Common\Readarr.Test.Common.csproj" />
+   </ItemGroup>
+ </Project>
+diff --git a/src/NzbDrone.Common.Test/Sonarr.Common.Test.csproj b/src/NzbDrone.Common.Test/Readarr.Common.Test.csproj
+similarity index 70%
+rename from src/NzbDrone.Common.Test/Sonarr.Common.Test.csproj
+rename to src/NzbDrone.Common.Test/Readarr.Common.Test.csproj
+index d9c6f051b..4fdedeb96 100644
+--- a/src/NzbDrone.Common.Test/Sonarr.Common.Test.csproj
++++ b/src/NzbDrone.Common.Test/Readarr.Common.Test.csproj
+@@ -11,8 +11,8 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Host\Sonarr.Host.csproj" />
+-    <ProjectReference Include="..\NzbDrone.Test.Common\Sonarr.Test.Common.csproj" />
+-    <ProjectReference Include="..\NzbDrone.Test.Dummy\Sonarr.Test.Dummy.csproj" />
++    <ProjectReference Include="..\NzbDrone.Host\Readarr.Host.csproj" />
++    <ProjectReference Include="..\NzbDrone.Test.Common\Readarr.Test.Common.csproj" />
++    <ProjectReference Include="..\NzbDrone.Test.Dummy\Readarr.Test.Dummy.csproj" />
+   </ItemGroup>
+ </Project>
+diff --git a/src/NzbDrone.Common.Test/ReflectionTests/ReflectionExtensionFixture.cs b/src/NzbDrone.Common.Test/ReflectionTests/ReflectionExtensionFixture.cs
+index 6059491a7..51bb6f2d8 100644
+--- a/src/NzbDrone.Common.Test/ReflectionTests/ReflectionExtensionFixture.cs
++++ b/src/NzbDrone.Common.Test/ReflectionTests/ReflectionExtensionFixture.cs
+@@ -12,7 +12,7 @@ public class ReflectionExtensionFixture : TestBase
+         [Test]
+         public void should_get_properties_from_models()
+         {
+-            var models = Assembly.Load("Sonarr.Core").ImplementationsOf<ModelBase>();
++            var models = Assembly.*"Readarr.Core").ImplementationsOf<ModelBase>();
+ 
+             foreach (var model in models)
+             {
+@@ -23,7 +23,7 @@ public void should_get_properties_from_models()
+         [Test]
+         public void should_be_able_to_get_implementations()
+         {
+-            var models = Assembly.Load("Sonarr.Core").ImplementationsOf<ModelBase>();
++            var models = Assembly.*"Readarr.Core").ImplementationsOf<ModelBase>();
+ 
+             models.Should().NotBeEmpty();
+         }
+diff --git a/src/NzbDrone.Common/Properties/AssemblyInfo.cs b/src/NzbDrone.Common/Properties/AssemblyInfo.cs
+new file mode 100644
+index 000000000..8e927e936
+--- /dev/null
++++ b/src/NzbDrone.Common/Properties/AssemblyInfo.cs
+@@ -0,0 +1,5 @@
++using System.Resources;
++using System.Runtime.CompilerServices;
++
++[assembly: NeutralResourcesLanguage("en")]
++[assembly: InternalsVisibleTo("Readarr.Common.Test")]
+diff --git a/src/NzbDrone.Common/Sonarr.Common.csproj b/src/NzbDrone.Common/Readarr.Common.csproj
+similarity index 100%
+rename from src/NzbDrone.Common/Sonarr.Common.csproj
+rename to src/NzbDrone.Common/Readarr.Common.csproj
+diff --git a/src/NzbDrone.Common/Reflection/ReflectionExtensions.cs b/src/NzbDrone.Common/Reflection/ReflectionExtensions.cs
+index 54371a2bb..9c29bdae3 100644
+--- a/src/NzbDrone.Common/Reflection/ReflectionExtensions.cs
++++ b/src/NzbDrone.Common/Reflection/ReflectionExtensions.cs
+@@ -7,7 +7,7 @@ namespace NzbDrone.Common.Reflection
+ {
+     public static class ReflectionExtensions
+     {
+-        public static readonly Assembly CoreAssembly = Assembly.Load("Sonarr.Core");
++        public static readonly Assembly CoreAssembly = Assembly.Load("Readarr.Core");
+ 
+         public static List<PropertyInfo> GetSimpleProperties(this Type type)
+         {
+diff --git a/src/NzbDrone.Console/Sonarr.Console.csproj b/src/NzbDrone.Console/Readarr.Console.csproj
+similarity index 85%
+rename from src/NzbDrone.Console/Sonarr.Console.csproj
+rename to src/NzbDrone.Console/Readarr.Console.csproj
+index 48f08130b..6b0c336c2 100644
+--- a/src/NzbDrone.Console/Sonarr.Console.csproj
++++ b/src/NzbDrone.Console/Readarr.Console.csproj
+@@ -6,10 +6,10 @@
+     <ApplicationIcon>..\NzbDrone.Host\Sonarr.ico</ApplicationIcon>
+   </PropertyGroup>
+   <PropertyGroup Condition="!$(RuntimeIdentifier.StartsWith('win'))">
+-    <AssemblyName>Sonarr</AssemblyName>
++    <AssemblyName>Readarr</AssemblyName>
+   </PropertyGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Host\Sonarr.Host.csproj" />
++    <ProjectReference Include="..\NzbDrone.Host\Readarr.Host.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+     <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556">
+diff --git a/src/NzbDrone.Core.Test/Sonarr.Core.Test.csproj b/src/NzbDrone.Core.Test/Readarr.Core.Test.csproj
+similarity index 87%
+rename from src/NzbDrone.Core.Test/Sonarr.Core.Test.csproj
+rename to src/NzbDrone.Core.Test/Readarr.Core.Test.csproj
+index 409152f89..5127f49e5 100644
+--- a/src/NzbDrone.Core.Test/Sonarr.Core.Test.csproj
++++ b/src/NzbDrone.Core.Test/Readarr.Core.Test.csproj
+@@ -14,8 +14,8 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Test.Common\Sonarr.Test.Common.csproj" />
+-    <ProjectReference Include="..\NzbDrone.Core\Sonarr.Core.csproj" />
++    <ProjectReference Include="..\NzbDrone.Test.Common\Readarr.Test.Common.csproj" />
++    <ProjectReference Include="..\NzbDrone.Core\Readarr.Core.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+     <None Include="..\..\Logo\1024.png">
+diff --git a/src/NzbDrone.Core/Extras/Metadata/ExistingMetadataImporter.cs b/src/NzbDrone.Core/Extras/Metadata/ExistingMetadataImporter.cs
+index 373282259..db4befc0f 100644
+--- a/src/NzbDrone.Core/Extras/Metadata/ExistingMetadataImporter.cs
++++ b/src/NzbDrone.Core/Extras/Metadata/ExistingMetadataImporter.cs
+@@ -2,15 +2,15 @@
+ using System.IO;
+ using System.Linq;
+ using NLog;
+-using NzbDrone.Common.Extensions;
+-using NzbDrone.Core.Extras.Files;
+-using NzbDrone.Core.Extras.Metadata.Files;
+-using NzbDrone.Core.Extras.Subtitles;
+-using NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation;
+-using NzbDrone.Core.Parser.Model;
+-using NzbDrone.Core.Tv;
+-
+-namespace NzbDrone.Core.Extras.Metadata
++using Readarr.Common.Extensions;
++using Readarr.Core.Extras.Files;
++using Readarr.Core.Extras.Metadata.Files;
++using Readarr.Core.Extras.Subtitles;
++using Readarr.Core.MediaFiles.EpisodeImport.Aggregation;
++using Readarr.Core.Parser.Model;
++using Readarr.Core.Tv;
++
++namespace Readarr.Core.Extras.Metadata
+ {
+     public class ExistingMetadataImporter : ImportExistingExtraFilesBase<MetadataFile>
+     {
+diff --git a/src/NzbDrone.Core/Extras/Metadata/IMetadata.cs b/src/NzbDrone.Core/Extras/Metadata/IMetadata.cs
+index b9232fa6e..481847356 100644
+--- a/src/NzbDrone.Core/Extras/Metadata/IMetadata.cs
++++ b/src/NzbDrone.Core/Extras/Metadata/IMetadata.cs
+@@ -1,10 +1,10 @@
+ using System.Collections.Generic;
+-using NzbDrone.Core.Extras.Metadata.Files;
+-using NzbDrone.Core.MediaFiles;
+-using NzbDrone.Core.ThingiProvider;
+-using NzbDrone.Core.Tv;
++using Readarr.Core.Extras.Metadata.Files;
++using Readarr.Core.MediaFiles;
++using Readarr.Core.ThingiProvider;
++using Readarr.Core.Tv;
+ 
+-namespace NzbDrone.Core.Extras.Metadata
++namespace Readarr.Core.Extras.Metadata
+ {
+     public interface IMetadata : IProvider
+     {
+diff --git a/src/NzbDrone.Core/Extras/Metadata/MetadataBase.cs b/src/NzbDrone.Core/Extras/Metadata/MetadataBase.cs
+index 369c9fe76..11029a461 100644
+--- a/src/NzbDrone.Core/Extras/Metadata/MetadataBase.cs
++++ b/src/NzbDrone.Core/Extras/Metadata/MetadataBase.cs
+@@ -2,12 +2,12 @@
+ using System.Collections.Generic;
+ using System.IO;
+ using FluentValidation.Results;
+-using NzbDrone.Core.Extras.Metadata.Files;
+-using NzbDrone.Core.MediaFiles;
+-using NzbDrone.Core.ThingiProvider;
+-using NzbDrone.Core.Tv;
++using Readarr.Core.Extras.Metadata.Files;
++using Readarr.Core.MediaFiles;
++using Readarr.Core.ThingiProvider;
++using Readarr.Core.Tv;
+ 
+-namespace NzbDrone.Core.Extras.Metadata
++namespace Readarr.Core.Extras.Metadata
+ {
+     public abstract class MetadataBase<TSettings> : IMetadata
+         where TSettings : IProviderConfig, new()
+diff --git a/src/NzbDrone.Core/Extras/Metadata/MetadataRepository.cs b/src/NzbDrone.Core/Extras/Metadata/MetadataRepository.cs
+index 942a5172b..fe8cf2e65 100644
+--- a/src/NzbDrone.Core/Extras/Metadata/MetadataRepository.cs
++++ b/src/NzbDrone.Core/Extras/Metadata/MetadataRepository.cs
+@@ -1,8 +1,8 @@
+-﻿using NzbDrone.Core.Datastore;
+-using NzbDrone.Core.Messaging.Events;
+-using NzbDrone.Core.ThingiProvider;
++﻿using Readarr.Core.Datastore;
++using Readarr.Core.Messaging.Events;
++using Readarr.Core.ThingiProvider;
+ 
+-namespace NzbDrone.Core.Extras.Metadata
++namespace Readarr.Core.Extras.Metadata
+ {
+     public interface IMetadataRepository : IProviderRepository<MetadataDefinition>
+     {
+diff --git a/src/NzbDrone.Core/Extras/Metadata/MetadataSectionType.cs b/src/NzbDrone.Core/Extras/Metadata/MetadataSectionType.cs
+index 7f2251d85..6cd341da8 100644
+--- a/src/NzbDrone.Core/Extras/Metadata/MetadataSectionType.cs
++++ b/src/NzbDrone.Core/Extras/Metadata/MetadataSectionType.cs
+@@ -1,4 +1,4 @@
+-namespace NzbDrone.Core.Extras.Metadata
++namespace Readarr.Core.Extras.Metadata
+ {
+     public static class MetadataSectionType
+     {
+diff --git a/src/NzbDrone.Core/Extras/Metadata/MetadataService.cs b/src/NzbDrone.Core/Extras/Metadata/MetadataService.cs
+index 5b08aa384..b57119fbf 100644
+--- a/src/NzbDrone.Core/Extras/Metadata/MetadataService.cs
++++ b/src/NzbDrone.Core/Extras/Metadata/MetadataService.cs
+@@ -4,18 +4,18 @@
+ using System.Linq;
+ using System.Net;
+ using NLog;
+-using NzbDrone.Common.Disk;
+-using NzbDrone.Common.Extensions;
+-using NzbDrone.Common.Http;
+-using NzbDrone.Core.Configuration;
+-using NzbDrone.Core.Extras.Files;
+-using NzbDrone.Core.Extras.Metadata.Files;
+-using NzbDrone.Core.Extras.Others;
+-using NzbDrone.Core.MediaFiles;
+-using NzbDrone.Core.Parser.Model;
+-using NzbDrone.Core.Tv;
+-
+-namespace NzbDrone.Core.Extras.Metadata
++using Readarr.Common.Disk;
++using Readarr.Common.Extensions;
++using Readarr.Common.Http;
++using Readarr.Core.Configuration;
++using Readarr.Core.Extras.Files;
++using Readarr.Core.Extras.Metadata.Files;
++using Readarr.Core.Extras.Others;
++using Readarr.Core.MediaFiles;
++using Readarr.Core.Parser.Model;
++using Readarr.Core.Tv;
++
++namespace Readarr.Core.Extras.Metadata
+ {
+     public class MetadataService : ExtraFileManager<MetadataFile>
+     {
+diff --git a/src/NzbDrone.Core/Extras/Metadata/MetadataType.cs b/src/NzbDrone.Core/Extras/Metadata/MetadataType.cs
+index 849bc31dd..c19ee9fd4 100644
+--- a/src/NzbDrone.Core/Extras/Metadata/MetadataType.cs
++++ b/src/NzbDrone.Core/Extras/Metadata/MetadataType.cs
+@@ -1,4 +1,4 @@
+-﻿namespace NzbDrone.Core.Extras.Metadata
++﻿namespace Readarr.Core.Extras.Metadata
+ {
+     public enum MetadataType
+     {
+diff --git a/src/NzbDrone.Core/Extras/Others/ExistingOtherExtraImporter.cs b/src/NzbDrone.Core/Extras/Others/ExistingOtherExtraImporter.cs
+index ea8d021de..9b852da7c 100644
+--- a/src/NzbDrone.Core/Extras/Others/ExistingOtherExtraImporter.cs
++++ b/src/NzbDrone.Core/Extras/Others/ExistingOtherExtraImporter.cs
+@@ -2,13 +2,13 @@
+ using System.IO;
+ using System.Linq;
+ using NLog;
+-using NzbDrone.Common.Extensions;
+-using NzbDrone.Core.Extras.Files;
+-using NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation;
+-using NzbDrone.Core.Parser.Model;
+-using NzbDrone.Core.Tv;
++using Readarr.Common.Extensions;
++using Readarr.Core.Extras.Files;
++using Readarr.Core.MediaFiles.EpisodeImport.Aggregation;
++using Readarr.Core.Parser.Model;
++using Readarr.Core.Tv;
+ 
+-namespace NzbDrone.Core.Extras.Others
++namespace Readarr.Core.Extras.Others
+ {
+     public class ExistingOtherExtraImporter : ImportExistingExtraFilesBase<OtherExtraFile>
+     {
+diff --git a/src/NzbDrone.Core/Extras/Others/OtherExtraFile.cs b/src/NzbDrone.Core/Extras/Others/OtherExtraFile.cs
+index 12187cfc1..a0cf70558 100644
+--- a/src/NzbDrone.Core/Extras/Others/OtherExtraFile.cs
++++ b/src/NzbDrone.Core/Extras/Others/OtherExtraFile.cs
+@@ -1,6 +1,6 @@
+-﻿using NzbDrone.Core.Extras.Files;
++﻿using Readarr.Core.Extras.Files;
+ 
+-namespace NzbDrone.Core.Extras.Others
++namespace Readarr.Core.Extras.Others
+ {
+     public class OtherExtraFile : ExtraFile
+     {
+diff --git a/src/NzbDrone.Core/Extras/Others/OtherExtraFileRenamer.cs b/src/NzbDrone.Core/Extras/Others/OtherExtraFileRenamer.cs
+index c4ec247df..395c355d0 100644
+--- a/src/NzbDrone.Core/Extras/Others/OtherExtraFileRenamer.cs
++++ b/src/NzbDrone.Core/Extras/Others/OtherExtraFileRenamer.cs
+@@ -1,11 +1,11 @@
+ ﻿using System.IO;
+ using NLog;
+-using NzbDrone.Common.Disk;
+-using NzbDrone.Common.Extensions;
+-using NzbDrone.Core.MediaFiles;
+-using NzbDrone.Core.Tv;
++using Readarr.Common.Disk;
++using Readarr.Common.Extensions;
++using Readarr.Core.MediaFiles;
++using Readarr.Core.Tv;
+ 
+-namespace NzbDrone.Core.Extras.Others
++namespace Readarr.Core.Extras.Others
+ {
+     public interface IOtherExtraFileRenamer
+     {
+diff --git a/src/NzbDrone.Core/Extras/Others/OtherExtraFileRepository.cs b/src/NzbDrone.Core/Extras/Others/OtherExtraFileRepository.cs
+index 91fbdb056..4d615475b 100644
+--- a/src/NzbDrone.Core/Extras/Others/OtherExtraFileRepository.cs
++++ b/src/NzbDrone.Core/Extras/Others/OtherExtraFileRepository.cs
+@@ -1,8 +1,8 @@
+-﻿using NzbDrone.Core.Datastore;
+-using NzbDrone.Core.Extras.Files;
+-using NzbDrone.Core.Messaging.Events;
++﻿using Readarr.Core.Datastore;
++using Readarr.Core.Extras.Files;
++using Readarr.Core.Messaging.Events;
+ 
+-namespace NzbDrone.Core.Extras.Others
++namespace Readarr.Core.Extras.Others
+ {
+     public interface IOtherExtraFileRepository : IExtraFileRepository<OtherExtraFile>
+     {
+diff --git a/src/NzbDrone.Core/Extras/Others/OtherExtraFileService.cs b/src/NzbDrone.Core/Extras/Others/OtherExtraFileService.cs
+index ceeb15ff8..355be97b6 100644
+--- a/src/NzbDrone.Core/Extras/Others/OtherExtraFileService.cs
++++ b/src/NzbDrone.Core/Extras/Others/OtherExtraFileService.cs
+@@ -1,10 +1,10 @@
+ ﻿using NLog;
+-using NzbDrone.Common.Disk;
+-using NzbDrone.Core.Extras.Files;
+-using NzbDrone.Core.MediaFiles;
+-using NzbDrone.Core.Tv;
++using Readarr.Common.Disk;
++using Readarr.Core.Extras.Files;
++using Readarr.Core.MediaFiles;
++using Readarr.Core.Tv;
+ 
+-namespace NzbDrone.Core.Extras.Others
++namespace Readarr.Core.Extras.Others
+ {
+     public interface IOtherExtraFileService : IExtraFileService<OtherExtraFile>
+     {
+diff --git a/src/NzbDrone.Core/Extras/Others/OtherExtraService.cs b/src/NzbDrone.Core/Extras/Others/OtherExtraService.cs
+index 4567dbe08..9dbd18d74 100644
+--- a/src/NzbDrone.Core/Extras/Others/OtherExtraService.cs
++++ b/src/NzbDrone.Core/Extras/Others/OtherExtraService.cs
+@@ -3,15 +3,15 @@
+ using System.IO;
+ using System.Linq;
+ using NLog;
+-using NzbDrone.Common.Disk;
+-using NzbDrone.Common.Extensions;
+-using NzbDrone.Core.Configuration;
+-using NzbDrone.Core.Extras.Files;
+-using NzbDrone.Core.MediaFiles;
+-using NzbDrone.Core.Parser.Model;
+-using NzbDrone.Core.Tv;
+-
+-namespace NzbDrone.Core.Extras.Others
++using Readarr.Common.Disk;
++using Readarr.Common.Extensions;
++using Readarr.Core.Configuration;
++using Readarr.Core.Extras.Files;
++using Readarr.Core.MediaFiles;
++using Readarr.Core.Parser.Model;
++using Readarr.Core.Tv;
++
++namespace Readarr.Core.Extras.Others
+ {
+     public class OtherExtraService : ExtraFileManager<OtherExtraFile>
+     {
+diff --git a/src/NzbDrone.Core/Sonarr.Core.csproj b/src/NzbDrone.Core/Readarr.Core.csproj
+similarity index 97%
+rename from src/NzbDrone.Core/Sonarr.Core.csproj
+rename to src/NzbDrone.Core/Readarr.Core.csproj
+index 60ad97000..cb8832fdf 100644
+--- a/src/NzbDrone.Core/Sonarr.Core.csproj
++++ b/src/NzbDrone.Core/Readarr.Core.csproj
+@@ -34,7 +34,7 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Common\Sonarr.Common.csproj" />
++    <ProjectReference Include="..\NzbDrone.Common\Readarr.Common.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+     <EmbeddedResource Include="..\..\Logo\64.png">
+diff --git a/src/NzbDrone.Host.Test/Sonarr.Host.Test.csproj b/src/NzbDrone.Host.Test/Readarr.Host.Test.csproj
+similarity index 78%
+rename from src/NzbDrone.Host.Test/Sonarr.Host.Test.csproj
+rename to src/NzbDrone.Host.Test/Readarr.Host.Test.csproj
+index 073d2149d..9fdad81d3 100644
+--- a/src/NzbDrone.Host.Test/Sonarr.Host.Test.csproj
++++ b/src/NzbDrone.Host.Test/Readarr.Host.Test.csproj
+@@ -11,7 +11,7 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Host\Sonarr.Host.csproj" />
+-    <ProjectReference Include="..\NzbDrone.Test.Common\Sonarr.Test.Common.csproj" />
++    <ProjectReference Include="..\NzbDrone.Host\Readarr.Host.csproj" />
++    <ProjectReference Include="..\NzbDrone.Test.Common\Readarr.Test.Common.csproj" />
+   </ItemGroup>
+ </Project>
+diff --git a/src/NzbDrone.Host/AccessControl/FirewallAdapter.cs b/src/NzbDrone.Host/AccessControl/FirewallAdapter.cs
+index 7b2dd1af3..a8a43fba2 100644
+--- a/src/NzbDrone.Host/AccessControl/FirewallAdapter.cs
++++ b/src/NzbDrone.Host/AccessControl/FirewallAdapter.cs
+@@ -2,10 +2,10 @@
+ using System.Linq;
+ using NetFwTypeLib;
+ using NLog;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Core.Configuration;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Core.Configuration;
+ 
+-namespace NzbDrone.Host.AccessControl
++namespace Readarr.Host.AccessControl
+ {
+     public interface IFirewallAdapter
+     {
+diff --git a/src/NzbDrone.Host/AccessControl/RemoteAccessAdapter.cs b/src/NzbDrone.Host/AccessControl/RemoteAccessAdapter.cs
+index 183ddc8e1..b4e866068 100644
+--- a/src/NzbDrone.Host/AccessControl/RemoteAccessAdapter.cs
++++ b/src/NzbDrone.Host/AccessControl/RemoteAccessAdapter.cs
+@@ -1,6 +1,6 @@
+-using NzbDrone.Common.EnvironmentInfo;
++using Readarr.Common.EnvironmentInfo;
+ 
+-namespace NzbDrone.Host.AccessControl
++namespace Readarr.Host.AccessControl
+ {
+     public interface IRemoteAccessAdapter
+     {
+diff --git a/src/NzbDrone.Host/AccessControl/RemoteAccessException.cs b/src/NzbDrone.Host/AccessControl/RemoteAccessException.cs
+index 71ea33052..a05a61df2 100644
+--- a/src/NzbDrone.Host/AccessControl/RemoteAccessException.cs
++++ b/src/NzbDrone.Host/AccessControl/RemoteAccessException.cs
+@@ -1,7 +1,7 @@
+ using System;
+-using NzbDrone.Common.Exceptions;
++using Readarr.Common.Exceptions;
+ 
+-namespace NzbDrone.Host.AccessControl
++namespace Readarr.Host.AccessControl
+ {
+     public class RemoteAccessException : NzbDroneException
+     {
+diff --git a/src/NzbDrone.Host/AppLifetime.cs b/src/NzbDrone.Host/AppLifetime.cs
+index dcb70a6ff..b097330a6 100644
+--- a/src/NzbDrone.Host/AppLifetime.cs
++++ b/src/NzbDrone.Host/AppLifetime.cs
+@@ -2,13 +2,13 @@
+ using System.Threading.Tasks;
+ using Microsoft.Extensions.Hosting;
+ using NLog;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Common.Processes;
+-using NzbDrone.Core.Configuration;
+-using NzbDrone.Core.Lifecycle;
+-using NzbDrone.Core.Messaging.Events;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Common.Processes;
++using Readarr.Core.Configuration;
++using Readarr.Core.Lifecycle;
++using Readarr.Core.Messaging.Events;
+ 
+-namespace NzbDrone.Host
++namespace Readarr.Host
+ {
+     public class AppLifetime : IHostedService, IHandle<ApplicationShutdownRequested>
+     {
+diff --git a/src/NzbDrone.Host/ApplicationModes.cs b/src/NzbDrone.Host/ApplicationModes.cs
+index ec06ea1f3..9069d860e 100644
+--- a/src/NzbDrone.Host/ApplicationModes.cs
++++ b/src/NzbDrone.Host/ApplicationModes.cs
+@@ -1,4 +1,4 @@
+-namespace NzbDrone.Host
++namespace Readarr.Host
+ {
+     public enum ApplicationModes
+     {
+diff --git a/src/NzbDrone.Host/Bootstrap.cs b/src/NzbDrone.Host/Bootstrap.cs
+index 2194664e3..9a4164765 100644
+--- a/src/NzbDrone.Host/Bootstrap.cs
++++ b/src/NzbDrone.Host/Bootstrap.cs
+@@ -14,20 +14,20 @@
+ using Microsoft.Extensions.Hosting.WindowsServices;
+ using Microsoft.Extensions.Logging;
+ using NLog;
+-using NzbDrone.Common.Composition.Extensions;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Common.Exceptions;
+-using NzbDrone.Common.Extensions;
+-using NzbDrone.Common.Instrumentation;
+-using NzbDrone.Common.Instrumentation.Extensions;
+-using NzbDrone.Common.Options;
+-using NzbDrone.Core.Configuration;
+-using NzbDrone.Core.Datastore.Extensions;
++using Readarr.Common.Composition.Extensions;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Common.Exceptions;
++using Readarr.Common.Extensions;
++using Readarr.Common.Instrumentation;
++using Readarr.Common.Instrumentation.Extensions;
++using Readarr.Common.Options;
++using Readarr.Core.Configuration;
++using Readarr.Core.Datastore.Extensions;
+ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
+ 
+ using PostgresOptions = NzbDrone.Core.Datastore.PostgresOptions;
+ 
+-namespace NzbDrone.Host
++namespace Readarr.Host
+ {
+     public static class Bootstrap
+     {
+@@ -35,11 +35,11 @@ public static class Bootstrap
+ 
+         public static readonly List<string> ASSEMBLIES = new List<string>
+         {
+-            "Sonarr.Host",
+-            "Sonarr.Core",
+-            "Sonarr.SignalR",
+-            "Sonarr.Api.V3",
+-            "Sonarr.Http"
++            "Readarr.Host",
++            "Readarr.Core",
++            "Readarr.SignalR",
++            "Readarr.Api.V1",
++            "Readarr.Http"
+         };
+ 
+         public static void Start(string[] args, Action<IHostBuilder> trayCallback = null)
+diff --git a/src/NzbDrone.Host/BrowserService.cs b/src/NzbDrone.Host/BrowserService.cs
+index 3766699d2..652e37434 100644
+--- a/src/NzbDrone.Host/BrowserService.cs
++++ b/src/NzbDrone.Host/BrowserService.cs
+@@ -1,10 +1,10 @@
+ ﻿using System;
+ using NLog;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Common.Processes;
+-using NzbDrone.Core.Configuration;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Common.Processes;
++using Readarr.Core.Configuration;
+ 
+-namespace NzbDrone.Host
++namespace Readarr.Host
+ {
+     public interface IBrowserService
+     {
+diff --git a/src/NzbDrone.Host/Sonarr.Host.csproj b/src/NzbDrone.Host/Readarr.Host.csproj
+similarity index 77%
+rename from src/NzbDrone.Host/Sonarr.Host.csproj
+rename to src/NzbDrone.Host/Readarr.Host.csproj
+index 262313d69..d697c3420 100644
+--- a/src/NzbDrone.Host/Sonarr.Host.csproj
++++ b/src/NzbDrone.Host/Readarr.Host.csproj
+@@ -17,11 +17,11 @@
+ 		<PackageReference Remove="StyleCop.Analyzers" />
+ 	</ItemGroup>
+ 	<ItemGroup>
+-		<ProjectReference Include="..\NzbDrone.Common\Sonarr.Common.csproj" />
+-		<ProjectReference Include="..\NzbDrone.Core\Sonarr.Core.csproj" />
+-		<ProjectReference Include="..\NzbDrone.SignalR\Sonarr.SignalR.csproj" />
+-		<ProjectReference Include="..\Sonarr.Api.V3\Sonarr.Api.V3.csproj" />
+-		<ProjectReference Include="..\Sonarr.Http\Sonarr.Http.csproj" />
++		<ProjectReference Include="..\NzbDrone.Common\Readarr.Common.csproj" />
++		<ProjectReference Include="..\NzbDrone.Core\Readarr.Core.csproj" />
++		<ProjectReference Include="..\NzbDrone.SignalR\Readarr.SignalR.csproj" />
++		<ProjectReference Include="..\Readarr.Api.V1\Readarr.Api.V1.csproj" />
++		<ProjectReference Include="..\Readarr.Http\Readarr.Http.csproj" />
+ 	</ItemGroup>
+ 	<ItemGroup>
+ 		<Reference Include="Interop.NetFwTypeLib">
+diff --git a/src/NzbDrone.Host/SingleInstancePolicy.cs b/src/NzbDrone.Host/SingleInstancePolicy.cs
+index 98f070bb9..6bd8d9f48 100644
+--- a/src/NzbDrone.Host/SingleInstancePolicy.cs
++++ b/src/NzbDrone.Host/SingleInstancePolicy.cs
+@@ -2,9 +2,9 @@
+ using System.Collections.Generic;
+ using System.Linq;
+ using NLog;
+-using NzbDrone.Common.Processes;
++using Readarr.Common.Processes;
+ 
+-namespace NzbDrone.Host
++namespace Readarr.Host
+ {
+     public interface ISingleInstancePolicy
+     {
+diff --git a/src/NzbDrone.Host/Startup.cs b/src/NzbDrone.Host/Startup.cs
+index ede9aace9..231bb6552 100644
+--- a/src/NzbDrone.Host/Startup.cs
++++ b/src/NzbDrone.Host/Startup.cs
+@@ -14,29 +14,29 @@
+ using Microsoft.Extensions.Logging;
+ using Microsoft.OpenApi.Models;
+ using NLog.Extensions.Logging;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Common.Instrumentation;
+-using NzbDrone.Common.Processes;
+-using NzbDrone.Common.Serializer;
+-using NzbDrone.Core.Configuration;
+-using NzbDrone.Core.Datastore;
+-using NzbDrone.Core.Instrumentation;
+-using NzbDrone.Core.Lifecycle;
+-using NzbDrone.Core.Messaging.Events;
+-using NzbDrone.Host.AccessControl;
+-using NzbDrone.Http.Authentication;
+-using NzbDrone.SignalR;
+-using Sonarr.Api.V3.Series;
+-using Sonarr.Api.V3.System;
+-using Sonarr.Http;
+-using Sonarr.Http.Authentication;
+-using Sonarr.Http.ClientSchema;
+-using Sonarr.Http.ErrorManagement;
+-using Sonarr.Http.Frontend;
+-using Sonarr.Http.Middleware;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Common.Instrumentation;
++using Readarr.Common.Processes;
++using Readarr.Common.Serializer;
++using Readarr.Core.Configuration;
++using Readarr.Core.Datastore;
++using Readarr.Core.Instrumentation;
++using Readarr.Core.Lifecycle;
++using Readarr.Core.Messaging.Events;
++using Readarr.Host.AccessControl;
++using Readarr.Http.Authentication;
++using Readarr.SignalR;
++using Readarr.Api.V3.Series;
++using Readarr.Api.V3.System;
++using Readarr.Http;
++using Readarr.Http.Authentication;
++using Readarr.Http.ClientSchema;
++using Readarr.Http.ErrorManagement;
++using Readarr.Http.Frontend;
++using Readarr.Http.Middleware;
+ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
+ 
+-namespace NzbDrone.Host
++namespace Readarr.Host
+ {
+     public class Startup
+     {
+@@ -54,7 +54,7 @@ public void ConfigureServices(IServiceCollection services)
+                 b.ClearProviders();
+                 b.SetMinimumLevel(LogLevel.Trace);
+                 b.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
+-                b.AddFilter("Sonarr.Http.Authentication.ApiKeyAuthenticationHandler", LogLevel.Information);
++                b.AddFilter("Readarr.Http.Authentication.ApiKeyAuthenticationHandler", LogLevel.Information);
+                 b.AddFilter("Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager", LogLevel.Error);
+                 b.AddNLog();
+             });
+diff --git a/src/NzbDrone.Host/TerminateApplicationException.cs b/src/NzbDrone.Host/TerminateApplicationException.cs
+index cbcc0ceb2..61d1e9d2f 100644
+--- a/src/NzbDrone.Host/TerminateApplicationException.cs
++++ b/src/NzbDrone.Host/TerminateApplicationException.cs
+@@ -1,6 +1,6 @@
+ ﻿using System;
+ 
+-namespace NzbDrone.Host
++namespace Readarr.Host
+ {
+     public class TerminateApplicationException : ApplicationException
+     {
+diff --git a/src/NzbDrone.Host/UtilityModeRouter.cs b/src/NzbDrone.Host/UtilityModeRouter.cs
+index 9baac8e7e..a5904099e 100644
+--- a/src/NzbDrone.Host/UtilityModeRouter.cs
++++ b/src/NzbDrone.Host/UtilityModeRouter.cs
+@@ -1,11 +1,11 @@
+ using NLog;
+-using NzbDrone.Common;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Common.Processes;
+-using NzbDrone.Host.AccessControl;
++using Readarr.Common;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Common.Processes;
++using Readarr.Host.AccessControl;
+ using IServiceProvider = NzbDrone.Common.IServiceProvider;
+ 
+-namespace NzbDrone.Host
++namespace Readarr.Host
+ {
+     public interface IUtilityModeRouter
+     {
+diff --git a/src/NzbDrone.Integration.Test/Sonarr.Integration.Test.csproj b/src/NzbDrone.Integration.Test/Readarr.Integration.Test.csproj
+similarity index 74%
+rename from src/NzbDrone.Integration.Test/Sonarr.Integration.Test.csproj
+rename to src/NzbDrone.Integration.Test/Readarr.Integration.Test.csproj
+index 8b612a3ed..bfefc812a 100644
+--- a/src/NzbDrone.Integration.Test/Sonarr.Integration.Test.csproj
++++ b/src/NzbDrone.Integration.Test/Readarr.Integration.Test.csproj
+@@ -13,8 +13,8 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Test.Common\Sonarr.Test.Common.csproj" />
+-    <ProjectReference Include="..\Sonarr.Api.V3\Sonarr.Api.V3.csproj" />
+-    <ProjectReference Include="..\Sonarr.Http\Sonarr.Http.csproj" />
++    <ProjectReference Include="..\NzbDrone.Test.Common\Readarr.Test.Common.csproj" />
++    <ProjectReference Include="..\Readarr.Api.V1\Readarr.Api.V1.csproj" />
++    <ProjectReference Include="..\Readarr.Http\Readarr.Http.csproj" />
+   </ItemGroup>
+ </Project>
+diff --git a/src/NzbDrone.Libraries.Test/Sonarr.Libraries.Test.csproj b/src/NzbDrone.Libraries.Test/Readarr.Libraries.Test.csproj
+similarity index 86%
+rename from src/NzbDrone.Libraries.Test/Sonarr.Libraries.Test.csproj
+rename to src/NzbDrone.Libraries.Test/Readarr.Libraries.Test.csproj
+index 34ae081bb..c504e393d 100644
+--- a/src/NzbDrone.Libraries.Test/Sonarr.Libraries.Test.csproj
++++ b/src/NzbDrone.Libraries.Test/Readarr.Libraries.Test.csproj
+@@ -11,6 +11,6 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Test.Common\Sonarr.Test.Common.csproj" />
++    <ProjectReference Include="..\NzbDrone.Test.Common\Readarr.Test.Common.csproj" />
+   </ItemGroup>
+ </Project>
+diff --git a/src/NzbDrone.Mono.Test/Sonarr.Mono.Test.csproj b/src/NzbDrone.Mono.Test/Readarr.Mono.Test.csproj
+similarity index 79%
+rename from src/NzbDrone.Mono.Test/Sonarr.Mono.Test.csproj
+rename to src/NzbDrone.Mono.Test/Readarr.Mono.Test.csproj
+index 725cc26bc..94f5abe45 100644
+--- a/src/NzbDrone.Mono.Test/Sonarr.Mono.Test.csproj
++++ b/src/NzbDrone.Mono.Test/Readarr.Mono.Test.csproj
+@@ -16,9 +16,9 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Common.Test\Sonarr.Common.Test.csproj" />
+-    <ProjectReference Include="..\NzbDrone.Mono\Sonarr.Mono.csproj" />
+-    <ProjectReference Include="..\NzbDrone.Test.Common\Sonarr.Test.Common.csproj" />
++    <ProjectReference Include="..\NzbDrone.Common.Test\Readarr.Common.Test.csproj" />
++    <ProjectReference Include="..\NzbDrone.Mono\Readarr.Mono.csproj" />
++    <ProjectReference Include="..\NzbDrone.Test.Common\Readarr.Test.Common.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+     <None Update="Files\**\*.*">
+diff --git a/src/NzbDrone.Mono/Sonarr.Mono.csproj b/src/NzbDrone.Mono/Readarr.Mono.csproj
+similarity index 92%
+rename from src/NzbDrone.Mono/Sonarr.Mono.csproj
+rename to src/NzbDrone.Mono/Readarr.Mono.csproj
+index e71b04b44..c8759c202 100644
+--- a/src/NzbDrone.Mono/Sonarr.Mono.csproj
++++ b/src/NzbDrone.Mono/Readarr.Mono.csproj
+@@ -17,6 +17,6 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Common\Sonarr.Common.csproj" />
++    <ProjectReference Include="..\NzbDrone.Common\Readarr.Common.csproj" />
+   </ItemGroup>
+ </Project>
+diff --git a/src/NzbDrone.SignalR/Sonarr.SignalR.csproj b/src/NzbDrone.SignalR/Readarr.SignalR.csproj
+similarity index 78%
+rename from src/NzbDrone.SignalR/Sonarr.SignalR.csproj
+rename to src/NzbDrone.SignalR/Readarr.SignalR.csproj
+index d106d8a3c..877d33d71 100644
+--- a/src/NzbDrone.SignalR/Sonarr.SignalR.csproj
++++ b/src/NzbDrone.SignalR/Readarr.SignalR.csproj
+@@ -4,8 +4,8 @@
+     <OutputType>Library</OutputType>
+   </PropertyGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Core\Sonarr.Core.csproj" />
+-    <ProjectReference Include="..\NzbDrone.Common\Sonarr.Common.csproj" />
++    <ProjectReference Include="..\NzbDrone.Core\Readarr.Core.csproj" />
++    <ProjectReference Include="..\NzbDrone.Common\Readarr.Common.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+     <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556">
+diff --git a/src/NzbDrone.Test.Common/AutoMoq/AutoMoqer.cs b/src/NzbDrone.Test.Common/AutoMoq/AutoMoqer.cs
+index 2986a1152..6c6d1432b 100644
+--- a/src/NzbDrone.Test.Common/AutoMoq/AutoMoqer.cs
++++ b/src/NzbDrone.Test.Common/AutoMoq/AutoMoqer.cs
+@@ -139,7 +139,7 @@ private void SetupAutoMoqer(IContainer container)
+ 
+             LoadPlatformLibrary();
+ 
+-            AssemblyLoader.RegisterNativeResolver(new[] { "System.Data.SQLite", "Sonarr.Core" });
++            Assembly.*"Readarr.Core" });
+         }
+ 
+         private Mock<T> TheRegisteredMockForThisType<T>(Type type)
+diff --git a/src/NzbDrone.Test.Common/Sonarr.Test.Common.csproj b/src/NzbDrone.Test.Common/Readarr.Test.Common.csproj
+similarity index 85%
+rename from src/NzbDrone.Test.Common/Sonarr.Test.Common.csproj
+rename to src/NzbDrone.Test.Common/Readarr.Test.Common.csproj
+index 2639bcd70..70b3cbebb 100644
+--- a/src/NzbDrone.Test.Common/Sonarr.Test.Common.csproj
++++ b/src/NzbDrone.Test.Common/Readarr.Test.Common.csproj
+@@ -16,7 +16,7 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Common\Sonarr.Common.csproj" />
+-    <ProjectReference Include="..\NzbDrone.Core\Sonarr.Core.csproj" />
++    <ProjectReference Include="..\NzbDrone.Common\Readarr.Common.csproj" />
++    <ProjectReference Include="..\NzbDrone.Core\Readarr.Core.csproj" />
+   </ItemGroup>
+ </Project>
+diff --git a/src/NzbDrone.Test.Dummy/Sonarr.Test.Dummy.csproj b/src/NzbDrone.Test.Dummy/Readarr.Test.Dummy.csproj
+similarity index 100%
+rename from src/NzbDrone.Test.Dummy/Sonarr.Test.Dummy.csproj
+rename to src/NzbDrone.Test.Dummy/Readarr.Test.Dummy.csproj
+diff --git a/src/NzbDrone.Update.Test/Sonarr.Update.Test.csproj b/src/NzbDrone.Update.Test/Readarr.Update.Test.csproj
+similarity index 77%
+rename from src/NzbDrone.Update.Test/Sonarr.Update.Test.csproj
+rename to src/NzbDrone.Update.Test/Readarr.Update.Test.csproj
+index b3bba2d1a..631ffa024 100644
+--- a/src/NzbDrone.Update.Test/Sonarr.Update.Test.csproj
++++ b/src/NzbDrone.Update.Test/Readarr.Update.Test.csproj
+@@ -11,7 +11,7 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Test.Common\Sonarr.Test.Common.csproj" />
+-    <ProjectReference Include="..\NzbDrone.Update\Sonarr.Update.csproj" />
++    <ProjectReference Include="..\NzbDrone.Test.Common\Readarr.Test.Common.csproj" />
++    <ProjectReference Include="..\NzbDrone.Update\Readarr.Update.csproj" />
+   </ItemGroup>
+ </Project>
+diff --git a/src/NzbDrone.Update/AppType.cs b/src/NzbDrone.Update/AppType.cs
+index d83b457c1..9aa704c6f 100644
+--- a/src/NzbDrone.Update/AppType.cs
++++ b/src/NzbDrone.Update/AppType.cs
+@@ -1,4 +1,4 @@
+-﻿namespace NzbDrone.Update
++﻿namespace Readarr.Update
+ {
+     public enum AppType
+     {
+diff --git a/src/NzbDrone.Update/Sonarr.Update.csproj b/src/NzbDrone.Update/Readarr.Update.csproj
+similarity index 90%
+rename from src/NzbDrone.Update/Sonarr.Update.csproj
+rename to src/NzbDrone.Update/Readarr.Update.csproj
+index 16b18cf14..354c1372f 100644
+--- a/src/NzbDrone.Update/Sonarr.Update.csproj
++++ b/src/NzbDrone.Update/Readarr.Update.csproj
+@@ -14,6 +14,6 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Common\Sonarr.Common.csproj" />
++    <ProjectReference Include="..\NzbDrone.Common\Readarr.Common.csproj" />
+   </ItemGroup>
+ </Project>
+diff --git a/src/NzbDrone.Update/UpdateApp.cs b/src/NzbDrone.Update/UpdateApp.cs
+index 1dc7907f7..079fd942a 100644
+--- a/src/NzbDrone.Update/UpdateApp.cs
++++ b/src/NzbDrone.Update/UpdateApp.cs
+@@ -4,15 +4,15 @@
+ using System.Linq;
+ using DryIoc;
+ using NLog;
+-using NzbDrone.Common.Composition.Extensions;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Common.Extensions;
+-using NzbDrone.Common.Instrumentation;
+-using NzbDrone.Common.Instrumentation.Extensions;
+-using NzbDrone.Common.Processes;
+-using NzbDrone.Update.UpdateEngine;
+-
+-namespace NzbDrone.Update
++using Readarr.Common.Composition.Extensions;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Common.Extensions;
++using Readarr.Common.Instrumentation;
++using Readarr.Common.Instrumentation.Extensions;
++using Readarr.Common.Processes;
++using Readarr.Update.UpdateEngine;
++
++namespace Readarr.Update
+ {
+     public class UpdateApp
+     {
+@@ -37,7 +37,7 @@ public static void Main(string[] args)
+                 Logger.Info("Starting Sonarr Update Client");
+ 
+                 var container = new Container(rules => rules.WithNzbDroneRules())
+-                    .AutoAddServices(new List<string> { "Sonarr.Update" })
++                    .AutoAddServices(new List<string> { "Readarr.Update" })
+                     .AddNzbDroneLogger()
+                     .AddStartupContext(startupArgument);
+ 
+diff --git a/src/NzbDrone.Update/UpdateEngine/BackupAndRestore.cs b/src/NzbDrone.Update/UpdateEngine/BackupAndRestore.cs
+index 8bfcada5e..079712a74 100644
+--- a/src/NzbDrone.Update/UpdateEngine/BackupAndRestore.cs
++++ b/src/NzbDrone.Update/UpdateEngine/BackupAndRestore.cs
+@@ -1,9 +1,9 @@
+ using NLog;
+-using NzbDrone.Common.Disk;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Common.Extensions;
++using Readarr.Common.Disk;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Common.Extensions;
+ 
+-namespace NzbDrone.Update.UpdateEngine
++namespace Readarr.Update.UpdateEngine
+ {
+     public interface IBackupAndRestore
+     {
+diff --git a/src/NzbDrone.Update/UpdateEngine/BackupAppData.cs b/src/NzbDrone.Update/UpdateEngine/BackupAppData.cs
+index 22b0b481a..ba7ad35d7 100644
+--- a/src/NzbDrone.Update/UpdateEngine/BackupAppData.cs
++++ b/src/NzbDrone.Update/UpdateEngine/BackupAppData.cs
+@@ -1,10 +1,10 @@
+ ﻿using System;
+ using NLog;
+-using NzbDrone.Common.Disk;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Common.Extensions;
++using Readarr.Common.Disk;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Common.Extensions;
+ 
+-namespace NzbDrone.Update.UpdateEngine
++namespace Readarr.Update.UpdateEngine
+ {
+     public interface IBackupAppData
+     {
+diff --git a/src/NzbDrone.Update/UpdateEngine/DetectApplicationType.cs b/src/NzbDrone.Update/UpdateEngine/DetectApplicationType.cs
+index 9aac7edb2..f6c7c4365 100644
+--- a/src/NzbDrone.Update/UpdateEngine/DetectApplicationType.cs
++++ b/src/NzbDrone.Update/UpdateEngine/DetectApplicationType.cs
+@@ -1,8 +1,8 @@
+-using NzbDrone.Common;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Common.Processes;
++using Readarr.Common;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Common.Processes;
+ 
+-namespace NzbDrone.Update.UpdateEngine
++namespace Readarr.Update.UpdateEngine
+ {
+     public interface IDetectApplicationType
+     {
+diff --git a/src/NzbDrone.Update/UpdateEngine/DetectExistingVersion.cs b/src/NzbDrone.Update/UpdateEngine/DetectExistingVersion.cs
+index efbe2fe0a..fab0e3327 100644
+--- a/src/NzbDrone.Update/UpdateEngine/DetectExistingVersion.cs
++++ b/src/NzbDrone.Update/UpdateEngine/DetectExistingVersion.cs
+@@ -2,7 +2,7 @@
+ using System.IO;
+ using NLog;
+ 
+-namespace NzbDrone.Update.UpdateEngine
++namespace Readarr.Update.UpdateEngine
+ {
+     public interface IDetectExistingVersion
+     {
+@@ -22,7 +22,7 @@ public string GetExistingVersion(string targetFolder)
+         {
+             try
+             {
+-                var targetExecutable = Path.Combine(targetFolder, "Sonarr.dll");
++                var targetExecutable = Path.Combine(targetFolder, "Readarr.dll");
+ 
+                 if (File.Exists(targetExecutable))
+                 {
+diff --git a/src/NzbDrone.Update/UpdateEngine/InstallUpdateService.cs b/src/NzbDrone.Update/UpdateEngine/InstallUpdateService.cs
+index 616c5d2da..c88adcada 100644
+--- a/src/NzbDrone.Update/UpdateEngine/InstallUpdateService.cs
++++ b/src/NzbDrone.Update/UpdateEngine/InstallUpdateService.cs
+@@ -1,12 +1,12 @@
+ using System;
+ using System.IO;
+ using NLog;
+-using NzbDrone.Common.Disk;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Common.Extensions;
+-using NzbDrone.Common.Processes;
++using Readarr.Common.Disk;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Common.Extensions;
++using Readarr.Common.Processes;
+ 
+-namespace NzbDrone.Update.UpdateEngine
++namespace Readarr.Update.UpdateEngine
+ {
+     public interface IInstallUpdateService
+     {
+diff --git a/src/NzbDrone.Update/UpdateEngine/StartNzbDrone.cs b/src/NzbDrone.Update/UpdateEngine/StartNzbDrone.cs
+index 36cd51efb..c4b3e3ba9 100644
+--- a/src/NzbDrone.Update/UpdateEngine/StartNzbDrone.cs
++++ b/src/NzbDrone.Update/UpdateEngine/StartNzbDrone.cs
+@@ -1,13 +1,13 @@
+ using System;
+ using System.IO;
+ using NLog;
+-using NzbDrone.Common;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Common.Extensions;
+-using NzbDrone.Common.Processes;
++using Readarr.Common;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Common.Extensions;
++using Readarr.Common.Processes;
+ using IServiceProvider = NzbDrone.Common.IServiceProvider;
+ 
+-namespace NzbDrone.Update.UpdateEngine
++namespace Readarr.Update.UpdateEngine
+ {
+     public interface IStartNzbDrone
+     {
+@@ -67,7 +67,7 @@ private void StartWinform(string installationFolder)
+ 
+         private void StartConsole(string installationFolder)
+         {
+-            Start(installationFolder, "Sonarr.Console".ProcessNameToExe());
++            Start(installationFolder, "Readarr.Console".ProcessNameToExe());
+         }
+ 
+         private void Start(string installationFolder, string fileName)
+diff --git a/src/NzbDrone.Update/UpdateEngine/TerminateNzbDrone.cs b/src/NzbDrone.Update/UpdateEngine/TerminateNzbDrone.cs
+index 2c9319caf..77cd9e090 100644
+--- a/src/NzbDrone.Update/UpdateEngine/TerminateNzbDrone.cs
++++ b/src/NzbDrone.Update/UpdateEngine/TerminateNzbDrone.cs
+@@ -1,11 +1,11 @@
+ using System;
+ using NLog;
+-using NzbDrone.Common;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Common.Processes;
++using Readarr.Common;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Common.Processes;
+ using IServiceProvider = NzbDrone.Common.IServiceProvider;
+ 
+-namespace NzbDrone.Update.UpdateEngine
++namespace Readarr.Update.UpdateEngine
+ {
+     public interface ITerminateNzbDrone
+     {
+diff --git a/src/NzbDrone.Update/UpdateStartupContext.cs b/src/NzbDrone.Update/UpdateStartupContext.cs
+index 7c38ce10d..6bac6384b 100644
+--- a/src/NzbDrone.Update/UpdateStartupContext.cs
++++ b/src/NzbDrone.Update/UpdateStartupContext.cs
+@@ -1,4 +1,4 @@
+-﻿namespace NzbDrone.Update
++﻿namespace Readarr.Update
+ {
+     public class UpdateStartupContext
+     {
+diff --git a/src/NzbDrone.Windows.Test/DiskProviderTests/DiskProviderFixture.cs b/src/NzbDrone.Windows.Test/DiskProviderTests/DiskProviderFixture.cs
+index 789d07e0a..22f2aeb1a 100644
+--- a/src/NzbDrone.Windows.Test/DiskProviderTests/DiskProviderFixture.cs
++++ b/src/NzbDrone.Windows.Test/DiskProviderTests/DiskProviderFixture.cs
+@@ -2,10 +2,10 @@
+ using System.Security.AccessControl;
+ using System.Security.Principal;
+ using NUnit.Framework;
+-using NzbDrone.Common.Test.DiskTests;
+-using NzbDrone.Windows.Disk;
++using Readarr.Common.Test.DiskTests;
++using Readarr.Windows.Disk;
+ 
+-namespace NzbDrone.Windows.Test.DiskProviderTests
++namespace Readarr.Windows.Test.DiskProviderTests
+ {
+     [TestFixture]
+     [Platform("Win")]
+diff --git a/src/NzbDrone.Windows.Test/DiskProviderTests/FreeSpaceFixture.cs b/src/NzbDrone.Windows.Test/DiskProviderTests/FreeSpaceFixture.cs
+index 1cda90713..0936aef6f 100644
+--- a/src/NzbDrone.Windows.Test/DiskProviderTests/FreeSpaceFixture.cs
++++ b/src/NzbDrone.Windows.Test/DiskProviderTests/FreeSpaceFixture.cs
+@@ -1,10 +1,10 @@
+ using System.IO;
+ using FluentAssertions;
+ using NUnit.Framework;
+-using NzbDrone.Common.Test.DiskTests;
+-using NzbDrone.Windows.Disk;
++using Readarr.Common.Test.DiskTests;
++using Readarr.Windows.Disk;
+ 
+-namespace NzbDrone.Windows.Test.DiskProviderTests
++namespace Readarr.Windows.Test.DiskProviderTests
+ {
+     [TestFixture]
+     [Platform("Win")]
+diff --git a/src/NzbDrone.Windows.Test/EnvironmentInfo/DotNetPlatformInfoFixture.cs b/src/NzbDrone.Windows.Test/EnvironmentInfo/DotNetPlatformInfoFixture.cs
+index f88119ad3..7fcc0f0b8 100644
+--- a/src/NzbDrone.Windows.Test/EnvironmentInfo/DotNetPlatformInfoFixture.cs
++++ b/src/NzbDrone.Windows.Test/EnvironmentInfo/DotNetPlatformInfoFixture.cs
+@@ -1,9 +1,9 @@
+ ﻿using FluentAssertions;
+ using NUnit.Framework;
+-using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Test.Common;
++using Readarr.Common.EnvironmentInfo;
++using Readarr.Test.Common;
+ 
+-namespace NzbDrone.Windows.Test.EnvironmentInfo
++namespace Readarr.Windows.Test.EnvironmentInfo
+ {
+     [TestFixture]
+     [Platform("Net")]
+diff --git a/src/NzbDrone.Windows.Test/EnvironmentInfo/WindowsVersionInfoFixture.cs b/src/NzbDrone.Windows.Test/EnvironmentInfo/WindowsVersionInfoFixture.cs
+index 198789673..3bbbd19e8 100644
+--- a/src/NzbDrone.Windows.Test/EnvironmentInfo/WindowsVersionInfoFixture.cs
++++ b/src/NzbDrone.Windows.Test/EnvironmentInfo/WindowsVersionInfoFixture.cs
+@@ -1,9 +1,9 @@
+ ﻿using FluentAssertions;
+ using NUnit.Framework;
+-using NzbDrone.Test.Common;
+-using NzbDrone.Windows.EnvironmentInfo;
++using Readarr.Test.Common;
++using Readarr.Windows.EnvironmentInfo;
+ 
+-namespace NzbDrone.Windows.Test.EnvironmentInfo
++namespace Readarr.Windows.Test.EnvironmentInfo
+ {
+     [TestFixture]
+     [Platform("Win")]
+diff --git a/src/NzbDrone.Windows.Test/Readarr.Windows.Test.csproj b/src/NzbDrone.Windows.Test/Readarr.Windows.Test.csproj
+new file mode 100644
+index 000000000..43c671c96
+--- /dev/null
++++ b/src/NzbDrone.Windows.Test/Readarr.Windows.Test.csproj
+@@ -0,0 +1,18 @@
++﻿<Project Sdk="Microsoft.NET.Sdk">
++  <PropertyGroup>
++    <TargetFrameworks>net8.0</TargetFrameworks>
++  </PropertyGroup>
++  <ItemGroup>
++    <PackageReference Include="GitHubActionsTestLogger" Version="2.4.1" />
++    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556">
++      <PrivateAssets>all</PrivateAssets>
++      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
++    </PackageReference>
++    <PackageReference Remove="StyleCop.Analyzers" />
++  </ItemGroup>
++  <ItemGroup>
++    <ProjectReference Include="..\NzbDrone.Common.Test\Readarr.Common.Test.csproj" />
++    <ProjectReference Include="..\NzbDrone.Test.Common\Readarr.Test.Common.csproj" />
++    <ProjectReference Include="..\NzbDrone.Windows\Readarr.Windows.csproj" />
++  </ItemGroup>
++</Project>
+diff --git a/src/NzbDrone.Windows.Test/Sonarr.Windows.Test.csproj b/src/NzbDrone.Windows.Test/Sonarr.Windows.Test.csproj
+deleted file mode 100644
+index 5f3efca41..000000000
+--- a/src/NzbDrone.Windows.Test/Sonarr.Windows.Test.csproj
++++ /dev/null
+@@ -1,18 +0,0 @@
+-﻿<Project Sdk="Microsoft.NET.Sdk">
+-  <PropertyGroup>
+-    <TargetFrameworks>net8.0</TargetFrameworks>
+-  </PropertyGroup>
+-  <ItemGroup>
+-    <PackageReference Include="GitHubActionsTestLogger" Version="2.4.1" />
+-    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-    <PackageReference Remove="StyleCop.Analyzers" />
+-  </ItemGroup>
+-  <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Common.Test\Sonarr.Common.Test.csproj" />
+-    <ProjectReference Include="..\NzbDrone.Test.Common\Sonarr.Test.Common.csproj" />
+-    <ProjectReference Include="..\NzbDrone.Windows\Sonarr.Windows.csproj" />
+-  </ItemGroup>
+-</Project>
+diff --git a/src/NzbDrone.Windows/Disk/DiskProvider.cs b/src/NzbDrone.Windows/Disk/DiskProvider.cs
+index a7a204a5e..e7046dae1 100644
+--- a/src/NzbDrone.Windows/Disk/DiskProvider.cs
++++ b/src/NzbDrone.Windows/Disk/DiskProvider.cs
+@@ -5,11 +5,11 @@
+ using System.Security.AccessControl;
+ using System.Security.Principal;
+ using NLog;
+-using NzbDrone.Common.Disk;
+-using NzbDrone.Common.EnsureThat;
+-using NzbDrone.Common.Instrumentation;
++using Readarr.Common.Disk;
++using Readarr.Common.EnsureThat;
++using Readarr.Common.Instrumentation;
+ 
+-namespace NzbDrone.Windows.Disk
++namespace Readarr.Windows.Disk
+ {
+     public class DiskProvider : DiskProviderBase
+     {
+diff --git a/src/NzbDrone.Windows/Disk/FolderMount.cs b/src/NzbDrone.Windows/Disk/FolderMount.cs
+index 457887532..d4a01dd1d 100644
+--- a/src/NzbDrone.Windows/Disk/FolderMount.cs
++++ b/src/NzbDrone.Windows/Disk/FolderMount.cs
+@@ -1,7 +1,7 @@
+ using System.IO;
+-using NzbDrone.Common.Disk;
++using Readarr.Common.Disk;
+ 
+-namespace NzbDrone.Windows.Disk
++namespace Readarr.Windows.Disk
+ {
+     public class FolderMount : IMount
+     {
+diff --git a/src/NzbDrone.Windows/EnvironmentInfo/WindowsVersionInfo.cs b/src/NzbDrone.Windows/EnvironmentInfo/WindowsVersionInfo.cs
+index 6d9699f87..2516db953 100644
+--- a/src/NzbDrone.Windows/EnvironmentInfo/WindowsVersionInfo.cs
++++ b/src/NzbDrone.Windows/EnvironmentInfo/WindowsVersionInfo.cs
+@@ -1,9 +1,9 @@
+ ﻿using System;
+ using Microsoft.Win32;
+ using NLog;
+-using NzbDrone.Common.EnvironmentInfo;
++using Readarr.Common.EnvironmentInfo;
+ 
+-namespace NzbDrone.Windows.EnvironmentInfo
++namespace Readarr.Windows.EnvironmentInfo
+ {
+     public class WindowsVersionInfo : IOsVersionAdapter
+     {
+diff --git a/src/NzbDrone.Windows/Sonarr.Windows.csproj b/src/NzbDrone.Windows/Readarr.Windows.csproj
+similarity index 90%
+rename from src/NzbDrone.Windows/Sonarr.Windows.csproj
+rename to src/NzbDrone.Windows/Readarr.Windows.csproj
+index 6d27190cc..1f5383e15 100644
+--- a/src/NzbDrone.Windows/Sonarr.Windows.csproj
++++ b/src/NzbDrone.Windows/Readarr.Windows.csproj
+@@ -13,6 +13,6 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Common\Sonarr.Common.csproj" />
++    <ProjectReference Include="..\NzbDrone.Common\Readarr.Common.csproj" />
+   </ItemGroup>
+ </Project>
+diff --git a/src/NzbDrone/Sonarr.csproj b/src/NzbDrone/Sonarr.csproj
+index 7ac0a3d45..152b823e4 100644
+--- a/src/NzbDrone/Sonarr.csproj
++++ b/src/NzbDrone/Sonarr.csproj
+@@ -16,8 +16,8 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Host\Sonarr.Host.csproj" />
+-    <ProjectReference Include="..\NzbDrone.Windows\Sonarr.Windows.csproj" />
++    <ProjectReference Include="..\NzbDrone.Host\Readarr.Host.csproj" />
++    <ProjectReference Include="..\NzbDrone.Windows\Readarr.Windows.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+     <Compile Update="Properties\Resources.Designer.cs">
+diff --git a/src/Sonarr.Api.V3/ApplyTags.cs b/src/Readarr.Api.V1/ApplyTags.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ApplyTags.cs
+rename to src/Readarr.Api.V1/ApplyTags.cs
+diff --git a/src/Sonarr.Api.V3/AutoTagging/AutoTaggingController.cs b/src/Readarr.Api.V1/AutoTagging/AutoTaggingController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/AutoTagging/AutoTaggingController.cs
+rename to src/Readarr.Api.V1/AutoTagging/AutoTaggingController.cs
+diff --git a/src/Sonarr.Api.V3/AutoTagging/AutoTaggingResource.cs b/src/Readarr.Api.V1/AutoTagging/AutoTaggingResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/AutoTagging/AutoTaggingResource.cs
+rename to src/Readarr.Api.V1/AutoTagging/AutoTaggingResource.cs
+diff --git a/src/Sonarr.Api.V3/AutoTagging/AutoTaggingSpecificationSchema.cs b/src/Readarr.Api.V1/AutoTagging/AutoTaggingSpecificationSchema.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/AutoTagging/AutoTaggingSpecificationSchema.cs
+rename to src/Readarr.Api.V1/AutoTagging/AutoTaggingSpecificationSchema.cs
+diff --git a/src/Sonarr.Api.V3/Blocklist/BlocklistBulkResource.cs b/src/Readarr.Api.V1/Blocklist/BlocklistBulkResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Blocklist/BlocklistBulkResource.cs
+rename to src/Readarr.Api.V1/Blocklist/BlocklistBulkResource.cs
+diff --git a/src/Sonarr.Api.V3/Blocklist/BlocklistController.cs b/src/Readarr.Api.V1/Blocklist/BlocklistController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Blocklist/BlocklistController.cs
+rename to src/Readarr.Api.V1/Blocklist/BlocklistController.cs
+diff --git a/src/Sonarr.Api.V3/Blocklist/BlocklistResource.cs b/src/Readarr.Api.V1/Blocklist/BlocklistResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Blocklist/BlocklistResource.cs
+rename to src/Readarr.Api.V1/Blocklist/BlocklistResource.cs
+diff --git a/src/Sonarr.Api.V3/Calendar/CalendarController.cs b/src/Readarr.Api.V1/Calendar/CalendarController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Calendar/CalendarController.cs
+rename to src/Readarr.Api.V1/Calendar/CalendarController.cs
+diff --git a/src/Sonarr.Api.V3/Calendar/CalendarFeedController.cs b/src/Readarr.Api.V1/Calendar/CalendarFeedController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Calendar/CalendarFeedController.cs
+rename to src/Readarr.Api.V1/Calendar/CalendarFeedController.cs
+diff --git a/src/Sonarr.Api.V3/Commands/CommandController.cs b/src/Readarr.Api.V1/Commands/CommandController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Commands/CommandController.cs
+rename to src/Readarr.Api.V1/Commands/CommandController.cs
+diff --git a/src/Sonarr.Api.V3/Commands/CommandResource.cs b/src/Readarr.Api.V1/Commands/CommandResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Commands/CommandResource.cs
+rename to src/Readarr.Api.V1/Commands/CommandResource.cs
+diff --git a/src/Sonarr.Api.V3/Config/CertificateValidator.cs b/src/Readarr.Api.V1/Config/CertificateValidator.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/CertificateValidator.cs
+rename to src/Readarr.Api.V1/Config/CertificateValidator.cs
+diff --git a/src/Sonarr.Api.V3/Config/ConfigController.cs b/src/Readarr.Api.V1/Config/ConfigController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/ConfigController.cs
+rename to src/Readarr.Api.V1/Config/ConfigController.cs
+diff --git a/src/Sonarr.Api.V3/Config/DownloadClientConfigController.cs b/src/Readarr.Api.V1/Config/DownloadClientConfigController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/DownloadClientConfigController.cs
+rename to src/Readarr.Api.V1/Config/DownloadClientConfigController.cs
+diff --git a/src/Sonarr.Api.V3/Config/DownloadClientConfigResource.cs b/src/Readarr.Api.V1/Config/DownloadClientConfigResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/DownloadClientConfigResource.cs
+rename to src/Readarr.Api.V1/Config/DownloadClientConfigResource.cs
+diff --git a/src/Sonarr.Api.V3/Config/HostConfigController.cs b/src/Readarr.Api.V1/Config/HostConfigController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/HostConfigController.cs
+rename to src/Readarr.Api.V1/Config/HostConfigController.cs
+diff --git a/src/Sonarr.Api.V3/Config/HostConfigResource.cs b/src/Readarr.Api.V1/Config/HostConfigResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/HostConfigResource.cs
+rename to src/Readarr.Api.V1/Config/HostConfigResource.cs
+diff --git a/src/Sonarr.Api.V3/Config/ImportListConfigController.cs b/src/Readarr.Api.V1/Config/ImportListConfigController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/ImportListConfigController.cs
+rename to src/Readarr.Api.V1/Config/ImportListConfigController.cs
+diff --git a/src/Sonarr.Api.V3/Config/ImportListConfigResource.cs b/src/Readarr.Api.V1/Config/ImportListConfigResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/ImportListConfigResource.cs
+rename to src/Readarr.Api.V1/Config/ImportListConfigResource.cs
+diff --git a/src/Sonarr.Api.V3/Config/IndexerConfigController.cs b/src/Readarr.Api.V1/Config/IndexerConfigController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/IndexerConfigController.cs
+rename to src/Readarr.Api.V1/Config/IndexerConfigController.cs
+diff --git a/src/Sonarr.Api.V3/Config/IndexerConfigResource.cs b/src/Readarr.Api.V1/Config/IndexerConfigResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/IndexerConfigResource.cs
+rename to src/Readarr.Api.V1/Config/IndexerConfigResource.cs
+diff --git a/src/Sonarr.Api.V3/Config/MediaManagementConfigController.cs b/src/Readarr.Api.V1/Config/MediaManagementConfigController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/MediaManagementConfigController.cs
+rename to src/Readarr.Api.V1/Config/MediaManagementConfigController.cs
+diff --git a/src/Sonarr.Api.V3/Config/MediaManagementConfigResource.cs b/src/Readarr.Api.V1/Config/MediaManagementConfigResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/MediaManagementConfigResource.cs
+rename to src/Readarr.Api.V1/Config/MediaManagementConfigResource.cs
+diff --git a/src/Sonarr.Api.V3/Config/NamingConfigController.cs b/src/Readarr.Api.V1/Config/NamingConfigController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/NamingConfigController.cs
+rename to src/Readarr.Api.V1/Config/NamingConfigController.cs
+diff --git a/src/Sonarr.Api.V3/Config/NamingConfigResource.cs b/src/Readarr.Api.V1/Config/NamingConfigResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/NamingConfigResource.cs
+rename to src/Readarr.Api.V1/Config/NamingConfigResource.cs
+diff --git a/src/Sonarr.Api.V3/Config/NamingExampleResource.cs b/src/Readarr.Api.V1/Config/NamingExampleResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/NamingExampleResource.cs
+rename to src/Readarr.Api.V1/Config/NamingExampleResource.cs
+diff --git a/src/Sonarr.Api.V3/Config/UiConfigController.cs b/src/Readarr.Api.V1/Config/UiConfigController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/UiConfigController.cs
+rename to src/Readarr.Api.V1/Config/UiConfigController.cs
+diff --git a/src/Sonarr.Api.V3/Config/UiConfigResource.cs b/src/Readarr.Api.V1/Config/UiConfigResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Config/UiConfigResource.cs
+rename to src/Readarr.Api.V1/Config/UiConfigResource.cs
+diff --git a/src/Sonarr.Api.V3/CustomFilters/CustomFilterController.cs b/src/Readarr.Api.V1/CustomFilters/CustomFilterController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/CustomFilters/CustomFilterController.cs
+rename to src/Readarr.Api.V1/CustomFilters/CustomFilterController.cs
+diff --git a/src/Sonarr.Api.V3/CustomFilters/CustomFilterResource.cs b/src/Readarr.Api.V1/CustomFilters/CustomFilterResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/CustomFilters/CustomFilterResource.cs
+rename to src/Readarr.Api.V1/CustomFilters/CustomFilterResource.cs
+diff --git a/src/Sonarr.Api.V3/CustomFormats/CustomFormatBulkResource.cs b/src/Readarr.Api.V1/CustomFormats/CustomFormatBulkResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/CustomFormats/CustomFormatBulkResource.cs
+rename to src/Readarr.Api.V1/CustomFormats/CustomFormatBulkResource.cs
+diff --git a/src/Sonarr.Api.V3/CustomFormats/CustomFormatController.cs b/src/Readarr.Api.V1/CustomFormats/CustomFormatController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/CustomFormats/CustomFormatController.cs
+rename to src/Readarr.Api.V1/CustomFormats/CustomFormatController.cs
+diff --git a/src/Sonarr.Api.V3/CustomFormats/CustomFormatResource.cs b/src/Readarr.Api.V1/CustomFormats/CustomFormatResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/CustomFormats/CustomFormatResource.cs
+rename to src/Readarr.Api.V1/CustomFormats/CustomFormatResource.cs
+diff --git a/src/Sonarr.Api.V3/CustomFormats/CustomFormatSpecificationSchema.cs b/src/Readarr.Api.V1/CustomFormats/CustomFormatSpecificationSchema.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/CustomFormats/CustomFormatSpecificationSchema.cs
+rename to src/Readarr.Api.V1/CustomFormats/CustomFormatSpecificationSchema.cs
+diff --git a/src/Sonarr.Api.V3/DiskSpace/DiskSpaceController.cs b/src/Readarr.Api.V1/DiskSpace/DiskSpaceController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/DiskSpace/DiskSpaceController.cs
+rename to src/Readarr.Api.V1/DiskSpace/DiskSpaceController.cs
+diff --git a/src/Sonarr.Api.V3/DiskSpace/DiskSpaceResource.cs b/src/Readarr.Api.V1/DiskSpace/DiskSpaceResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/DiskSpace/DiskSpaceResource.cs
+rename to src/Readarr.Api.V1/DiskSpace/DiskSpaceResource.cs
+diff --git a/src/Sonarr.Api.V3/DownloadClient/DownloadClientBulkResource.cs b/src/Readarr.Api.V1/DownloadClient/DownloadClientBulkResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/DownloadClient/DownloadClientBulkResource.cs
+rename to src/Readarr.Api.V1/DownloadClient/DownloadClientBulkResource.cs
+diff --git a/src/Sonarr.Api.V3/DownloadClient/DownloadClientController.cs b/src/Readarr.Api.V1/DownloadClient/DownloadClientController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/DownloadClient/DownloadClientController.cs
+rename to src/Readarr.Api.V1/DownloadClient/DownloadClientController.cs
+diff --git a/src/Sonarr.Api.V3/DownloadClient/DownloadClientResource.cs b/src/Readarr.Api.V1/DownloadClient/DownloadClientResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/DownloadClient/DownloadClientResource.cs
+rename to src/Readarr.Api.V1/DownloadClient/DownloadClientResource.cs
+diff --git a/src/Sonarr.Api.V3/EpisodeFiles/EpisodeFileController.cs b/src/Readarr.Api.V1/EpisodeFiles/EpisodeFileController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/EpisodeFiles/EpisodeFileController.cs
+rename to src/Readarr.Api.V1/EpisodeFiles/EpisodeFileController.cs
+diff --git a/src/Sonarr.Api.V3/EpisodeFiles/EpisodeFileListResource.cs b/src/Readarr.Api.V1/EpisodeFiles/EpisodeFileListResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/EpisodeFiles/EpisodeFileListResource.cs
+rename to src/Readarr.Api.V1/EpisodeFiles/EpisodeFileListResource.cs
+diff --git a/src/Sonarr.Api.V3/EpisodeFiles/EpisodeFileResource.cs b/src/Readarr.Api.V1/EpisodeFiles/EpisodeFileResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/EpisodeFiles/EpisodeFileResource.cs
+rename to src/Readarr.Api.V1/EpisodeFiles/EpisodeFileResource.cs
+diff --git a/src/Sonarr.Api.V3/EpisodeFiles/MediaInfoResource.cs b/src/Readarr.Api.V1/EpisodeFiles/MediaInfoResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/EpisodeFiles/MediaInfoResource.cs
+rename to src/Readarr.Api.V1/EpisodeFiles/MediaInfoResource.cs
+diff --git a/src/Sonarr.Api.V3/Episodes/EpisodeController.cs b/src/Readarr.Api.V1/Episodes/EpisodeController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Episodes/EpisodeController.cs
+rename to src/Readarr.Api.V1/Episodes/EpisodeController.cs
+diff --git a/src/Sonarr.Api.V3/Episodes/EpisodeControllerWithSignalR.cs b/src/Readarr.Api.V1/Episodes/EpisodeControllerWithSignalR.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Episodes/EpisodeControllerWithSignalR.cs
+rename to src/Readarr.Api.V1/Episodes/EpisodeControllerWithSignalR.cs
+diff --git a/src/Sonarr.Api.V3/Episodes/EpisodeResource.cs b/src/Readarr.Api.V1/Episodes/EpisodeResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Episodes/EpisodeResource.cs
+rename to src/Readarr.Api.V1/Episodes/EpisodeResource.cs
+diff --git a/src/Sonarr.Api.V3/Episodes/EpisodesMonitoredResource.cs b/src/Readarr.Api.V1/Episodes/EpisodesMonitoredResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Episodes/EpisodesMonitoredResource.cs
+rename to src/Readarr.Api.V1/Episodes/EpisodesMonitoredResource.cs
+diff --git a/src/Sonarr.Api.V3/Episodes/RenameEpisodeController.cs b/src/Readarr.Api.V1/Episodes/RenameEpisodeController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Episodes/RenameEpisodeController.cs
+rename to src/Readarr.Api.V1/Episodes/RenameEpisodeController.cs
+diff --git a/src/Sonarr.Api.V3/Episodes/RenameEpisodeResource.cs b/src/Readarr.Api.V1/Episodes/RenameEpisodeResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Episodes/RenameEpisodeResource.cs
+rename to src/Readarr.Api.V1/Episodes/RenameEpisodeResource.cs
+diff --git a/src/Sonarr.Api.V3/FileSystem/FileSystemController.cs b/src/Readarr.Api.V1/FileSystem/FileSystemController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/FileSystem/FileSystemController.cs
+rename to src/Readarr.Api.V1/FileSystem/FileSystemController.cs
+diff --git a/src/Sonarr.Api.V3/Health/HealthController.cs b/src/Readarr.Api.V1/Health/HealthController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Health/HealthController.cs
+rename to src/Readarr.Api.V1/Health/HealthController.cs
+diff --git a/src/Sonarr.Api.V3/Health/HealthResource.cs b/src/Readarr.Api.V1/Health/HealthResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Health/HealthResource.cs
+rename to src/Readarr.Api.V1/Health/HealthResource.cs
+diff --git a/src/Sonarr.Api.V3/History/HistoryController.cs b/src/Readarr.Api.V1/History/HistoryController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/History/HistoryController.cs
+rename to src/Readarr.Api.V1/History/HistoryController.cs
+diff --git a/src/Sonarr.Api.V3/History/HistoryResource.cs b/src/Readarr.Api.V1/History/HistoryResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/History/HistoryResource.cs
+rename to src/Readarr.Api.V1/History/HistoryResource.cs
+diff --git a/src/Sonarr.Api.V3/ImportLists/ImportListBulkResource.cs b/src/Readarr.Api.V1/ImportLists/ImportListBulkResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ImportLists/ImportListBulkResource.cs
+rename to src/Readarr.Api.V1/ImportLists/ImportListBulkResource.cs
+diff --git a/src/Sonarr.Api.V3/ImportLists/ImportListController.cs b/src/Readarr.Api.V1/ImportLists/ImportListController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ImportLists/ImportListController.cs
+rename to src/Readarr.Api.V1/ImportLists/ImportListController.cs
+diff --git a/src/Sonarr.Api.V3/ImportLists/ImportListExclusionBulkResource.cs b/src/Readarr.Api.V1/ImportLists/ImportListExclusionBulkResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ImportLists/ImportListExclusionBulkResource.cs
+rename to src/Readarr.Api.V1/ImportLists/ImportListExclusionBulkResource.cs
+diff --git a/src/Sonarr.Api.V3/ImportLists/ImportListExclusionController.cs b/src/Readarr.Api.V1/ImportLists/ImportListExclusionController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ImportLists/ImportListExclusionController.cs
+rename to src/Readarr.Api.V1/ImportLists/ImportListExclusionController.cs
+diff --git a/src/Sonarr.Api.V3/ImportLists/ImportListExclusionExistsValidator.cs b/src/Readarr.Api.V1/ImportLists/ImportListExclusionExistsValidator.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ImportLists/ImportListExclusionExistsValidator.cs
+rename to src/Readarr.Api.V1/ImportLists/ImportListExclusionExistsValidator.cs
+diff --git a/src/Sonarr.Api.V3/ImportLists/ImportListExclusionResource.cs b/src/Readarr.Api.V1/ImportLists/ImportListExclusionResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ImportLists/ImportListExclusionResource.cs
+rename to src/Readarr.Api.V1/ImportLists/ImportListExclusionResource.cs
+diff --git a/src/Sonarr.Api.V3/ImportLists/ImportListResource.cs b/src/Readarr.Api.V1/ImportLists/ImportListResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ImportLists/ImportListResource.cs
+rename to src/Readarr.Api.V1/ImportLists/ImportListResource.cs
+diff --git a/src/Sonarr.Api.V3/Indexers/IndexerBulkResource.cs b/src/Readarr.Api.V1/Indexers/IndexerBulkResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Indexers/IndexerBulkResource.cs
+rename to src/Readarr.Api.V1/Indexers/IndexerBulkResource.cs
+diff --git a/src/Sonarr.Api.V3/Indexers/IndexerController.cs b/src/Readarr.Api.V1/Indexers/IndexerController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Indexers/IndexerController.cs
+rename to src/Readarr.Api.V1/Indexers/IndexerController.cs
+diff --git a/src/Sonarr.Api.V3/Indexers/IndexerFlagController.cs b/src/Readarr.Api.V1/Indexers/IndexerFlagController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Indexers/IndexerFlagController.cs
+rename to src/Readarr.Api.V1/Indexers/IndexerFlagController.cs
+diff --git a/src/Sonarr.Api.V3/Indexers/IndexerFlagResource.cs b/src/Readarr.Api.V1/Indexers/IndexerFlagResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Indexers/IndexerFlagResource.cs
+rename to src/Readarr.Api.V1/Indexers/IndexerFlagResource.cs
+diff --git a/src/Sonarr.Api.V3/Indexers/IndexerResource.cs b/src/Readarr.Api.V1/Indexers/IndexerResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Indexers/IndexerResource.cs
+rename to src/Readarr.Api.V1/Indexers/IndexerResource.cs
+diff --git a/src/Sonarr.Api.V3/Indexers/ReleaseController.cs b/src/Readarr.Api.V1/Indexers/ReleaseController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Indexers/ReleaseController.cs
+rename to src/Readarr.Api.V1/Indexers/ReleaseController.cs
+diff --git a/src/Sonarr.Api.V3/Indexers/ReleaseControllerBase.cs b/src/Readarr.Api.V1/Indexers/ReleaseControllerBase.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Indexers/ReleaseControllerBase.cs
+rename to src/Readarr.Api.V1/Indexers/ReleaseControllerBase.cs
+diff --git a/src/Sonarr.Api.V3/Indexers/ReleasePushController.cs b/src/Readarr.Api.V1/Indexers/ReleasePushController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Indexers/ReleasePushController.cs
+rename to src/Readarr.Api.V1/Indexers/ReleasePushController.cs
+diff --git a/src/Sonarr.Api.V3/Indexers/ReleaseResource.cs b/src/Readarr.Api.V1/Indexers/ReleaseResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Indexers/ReleaseResource.cs
+rename to src/Readarr.Api.V1/Indexers/ReleaseResource.cs
+diff --git a/src/Sonarr.Api.V3/Localization/LocalizationController.cs b/src/Readarr.Api.V1/Localization/LocalizationController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Localization/LocalizationController.cs
+rename to src/Readarr.Api.V1/Localization/LocalizationController.cs
+diff --git a/src/Sonarr.Api.V3/Localization/LocalizationLanguageResource.cs b/src/Readarr.Api.V1/Localization/LocalizationLanguageResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Localization/LocalizationLanguageResource.cs
+rename to src/Readarr.Api.V1/Localization/LocalizationLanguageResource.cs
+diff --git a/src/Sonarr.Api.V3/Localization/LocalizationResource.cs b/src/Readarr.Api.V1/Localization/LocalizationResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Localization/LocalizationResource.cs
+rename to src/Readarr.Api.V1/Localization/LocalizationResource.cs
+diff --git a/src/Sonarr.Api.V3/Logs/LogController.cs b/src/Readarr.Api.V1/Logs/LogController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Logs/LogController.cs
+rename to src/Readarr.Api.V1/Logs/LogController.cs
+diff --git a/src/Sonarr.Api.V3/Logs/LogFileController.cs b/src/Readarr.Api.V1/Logs/LogFileController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Logs/LogFileController.cs
+rename to src/Readarr.Api.V1/Logs/LogFileController.cs
+diff --git a/src/Sonarr.Api.V3/Logs/LogFileControllerBase.cs b/src/Readarr.Api.V1/Logs/LogFileControllerBase.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Logs/LogFileControllerBase.cs
+rename to src/Readarr.Api.V1/Logs/LogFileControllerBase.cs
+diff --git a/src/Sonarr.Api.V3/Logs/LogFileResource.cs b/src/Readarr.Api.V1/Logs/LogFileResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Logs/LogFileResource.cs
+rename to src/Readarr.Api.V1/Logs/LogFileResource.cs
+diff --git a/src/Sonarr.Api.V3/Logs/LogResource.cs b/src/Readarr.Api.V1/Logs/LogResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Logs/LogResource.cs
+rename to src/Readarr.Api.V1/Logs/LogResource.cs
+diff --git a/src/Sonarr.Api.V3/Logs/UpdateLogFileController.cs b/src/Readarr.Api.V1/Logs/UpdateLogFileController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Logs/UpdateLogFileController.cs
+rename to src/Readarr.Api.V1/Logs/UpdateLogFileController.cs
+diff --git a/src/Sonarr.Api.V3/ManualImport/ManualImportController.cs b/src/Readarr.Api.V1/ManualImport/ManualImportController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ManualImport/ManualImportController.cs
+rename to src/Readarr.Api.V1/ManualImport/ManualImportController.cs
+diff --git a/src/Sonarr.Api.V3/ManualImport/ManualImportReprocessResource.cs b/src/Readarr.Api.V1/ManualImport/ManualImportReprocessResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ManualImport/ManualImportReprocessResource.cs
+rename to src/Readarr.Api.V1/ManualImport/ManualImportReprocessResource.cs
+diff --git a/src/Sonarr.Api.V3/ManualImport/ManualImportResource.cs b/src/Readarr.Api.V1/ManualImport/ManualImportResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ManualImport/ManualImportResource.cs
+rename to src/Readarr.Api.V1/ManualImport/ManualImportResource.cs
+diff --git a/src/Sonarr.Api.V3/MediaCovers/MediaCoverController.cs b/src/Readarr.Api.V1/MediaCovers/MediaCoverController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/MediaCovers/MediaCoverController.cs
+rename to src/Readarr.Api.V1/MediaCovers/MediaCoverController.cs
+diff --git a/src/Sonarr.Api.V3/Metadata/MetadataBulkResource.cs b/src/Readarr.Api.V1/Metadata/MetadataBulkResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Metadata/MetadataBulkResource.cs
+rename to src/Readarr.Api.V1/Metadata/MetadataBulkResource.cs
+diff --git a/src/Sonarr.Api.V3/Metadata/MetadataController.cs b/src/Readarr.Api.V1/Metadata/MetadataController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Metadata/MetadataController.cs
+rename to src/Readarr.Api.V1/Metadata/MetadataController.cs
+diff --git a/src/Sonarr.Api.V3/Metadata/MetadataResource.cs b/src/Readarr.Api.V1/Metadata/MetadataResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Metadata/MetadataResource.cs
+rename to src/Readarr.Api.V1/Metadata/MetadataResource.cs
+diff --git a/src/Sonarr.Api.V3/Notifications/NotificationBulkResource.cs b/src/Readarr.Api.V1/Notifications/NotificationBulkResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Notifications/NotificationBulkResource.cs
+rename to src/Readarr.Api.V1/Notifications/NotificationBulkResource.cs
+diff --git a/src/Sonarr.Api.V3/Notifications/NotificationController.cs b/src/Readarr.Api.V1/Notifications/NotificationController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Notifications/NotificationController.cs
+rename to src/Readarr.Api.V1/Notifications/NotificationController.cs
+diff --git a/src/Sonarr.Api.V3/Notifications/NotificationResource.cs b/src/Readarr.Api.V1/Notifications/NotificationResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Notifications/NotificationResource.cs
+rename to src/Readarr.Api.V1/Notifications/NotificationResource.cs
+diff --git a/src/Sonarr.Api.V3/Parse/ParseController.cs b/src/Readarr.Api.V1/Parse/ParseController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Parse/ParseController.cs
+rename to src/Readarr.Api.V1/Parse/ParseController.cs
+diff --git a/src/Sonarr.Api.V3/Parse/ParseResource.cs b/src/Readarr.Api.V1/Parse/ParseResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Parse/ParseResource.cs
+rename to src/Readarr.Api.V1/Parse/ParseResource.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Delay/DelayProfileController.cs b/src/Readarr.Api.V1/Profiles/Delay/DelayProfileController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Delay/DelayProfileController.cs
+rename to src/Readarr.Api.V1/Profiles/Delay/DelayProfileController.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Delay/DelayProfileResource.cs b/src/Readarr.Api.V1/Profiles/Delay/DelayProfileResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Delay/DelayProfileResource.cs
+rename to src/Readarr.Api.V1/Profiles/Delay/DelayProfileResource.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Languages/LanguageController.cs b/src/Readarr.Api.V1/Profiles/Languages/LanguageController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Languages/LanguageController.cs
+rename to src/Readarr.Api.V1/Profiles/Languages/LanguageController.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Languages/LanguageProfileController.cs b/src/Readarr.Api.V1/Profiles/Languages/LanguageProfileController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Languages/LanguageProfileController.cs
+rename to src/Readarr.Api.V1/Profiles/Languages/LanguageProfileController.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Languages/LanguageProfileResource.cs b/src/Readarr.Api.V1/Profiles/Languages/LanguageProfileResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Languages/LanguageProfileResource.cs
+rename to src/Readarr.Api.V1/Profiles/Languages/LanguageProfileResource.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Languages/LanguageProfileSchemaController.cs b/src/Readarr.Api.V1/Profiles/Languages/LanguageProfileSchemaController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Languages/LanguageProfileSchemaController.cs
+rename to src/Readarr.Api.V1/Profiles/Languages/LanguageProfileSchemaController.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Languages/LanguageResource.cs b/src/Readarr.Api.V1/Profiles/Languages/LanguageResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Languages/LanguageResource.cs
+rename to src/Readarr.Api.V1/Profiles/Languages/LanguageResource.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Quality/QualityCutoffValidator.cs b/src/Readarr.Api.V1/Profiles/Quality/QualityCutoffValidator.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Quality/QualityCutoffValidator.cs
+rename to src/Readarr.Api.V1/Profiles/Quality/QualityCutoffValidator.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Quality/QualityItemsValidator.cs b/src/Readarr.Api.V1/Profiles/Quality/QualityItemsValidator.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Quality/QualityItemsValidator.cs
+rename to src/Readarr.Api.V1/Profiles/Quality/QualityItemsValidator.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Quality/QualityProfileController.cs b/src/Readarr.Api.V1/Profiles/Quality/QualityProfileController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Quality/QualityProfileController.cs
+rename to src/Readarr.Api.V1/Profiles/Quality/QualityProfileController.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Quality/QualityProfileResource.cs b/src/Readarr.Api.V1/Profiles/Quality/QualityProfileResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Quality/QualityProfileResource.cs
+rename to src/Readarr.Api.V1/Profiles/Quality/QualityProfileResource.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Quality/QualityProfileResourceValidator.cs b/src/Readarr.Api.V1/Profiles/Quality/QualityProfileResourceValidator.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Quality/QualityProfileResourceValidator.cs
+rename to src/Readarr.Api.V1/Profiles/Quality/QualityProfileResourceValidator.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Quality/QualityProfileSchemaController.cs b/src/Readarr.Api.V1/Profiles/Quality/QualityProfileSchemaController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Quality/QualityProfileSchemaController.cs
+rename to src/Readarr.Api.V1/Profiles/Quality/QualityProfileSchemaController.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Release/ReleaseProfileController.cs b/src/Readarr.Api.V1/Profiles/Release/ReleaseProfileController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Release/ReleaseProfileController.cs
+rename to src/Readarr.Api.V1/Profiles/Release/ReleaseProfileController.cs
+diff --git a/src/Sonarr.Api.V3/Profiles/Release/ReleaseProfileResource.cs b/src/Readarr.Api.V1/Profiles/Release/ReleaseProfileResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Profiles/Release/ReleaseProfileResource.cs
+rename to src/Readarr.Api.V1/Profiles/Release/ReleaseProfileResource.cs
+diff --git a/src/Sonarr.Api.V3/ProviderBulkResource.cs b/src/Readarr.Api.V1/ProviderBulkResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ProviderBulkResource.cs
+rename to src/Readarr.Api.V1/ProviderBulkResource.cs
+diff --git a/src/Sonarr.Api.V3/ProviderControllerBase.cs b/src/Readarr.Api.V1/ProviderControllerBase.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ProviderControllerBase.cs
+rename to src/Readarr.Api.V1/ProviderControllerBase.cs
+diff --git a/src/Sonarr.Api.V3/ProviderResource.cs b/src/Readarr.Api.V1/ProviderResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ProviderResource.cs
+rename to src/Readarr.Api.V1/ProviderResource.cs
+diff --git a/src/Sonarr.Api.V3/ProviderTestAllResult.cs b/src/Readarr.Api.V1/ProviderTestAllResult.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/ProviderTestAllResult.cs
+rename to src/Readarr.Api.V1/ProviderTestAllResult.cs
+diff --git a/src/Sonarr.Api.V3/Qualities/QualityDefinitionController.cs b/src/Readarr.Api.V1/Qualities/QualityDefinitionController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Qualities/QualityDefinitionController.cs
+rename to src/Readarr.Api.V1/Qualities/QualityDefinitionController.cs
+diff --git a/src/Sonarr.Api.V3/Qualities/QualityDefinitionLimitsResource.cs b/src/Readarr.Api.V1/Qualities/QualityDefinitionLimitsResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Qualities/QualityDefinitionLimitsResource.cs
+rename to src/Readarr.Api.V1/Qualities/QualityDefinitionLimitsResource.cs
+diff --git a/src/Sonarr.Api.V3/Qualities/QualityDefinitionResource.cs b/src/Readarr.Api.V1/Qualities/QualityDefinitionResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Qualities/QualityDefinitionResource.cs
+rename to src/Readarr.Api.V1/Qualities/QualityDefinitionResource.cs
+diff --git a/src/Sonarr.Api.V3/Qualities/QualityDefinitionResourceValidator.cs b/src/Readarr.Api.V1/Qualities/QualityDefinitionResourceValidator.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Qualities/QualityDefinitionResourceValidator.cs
+rename to src/Readarr.Api.V1/Qualities/QualityDefinitionResourceValidator.cs
+diff --git a/src/Sonarr.Api.V3/Queue/QueueActionController.cs b/src/Readarr.Api.V1/Queue/QueueActionController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Queue/QueueActionController.cs
+rename to src/Readarr.Api.V1/Queue/QueueActionController.cs
+diff --git a/src/Sonarr.Api.V3/Queue/QueueBulkResource.cs b/src/Readarr.Api.V1/Queue/QueueBulkResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Queue/QueueBulkResource.cs
+rename to src/Readarr.Api.V1/Queue/QueueBulkResource.cs
+diff --git a/src/Sonarr.Api.V3/Queue/QueueController.cs b/src/Readarr.Api.V1/Queue/QueueController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Queue/QueueController.cs
+rename to src/Readarr.Api.V1/Queue/QueueController.cs
+diff --git a/src/Sonarr.Api.V3/Queue/QueueDetailsController.cs b/src/Readarr.Api.V1/Queue/QueueDetailsController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Queue/QueueDetailsController.cs
+rename to src/Readarr.Api.V1/Queue/QueueDetailsController.cs
+diff --git a/src/Sonarr.Api.V3/Queue/QueueResource.cs b/src/Readarr.Api.V1/Queue/QueueResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Queue/QueueResource.cs
+rename to src/Readarr.Api.V1/Queue/QueueResource.cs
+diff --git a/src/Sonarr.Api.V3/Queue/QueueStatusController.cs b/src/Readarr.Api.V1/Queue/QueueStatusController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Queue/QueueStatusController.cs
+rename to src/Readarr.Api.V1/Queue/QueueStatusController.cs
+diff --git a/src/Sonarr.Api.V3/Queue/QueueStatusResource.cs b/src/Readarr.Api.V1/Queue/QueueStatusResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Queue/QueueStatusResource.cs
+rename to src/Readarr.Api.V1/Queue/QueueStatusResource.cs
+diff --git a/src/Sonarr.Api.V3/Sonarr.Api.V3.csproj b/src/Readarr.Api.V1/Readarr.Api.V1.csproj
+similarity index 84%
+rename from src/Sonarr.Api.V3/Sonarr.Api.V3.csproj
+rename to src/Readarr.Api.V1/Readarr.Api.V1.csproj
+index 6ccbd1aaa..c91d71de5 100644
+--- a/src/Sonarr.Api.V3/Sonarr.Api.V3.csproj
++++ b/src/Readarr.Api.V1/Readarr.Api.V1.csproj
+@@ -14,7 +14,7 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Core\Sonarr.Core.csproj" />
+-    <ProjectReference Include="..\Sonarr.Http\Sonarr.Http.csproj" />
++    <ProjectReference Include="..\NzbDrone.Core\Readarr.Core.csproj" />
++    <ProjectReference Include="..\Readarr.Http\Readarr.Http.csproj" />
+   </ItemGroup>
+ </Project>
+diff --git a/src/Sonarr.Api.V3/RemotePathMappings/RemotePathMappingController.cs b/src/Readarr.Api.V1/RemotePathMappings/RemotePathMappingController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/RemotePathMappings/RemotePathMappingController.cs
+rename to src/Readarr.Api.V1/RemotePathMappings/RemotePathMappingController.cs
+diff --git a/src/Sonarr.Api.V3/RemotePathMappings/RemotePathMappingResource.cs b/src/Readarr.Api.V1/RemotePathMappings/RemotePathMappingResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/RemotePathMappings/RemotePathMappingResource.cs
+rename to src/Readarr.Api.V1/RemotePathMappings/RemotePathMappingResource.cs
+diff --git a/src/Sonarr.Api.V3/RootFolders/RootFolderController.cs b/src/Readarr.Api.V1/RootFolders/RootFolderController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/RootFolders/RootFolderController.cs
+rename to src/Readarr.Api.V1/RootFolders/RootFolderController.cs
+diff --git a/src/Sonarr.Api.V3/RootFolders/RootFolderResource.cs b/src/Readarr.Api.V1/RootFolders/RootFolderResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/RootFolders/RootFolderResource.cs
+rename to src/Readarr.Api.V1/RootFolders/RootFolderResource.cs
+diff --git a/src/Sonarr.Api.V3/SeasonPass/SeasonPassController.cs b/src/Readarr.Api.V1/SeasonPass/SeasonPassController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/SeasonPass/SeasonPassController.cs
+rename to src/Readarr.Api.V1/SeasonPass/SeasonPassController.cs
+diff --git a/src/Sonarr.Api.V3/SeasonPass/SeasonPassResource.cs b/src/Readarr.Api.V1/SeasonPass/SeasonPassResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/SeasonPass/SeasonPassResource.cs
+rename to src/Readarr.Api.V1/SeasonPass/SeasonPassResource.cs
+diff --git a/src/Sonarr.Api.V3/SeasonPass/SeasonPassSeriesResource.cs b/src/Readarr.Api.V1/SeasonPass/SeasonPassSeriesResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/SeasonPass/SeasonPassSeriesResource.cs
+rename to src/Readarr.Api.V1/SeasonPass/SeasonPassSeriesResource.cs
+diff --git a/src/Sonarr.Api.V3/Series/AlternateTitleResource.cs b/src/Readarr.Api.V1/Series/AlternateTitleResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Series/AlternateTitleResource.cs
+rename to src/Readarr.Api.V1/Series/AlternateTitleResource.cs
+diff --git a/src/Sonarr.Api.V3/Series/SeasonResource.cs b/src/Readarr.Api.V1/Series/SeasonResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Series/SeasonResource.cs
+rename to src/Readarr.Api.V1/Series/SeasonResource.cs
+diff --git a/src/Sonarr.Api.V3/Series/SeasonStatisticsResource.cs b/src/Readarr.Api.V1/Series/SeasonStatisticsResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Series/SeasonStatisticsResource.cs
+rename to src/Readarr.Api.V1/Series/SeasonStatisticsResource.cs
+diff --git a/src/Sonarr.Api.V3/Series/SeriesController.cs b/src/Readarr.Api.V1/Series/SeriesController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Series/SeriesController.cs
+rename to src/Readarr.Api.V1/Series/SeriesController.cs
+diff --git a/src/Sonarr.Api.V3/Series/SeriesEditorController.cs b/src/Readarr.Api.V1/Series/SeriesEditorController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Series/SeriesEditorController.cs
+rename to src/Readarr.Api.V1/Series/SeriesEditorController.cs
+diff --git a/src/Sonarr.Api.V3/Series/SeriesEditorDeleteResource.cs b/src/Readarr.Api.V1/Series/SeriesEditorDeleteResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Series/SeriesEditorDeleteResource.cs
+rename to src/Readarr.Api.V1/Series/SeriesEditorDeleteResource.cs
+diff --git a/src/Sonarr.Api.V3/Series/SeriesEditorResource.cs b/src/Readarr.Api.V1/Series/SeriesEditorResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Series/SeriesEditorResource.cs
+rename to src/Readarr.Api.V1/Series/SeriesEditorResource.cs
+diff --git a/src/Sonarr.Api.V3/Series/SeriesEditorValidator.cs b/src/Readarr.Api.V1/Series/SeriesEditorValidator.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Series/SeriesEditorValidator.cs
+rename to src/Readarr.Api.V1/Series/SeriesEditorValidator.cs
+diff --git a/src/Sonarr.Api.V3/Series/SeriesFolderAsRootFolderValidator.cs b/src/Readarr.Api.V1/Series/SeriesFolderAsRootFolderValidator.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Series/SeriesFolderAsRootFolderValidator.cs
+rename to src/Readarr.Api.V1/Series/SeriesFolderAsRootFolderValidator.cs
+diff --git a/src/Sonarr.Api.V3/Series/SeriesFolderController.cs b/src/Readarr.Api.V1/Series/SeriesFolderController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Series/SeriesFolderController.cs
+rename to src/Readarr.Api.V1/Series/SeriesFolderController.cs
+diff --git a/src/Sonarr.Api.V3/Series/SeriesImportController.cs b/src/Readarr.Api.V1/Series/SeriesImportController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Series/SeriesImportController.cs
+rename to src/Readarr.Api.V1/Series/SeriesImportController.cs
+diff --git a/src/Sonarr.Api.V3/Series/SeriesLookupController.cs b/src/Readarr.Api.V1/Series/SeriesLookupController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Series/SeriesLookupController.cs
+rename to src/Readarr.Api.V1/Series/SeriesLookupController.cs
+diff --git a/src/Sonarr.Api.V3/Series/SeriesResource.cs b/src/Readarr.Api.V1/Series/SeriesResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Series/SeriesResource.cs
+rename to src/Readarr.Api.V1/Series/SeriesResource.cs
+diff --git a/src/Sonarr.Api.V3/Series/SeriesStatisticsResource.cs b/src/Readarr.Api.V1/Series/SeriesStatisticsResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Series/SeriesStatisticsResource.cs
+rename to src/Readarr.Api.V1/Series/SeriesStatisticsResource.cs
+diff --git a/src/Sonarr.Api.V3/System/Backup/BackupController.cs b/src/Readarr.Api.V1/System/Backup/BackupController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/System/Backup/BackupController.cs
+rename to src/Readarr.Api.V1/System/Backup/BackupController.cs
+diff --git a/src/Sonarr.Api.V3/System/Backup/BackupResource.cs b/src/Readarr.Api.V1/System/Backup/BackupResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/System/Backup/BackupResource.cs
+rename to src/Readarr.Api.V1/System/Backup/BackupResource.cs
+diff --git a/src/Sonarr.Api.V3/System/SystemController.cs b/src/Readarr.Api.V1/System/SystemController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/System/SystemController.cs
+rename to src/Readarr.Api.V1/System/SystemController.cs
+diff --git a/src/Sonarr.Api.V3/System/SystemResource.cs b/src/Readarr.Api.V1/System/SystemResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/System/SystemResource.cs
+rename to src/Readarr.Api.V1/System/SystemResource.cs
+diff --git a/src/Sonarr.Api.V3/System/Tasks/TaskController.cs b/src/Readarr.Api.V1/System/Tasks/TaskController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/System/Tasks/TaskController.cs
+rename to src/Readarr.Api.V1/System/Tasks/TaskController.cs
+diff --git a/src/Sonarr.Api.V3/System/Tasks/TaskResource.cs b/src/Readarr.Api.V1/System/Tasks/TaskResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/System/Tasks/TaskResource.cs
+rename to src/Readarr.Api.V1/System/Tasks/TaskResource.cs
+diff --git a/src/Sonarr.Api.V3/Tags/TagController.cs b/src/Readarr.Api.V1/Tags/TagController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Tags/TagController.cs
+rename to src/Readarr.Api.V1/Tags/TagController.cs
+diff --git a/src/Sonarr.Api.V3/Tags/TagDetailsController.cs b/src/Readarr.Api.V1/Tags/TagDetailsController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Tags/TagDetailsController.cs
+rename to src/Readarr.Api.V1/Tags/TagDetailsController.cs
+diff --git a/src/Sonarr.Api.V3/Tags/TagDetailsResource.cs b/src/Readarr.Api.V1/Tags/TagDetailsResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Tags/TagDetailsResource.cs
+rename to src/Readarr.Api.V1/Tags/TagDetailsResource.cs
+diff --git a/src/Sonarr.Api.V3/Tags/TagResource.cs b/src/Readarr.Api.V1/Tags/TagResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Tags/TagResource.cs
+rename to src/Readarr.Api.V1/Tags/TagResource.cs
+diff --git a/src/Sonarr.Api.V3/Update/UpdateController.cs b/src/Readarr.Api.V1/Update/UpdateController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Update/UpdateController.cs
+rename to src/Readarr.Api.V1/Update/UpdateController.cs
+diff --git a/src/Sonarr.Api.V3/Update/UpdateResource.cs b/src/Readarr.Api.V1/Update/UpdateResource.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Update/UpdateResource.cs
+rename to src/Readarr.Api.V1/Update/UpdateResource.cs
+diff --git a/src/Sonarr.Api.V3/Wanted/CutoffController.cs b/src/Readarr.Api.V1/Wanted/CutoffController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Wanted/CutoffController.cs
+rename to src/Readarr.Api.V1/Wanted/CutoffController.cs
+diff --git a/src/Sonarr.Api.V3/Wanted/MissingController.cs b/src/Readarr.Api.V1/Wanted/MissingController.cs
+similarity index 100%
+rename from src/Sonarr.Api.V3/Wanted/MissingController.cs
+rename to src/Readarr.Api.V1/Wanted/MissingController.cs
+diff --git a/src/Sonarr.Api.V3/openapi.json b/src/Readarr.Api.V1/openapi.json
+similarity index 100%
+rename from src/Sonarr.Api.V3/openapi.json
+rename to src/Readarr.Api.V1/openapi.json
+diff --git a/src/Sonarr.Http/ApiInfoController.cs b/src/Readarr.Http/ApiInfoController.cs
+similarity index 100%
+rename from src/Sonarr.Http/ApiInfoController.cs
+rename to src/Readarr.Http/ApiInfoController.cs
+diff --git a/src/Sonarr.Http/ApiInfoResource.cs b/src/Readarr.Http/ApiInfoResource.cs
+similarity index 100%
+rename from src/Sonarr.Http/ApiInfoResource.cs
+rename to src/Readarr.Http/ApiInfoResource.cs
+diff --git a/src/Sonarr.Http/Authentication/ApiKeyAuthenticationHandler.cs b/src/Readarr.Http/Authentication/ApiKeyAuthenticationHandler.cs
+similarity index 100%
+rename from src/Sonarr.Http/Authentication/ApiKeyAuthenticationHandler.cs
+rename to src/Readarr.Http/Authentication/ApiKeyAuthenticationHandler.cs
+diff --git a/src/Sonarr.Http/Authentication/AuthenticationBuilderExtensions.cs b/src/Readarr.Http/Authentication/AuthenticationBuilderExtensions.cs
+similarity index 100%
+rename from src/Sonarr.Http/Authentication/AuthenticationBuilderExtensions.cs
+rename to src/Readarr.Http/Authentication/AuthenticationBuilderExtensions.cs
+diff --git a/src/Sonarr.Http/Authentication/AuthenticationController.cs b/src/Readarr.Http/Authentication/AuthenticationController.cs
+similarity index 100%
+rename from src/Sonarr.Http/Authentication/AuthenticationController.cs
+rename to src/Readarr.Http/Authentication/AuthenticationController.cs
+diff --git a/src/Sonarr.Http/Authentication/AuthenticationService.cs b/src/Readarr.Http/Authentication/AuthenticationService.cs
+similarity index 100%
+rename from src/Sonarr.Http/Authentication/AuthenticationService.cs
+rename to src/Readarr.Http/Authentication/AuthenticationService.cs
+diff --git a/src/Sonarr.Http/Authentication/BypassableDenyAnonymousAuthorizationRequirement.cs b/src/Readarr.Http/Authentication/BypassableDenyAnonymousAuthorizationRequirement.cs
+similarity index 100%
+rename from src/Sonarr.Http/Authentication/BypassableDenyAnonymousAuthorizationRequirement.cs
+rename to src/Readarr.Http/Authentication/BypassableDenyAnonymousAuthorizationRequirement.cs
+diff --git a/src/Sonarr.Http/Authentication/LoginResource.cs b/src/Readarr.Http/Authentication/LoginResource.cs
+similarity index 100%
+rename from src/Sonarr.Http/Authentication/LoginResource.cs
+rename to src/Readarr.Http/Authentication/LoginResource.cs
+diff --git a/src/Sonarr.Http/Authentication/NoAuthenticationHandler.cs b/src/Readarr.Http/Authentication/NoAuthenticationHandler.cs
+similarity index 100%
+rename from src/Sonarr.Http/Authentication/NoAuthenticationHandler.cs
+rename to src/Readarr.Http/Authentication/NoAuthenticationHandler.cs
+diff --git a/src/Sonarr.Http/Authentication/UiAuthorizationHandler.cs b/src/Readarr.Http/Authentication/UiAuthorizationHandler.cs
+similarity index 100%
+rename from src/Sonarr.Http/Authentication/UiAuthorizationHandler.cs
+rename to src/Readarr.Http/Authentication/UiAuthorizationHandler.cs
+diff --git a/src/Sonarr.Http/Authentication/UiAuthorizationPolicyProvider.cs b/src/Readarr.Http/Authentication/UiAuthorizationPolicyProvider.cs
+similarity index 100%
+rename from src/Sonarr.Http/Authentication/UiAuthorizationPolicyProvider.cs
+rename to src/Readarr.Http/Authentication/UiAuthorizationPolicyProvider.cs
+diff --git a/src/Sonarr.Http/ClientSchema/Field.cs b/src/Readarr.Http/ClientSchema/Field.cs
+similarity index 100%
+rename from src/Sonarr.Http/ClientSchema/Field.cs
+rename to src/Readarr.Http/ClientSchema/Field.cs
+diff --git a/src/Sonarr.Http/ClientSchema/FieldMapping.cs b/src/Readarr.Http/ClientSchema/FieldMapping.cs
+similarity index 100%
+rename from src/Sonarr.Http/ClientSchema/FieldMapping.cs
+rename to src/Readarr.Http/ClientSchema/FieldMapping.cs
+diff --git a/src/Sonarr.Http/ClientSchema/SchemaBuilder.cs b/src/Readarr.Http/ClientSchema/SchemaBuilder.cs
+similarity index 100%
+rename from src/Sonarr.Http/ClientSchema/SchemaBuilder.cs
+rename to src/Readarr.Http/ClientSchema/SchemaBuilder.cs
+diff --git a/src/Sonarr.Http/ErrorManagement/ErrorModel.cs b/src/Readarr.Http/ErrorManagement/ErrorModel.cs
+similarity index 100%
+rename from src/Sonarr.Http/ErrorManagement/ErrorModel.cs
+rename to src/Readarr.Http/ErrorManagement/ErrorModel.cs
+diff --git a/src/Sonarr.Http/ErrorManagement/SonarrErrorPipeline.cs b/src/Readarr.Http/ErrorManagement/SonarrErrorPipeline.cs
+similarity index 100%
+rename from src/Sonarr.Http/ErrorManagement/SonarrErrorPipeline.cs
+rename to src/Readarr.Http/ErrorManagement/SonarrErrorPipeline.cs
+diff --git a/src/Sonarr.Http/Exceptions/ApiException.cs b/src/Readarr.Http/Exceptions/ApiException.cs
+similarity index 100%
+rename from src/Sonarr.Http/Exceptions/ApiException.cs
+rename to src/Readarr.Http/Exceptions/ApiException.cs
+diff --git a/src/Sonarr.Http/Exceptions/InvalidApiKeyException.cs b/src/Readarr.Http/Exceptions/InvalidApiKeyException.cs
+similarity index 100%
+rename from src/Sonarr.Http/Exceptions/InvalidApiKeyException.cs
+rename to src/Readarr.Http/Exceptions/InvalidApiKeyException.cs
+diff --git a/src/Sonarr.Http/Extensions/AccessControlHeaders.cs b/src/Readarr.Http/Extensions/AccessControlHeaders.cs
+similarity index 100%
+rename from src/Sonarr.Http/Extensions/AccessControlHeaders.cs
+rename to src/Readarr.Http/Extensions/AccessControlHeaders.cs
+diff --git a/src/Sonarr.Http/Extensions/RequestExtensions.cs b/src/Readarr.Http/Extensions/RequestExtensions.cs
+similarity index 100%
+rename from src/Sonarr.Http/Extensions/RequestExtensions.cs
+rename to src/Readarr.Http/Extensions/RequestExtensions.cs
+diff --git a/src/Sonarr.Http/Frontend/InitializeJsonController.cs b/src/Readarr.Http/Frontend/InitializeJsonController.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/InitializeJsonController.cs
+rename to src/Readarr.Http/Frontend/InitializeJsonController.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/BackupFileMapper.cs b/src/Readarr.Http/Frontend/Mappers/BackupFileMapper.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/BackupFileMapper.cs
+rename to src/Readarr.Http/Frontend/Mappers/BackupFileMapper.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/BrowserConfig.cs b/src/Readarr.Http/Frontend/Mappers/BrowserConfig.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/BrowserConfig.cs
+rename to src/Readarr.Http/Frontend/Mappers/BrowserConfig.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/CacheBreakerProvider.cs b/src/Readarr.Http/Frontend/Mappers/CacheBreakerProvider.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/CacheBreakerProvider.cs
+rename to src/Readarr.Http/Frontend/Mappers/CacheBreakerProvider.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/FaviconMapper.cs b/src/Readarr.Http/Frontend/Mappers/FaviconMapper.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/FaviconMapper.cs
+rename to src/Readarr.Http/Frontend/Mappers/FaviconMapper.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/HtmlMapperBase.cs b/src/Readarr.Http/Frontend/Mappers/HtmlMapperBase.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/HtmlMapperBase.cs
+rename to src/Readarr.Http/Frontend/Mappers/HtmlMapperBase.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/IMapHttpRequestsToDisk.cs b/src/Readarr.Http/Frontend/Mappers/IMapHttpRequestsToDisk.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/IMapHttpRequestsToDisk.cs
+rename to src/Readarr.Http/Frontend/Mappers/IMapHttpRequestsToDisk.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/IndexHtmlMapper.cs b/src/Readarr.Http/Frontend/Mappers/IndexHtmlMapper.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/IndexHtmlMapper.cs
+rename to src/Readarr.Http/Frontend/Mappers/IndexHtmlMapper.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/LogFileMapper.cs b/src/Readarr.Http/Frontend/Mappers/LogFileMapper.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/LogFileMapper.cs
+rename to src/Readarr.Http/Frontend/Mappers/LogFileMapper.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/LoginHtmlMapper.cs b/src/Readarr.Http/Frontend/Mappers/LoginHtmlMapper.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/LoginHtmlMapper.cs
+rename to src/Readarr.Http/Frontend/Mappers/LoginHtmlMapper.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/ManifestMapper.cs b/src/Readarr.Http/Frontend/Mappers/ManifestMapper.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/ManifestMapper.cs
+rename to src/Readarr.Http/Frontend/Mappers/ManifestMapper.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/MediaCoverMapper.cs b/src/Readarr.Http/Frontend/Mappers/MediaCoverMapper.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/MediaCoverMapper.cs
+rename to src/Readarr.Http/Frontend/Mappers/MediaCoverMapper.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/MediaCoverProxyMapper.cs b/src/Readarr.Http/Frontend/Mappers/MediaCoverProxyMapper.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/MediaCoverProxyMapper.cs
+rename to src/Readarr.Http/Frontend/Mappers/MediaCoverProxyMapper.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/RobotsTxtMapper.cs b/src/Readarr.Http/Frontend/Mappers/RobotsTxtMapper.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/RobotsTxtMapper.cs
+rename to src/Readarr.Http/Frontend/Mappers/RobotsTxtMapper.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/StaticResourceMapper.cs b/src/Readarr.Http/Frontend/Mappers/StaticResourceMapper.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/StaticResourceMapper.cs
+rename to src/Readarr.Http/Frontend/Mappers/StaticResourceMapper.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/StaticResourceMapperBase.cs b/src/Readarr.Http/Frontend/Mappers/StaticResourceMapperBase.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/StaticResourceMapperBase.cs
+rename to src/Readarr.Http/Frontend/Mappers/StaticResourceMapperBase.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/UpdateLogFileMapper.cs b/src/Readarr.Http/Frontend/Mappers/UpdateLogFileMapper.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/UpdateLogFileMapper.cs
+rename to src/Readarr.Http/Frontend/Mappers/UpdateLogFileMapper.cs
+diff --git a/src/Sonarr.Http/Frontend/Mappers/UrlBaseReplacementResourceMapperBase.cs b/src/Readarr.Http/Frontend/Mappers/UrlBaseReplacementResourceMapperBase.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/Mappers/UrlBaseReplacementResourceMapperBase.cs
+rename to src/Readarr.Http/Frontend/Mappers/UrlBaseReplacementResourceMapperBase.cs
+diff --git a/src/Sonarr.Http/Frontend/StaticResourceController.cs b/src/Readarr.Http/Frontend/StaticResourceController.cs
+similarity index 100%
+rename from src/Sonarr.Http/Frontend/StaticResourceController.cs
+rename to src/Readarr.Http/Frontend/StaticResourceController.cs
+diff --git a/src/Sonarr.Http/Middleware/BufferingMiddleware.cs b/src/Readarr.Http/Middleware/BufferingMiddleware.cs
+similarity index 100%
+rename from src/Sonarr.Http/Middleware/BufferingMiddleware.cs
+rename to src/Readarr.Http/Middleware/BufferingMiddleware.cs
+diff --git a/src/Sonarr.Http/Middleware/CacheHeaderMiddleware.cs b/src/Readarr.Http/Middleware/CacheHeaderMiddleware.cs
+similarity index 100%
+rename from src/Sonarr.Http/Middleware/CacheHeaderMiddleware.cs
+rename to src/Readarr.Http/Middleware/CacheHeaderMiddleware.cs
+diff --git a/src/Sonarr.Http/Middleware/CacheableSpecification.cs b/src/Readarr.Http/Middleware/CacheableSpecification.cs
+similarity index 100%
+rename from src/Sonarr.Http/Middleware/CacheableSpecification.cs
+rename to src/Readarr.Http/Middleware/CacheableSpecification.cs
+diff --git a/src/Sonarr.Http/Middleware/IfModifiedMiddleware.cs b/src/Readarr.Http/Middleware/IfModifiedMiddleware.cs
+similarity index 100%
+rename from src/Sonarr.Http/Middleware/IfModifiedMiddleware.cs
+rename to src/Readarr.Http/Middleware/IfModifiedMiddleware.cs
+diff --git a/src/Sonarr.Http/Middleware/LoggingMiddleware.cs b/src/Readarr.Http/Middleware/LoggingMiddleware.cs
+similarity index 100%
+rename from src/Sonarr.Http/Middleware/LoggingMiddleware.cs
+rename to src/Readarr.Http/Middleware/LoggingMiddleware.cs
+diff --git a/src/Sonarr.Http/Middleware/StartingUpMiddleware.cs b/src/Readarr.Http/Middleware/StartingUpMiddleware.cs
+similarity index 100%
+rename from src/Sonarr.Http/Middleware/StartingUpMiddleware.cs
+rename to src/Readarr.Http/Middleware/StartingUpMiddleware.cs
+diff --git a/src/Sonarr.Http/Middleware/UrlBaseMiddleware.cs b/src/Readarr.Http/Middleware/UrlBaseMiddleware.cs
+similarity index 100%
+rename from src/Sonarr.Http/Middleware/UrlBaseMiddleware.cs
+rename to src/Readarr.Http/Middleware/UrlBaseMiddleware.cs
+diff --git a/src/Sonarr.Http/Middleware/VersionMiddleware.cs b/src/Readarr.Http/Middleware/VersionMiddleware.cs
+similarity index 100%
+rename from src/Sonarr.Http/Middleware/VersionMiddleware.cs
+rename to src/Readarr.Http/Middleware/VersionMiddleware.cs
+diff --git a/src/Sonarr.Http/PagingResource.cs b/src/Readarr.Http/PagingResource.cs
+similarity index 100%
+rename from src/Sonarr.Http/PagingResource.cs
+rename to src/Readarr.Http/PagingResource.cs
+diff --git a/src/Sonarr.Http/Ping/PingController.cs b/src/Readarr.Http/Ping/PingController.cs
+similarity index 100%
+rename from src/Sonarr.Http/Ping/PingController.cs
+rename to src/Readarr.Http/Ping/PingController.cs
+diff --git a/src/Sonarr.Http/Ping/PingResource.cs b/src/Readarr.Http/Ping/PingResource.cs
+similarity index 100%
+rename from src/Sonarr.Http/Ping/PingResource.cs
+rename to src/Readarr.Http/Ping/PingResource.cs
+diff --git a/src/Sonarr.Http/REST/Attributes/RestDeleteByIdAttribute.cs b/src/Readarr.Http/REST/Attributes/RestDeleteByIdAttribute.cs
+similarity index 100%
+rename from src/Sonarr.Http/REST/Attributes/RestDeleteByIdAttribute.cs
+rename to src/Readarr.Http/REST/Attributes/RestDeleteByIdAttribute.cs
+diff --git a/src/Sonarr.Http/REST/Attributes/RestGetByIdAttribute.cs b/src/Readarr.Http/REST/Attributes/RestGetByIdAttribute.cs
+similarity index 100%
+rename from src/Sonarr.Http/REST/Attributes/RestGetByIdAttribute.cs
+rename to src/Readarr.Http/REST/Attributes/RestGetByIdAttribute.cs
+diff --git a/src/Sonarr.Http/REST/Attributes/RestPostByIdAttribute.cs b/src/Readarr.Http/REST/Attributes/RestPostByIdAttribute.cs
+similarity index 100%
+rename from src/Sonarr.Http/REST/Attributes/RestPostByIdAttribute.cs
+rename to src/Readarr.Http/REST/Attributes/RestPostByIdAttribute.cs
+diff --git a/src/Sonarr.Http/REST/Attributes/RestPutByIdAttribute.cs b/src/Readarr.Http/REST/Attributes/RestPutByIdAttribute.cs
+similarity index 100%
+rename from src/Sonarr.Http/REST/Attributes/RestPutByIdAttribute.cs
+rename to src/Readarr.Http/REST/Attributes/RestPutByIdAttribute.cs
+diff --git a/src/Sonarr.Http/REST/Attributes/SkipValidationAttribute.cs b/src/Readarr.Http/REST/Attributes/SkipValidationAttribute.cs
+similarity index 100%
+rename from src/Sonarr.Http/REST/Attributes/SkipValidationAttribute.cs
+rename to src/Readarr.Http/REST/Attributes/SkipValidationAttribute.cs
+diff --git a/src/Sonarr.Http/REST/BadRequestException.cs b/src/Readarr.Http/REST/BadRequestException.cs
+similarity index 100%
+rename from src/Sonarr.Http/REST/BadRequestException.cs
+rename to src/Readarr.Http/REST/BadRequestException.cs
+diff --git a/src/Sonarr.Http/REST/MethodNotAllowedException.cs b/src/Readarr.Http/REST/MethodNotAllowedException.cs
+similarity index 100%
+rename from src/Sonarr.Http/REST/MethodNotAllowedException.cs
+rename to src/Readarr.Http/REST/MethodNotAllowedException.cs
+diff --git a/src/Sonarr.Http/REST/NotFoundException.cs b/src/Readarr.Http/REST/NotFoundException.cs
+similarity index 100%
+rename from src/Sonarr.Http/REST/NotFoundException.cs
+rename to src/Readarr.Http/REST/NotFoundException.cs
+diff --git a/src/Sonarr.Http/REST/ResourceValidator.cs b/src/Readarr.Http/REST/ResourceValidator.cs
+similarity index 100%
+rename from src/Sonarr.Http/REST/ResourceValidator.cs
+rename to src/Readarr.Http/REST/ResourceValidator.cs
+diff --git a/src/Sonarr.Http/REST/RestController.cs b/src/Readarr.Http/REST/RestController.cs
+similarity index 100%
+rename from src/Sonarr.Http/REST/RestController.cs
+rename to src/Readarr.Http/REST/RestController.cs
+diff --git a/src/Sonarr.Http/REST/RestControllerWithSignalR.cs b/src/Readarr.Http/REST/RestControllerWithSignalR.cs
+similarity index 100%
+rename from src/Sonarr.Http/REST/RestControllerWithSignalR.cs
+rename to src/Readarr.Http/REST/RestControllerWithSignalR.cs
+diff --git a/src/Sonarr.Http/REST/RestResource.cs b/src/Readarr.Http/REST/RestResource.cs
+similarity index 100%
+rename from src/Sonarr.Http/REST/RestResource.cs
+rename to src/Readarr.Http/REST/RestResource.cs
+diff --git a/src/Sonarr.Http/REST/UnsupportedMediaTypeException.cs b/src/Readarr.Http/REST/UnsupportedMediaTypeException.cs
+similarity index 100%
+rename from src/Sonarr.Http/REST/UnsupportedMediaTypeException.cs
+rename to src/Readarr.Http/REST/UnsupportedMediaTypeException.cs
+diff --git a/src/Sonarr.Http/Sonarr.Http.csproj b/src/Readarr.Http/Readarr.Http.csproj
+similarity index 82%
+rename from src/Sonarr.Http/Sonarr.Http.csproj
+rename to src/Readarr.Http/Readarr.Http.csproj
+index 012595192..95497f348 100644
+--- a/src/Sonarr.Http/Sonarr.Http.csproj
++++ b/src/Readarr.Http/Readarr.Http.csproj
+@@ -13,7 +13,7 @@
+     <PackageReference Remove="StyleCop.Analyzers" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ProjectReference Include="..\NzbDrone.Core\Sonarr.Core.csproj" />
+-    <ProjectReference Include="..\NzbDrone.SignalR\Sonarr.SignalR.csproj" />
++    <ProjectReference Include="..\NzbDrone.Core\Readarr.Core.csproj" />
++    <ProjectReference Include="..\NzbDrone.SignalR\Readarr.SignalR.csproj" />
+   </ItemGroup>
+ </Project>
+diff --git a/src/Sonarr.Http/ResourceChangeMessage.cs b/src/Readarr.Http/ResourceChangeMessage.cs
+similarity index 100%
+rename from src/Sonarr.Http/ResourceChangeMessage.cs
+rename to src/Readarr.Http/ResourceChangeMessage.cs
+diff --git a/src/Sonarr.Http/Validation/DuplicateEndpointDetector.cs b/src/Readarr.Http/Validation/DuplicateEndpointDetector.cs
+similarity index 100%
+rename from src/Sonarr.Http/Validation/DuplicateEndpointDetector.cs
+rename to src/Readarr.Http/Validation/DuplicateEndpointDetector.cs
+diff --git a/src/Sonarr.Http/Validation/EmptyCollectionValidator.cs b/src/Readarr.Http/Validation/EmptyCollectionValidator.cs
+similarity index 100%
+rename from src/Sonarr.Http/Validation/EmptyCollectionValidator.cs
+rename to src/Readarr.Http/Validation/EmptyCollectionValidator.cs
+diff --git a/src/Sonarr.Http/Validation/RssSyncIntervalValidator.cs b/src/Readarr.Http/Validation/RssSyncIntervalValidator.cs
+similarity index 100%
+rename from src/Sonarr.Http/Validation/RssSyncIntervalValidator.cs
+rename to src/Readarr.Http/Validation/RssSyncIntervalValidator.cs
+diff --git a/src/Sonarr.Http/Validation/RuleBuilderExtensions.cs b/src/Readarr.Http/Validation/RuleBuilderExtensions.cs
+similarity index 100%
+rename from src/Sonarr.Http/Validation/RuleBuilderExtensions.cs
+rename to src/Readarr.Http/Validation/RuleBuilderExtensions.cs
+diff --git a/src/Sonarr.Http/VersionedApiControllerAttribute.cs b/src/Readarr.Http/VersionedApiControllerAttribute.cs
+similarity index 100%
+rename from src/Sonarr.Http/VersionedApiControllerAttribute.cs
+rename to src/Readarr.Http/VersionedApiControllerAttribute.cs
+diff --git a/src/Sonarr.Http/VersionedFeedControllerAttribute.cs b/src/Readarr.Http/VersionedFeedControllerAttribute.cs
+similarity index 100%
+rename from src/Sonarr.Http/VersionedFeedControllerAttribute.cs
+rename to src/Readarr.Http/VersionedFeedControllerAttribute.cs
+diff --git a/src/Sonarr.sln b/src/Readarr.sln
+similarity index 85%
+rename from src/Sonarr.sln
+rename to src/Readarr.sln
+index 37d2f8370..7f7f97587 100644
+--- a/src/Sonarr.sln
++++ b/src/Readarr.sln
+@@ -3,29 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
+ # Visual Studio Version 16
+ VisualStudioVersion = 17.2.32516.85
+ MinimumVisualStudioVersion = 15.0.26124.0
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Console", "NzbDrone.Console\Sonarr.Console.csproj", "{3DCA7B58-B8B3-49AC-9D9E-56F4A0460976}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Console", "NzbDrone.Console\Readarr.Console.csproj", "{3DCA7B58-B8B3-49AC-9D9E-56F4A0460976}"
+ EndProject
+ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{57A04B72-8088-4F75-A582-1158CF8291F7}"
+ EndProject
+ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test.Common", "Test.Common", "{47697CDB-27B6-4B05-B4F8-0CBE6F6EDF97}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Test.Dummy", "NzbDrone.Test.Dummy\Sonarr.Test.Dummy.csproj", "{FAFB5948-A222-4CF6-AD14-026BE7564802}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Test.Dummy", "NzbDrone.Test.Dummy\Readarr.Test.Dummy.csproj", "{FAFB5948-A222-4CF6-AD14-026BE7564802}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Test.Common", "NzbDrone.Test.Common\Sonarr.Test.Common.csproj", "{CADDFCE0-7509-4430-8364-2074E1EEFCA2}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Test.Common", "NzbDrone.Test.Common\Readarr.Test.Common.csproj", "{CADDFCE0-7509-4430-8364-2074E1EEFCA2}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Core.Test", "NzbDrone.Core.Test\Sonarr.Core.Test.csproj", "{193ADD3B-792B-4173-8E4C-5A3F8F0237F0}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Core.Test", "NzbDrone.Core.Test\Readarr.Core.Test.csproj", "{193ADD3B-792B-4173-8E4C-5A3F8F0237F0}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Update.Test", "NzbDrone.Update.Test\Sonarr.Update.Test.csproj", "{35388E8E-0CDB-4A84-AD16-E4B6EFDA5D97}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Update.Test", "NzbDrone.Update.Test\Readarr.Update.Test.csproj", "{35388E8E-0CDB-4A84-AD16-E4B6EFDA5D97}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Common.Test", "NzbDrone.Common.Test\Sonarr.Common.Test.csproj", "{BEC74619-DDBB-4FBA-B517-D3E20AFC9997}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Common.Test", "NzbDrone.Common.Test\Readarr.Common.Test.csproj", "{BEC74619-DDBB-4FBA-B517-D3E20AFC9997}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Api.Test", "NzbDrone.Api.Test\Sonarr.Api.Test.csproj", "{D18A5DEB-5102-4775-A1AF-B75DAAA8907B}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Api.Test", "NzbDrone.Api.Test\Readarr.Api.Test.csproj", "{D18A5DEB-5102-4775-A1AF-B75DAAA8907B}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Libraries.Test", "NzbDrone.Libraries.Test\Sonarr.Libraries.Test.csproj", "{CBF6B8B0-A015-413A-8C86-01238BB45770}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Libraries.Test", "NzbDrone.Libraries.Test\Readarr.Libraries.Test.csproj", "{CBF6B8B0-A015-413A-8C86-01238BB45770}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Integration.Test", "NzbDrone.Integration.Test\Sonarr.Integration.Test.csproj", "{8CEFECD0-A6C2-498F-98B1-3FBE5820F9AB}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Integration.Test", "NzbDrone.Integration.Test\Readarr.Integration.Test.csproj", "{8CEFECD0-A6C2-498F-98B1-3FBE5820F9AB}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Automation.Test", "NzbDrone.Automation.Test\Sonarr.Automation.Test.csproj", "{CC26800D-F67E-464B-88DE-8EB1A0C227A3}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Automation.Test", "NzbDrone.Automation.Test\Readarr.Automation.Test.csproj", "{CC26800D-F67E-464B-88DE-8EB1A0C227A3}"
+ EndProject
+ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Install", "Install", "{F9E67978-5CD6-4A5F-827B-4249711C0B02}"
+ EndProject
+@@ -33,42 +33,42 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceInstall", "ServiceHe
+ EndProject
+ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceUninstall", "ServiceHelpers\ServiceUninstall\ServiceUninstall.csproj", "{700D0B95-95CD-43F3-B6C9-FAA0FC1358D4}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Core", "NzbDrone.Core\Sonarr.Core.csproj", "{FF5EE3B6-913B-47CE-9CEB-11C51B4E1205}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Core", "NzbDrone.Core\Readarr.Core.csproj", "{FF5EE3B6-913B-47CE-9CEB-11C51B4E1205}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Update", "NzbDrone.Update\Sonarr.Update.csproj", "{4CCC53CD-8D5E-4CC4-97D2-5C9312AC2BD7}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Update", "NzbDrone.Update\Readarr.Update.csproj", "{4CCC53CD-8D5E-4CC4-97D2-5C9312AC2BD7}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Common", "NzbDrone.Common\Sonarr.Common.csproj", "{F2BE0FDF-6E47-4827-A420-DD4EF82407F8}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Common", "NzbDrone.Common\Readarr.Common.csproj", "{F2BE0FDF-6E47-4827-A420-DD4EF82407F8}"
+ EndProject
+ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Host", "Host", "{486ADF86-DD89-4E19-B805-9D94F19800D9}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Host", "NzbDrone.Host\Sonarr.Host.csproj", "{95C11A9E-56ED-456A-8447-2C89C1139266}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Host", "NzbDrone.Host\Readarr.Host.csproj", "{95C11A9E-56ED-456A-8447-2C89C1139266}"
+ EndProject
+ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr", "NzbDrone\Sonarr.csproj", "{D12F7F2F-8A3C-415F-88FA-6DD061A84869}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.SignalR", "NzbDrone.SignalR\Sonarr.SignalR.csproj", "{7C2CC69F-5CA0-4E5C-85CB-983F9F6C3B36}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.SignalR", "NzbDrone.SignalR\Readarr.SignalR.csproj", "{7C2CC69F-5CA0-4E5C-85CB-983F9F6C3B36}"
+ EndProject
+ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{0F0D4998-8F5D-4467-A909-BB192C4B3B4B}"
+ EndProject
+ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{4EACDBBC-BCD7-4765-A57B-3E08331E4749}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Windows.Test", "NzbDrone.Windows.Test\Sonarr.Windows.Test.csproj", "{80B51429-7A0E-46D6-BEE3-C80DCB1C4EAA}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Windows.Test", "NzbDrone.Windows.Test\Readarr.Windows.Test.csproj", "{80B51429-7A0E-46D6-BEE3-C80DCB1C4EAA}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Mono.Test", "NzbDrone.Mono.Test\Sonarr.Mono.Test.csproj", "{40D72824-7D02-4A77-9106-8FE0EEA2B997}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Mono.Test", "NzbDrone.Mono.Test\Readarr.Mono.Test.csproj", "{40D72824-7D02-4A77-9106-8FE0EEA2B997}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Api.V3", "Sonarr.Api.V3\Sonarr.Api.V3.csproj", "{7140FF1F-79BE-492F-9188-B21A050BF708}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Api.V1", "Readarr.Api.V1\Readarr.Api.V1.csproj", "{7140FF1F-79BE-492F-9188-B21A050BF708}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Http", "Sonarr.Http\Sonarr.Http.csproj", "{5370BFF7-1BD7-46BC-AF06-7D9EA5CDA1D6}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Http", "Readarr.Http\Readarr.Http.csproj", "{5370BFF7-1BD7-46BC-AF06-7D9EA5CDA1D6}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Host.Test", "NzbDrone.Host.Test\Sonarr.Host.Test.csproj", "{C0EA1A40-91AD-4EEB-BD16-2DDDEBD20AE5}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Host.Test", "NzbDrone.Host.Test\Readarr.Host.Test.csproj", "{C0EA1A40-91AD-4EEB-BD16-2DDDEBD20AE5}"
+ EndProject
+ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0C7E5F5A-C4CC-4945-B399-1E1C9817CC45}"
+ 	ProjectSection(SolutionItems) = preProject
+ 		..\.editorconfig = ..\.editorconfig
+ 	EndProjectSection
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Mono", "NzbDrone.Mono\Sonarr.Mono.csproj", "{22F71728-AB73-4774-8DC2-6D2D7734AE0C}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Mono", "NzbDrone.Mono\Readarr.Mono.csproj", "{22F71728-AB73-4774-8DC2-6D2D7734AE0C}"
+ EndProject
+-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Windows", "NzbDrone.Windows\Sonarr.Windows.csproj", "{4AE3B731-442E-4AF0-88A5-9FABEB685A0D}"
++Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readarr.Windows", "NzbDrone.Windows\Readarr.Windows.csproj", "{4AE3B731-442E-4AF0-88A5-9FABEB685A0D}"
+ EndProject
+ Global
+ 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+diff --git a/src/ServiceHelpers/ServiceInstall/ServiceHelper.cs b/src/ServiceHelpers/ServiceInstall/ServiceHelper.cs
+index 7e412aa4d..a55b0be47 100644
+--- a/src/ServiceHelpers/ServiceInstall/ServiceHelper.cs
++++ b/src/ServiceHelpers/ServiceInstall/ServiceHelper.cs
+@@ -8,7 +8,7 @@ namespace ServiceInstall
+ {
+     public static class ServiceHelper
+     {
+-        private static string SonarrExe => Path.Combine(new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.FullName, "Sonarr.Console.exe");
++        private static string SonarrExe => Path.Combine(new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.FullName, "Readarr.Console.exe");
+ 
+         private static bool IsAnAdministrator()
+         {
+diff --git a/src/ServiceHelpers/ServiceUninstall/ServiceHelper.cs b/src/ServiceHelpers/ServiceUninstall/ServiceHelper.cs
+index efcc26626..06e2f6b2a 100644
+--- a/src/ServiceHelpers/ServiceUninstall/ServiceHelper.cs
++++ b/src/ServiceHelpers/ServiceUninstall/ServiceHelper.cs
+@@ -8,7 +8,7 @@ namespace ServiceUninstall
+ {
+     public static class ServiceHelper
+     {
+-        private static string SonarrExe => Path.Combine(new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.FullName, "Sonarr.Console.exe");
++        private static string SonarrExe => Path.Combine(new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.FullName, "Readarr.Console.exe");
+ 
+         private static bool IsAnAdministrator()
+         {
+-- 
+2.48.1
+

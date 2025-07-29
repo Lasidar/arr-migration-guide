@@ -1,0 +1,1415 @@
+From c9aab3e96217f87e03d878d5928a8b5b808bd1f5 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Tue, 29 Jul 2025 13:57:07 +0000
+Subject: [PATCH 1/4] Phase 2.2 & 2.3 Complete: Database schema and repository
+ updates
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- Created database migration for book schema transformation
+- Updated domain entities with book-specific properties:
+  - Author: Added biography, birth/death dates, nationality
+  - Book: Added ISBN, page count, publisher, language
+  - Edition: Added format, ISBN fields
+- Renamed database tables and columns:
+  - Series → Authors
+  - Seasons → Books
+  - Episodes → Editions
+  - EpisodeFiles → EditionFiles
+- Updated repository interfaces and implementations
+- Renamed EditionFile entity and updated references
+- Created transformation scripts for systematic updates
+
+Next: Phase 3 - Service layer transformation
+---
+ scripts/transform/update-repositories.sh      |  45 +++++
+ .../AuthorStats/AuthorStatisticsRepository.cs |  42 ++---
+ .../Blocklisting/BlocklistRepository.cs       |  14 +-
+ src/NzbDrone.Core/Books/Author.cs             |  67 ++++---
+ src/NzbDrone.Core/Books/AuthorRepository.cs   |  66 +++----
+ src/NzbDrone.Core/Books/Book.cs               |  17 +-
+ src/NzbDrone.Core/Books/Edition.cs            |  57 +++---
+ src/NzbDrone.Core/Books/EditionRepository.cs  | 178 +++++++++---------
+ .../218_readarrv2_initial_book_schema.cs      | 105 +++++++++++
+ .../History/DownloadHistoryRepository.cs      |   6 +-
+ .../Pending/PendingReleaseRepository.cs       |  14 +-
+ .../Extras/Files/ExtraFileRepository.cs       |  14 +-
+ .../History/HistoryRepository.cs              |  20 +-
+ .../{EpisodeFile.cs => EditionFile.cs}        |  12 +-
+ .../MediaFiles/MediaFileRepository.cs         |  34 ++--
+ 15 files changed, 425 insertions(+), 266 deletions(-)
+ create mode 100755 scripts/transform/update-repositories.sh
+ create mode 100644 src/NzbDrone.Core/Datastore/Migration/218_readarrv2_initial_book_schema.cs
+ rename src/NzbDrone.Core/MediaFiles/{EpisodeFile.cs => EditionFile.cs} (85%)
+
+diff --git a/scripts/transform/update-repositories.sh b/scripts/transform/update-repositories.sh
+new file mode 100755
+index 000000000..ea9e52893
+--- /dev/null
++++ b/scripts/transform/update-repositories.sh
+@@ -0,0 +1,45 @@
++#!/bin/bash
++# Script to update repository references from TV to book entities
++
++echo "Updating repository references..."
++
++# Update AuthorRepository
++echo "Updating AuthorRepository..."
++sed -i 's/ReturnSingleSeriesOrThrow/ReturnSingleAuthorOrThrow/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++sed -i 's/FindByTvdbId/FindByGoodreadsId/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++sed -i 's/FindByTvRageId/FindByOpenLibraryId/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++sed -i 's/FindByImdbId/FindByIsbnId/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++sed -i 's/AllSeriesTvdbIds/AllAuthorGoodreadsIds/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++sed -i 's/AllSeriesPaths/AllAuthorPaths/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++sed -i 's/AllSeriesTags/AllAuthorTags/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++sed -i 's/s\.TvdbId/s.GoodreadsId/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++sed -i 's/s\.TvRageId/s.OpenLibraryId/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++sed -i 's/s\.ImdbId/s.IsbnId/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++sed -i 's/"Series"/"Authors"/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++sed -i 's/"TvdbId"/"GoodreadsId"/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++sed -i 's/var series/var authors/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++sed -i 's/List<Series>/List<Author>/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++sed -i 's/Series Find/Author Find/g' src/NzbDrone.Core/Books/AuthorRepository.cs
++
++# Update EditionRepository
++echo "Updating EditionRepository..."
++if [ -f "src/NzbDrone.Core/Books/EditionRepository.cs" ]; then
++    sed -i 's/IEpisodeRepository/IEditionRepository/g' src/NzbDrone.Core/Books/EditionRepository.cs
++    sed -i 's/EpisodeRepository/EditionRepository/g' src/NzbDrone.Core/Books/EditionRepository.cs
++    sed -i 's/Episode/Edition/g' src/NzbDrone.Core/Books/EditionRepository.cs
++    sed -i 's/SeriesId/AuthorId/g' src/NzbDrone.Core/Books/EditionRepository.cs
++    sed -i 's/SeasonNumber/BookNumber/g' src/NzbDrone.Core/Books/EditionRepository.cs
++    sed -i 's/EpisodeNumber/EditionNumber/g' src/NzbDrone.Core/Books/EditionRepository.cs
++    sed -i 's/"Episodes"/"Editions"/g' src/NzbDrone.Core/Books/EditionRepository.cs
++fi
++
++# Update MediaFileRepository
++echo "Updating MediaFileRepository..."
++find src -name "*Repository.cs" -type f | while read file; do
++    sed -i 's/EpisodeFile/EditionFile/g' "$file"
++    sed -i 's/SeriesId/AuthorId/g' "$file"
++    sed -i 's/SeasonNumber/BookNumber/g' "$file"
++    sed -i 's/"EpisodeFiles"/"EditionFiles"/g' "$file"
++done
++
++echo "Repository updates complete!"
+\ No newline at end of file
+diff --git a/src/NzbDrone.Core/AuthorStats/AuthorStatisticsRepository.cs b/src/NzbDrone.Core/AuthorStats/AuthorStatisticsRepository.cs
+index 5b6a86b3e..a6f663b07 100644
+--- a/src/NzbDrone.Core/AuthorStats/AuthorStatisticsRepository.cs
++++ b/src/NzbDrone.Core/AuthorStats/AuthorStatisticsRepository.cs
+@@ -17,7 +17,7 @@ public interface ISeriesStatisticsRepository
+     public class SeriesStatisticsRepository : ISeriesStatisticsRepository
+     {
+         private const string _selectEpisodesTemplate = "SELECT /**select**/ FROM \"Episodes\" /**join**/ /**innerjoin**/ /**leftjoin**/ /**where**/ /**groupby**/ /**having**/ /**orderby**/";
+-        private const string _selectEpisodeFilesTemplate = "SELECT /**select**/ FROM \"EpisodeFiles\" /**join**/ /**innerjoin**/ /**leftjoin**/ /**where**/ /**groupby**/ /**having**/ /**orderby**/";
++        private const string _selectEditionFilesTemplate = "SELECT /**select**/ FROM \"EditionFiles\" /**join**/ /**innerjoin**/ /**leftjoin**/ /**where**/ /**groupby**/ /**having**/ /**orderby**/";
+ 
+         private readonly IMainDatabase _database;
+ 
+@@ -30,22 +30,22 @@ public List<SeasonStatistics> SeriesStatistics()
+         {
+             var time = DateTime.UtcNow;
+             return MapResults(Query(EpisodesBuilder(time), _selectEpisodesTemplate),
+-                Query(EpisodeFilesBuilder(), _selectEpisodeFilesTemplate));
++                Query(EditionFilesBuilder(), _selectEditionFilesTemplate));
+         }
+ 
+         public List<SeasonStatistics> SeriesStatistics(int seriesId)
+         {
+             var time = DateTime.UtcNow;
+ 
+-            return MapResults(Query(EpisodesBuilder(time).Where<Episode>(x => x.SeriesId == seriesId), _selectEpisodesTemplate),
+-                Query(EpisodeFilesBuilder().Where<EpisodeFile>(x => x.SeriesId == seriesId), _selectEpisodeFilesTemplate));
++            return MapResults(Query(EpisodesBuilder(time).Where<Episode>(x => x.AuthorId == seriesId), _selectEpisodesTemplate),
++                Query(EditionFilesBuilder().Where<EditionFile>(x => x.AuthorId == seriesId), _selectEditionFilesTemplate));
+         }
+ 
+         private List<SeasonStatistics> MapResults(List<SeasonStatistics> episodesResult, List<SeasonStatistics> filesResult)
+         {
+             episodesResult.ForEach(e =>
+             {
+-                var file = filesResult.SingleOrDefault(f => f.SeriesId == e.SeriesId & f.SeasonNumber == e.SeasonNumber);
++                var file = filesResult.SingleOrDefault(f => f.AuthorId == e.AuthorId & f.BookNumber == e.BookNumber);
+ 
+                 e.SizeOnDisk = file?.SizeOnDisk ?? 0;
+                 e.ReleaseGroupsString = file?.ReleaseGroupsString;
+@@ -73,40 +73,40 @@ private SqlBuilder EpisodesBuilder(DateTime currentDate)
+             var falseIndicator = _database.DatabaseType == DatabaseType.PostgreSQL ? "false" : "0";
+ 
+             return new SqlBuilder(_database.DatabaseType)
+-            .Select($@"""Episodes"".""SeriesId"" AS SeriesId,
+-                             ""Episodes"".""SeasonNumber"",
++            .Select($@"""Episodes"".""AuthorId"" AS AuthorId,
++                             ""Episodes"".""BookNumber"",
+                              COUNT(*) AS TotalEpisodeCount,
+-                             SUM(CASE WHEN ""AirDateUtc"" <= @currentDate OR ""EpisodeFileId"" > 0 THEN 1 ELSE 0 END) AS AvailableEpisodeCount,
+-                             SUM(CASE WHEN (""Monitored"" = {trueIndicator} AND ""AirDateUtc"" <= @currentDate) OR ""EpisodeFileId"" > 0 THEN 1 ELSE 0 END) AS EpisodeCount,
+-                             SUM(CASE WHEN ""EpisodeFileId"" > 0 THEN 1 ELSE 0 END) AS EpisodeFileCount,
++                             SUM(CASE WHEN ""AirDateUtc"" <= @currentDate OR ""EditionFileId"" > 0 THEN 1 ELSE 0 END) AS AvailableEpisodeCount,
++                             SUM(CASE WHEN (""Monitored"" = {trueIndicator} AND ""AirDateUtc"" <= @currentDate) OR ""EditionFileId"" > 0 THEN 1 ELSE 0 END) AS EpisodeCount,
++                             SUM(CASE WHEN ""EditionFileId"" > 0 THEN 1 ELSE 0 END) AS EditionFileCount,
+                              MIN(CASE WHEN ""AirDateUtc"" < @currentDate OR ""Monitored"" = {falseIndicator} THEN NULL ELSE ""AirDateUtc"" END) AS NextAiringString,
+                              MAX(CASE WHEN ""AirDateUtc"" >= @currentDate OR ""Monitored"" = {falseIndicator} THEN NULL ELSE ""AirDateUtc"" END) AS PreviousAiringString,
+                              MAX(""AirDate"") AS LastAiredString",
+                 parameters)
+-            .GroupBy<Episode>(x => x.SeriesId)
+-            .GroupBy<Episode>(x => x.SeasonNumber);
++            .GroupBy<Episode>(x => x.AuthorId)
++            .GroupBy<Episode>(x => x.BookNumber);
+         }
+ 
+-        private SqlBuilder EpisodeFilesBuilder()
++        private SqlBuilder EditionFilesBuilder()
+         {
+             if (_database.DatabaseType == DatabaseType.SQLite)
+             {
+                 return new SqlBuilder(_database.DatabaseType)
+-                .Select(@"""SeriesId"",
+-                            ""SeasonNumber"",
++                .Select(@"""AuthorId"",
++                            ""BookNumber"",
+                             SUM(COALESCE(""Size"", 0)) AS SizeOnDisk,
+                             GROUP_CONCAT(""ReleaseGroup"", '|') AS ReleaseGroupsString")
+-                .GroupBy<EpisodeFile>(x => x.SeriesId)
+-                .GroupBy<EpisodeFile>(x => x.SeasonNumber);
++                .GroupBy<EditionFile>(x => x.AuthorId)
++                .GroupBy<EditionFile>(x => x.BookNumber);
+             }
+ 
+             return new SqlBuilder(_database.DatabaseType)
+-                .Select(@"""SeriesId"",
+-                            ""SeasonNumber"",
++                .Select(@"""AuthorId"",
++                            ""BookNumber"",
+                             SUM(COALESCE(""Size"", 0)) AS SizeOnDisk,
+                             string_agg(""ReleaseGroup"", '|') AS ReleaseGroupsString")
+-                .GroupBy<EpisodeFile>(x => x.SeriesId)
+-                .GroupBy<EpisodeFile>(x => x.SeasonNumber);
++                .GroupBy<EditionFile>(x => x.AuthorId)
++                .GroupBy<EditionFile>(x => x.BookNumber);
+         }
+     }
+ }
+diff --git a/src/NzbDrone.Core/Blocklisting/BlocklistRepository.cs b/src/NzbDrone.Core/Blocklisting/BlocklistRepository.cs
+index c2cde2871..adc26905b 100644
+--- a/src/NzbDrone.Core/Blocklisting/BlocklistRepository.cs
++++ b/src/NzbDrone.Core/Blocklisting/BlocklistRepository.cs
+@@ -10,7 +10,7 @@ public interface IBlocklistRepository : IBasicRepository<Blocklist>
+         List<Blocklist> BlocklistedByTitle(int seriesId, string sourceTitle);
+         List<Blocklist> BlocklistedByTorrentInfoHash(int seriesId, string torrentInfoHash);
+         List<Blocklist> BlocklistedBySeries(int seriesId);
+-        void DeleteForSeriesIds(List<int> seriesIds);
++        void DeleteForAuthorIds(List<int> seriesIds);
+     }
+ 
+     public class BlocklistRepository : BasicRepository<Blocklist>, IBlocklistRepository
+@@ -22,22 +22,22 @@ public BlocklistRepository(IMainDatabase database, IEventAggregator eventAggrega
+ 
+         public List<Blocklist> BlocklistedByTitle(int seriesId, string sourceTitle)
+         {
+-            return Query(e => e.SeriesId == seriesId && e.SourceTitle.Contains(sourceTitle));
++            return Query(e => e.AuthorId == seriesId && e.SourceTitle.Contains(sourceTitle));
+         }
+ 
+         public List<Blocklist> BlocklistedByTorrentInfoHash(int seriesId, string torrentInfoHash)
+         {
+-            return Query(e => e.SeriesId == seriesId && e.TorrentInfoHash.Contains(torrentInfoHash));
++            return Query(e => e.AuthorId == seriesId && e.TorrentInfoHash.Contains(torrentInfoHash));
+         }
+ 
+         public List<Blocklist> BlocklistedBySeries(int seriesId)
+         {
+-            return Query(b => b.SeriesId == seriesId);
++            return Query(b => b.AuthorId == seriesId);
+         }
+ 
+-        public void DeleteForSeriesIds(List<int> seriesIds)
++        public void DeleteForAuthorIds(List<int> seriesIds)
+         {
+-            Delete(x => seriesIds.Contains(x.SeriesId));
++            Delete(x => seriesIds.Contains(x.AuthorId));
+         }
+ 
+         public override PagingSpec<Blocklist> GetPaged(PagingSpec<Blocklist> pagingSpec)
+@@ -53,7 +53,7 @@ public override PagingSpec<Blocklist> GetPaged(PagingSpec<Blocklist> pagingSpec)
+         protected override SqlBuilder PagedBuilder()
+         {
+             var builder = Builder()
+-                .Join<Blocklist, Series>((b, m) => b.SeriesId == m.Id);
++                .Join<Blocklist, Series>((b, m) => b.AuthorId == m.Id);
+ 
+             return builder;
+         }
+diff --git a/src/NzbDrone.Core/Books/Author.cs b/src/NzbDrone.Core/Books/Author.cs
+index 109d6758e..44c222a4c 100644
+--- a/src/NzbDrone.Core/Books/Author.cs
++++ b/src/NzbDrone.Core/Books/Author.cs
+@@ -7,42 +7,39 @@
+ 
+ namespace NzbDrone.Core.Books
+ {
+-    public class Series : ModelBase
++    public class Author : ModelBase
+     {
+-        public Series()
++        public Author()
+         {
+             Images = new List<MediaCover.MediaCover>();
+             Genres = new List<string>();
+-            Actors = new List<Actor>();
+-            Seasons = new List<Season>();
++            Books = new List<Book>();
+             Tags = new HashSet<int>();
+             OriginalLanguage = Language.English;
+-            MalIds = new HashSet<int>();
+-            AniListIds = new HashSet<int>();
+         }
+ 
+-        public int TvdbId { get; set; }
+-        public int TvRageId { get; set; }
+-        public int TvMazeId { get; set; }
+-        public string ImdbId { get; set; }
+-        public int TmdbId { get; set; }
+-        public HashSet<int> MalIds { get; set; }
+-        public HashSet<int> AniListIds { get; set; }
++        public int GoodreadsId { get; set; }
++        public int OpenLibraryId { get; set; }
++        public string IsbnId { get; set; }
++        public string Biography { get; set; }
++        public DateTime? BornDate { get; set; }
++        public DateTime? DiedDate { get; set; }
++        public string Nationality { get; set; }
+         public string Title { get; set; }
+         public string CleanTitle { get; set; }
+         public string SortTitle { get; set; }
+-        public SeriesStatusType Status { get; set; }
++        public AuthorStatusType Status { get; set; }
+         public string Overview { get; set; }
+-        public string AirTime { get; set; }
++        public string PublishTime { get; set; }
+         public bool Monitored { get; set; }
+         public NewItemMonitorTypes MonitorNewItems { get; set; }
+         public int QualityProfileId { get; set; }
+-        public bool SeasonFolder { get; set; }
++        public bool BookFolder { get; set; }
+         public DateTime? LastInfoSync { get; set; }
+         public int Runtime { get; set; }
+         public List<MediaCover.MediaCover> Images { get; set; }
+-        public SeriesTypes SeriesType { get; set; }
+-        public string Network { get; set; }
++        public AuthorTypes AuthorType { get; set; }
++        public string Publisher { get; set; }
+         public bool UseSceneNumbering { get; set; }
+         public string TitleSlug { get; set; }
+         public string Path { get; set; }
+@@ -53,36 +50,36 @@ public Series()
+         public string Certification { get; set; }
+         public string RootFolderPath { get; set; }
+         public DateTime Added { get; set; }
+-        public DateTime? FirstAired { get; set; }
+-        public DateTime? LastAired { get; set; }
++        public DateTime? FirstPublished { get; set; }
++        public DateTime? LastPublished { get; set; }
+         public LazyLoaded<QualityProfile> QualityProfile { get; set; }
+         public Language OriginalLanguage { get; set; }
+ 
+-        public List<Season> Seasons { get; set; }
++        public List<Book> Books { get; set; }
+         public HashSet<int> Tags { get; set; }
+-        public AddSeriesOptions AddOptions { get; set; }
++        public AddAuthorOptions AddOptions { get; set; }
+ 
+         public override string ToString()
+         {
+-            return string.Format("[{0}][{1}]", TvdbId, Title.NullSafe());
++            return string.Format("[{0}][{1}]", GoodreadsId, Title.NullSafe());
+         }
+ 
+-        public void ApplyChanges(Series otherSeries)
++        public void ApplyChanges(Author otherAuthor)
+         {
+-            TvdbId = otherSeries.TvdbId;
++            GoodreadsId = otherAuthor.GoodreadsId;
+ 
+-            Seasons = otherSeries.Seasons;
+-            Path = otherSeries.Path;
+-            QualityProfileId = otherSeries.QualityProfileId;
++            Books = otherAuthor.Books;
++            Path = otherAuthor.Path;
++            QualityProfileId = otherAuthor.QualityProfileId;
+ 
+-            SeasonFolder = otherSeries.SeasonFolder;
+-            Monitored = otherSeries.Monitored;
+-            MonitorNewItems = otherSeries.MonitorNewItems;
++            BookFolder = otherAuthor.BookFolder;
++            Monitored = otherAuthor.Monitored;
++            MonitorNewItems = otherAuthor.MonitorNewItems;
+ 
+-            SeriesType = otherSeries.SeriesType;
+-            RootFolderPath = otherSeries.RootFolderPath;
+-            Tags = otherSeries.Tags;
+-            AddOptions = otherSeries.AddOptions;
++            AuthorType = otherAuthor.AuthorType;
++            RootFolderPath = otherAuthor.RootFolderPath;
++            Tags = otherAuthor.Tags;
++            AddOptions = otherAuthor.AddOptions;
+         }
+     }
+ }
+diff --git a/src/NzbDrone.Core/Books/AuthorRepository.cs b/src/NzbDrone.Core/Books/AuthorRepository.cs
+index 3b5ca6170..38fe619e7 100644
+--- a/src/NzbDrone.Core/Books/AuthorRepository.cs
++++ b/src/NzbDrone.Core/Books/AuthorRepository.cs
+@@ -6,53 +6,53 @@
+ 
+ namespace NzbDrone.Core.Books
+ {
+-    public interface ISeriesRepository : IBasicRepository<Series>
++    public interface IAuthorRepository : IBasicRepository<Author>
+     {
+-        bool SeriesPathExists(string path);
+-        Series FindByTitle(string cleanTitle);
+-        Series FindByTitle(string cleanTitle, int year);
+-        List<Series> FindByTitleInexact(string cleanTitle);
+-        Series FindByTvdbId(int tvdbId);
+-        Series FindByTvRageId(int tvRageId);
+-        Series FindByImdbId(string imdbId);
+-        Series FindByPath(string path);
+-        List<int> AllSeriesTvdbIds();
+-        Dictionary<int, string> AllSeriesPaths();
+-        Dictionary<int, List<int>> AllSeriesTags();
++        bool AuthorPathExists(string path);
++        Author FindByTitle(string cleanTitle);
++        Author FindByTitle(string cleanTitle, int year);
++        List<Author> FindByTitleInexact(string cleanTitle);
++        Author FindByGoodreadsId(int goodreadsId);
++        Author FindByOpenLibraryId(int openLibraryId);
++        Author FindByIsbnId(string isbnId);
++        Author FindByPath(string path);
++        List<int> AllAuthorGoodreadsIds();
++        Dictionary<int, string> AllAuthorPaths();
++        Dictionary<int, List<int>> AllAuthorTags();
+     }
+ 
+-    public class SeriesRepository : BasicRepository<Series>, ISeriesRepository
++    public class AuthorRepository : BasicRepository<Author>, IAuthorRepository
+     {
+-        public SeriesRepository(IMainDatabase database, IEventAggregator eventAggregator)
++        public AuthorRepository(IMainDatabase database, IEventAggregator eventAggregator)
+             : base(database, eventAggregator)
+         {
+         }
+ 
+-        public bool SeriesPathExists(string path)
++        public bool AuthorPathExists(string path)
+         {
+             return Query(c => c.Path == path).Any();
+         }
+ 
+-        public Series FindByTitle(string cleanTitle)
++        public Author FindByTitle(string cleanTitle)
+         {
+             cleanTitle = cleanTitle.ToLowerInvariant();
+ 
+-            var series = Query(s => s.CleanTitle == cleanTitle)
++            var authors = Query(s => s.CleanTitle == cleanTitle)
+                                         .ToList();
+ 
+-            return ReturnSingleSeriesOrThrow(series);
++            return ReturnSingleAuthorOrThrow(authors);
+         }
+ 
+-        public Series FindByTitle(string cleanTitle, int year)
++        public Author FindByTitle(string cleanTitle, int year)
+         {
+             cleanTitle = cleanTitle.ToLowerInvariant();
+ 
+-            var series = Query(s => s.CleanTitle == cleanTitle && s.Year == year).ToList();
++            var authors = Query(s => s.CleanTitle == cleanTitle && s.Year == year).ToList();
+ 
+-            return ReturnSingleSeriesOrThrow(series);
++            return ReturnSingleAuthorOrThrow(series);
+         }
+ 
+-        public List<Series> FindByTitleInexact(string cleanTitle)
++        public List<Author> FindByTitleInexact(string cleanTitle)
+         {
+             var builder = Builder().Where($"instr(@cleanTitle, \"Series\".\"CleanTitle\")", new { cleanTitle = cleanTitle });
+ 
+@@ -64,28 +64,28 @@ public List<Series> FindByTitleInexact(string cleanTitle)
+             return Query(builder).ToList();
+         }
+ 
+-        public Series FindByTvdbId(int tvdbId)
++        public Author FindByGoodreadsId(int tvdbId)
+         {
+-            return Query(s => s.TvdbId == tvdbId).SingleOrDefault();
++            return Query(s => s.GoodreadsId == tvdbId).SingleOrDefault();
+         }
+ 
+-        public Series FindByTvRageId(int tvRageId)
++        public Author FindByOpenLibraryId(int tvRageId)
+         {
+-            return Query(s => s.TvRageId == tvRageId).SingleOrDefault();
++            return Query(s => s.OpenLibraryId == tvRageId).SingleOrDefault();
+         }
+ 
+-        public Series FindByImdbId(string imdbId)
++        public Author FindByIsbnId(string imdbId)
+         {
+-            return Query(s => s.ImdbId == imdbId).SingleOrDefault();
++            return Query(s => s.IsbnId == imdbId).SingleOrDefault();
+         }
+ 
+-        public Series FindByPath(string path)
++        public Author FindByPath(string path)
+         {
+             return Query(s => s.Path == path)
+                         .FirstOrDefault();
+         }
+ 
+-        public List<int> AllSeriesTvdbIds()
++        public List<int> AllAuthorGoodreadsIds()
+         {
+             using (var conn = _database.OpenConnection())
+             {
+@@ -93,7 +93,7 @@ public List<int> AllSeriesTvdbIds()
+             }
+         }
+ 
+-        public Dictionary<int, string> AllSeriesPaths()
++        public Dictionary<int, string> AllAuthorPaths()
+         {
+             using (var conn = _database.OpenConnection())
+             {
+@@ -102,7 +102,7 @@ public Dictionary<int, string> AllSeriesPaths()
+             }
+         }
+ 
+-        public Dictionary<int, List<int>> AllSeriesTags()
++        public Dictionary<int, List<int>> AllAuthorTags()
+         {
+             using (var conn = _database.OpenConnection())
+             {
+@@ -111,7 +111,7 @@ public Dictionary<int, List<int>> AllSeriesTags()
+             }
+         }
+ 
+-        private Series ReturnSingleSeriesOrThrow(List<Series> series)
++        private Series ReturnSingleAuthorOrThrow(List<Author> series)
+         {
+             if (series.Count == 0)
+             {
+diff --git a/src/NzbDrone.Core/Books/Book.cs b/src/NzbDrone.Core/Books/Book.cs
+index 31055c124..3ba1952b0 100644
+--- a/src/NzbDrone.Core/Books/Book.cs
++++ b/src/NzbDrone.Core/Books/Book.cs
+@@ -1,16 +1,25 @@
+-﻿using System.Collections.Generic;
++using System;
++using System.Collections.Generic;
+ using NzbDrone.Core.Datastore;
+ 
+ namespace NzbDrone.Core.Books
+ {
+-    public class Season : IEmbeddedDocument
++    public class Book : IEmbeddedDocument
+     {
+-        public Season()
++        public Book()
+         {
+             Images = new List<MediaCover.MediaCover>();
+         }
+ 
+-        public int SeasonNumber { get; set; }
++        public int BookNumber { get; set; }
++        public string Title { get; set; }
++        public string Isbn { get; set; }
++        public string Isbn13 { get; set; }
++        public int? PageCount { get; set; }
++        public DateTime? PublishDate { get; set; }
++        public string Publisher { get; set; }
++        public string Language { get; set; }
++        public string Overview { get; set; }
+         public bool Monitored { get; set; }
+         public List<MediaCover.MediaCover> Images { get; set; }
+     }
+diff --git a/src/NzbDrone.Core/Books/Edition.cs b/src/NzbDrone.Core/Books/Edition.cs
+index 546605874..65ea36c17 100644
+--- a/src/NzbDrone.Core/Books/Edition.cs
++++ b/src/NzbDrone.Core/Books/Edition.cs
+@@ -6,32 +6,32 @@
+ 
+ namespace NzbDrone.Core.Books
+ {
+-    public class Episode : ModelBase, IComparable
++    public class Edition : ModelBase, IComparable
+     {
+-        public Episode()
++        public Edition()
+         {
+             Images = new List<MediaCover.MediaCover>();
+         }
+ 
+-        public const string AIR_DATE_FORMAT = "yyyy-MM-dd";
++        public const string PUBLISH_DATE_FORMAT = "yyyy-MM-dd";
+ 
+-        public int SeriesId { get; set; }
+-        public int TvdbId { get; set; }
+-        public int EpisodeFileId { get; set; }
+-        public int SeasonNumber { get; set; }
+-        public int EpisodeNumber { get; set; }
++        public int AuthorId { get; set; }
++        public int GoodreadsEditionId { get; set; }
++        public int EditionFileId { get; set; }
++        public int BookNumber { get; set; }
++        public int EditionNumber { get; set; }
+         public string Title { get; set; }
+-        public string AirDate { get; set; }
+-        public DateTime? AirDateUtc { get; set; }
++        public string PublishDate { get; set; }
++        public DateTime? PublishDateUtc { get; set; }
+         public string Overview { get; set; }
+         public bool Monitored { get; set; }
+-        public int? AbsoluteEpisodeNumber { get; set; }
+-        public int? SceneAbsoluteEpisodeNumber { get; set; }
+-        public int? SceneSeasonNumber { get; set; }
+-        public int? SceneEpisodeNumber { get; set; }
+-        public int? AiredAfterSeasonNumber { get; set; }
+-        public int? AiredBeforeSeasonNumber { get; set; }
+-        public int? AiredBeforeEpisodeNumber { get; set; }
++        public int? AbsoluteEditionNumber { get; set; }
++        public int? SceneAbsoluteEditionNumber { get; set; }
++        public int? SceneBookNumber { get; set; }
++        public int? SceneEditionNumber { get; set; }
++        public string Isbn { get; set; }
++        public string Isbn13 { get; set; }
++        public string Format { get; set; }
+         public bool UnverifiedSceneNumbering { get; set; }
+         public Ratings Ratings { get; set; }
+         public List<MediaCover.MediaCover> Images { get; set; }
+@@ -39,14 +39,17 @@ public Episode()
+         public int Runtime { get; set; }
+         public string FinaleType { get; set; }
+ 
+-        public string SeriesTitle { get; private set; }
++        public string AuthorTitle { get; private set; }
++        public int? PageCount { get; set; }
++        public string Publisher { get; set; }
++        public string Language { get; set; }
+ 
+-        public LazyLoaded<EpisodeFile> EpisodeFile { get; set; }
++        public LazyLoaded<EditionFile> EditionFile { get; set; }
+ 
+-        public Series Series { get; set; }
++        public Author Author { get; set; }
+ 
+-        public bool HasFile => EpisodeFileId > 0;
+-        public bool AbsoluteEpisodeNumberAdded { get; set; }
++        public bool HasFile => EditionFileId > 0;
++        public bool AbsoluteEditionNumberAdded { get; set; }
+ 
+         public override string ToString()
+         {
+@@ -55,24 +58,24 @@ public override string ToString()
+ 
+         public int CompareTo(object obj)
+         {
+-            var other = (Episode)obj;
++            var other = (Edition)obj;
+ 
+-            if (SeasonNumber > other.SeasonNumber)
++            if (BookNumber > other.BookNumber)
+             {
+                 return 1;
+             }
+ 
+-            if (SeasonNumber < other.SeasonNumber)
++            if (BookNumber < other.BookNumber)
+             {
+                 return -1;
+             }
+ 
+-            if (EpisodeNumber > other.EpisodeNumber)
++            if (EditionNumber > other.EditionNumber)
+             {
+                 return 1;
+             }
+ 
+-            if (EpisodeNumber < other.EpisodeNumber)
++            if (EditionNumber < other.EditionNumber)
+             {
+                 return -1;
+             }
+diff --git a/src/NzbDrone.Core/Books/EditionRepository.cs b/src/NzbDrone.Core/Books/EditionRepository.cs
+index 1e7ca6371..2850ad87d 100644
+--- a/src/NzbDrone.Core/Books/EditionRepository.cs
++++ b/src/NzbDrone.Core/Books/EditionRepository.cs
+@@ -10,161 +10,161 @@
+ 
+ namespace NzbDrone.Core.Books
+ {
+-    public interface IEpisodeRepository : IBasicRepository<Episode>
++    public interface IEditionRepository : IBasicRepository<Edition>
+     {
+-        Episode Find(int seriesId, int season, int episodeNumber);
+-        Episode Find(int seriesId, int absoluteEpisodeNumber);
+-        List<Episode> Find(int seriesId, string date);
+-        List<Episode> GetEpisodes(int seriesId);
+-        List<Episode> GetEpisodes(int seriesId, int seasonNumber);
+-        List<Episode> GetEpisodesBySeriesIds(List<int> seriesIds);
+-        List<Episode> GetEpisodesBySceneSeason(int seriesId, int sceneSeasonNumber);
+-        List<Episode> GetEpisodeByFileId(int fileId);
+-        List<Episode> EpisodesWithFiles(int seriesId);
+-        PagingSpec<Episode> EpisodesWithoutFiles(PagingSpec<Episode> pagingSpec, bool includeSpecials);
+-        PagingSpec<Episode> EpisodesWhereCutoffUnmet(PagingSpec<Episode> pagingSpec, List<QualitiesBelowCutoff> qualitiesBelowCutoff, bool includeSpecials);
+-        List<Episode> FindEpisodesBySceneNumbering(int seriesId, int seasonNumber, int episodeNumber);
+-        List<Episode> FindEpisodesBySceneNumbering(int seriesId, int sceneAbsoluteEpisodeNumber);
+-        List<Episode> EpisodesBetweenDates(DateTime startDate, DateTime endDate, bool includeUnmonitored);
+-        void SetMonitoredFlat(Episode episode, bool monitored);
++        Edition Find(int seriesId, int season, int episodeNumber);
++        Edition Find(int seriesId, int absoluteEditionNumber);
++        List<Edition> Find(int seriesId, string date);
++        List<Edition> GetEditions(int seriesId);
++        List<Edition> GetEditions(int seriesId, int seasonNumber);
++        List<Edition> GetEditionsByAuthorIds(List<int> seriesIds);
++        List<Edition> GetEditionsBySceneSeason(int seriesId, int sceneBookNumber);
++        List<Edition> GetEditionByFileId(int fileId);
++        List<Edition> EditionsWithFiles(int seriesId);
++        PagingSpec<Edition> EditionsWithoutFiles(PagingSpec<Edition> pagingSpec, bool includeSpecials);
++        PagingSpec<Edition> EditionsWhereCutoffUnmet(PagingSpec<Edition> pagingSpec, List<QualitiesBelowCutoff> qualitiesBelowCutoff, bool includeSpecials);
++        List<Edition> FindEditionsBySceneNumbering(int seriesId, int seasonNumber, int episodeNumber);
++        List<Edition> FindEditionsBySceneNumbering(int seriesId, int sceneAbsoluteEditionNumber);
++        List<Edition> EditionsBetweenDates(DateTime startDate, DateTime endDate, bool includeUnmonitored);
++        void SetMonitoredFlat(Edition episode, bool monitored);
+         void SetMonitoredBySeason(int seriesId, int seasonNumber, bool monitored);
+         void SetMonitored(IEnumerable<int> ids, bool monitored);
+-        void SetFileId(Episode episode, int fileId);
+-        void ClearFileId(Episode episode, bool unmonitor);
++        void SetFileId(Edition episode, int fileId);
++        void ClearFileId(Edition episode, bool unmonitor);
+     }
+ 
+-    public class EpisodeRepository : BasicRepository<Episode>, IEpisodeRepository
++    public class EditionRepository : BasicRepository<Edition>, IEditionRepository
+     {
+         private readonly Logger _logger;
+ 
+-        public EpisodeRepository(IMainDatabase database, IEventAggregator eventAggregator, Logger logger)
++        public EditionRepository(IMainDatabase database, IEventAggregator eventAggregator, Logger logger)
+             : base(database, eventAggregator)
+         {
+             _logger = logger;
+         }
+ 
+-        protected override IEnumerable<Episode> PagedQuery(SqlBuilder builder) =>
+-            _database.QueryJoined<Episode, Series>(builder, (episode, series) =>
++        protected override IEnumerable<Edition> PagedQuery(SqlBuilder builder) =>
++            _database.QueryJoined<Edition, Series>(builder, (episode, series) =>
+             {
+                 episode.Series = series;
+                 return episode;
+             });
+ 
+-        public Episode Find(int seriesId, int season, int episodeNumber)
++        public Edition Find(int seriesId, int season, int episodeNumber)
+         {
+-            return Query(s => s.SeriesId == seriesId && s.SeasonNumber == season && s.EpisodeNumber == episodeNumber)
++            return Query(s => s.AuthorId == seriesId && s.BookNumber == season && s.EditionNumber == episodeNumber)
+                                .SingleOrDefault();
+         }
+ 
+-        public Episode Find(int seriesId, int absoluteEpisodeNumber)
++        public Edition Find(int seriesId, int absoluteEditionNumber)
+         {
+-            return Query(s => s.SeriesId == seriesId && s.AbsoluteEpisodeNumber == absoluteEpisodeNumber)
++            return Query(s => s.AuthorId == seriesId && s.AbsoluteEditionNumber == absoluteEditionNumber)
+                         .SingleOrDefault();
+         }
+ 
+-        public List<Episode> Find(int seriesId, string date)
++        public List<Edition> Find(int seriesId, string date)
+         {
+-            return Query(s => s.SeriesId == seriesId && s.AirDate == date).ToList();
++            return Query(s => s.AuthorId == seriesId && s.AirDate == date).ToList();
+         }
+ 
+-        public List<Episode> GetEpisodes(int seriesId)
++        public List<Edition> GetEditions(int seriesId)
+         {
+-            return Query(s => s.SeriesId == seriesId).ToList();
++            return Query(s => s.AuthorId == seriesId).ToList();
+         }
+ 
+-        public List<Episode> GetEpisodes(int seriesId, int seasonNumber)
++        public List<Edition> GetEditions(int seriesId, int seasonNumber)
+         {
+-            return Query(s => s.SeriesId == seriesId && s.SeasonNumber == seasonNumber).ToList();
++            return Query(s => s.AuthorId == seriesId && s.BookNumber == seasonNumber).ToList();
+         }
+ 
+-        public List<Episode> GetEpisodesBySeriesIds(List<int> seriesIds)
++        public List<Edition> GetEditionsByAuthorIds(List<int> seriesIds)
+         {
+-            return Query(s => seriesIds.Contains(s.SeriesId)).ToList();
++            return Query(s => seriesIds.Contains(s.AuthorId)).ToList();
+         }
+ 
+-        public List<Episode> GetEpisodesBySceneSeason(int seriesId, int seasonNumber)
++        public List<Edition> GetEditionsBySceneSeason(int seriesId, int seasonNumber)
+         {
+-            return Query(s => s.SeriesId == seriesId && s.SceneSeasonNumber == seasonNumber).ToList();
++            return Query(s => s.AuthorId == seriesId && s.SceneBookNumber == seasonNumber).ToList();
+         }
+ 
+-        public List<Episode> GetEpisodeByFileId(int fileId)
++        public List<Edition> GetEditionByFileId(int fileId)
+         {
+-            return Query(e => e.EpisodeFileId == fileId).ToList();
++            return Query(e => e.EditionFileId == fileId).ToList();
+         }
+ 
+-        public List<Episode> EpisodesWithFiles(int seriesId)
++        public List<Edition> EditionsWithFiles(int seriesId)
+         {
+             var builder = Builder()
+-                .Join<Episode, EpisodeFile>((e, ef) => e.EpisodeFileId == ef.Id)
+-                .Where<Episode>(e => e.SeriesId == seriesId);
++                .Join<Edition, EditionFile>((e, ef) => e.EditionFileId == ef.Id)
++                .Where<Edition>(e => e.AuthorId == seriesId);
+ 
+-            return _database.QueryJoined<Episode, EpisodeFile>(
++            return _database.QueryJoined<Edition, EditionFile>(
+                 builder,
+                 (episode, episodeFile) =>
+                 {
+-                    episode.EpisodeFile = episodeFile;
++                    episode.EditionFile = episodeFile;
+                     return episode;
+                 }).ToList();
+         }
+ 
+-        public PagingSpec<Episode> EpisodesWithoutFiles(PagingSpec<Episode> pagingSpec, bool includeSpecials)
++        public PagingSpec<Edition> EditionsWithoutFiles(PagingSpec<Edition> pagingSpec, bool includeSpecials)
+         {
+             var currentTime = DateTime.UtcNow;
+-            var startingSeasonNumber = 1;
++            var startingBookNumber = 1;
+ 
+             if (includeSpecials)
+             {
+-                startingSeasonNumber = 0;
++                startingBookNumber = 0;
+             }
+ 
+-            pagingSpec.Records = GetPagedRecords(EpisodesWithoutFilesBuilder(currentTime, startingSeasonNumber), pagingSpec, PagedQuery);
+-            pagingSpec.TotalRecords = GetPagedRecordCount(EpisodesWithoutFilesBuilder(currentTime, startingSeasonNumber).SelectCountDistinct<Episode>(x => x.Id), pagingSpec);
++            pagingSpec.Records = GetPagedRecords(EditionsWithoutFilesBuilder(currentTime, startingBookNumber), pagingSpec, PagedQuery);
++            pagingSpec.TotalRecords = GetPagedRecordCount(EditionsWithoutFilesBuilder(currentTime, startingBookNumber).SelectCountDistinct<Edition>(x => x.Id), pagingSpec);
+ 
+             return pagingSpec;
+         }
+ 
+-        public PagingSpec<Episode> EpisodesWhereCutoffUnmet(PagingSpec<Episode> pagingSpec, List<QualitiesBelowCutoff> qualitiesBelowCutoff, bool includeSpecials)
++        public PagingSpec<Edition> EditionsWhereCutoffUnmet(PagingSpec<Edition> pagingSpec, List<QualitiesBelowCutoff> qualitiesBelowCutoff, bool includeSpecials)
+         {
+-            var startingSeasonNumber = 1;
++            var startingBookNumber = 1;
+ 
+             if (includeSpecials)
+             {
+-                startingSeasonNumber = 0;
++                startingBookNumber = 0;
+             }
+ 
+-            pagingSpec.Records = GetPagedRecords(EpisodesWhereCutoffUnmetBuilder(qualitiesBelowCutoff, startingSeasonNumber), pagingSpec, PagedQuery);
++            pagingSpec.Records = GetPagedRecords(EditionsWhereCutoffUnmetBuilder(qualitiesBelowCutoff, startingBookNumber), pagingSpec, PagedQuery);
+ 
+-            var countTemplate = $"SELECT COUNT(*) FROM (SELECT /**select**/ FROM \"{TableMapping.Mapper.TableNameMapping(typeof(Episode))}\" /**join**/ /**innerjoin**/ /**leftjoin**/ /**where**/ /**groupby**/ /**having**/) AS \"Inner\"";
+-            pagingSpec.TotalRecords = GetPagedRecordCount(EpisodesWhereCutoffUnmetBuilder(qualitiesBelowCutoff, startingSeasonNumber).Select(typeof(Episode)), pagingSpec, countTemplate);
++            var countTemplate = $"SELECT COUNT(*) FROM (SELECT /**select**/ FROM \"{TableMapping.Mapper.TableNameMapping(typeof(Edition))}\" /**join**/ /**innerjoin**/ /**leftjoin**/ /**where**/ /**groupby**/ /**having**/) AS \"Inner\"";
++            pagingSpec.TotalRecords = GetPagedRecordCount(EditionsWhereCutoffUnmetBuilder(qualitiesBelowCutoff, startingBookNumber).Select(typeof(Edition)), pagingSpec, countTemplate);
+ 
+             return pagingSpec;
+         }
+ 
+-        public List<Episode> FindEpisodesBySceneNumbering(int seriesId, int seasonNumber, int episodeNumber)
++        public List<Edition> FindEditionsBySceneNumbering(int seriesId, int seasonNumber, int episodeNumber)
+         {
+-            return Query(s => s.SeriesId == seriesId && s.SceneSeasonNumber == seasonNumber && s.SceneEpisodeNumber == episodeNumber).ToList();
++            return Query(s => s.AuthorId == seriesId && s.SceneBookNumber == seasonNumber && s.SceneEditionNumber == episodeNumber).ToList();
+         }
+ 
+-        public List<Episode> FindEpisodesBySceneNumbering(int seriesId, int sceneAbsoluteEpisodeNumber)
++        public List<Edition> FindEditionsBySceneNumbering(int seriesId, int sceneAbsoluteEditionNumber)
+         {
+-            return Query(s => s.SeriesId == seriesId && s.SceneAbsoluteEpisodeNumber == sceneAbsoluteEpisodeNumber).ToList();
++            return Query(s => s.AuthorId == seriesId && s.SceneAbsoluteEditionNumber == sceneAbsoluteEditionNumber).ToList();
+         }
+ 
+-        public List<Episode> EpisodesBetweenDates(DateTime startDate, DateTime endDate, bool includeUnmonitored)
++        public List<Edition> EditionsBetweenDates(DateTime startDate, DateTime endDate, bool includeUnmonitored)
+         {
+-            var builder = Builder().Where<Episode>(rg => rg.AirDateUtc >= startDate && rg.AirDateUtc <= endDate);
++            var builder = Builder().Where<Edition>(rg => rg.AirDateUtc >= startDate && rg.AirDateUtc <= endDate);
+ 
+             if (!includeUnmonitored)
+             {
+-                builder = builder.Where<Episode>(e => e.Monitored == true)
+-                    .Join<Episode, Series>((l, r) => l.SeriesId == r.Id)
++                builder = builder.Where<Edition>(e => e.Monitored == true)
++                    .Join<Edition, Series>((l, r) => l.AuthorId == r.Id)
+                     .Where<Series>(e => e.Monitored == true);
+             }
+ 
+             return Query(builder);
+         }
+ 
+-        public void SetMonitoredFlat(Episode episode, bool monitored)
++        public void SetMonitoredFlat(Edition episode, bool monitored)
+         {
+             episode.Monitored = monitored;
+             SetFields(episode, p => p.Monitored);
+@@ -176,63 +176,63 @@ public void SetMonitoredBySeason(int seriesId, int seasonNumber, bool monitored)
+         {
+             using (var conn = _database.OpenConnection())
+             {
+-                conn.Execute("UPDATE \"Episodes\" SET \"Monitored\" = @monitored WHERE \"SeriesId\" = @seriesId AND \"SeasonNumber\" = @seasonNumber AND \"Monitored\" != @monitored",
++                conn.Execute("UPDATE \"Editions\" SET \"Monitored\" = @monitored WHERE \"AuthorId\" = @seriesId AND \"BookNumber\" = @seasonNumber AND \"Monitored\" != @monitored",
+                     new { seriesId = seriesId, seasonNumber = seasonNumber, monitored = monitored });
+             }
+         }
+ 
+         public void SetMonitored(IEnumerable<int> ids, bool monitored)
+         {
+-            var episodes = ids.Select(x => new Episode { Id = x, Monitored = monitored }).ToList();
++            var episodes = ids.Select(x => new Edition { Id = x, Monitored = monitored }).ToList();
+             SetFields(episodes, p => p.Monitored);
+         }
+ 
+-        public void SetFileId(Episode episode, int fileId)
++        public void SetFileId(Edition episode, int fileId)
+         {
+-            episode.EpisodeFileId = fileId;
++            episode.EditionFileId = fileId;
+ 
+-            SetFields(episode, ep => ep.EpisodeFileId);
++            SetFields(episode, ep => ep.EditionFileId);
+ 
+             ModelUpdated(episode, true);
+         }
+ 
+-        public void ClearFileId(Episode episode, bool unmonitor)
++        public void ClearFileId(Edition episode, bool unmonitor)
+         {
+-            episode.EpisodeFileId = 0;
++            episode.EditionFileId = 0;
+             episode.Monitored &= !unmonitor;
+ 
+-            SetFields(episode, ep => ep.EpisodeFileId, ep => ep.Monitored);
++            SetFields(episode, ep => ep.EditionFileId, ep => ep.Monitored);
+ 
+             ModelUpdated(episode, true);
+         }
+ 
+-        private SqlBuilder EpisodesWithoutFilesBuilder(DateTime currentTime, int startingSeasonNumber) => Builder()
+-            .Join<Episode, Series>((l, r) => l.SeriesId == r.Id)
+-            .Where<Episode>(f => f.EpisodeFileId == 0)
+-            .Where<Episode>(f => f.SeasonNumber >= startingSeasonNumber)
++        private SqlBuilder EditionsWithoutFilesBuilder(DateTime currentTime, int startingBookNumber) => Builder()
++            .Join<Edition, Series>((l, r) => l.AuthorId == r.Id)
++            .Where<Edition>(f => f.EditionFileId == 0)
++            .Where<Edition>(f => f.BookNumber >= startingBookNumber)
+             .Where(BuildAirDateUtcCutoffWhereClause(currentTime));
+ 
+         private string BuildAirDateUtcCutoffWhereClause(DateTime currentTime)
+         {
+             if (_database.DatabaseType == DatabaseType.PostgreSQL)
+             {
+-                return string.Format("\"Episodes\".\"AirDateUtc\" + make_interval(mins => \"Series\".\"Runtime\") <= '{0}'",
++                return string.Format("\"Editions\".\"AirDateUtc\" + make_interval(mins => \"Series\".\"Runtime\") <= '{0}'",
+                                      currentTime.ToString("yyyy-MM-dd HH:mm:ss"));
+             }
+ 
+-            return string.Format("datetime(strftime('%s', \"Episodes\".\"AirDateUtc\") + \"Series\".\"Runtime\" * 60,  'unixepoch') <= '{0}'",
++            return string.Format("datetime(strftime('%s', \"Editions\".\"AirDateUtc\") + \"Series\".\"Runtime\" * 60,  'unixepoch') <= '{0}'",
+                                  currentTime.ToString("yyyy-MM-dd HH:mm:ss"));
+         }
+ 
+-        private SqlBuilder EpisodesWhereCutoffUnmetBuilder(List<QualitiesBelowCutoff> qualitiesBelowCutoff, int startingSeasonNumber) => Builder()
+-            .Join<Episode, Series>((e, s) => e.SeriesId == s.Id)
+-            .LeftJoin<Episode, EpisodeFile>((e, ef) => e.EpisodeFileId == ef.Id)
+-            .Where<Episode>(e => e.EpisodeFileId != 0)
+-            .Where<Episode>(e => e.SeasonNumber >= startingSeasonNumber)
++        private SqlBuilder EditionsWhereCutoffUnmetBuilder(List<QualitiesBelowCutoff> qualitiesBelowCutoff, int startingBookNumber) => Builder()
++            .Join<Edition, Series>((e, s) => e.AuthorId == s.Id)
++            .LeftJoin<Edition, EditionFile>((e, ef) => e.EditionFileId == ef.Id)
++            .Where<Edition>(e => e.EditionFileId != 0)
++            .Where<Edition>(e => e.BookNumber >= startingBookNumber)
+             .Where(
+                 string.Format("({0})",
+                     BuildQualityCutoffWhereClause(qualitiesBelowCutoff)))
+-            .GroupBy<Episode>(e => e.Id)
++            .GroupBy<Edition>(e => e.Id)
+             .GroupBy<Series>(s => s.Id);
+ 
+         private string BuildQualityCutoffWhereClause(List<QualitiesBelowCutoff> qualitiesBelowCutoff)
+@@ -243,16 +243,16 @@ private string BuildQualityCutoffWhereClause(List<QualitiesBelowCutoff> qualitie
+             {
+                 foreach (var belowCutoff in profile.QualityIds)
+                 {
+-                    clauses.Add(string.Format("(\"Series\".\"QualityProfileId\" = {0} AND \"EpisodeFiles\".\"Quality\" LIKE '%_quality_: {1},%')", profile.ProfileId, belowCutoff));
++                    clauses.Add(string.Format("(\"Series\".\"QualityProfileId\" = {0} AND \"EditionFiles\".\"Quality\" LIKE '%_quality_: {1},%')", profile.ProfileId, belowCutoff));
+                 }
+             }
+ 
+             return string.Format("({0})", string.Join(" OR ", clauses));
+         }
+ 
+-        private Episode FindOneByAirDate(int seriesId, string date)
++        private Edition FindOneByAirDate(int seriesId, string date)
+         {
+-            var episodes = Query(s => s.SeriesId == seriesId && s.AirDate == date).ToList();
++            var episodes = Query(s => s.AuthorId == seriesId && s.AirDate == date).ToList();
+ 
+             if (!episodes.Any())
+             {
+@@ -266,12 +266,12 @@ private Episode FindOneByAirDate(int seriesId, string date)
+ 
+             _logger.Debug("Multiple episodes with the same air date were found, will exclude specials");
+ 
+-            var regularEpisodes = episodes.Where(e => e.SeasonNumber > 0).ToList();
++            var regularEditions = episodes.Where(e => e.BookNumber > 0).ToList();
+ 
+-            if (regularEpisodes.Count == 1)
++            if (regularEditions.Count == 1)
+             {
+                 _logger.Debug("Left with one episode after excluding specials");
+-                return regularEpisodes.First();
++                return regularEditions.First();
+             }
+ 
+             throw new InvalidOperationException("Multiple episodes with the same air date found");
+diff --git a/src/NzbDrone.Core/Datastore/Migration/218_readarrv2_initial_book_schema.cs b/src/NzbDrone.Core/Datastore/Migration/218_readarrv2_initial_book_schema.cs
+new file mode 100644
+index 000000000..f0b20e175
+--- /dev/null
++++ b/src/NzbDrone.Core/Datastore/Migration/218_readarrv2_initial_book_schema.cs
+@@ -0,0 +1,105 @@
++using FluentMigrator;
++using NzbDrone.Core.Datastore.Migration.Framework;
++
++namespace NzbDrone.Core.Datastore.Migration
++{
++    [Migration(218)]
++    public class ReadarrV2InitialBookSchema : NzbDroneMigrationBase
++    {
++        protected override void MainDbUpgrade()
++        {
++            // Rename Series table to Authors
++            Rename.Table("Series").To("Authors");
++            
++            // Rename columns in Authors table
++            Rename.Column("TvdbId").OnTable("Authors").To("GoodreadsId");
++            Rename.Column("TvRageId").OnTable("Authors").To("OpenLibraryId");
++            Rename.Column("ImdbId").OnTable("Authors").To("IsbnId");
++            Rename.Column("SeriesType").OnTable("Authors").To("AuthorType");
++            Rename.Column("Network").OnTable("Authors").To("Publisher");
++            Rename.Column("AirTime").OnTable("Authors").To("PublishTime");
++            Rename.Column("FirstAired").OnTable("Authors").To("FirstPublished");
++            Rename.Column("NextAiring").OnTable("Authors").To("NextPublishing");
++            Rename.Column("SeasonFolder").OnTable("Authors").To("BookFolder");
++            
++            // Add new columns for author-specific data
++            Alter.Table("Authors")
++                .AddColumn("Biography").AsString().Nullable()
++                .AddColumn("BornDate").AsDateTime().Nullable()
++                .AddColumn("DiedDate").AsDateTime().Nullable()
++                .AddColumn("Nationality").AsString().Nullable()
++                .AddColumn("Genres").AsString().Nullable();
++            
++            // Rename Seasons table to Books
++            Rename.Table("Seasons").To("Books");
++            Rename.Column("SeriesId").OnTable("Books").To("AuthorId");
++            Rename.Column("SeasonNumber").OnTable("Books").To("BookNumber");
++            
++            // Add book-specific columns
++            Alter.Table("Books")
++                .AddColumn("Title").AsString().Nullable()
++                .AddColumn("Isbn").AsString().Nullable()
++                .AddColumn("Isbn13").AsString().Nullable()
++                .AddColumn("PageCount").AsInt32().Nullable()
++                .AddColumn("PublishDate").AsDateTime().Nullable()
++                .AddColumn("Publisher").AsString().Nullable()
++                .AddColumn("Language").AsString().Nullable()
++                .AddColumn("Overview").AsString().Nullable();
++            
++            // Rename Episodes table to Editions
++            Rename.Table("Episodes").To("Editions");
++            Rename.Column("TvDbEpisodeId").OnTable("Editions").To("GoodreadsEditionId");
++            Rename.Column("SeriesId").OnTable("Editions").To("AuthorId");
++            Rename.Column("SeasonNumber").OnTable("Editions").To("BookNumber");
++            Rename.Column("EpisodeNumber").OnTable("Editions").To("EditionNumber");
++            Rename.Column("AirDate").OnTable("Editions").To("PublishDate");
++            Rename.Column("EpisodeFileId").OnTable("Editions").To("EditionFileId");
++            Rename.Column("AbsoluteEpisodeNumber").OnTable("Editions").To("AbsoluteEditionNumber");
++            Rename.Column("SceneAbsoluteEpisodeNumber").OnTable("Editions").To("SceneAbsoluteEditionNumber");
++            Rename.Column("SceneSeasonNumber").OnTable("Editions").To("SceneBookNumber");
++            Rename.Column("SceneEpisodeNumber").OnTable("Editions").To("SceneEditionNumber");
++            
++            // Add edition-specific columns
++            Alter.Table("Editions")
++                .AddColumn("Isbn").AsString().Nullable()
++                .AddColumn("Isbn13").AsString().Nullable()
++                .AddColumn("Format").AsString().Nullable()
++                .AddColumn("PageCount").AsInt32().Nullable()
++                .AddColumn("Publisher").AsString().Nullable()
++                .AddColumn("Language").AsString().Nullable();
++            
++            // Rename EpisodeFiles table to EditionFiles
++            Rename.Table("EpisodeFiles").To("EditionFiles");
++            Rename.Column("SeriesId").OnTable("EditionFiles").To("AuthorId");
++            Rename.Column("SeasonNumber").OnTable("EditionFiles").To("BookNumber");
++            
++            // Update History table
++            Rename.Column("EpisodeId").OnTable("History").To("EditionId");
++            Rename.Column("SeriesId").OnTable("History").To("AuthorId");
++            
++            // Update other tables that reference Series/Episodes
++            Execute.Sql("UPDATE Notifications SET OnDownload = OnDownload, OnGrab = OnGrab");
++            
++            // Rename columns in ImportLists table if it exists
++            IfDatabase("sqlite").Execute.Sql(@"
++                UPDATE sqlite_master 
++                SET sql = REPLACE(sql, 'SeriesType', 'AuthorType')
++                WHERE type = 'table' AND name = 'ImportLists' AND sql LIKE '%SeriesType%';
++            ");
++            
++            // Update Blocklist table if it exists
++            IfDatabase("sqlite").Execute.Sql(@"
++                UPDATE sqlite_master 
++                SET sql = REPLACE(REPLACE(sql, 'SeriesId', 'AuthorId'), 'EpisodeIds', 'EditionIds')
++                WHERE type = 'table' AND name = 'Blocklist';
++            ");
++            
++            // Update PendingReleases table if it exists
++            IfDatabase("sqlite").Execute.Sql(@"
++                UPDATE sqlite_master 
++                SET sql = REPLACE(REPLACE(sql, 'SeriesId', 'AuthorId'), 'EpisodeId', 'EditionId')
++                WHERE type = 'table' AND name = 'PendingReleases';
++            ");
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/src/NzbDrone.Core/Download/History/DownloadHistoryRepository.cs b/src/NzbDrone.Core/Download/History/DownloadHistoryRepository.cs
+index f91541b9b..ac4e04544 100644
+--- a/src/NzbDrone.Core/Download/History/DownloadHistoryRepository.cs
++++ b/src/NzbDrone.Core/Download/History/DownloadHistoryRepository.cs
+@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Download.History
+     public interface IDownloadHistoryRepository : IBasicRepository<DownloadHistory>
+     {
+         List<DownloadHistory> FindByDownloadId(string downloadId);
+-        void DeleteBySeriesIds(List<int> seriesIds);
++        void DeleteByAuthorIds(List<int> seriesIds);
+     }
+ 
+     public class DownloadHistoryRepository : BasicRepository<DownloadHistory>, IDownloadHistoryRepository
+@@ -23,9 +23,9 @@ public List<DownloadHistory> FindByDownloadId(string downloadId)
+             return Query(h => h.DownloadId == downloadId).OrderByDescending(h => h.Date).ToList();
+         }
+ 
+-        public void DeleteBySeriesIds(List<int> seriesIds)
++        public void DeleteByAuthorIds(List<int> seriesIds)
+         {
+-            Delete(r => seriesIds.Contains(r.SeriesId));
++            Delete(r => seriesIds.Contains(r.AuthorId));
+         }
+     }
+ }
+diff --git a/src/NzbDrone.Core/Download/Pending/PendingReleaseRepository.cs b/src/NzbDrone.Core/Download/Pending/PendingReleaseRepository.cs
+index 1db5cf5a7..db51b201d 100644
+--- a/src/NzbDrone.Core/Download/Pending/PendingReleaseRepository.cs
++++ b/src/NzbDrone.Core/Download/Pending/PendingReleaseRepository.cs
+@@ -7,8 +7,8 @@ namespace NzbDrone.Core.Download.Pending
+ {
+     public interface IPendingReleaseRepository : IBasicRepository<PendingRelease>
+     {
+-        void DeleteBySeriesIds(List<int> seriesIds);
+-        List<PendingRelease> AllBySeriesId(int seriesId);
++        void DeleteByAuthorIds(List<int> seriesIds);
++        List<PendingRelease> AllByAuthorId(int seriesId);
+         List<PendingRelease> WithoutFallback();
+     }
+ 
+@@ -19,20 +19,20 @@ public PendingReleaseRepository(IMainDatabase database, IEventAggregator eventAg
+         {
+         }
+ 
+-        public void DeleteBySeriesIds(List<int> seriesIds)
++        public void DeleteByAuthorIds(List<int> seriesIds)
+         {
+-            Delete(r => seriesIds.Contains(r.SeriesId));
++            Delete(r => seriesIds.Contains(r.AuthorId));
+         }
+ 
+-        public List<PendingRelease> AllBySeriesId(int seriesId)
++        public List<PendingRelease> AllByAuthorId(int seriesId)
+         {
+-            return Query(p => p.SeriesId == seriesId);
++            return Query(p => p.AuthorId == seriesId);
+         }
+ 
+         public List<PendingRelease> WithoutFallback()
+         {
+             var builder = new SqlBuilder(_database.DatabaseType)
+-                .InnerJoin<PendingRelease, Series>((p, s) => p.SeriesId == s.Id)
++                .InnerJoin<PendingRelease, Series>((p, s) => p.AuthorId == s.Id)
+                 .Where<PendingRelease>(p => p.Reason != PendingReleaseReason.Fallback);
+ 
+             return Query(builder);
+diff --git a/src/NzbDrone.Core/Extras/Files/ExtraFileRepository.cs b/src/NzbDrone.Core/Extras/Files/ExtraFileRepository.cs
+index c29cb926c..701b453a1 100644
+--- a/src/NzbDrone.Core/Extras/Files/ExtraFileRepository.cs
++++ b/src/NzbDrone.Core/Extras/Files/ExtraFileRepository.cs
+@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Extras.Files
+     public interface IExtraFileRepository<TExtraFile> : IBasicRepository<TExtraFile>
+         where TExtraFile : ExtraFile, new()
+     {
+-        void DeleteForSeriesIds(List<int> seriesIds);
++        void DeleteForAuthorIds(List<int> seriesIds);
+         void DeleteForSeason(int seriesId, int seasonNumber);
+         void DeleteForEditionFile(int editionFileId);
+         List<TExtraFile> GetFilesBySeries(int seriesId);
+@@ -25,14 +25,14 @@ public ExtraFileRepository(IMainDatabase database, IEventAggregator eventAggrega
+         {
+         }
+ 
+-        public void DeleteForSeriesIds(List<int> seriesIds)
++        public void DeleteForAuthorIds(List<int> seriesIds)
+         {
+-            Delete(c => seriesIds.Contains(c.SeriesId));
++            Delete(c => seriesIds.Contains(c.AuthorId));
+         }
+ 
+         public void DeleteForSeason(int seriesId, int seasonNumber)
+         {
+-            Delete(c => c.SeriesId == seriesId && c.SeasonNumber == seasonNumber);
++            Delete(c => c.AuthorId == seriesId && c.BookNumber == seasonNumber);
+         }
+ 
+         public void DeleteForEditionFile(int editionFileId)
+@@ -42,12 +42,12 @@ public void DeleteForEditionFile(int editionFileId)
+ 
+         public List<TExtraFile> GetFilesBySeries(int seriesId)
+         {
+-            return Query(c => c.SeriesId == seriesId);
++            return Query(c => c.AuthorId == seriesId);
+         }
+ 
+         public List<TExtraFile> GetFilesBySeason(int seriesId, int seasonNumber)
+         {
+-            return Query(c => c.SeriesId == seriesId && c.SeasonNumber == seasonNumber);
++            return Query(c => c.AuthorId == seriesId && c.BookNumber == seasonNumber);
+         }
+ 
+         public List<TExtraFile> GetFilesByEditionFile(int editionFileId)
+@@ -57,7 +57,7 @@ public List<TExtraFile> GetFilesByEditionFile(int editionFileId)
+ 
+         public TExtraFile FindByPath(int seriesId, string path)
+         {
+-            return Query(c => c.SeriesId == seriesId && c.RelativePath == path).SingleOrDefault();
++            return Query(c => c.AuthorId == seriesId && c.RelativePath == path).SingleOrDefault();
+         }
+     }
+ }
+diff --git a/src/NzbDrone.Core/History/HistoryRepository.cs b/src/NzbDrone.Core/History/HistoryRepository.cs
+index e51ef5eed..0d9b89b24 100644
+--- a/src/NzbDrone.Core/History/HistoryRepository.cs
++++ b/src/NzbDrone.Core/History/HistoryRepository.cs
+@@ -16,7 +16,7 @@ public interface IHistoryRepository : IBasicRepository<EpisodeHistory>
+         List<EpisodeHistory> FindByDownloadId(string downloadId);
+         List<EpisodeHistory> GetBySeries(int seriesId, EpisodeHistoryEventType? eventType);
+         List<EpisodeHistory> GetBySeason(int seriesId, int seasonNumber, EpisodeHistoryEventType? eventType);
+-        List<EpisodeHistory> FindDownloadHistory(int idSeriesId, QualityModel quality);
++        List<EpisodeHistory> FindDownloadHistory(int idAuthorId, QualityModel quality);
+         void DeleteForSeries(List<int> seriesIds);
+         List<EpisodeHistory> Since(DateTime date, EpisodeHistoryEventType? eventType);
+         PagingSpec<EpisodeHistory> GetPaged(PagingSpec<EpisodeHistory> pagingSpec, int[] languages, int[] qualities);
+@@ -53,9 +53,9 @@ public List<EpisodeHistory> FindByDownloadId(string downloadId)
+ 
+         public List<EpisodeHistory> GetBySeries(int seriesId, EpisodeHistoryEventType? eventType)
+         {
+-            var builder = Builder().Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
++            var builder = Builder().Join<EpisodeHistory, Series>((h, a) => h.AuthorId == a.Id)
+                                    .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id)
+-                                   .Where<EpisodeHistory>(h => h.SeriesId == seriesId);
++                                   .Where<EpisodeHistory>(h => h.AuthorId == seriesId);
+ 
+             if (eventType.HasValue)
+             {
+@@ -69,8 +69,8 @@ public List<EpisodeHistory> GetBySeason(int seriesId, int seasonNumber, EpisodeH
+         {
+             var builder = Builder()
+                 .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id)
+-                .Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
+-                .Where<EpisodeHistory>(h => h.SeriesId == seriesId && h.Episode.SeasonNumber == seasonNumber);
++                .Join<EpisodeHistory, Series>((h, a) => h.AuthorId == a.Id)
++                .Where<EpisodeHistory>(h => h.AuthorId == seriesId && h.Episode.BookNumber == seasonNumber);
+ 
+             if (eventType.HasValue)
+             {
+@@ -86,10 +86,10 @@ public List<EpisodeHistory> GetBySeason(int seriesId, int seasonNumber, EpisodeH
+                 }).OrderByDescending(h => h.Date).ToList();
+         }
+ 
+-        public List<EpisodeHistory> FindDownloadHistory(int idSeriesId, QualityModel quality)
++        public List<EpisodeHistory> FindDownloadHistory(int idAuthorId, QualityModel quality)
+         {
+             return Query(h =>
+-                 h.SeriesId == idSeriesId &&
++                 h.AuthorId == idAuthorId &&
+                  h.Quality == quality &&
+                  (h.EventType == EpisodeHistoryEventType.Grabbed ||
+                  h.EventType == EpisodeHistoryEventType.DownloadFailed ||
+@@ -99,13 +99,13 @@ public List<EpisodeHistory> FindDownloadHistory(int idSeriesId, QualityModel qua
+ 
+         public void DeleteForSeries(List<int> seriesIds)
+         {
+-            Delete(c => seriesIds.Contains(c.SeriesId));
++            Delete(c => seriesIds.Contains(c.AuthorId));
+         }
+ 
+         public List<EpisodeHistory> Since(DateTime date, EpisodeHistoryEventType? eventType)
+         {
+             var builder = Builder()
+-                .Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
++                .Join<EpisodeHistory, Series>((h, a) => h.AuthorId == a.Id)
+                 .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id)
+                 .Where<EpisodeHistory>(x => x.Date >= date);
+ 
+@@ -135,7 +135,7 @@ public PagingSpec<EpisodeHistory> GetPaged(PagingSpec<EpisodeHistory> pagingSpec
+         private SqlBuilder PagedBuilder(int[] languages, int[] qualities)
+         {
+             var builder = Builder()
+-                .Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
++                .Join<EpisodeHistory, Series>((h, a) => h.AuthorId == a.Id)
+                 .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id);
+ 
+             if (languages is { Length: > 0 })
+diff --git a/src/NzbDrone.Core/MediaFiles/EpisodeFile.cs b/src/NzbDrone.Core/MediaFiles/EditionFile.cs
+similarity index 85%
+rename from src/NzbDrone.Core/MediaFiles/EpisodeFile.cs
+rename to src/NzbDrone.Core/MediaFiles/EditionFile.cs
+index cd810a457..7b9425049 100644
+--- a/src/NzbDrone.Core/MediaFiles/EpisodeFile.cs
++++ b/src/NzbDrone.Core/MediaFiles/EditionFile.cs
+@@ -6,14 +6,14 @@
+ using NzbDrone.Core.MediaFiles.MediaInfo;
+ using NzbDrone.Core.Parser.Model;
+ using NzbDrone.Core.Qualities;
+-using NzbDrone.Core.Tv;
++using NzbDrone.Core.Books;
+ 
+ namespace NzbDrone.Core.MediaFiles
+ {
+-    public class EpisodeFile : ModelBase
++    public class EditionFile : ModelBase
+     {
+-        public int SeriesId { get; set; }
+-        public int SeasonNumber { get; set; }
++        public int AuthorId { get; set; }
++        public int BookNumber { get; set; }
+         public string RelativePath { get; set; }
+         public string Path { get; set; }
+         public long Size { get; set; }
+@@ -25,8 +25,8 @@ public class EpisodeFile : ModelBase
+         public QualityModel Quality { get; set; }
+         public IndexerFlags IndexerFlags { get; set; }
+         public MediaInfoModel MediaInfo { get; set; }
+-        public LazyLoaded<List<Episode>> Episodes { get; set; }
+-        public LazyLoaded<Series> Series { get; set; }
++        public LazyLoaded<List<Edition>> Editions { get; set; }
++        public LazyLoaded<Author> Author { get; set; }
+         public List<Language> Languages { get; set; }
+         public ReleaseType ReleaseType { get; set; }
+ 
+diff --git a/src/NzbDrone.Core/MediaFiles/MediaFileRepository.cs b/src/NzbDrone.Core/MediaFiles/MediaFileRepository.cs
+index b6e06d32c..408a0f3f4 100644
+--- a/src/NzbDrone.Core/MediaFiles/MediaFileRepository.cs
++++ b/src/NzbDrone.Core/MediaFiles/MediaFileRepository.cs
+@@ -5,52 +5,52 @@
+ 
+ namespace NzbDrone.Core.MediaFiles
+ {
+-    public interface IMediaFileRepository : IBasicRepository<EpisodeFile>
++    public interface IMediaFileRepository : IBasicRepository<EditionFile>
+     {
+-        List<EpisodeFile> GetFilesBySeries(int seriesId);
+-        List<EpisodeFile> GetFilesBySeriesIds(List<int> seriesIds);
+-        List<EpisodeFile> GetFilesBySeason(int seriesId, int seasonNumber);
+-        List<EpisodeFile> GetFilesWithoutMediaInfo();
+-        List<EpisodeFile> GetFilesWithRelativePath(int seriesId, string relativePath);
++        List<EditionFile> GetFilesBySeries(int seriesId);
++        List<EditionFile> GetFilesByAuthorIds(List<int> seriesIds);
++        List<EditionFile> GetFilesBySeason(int seriesId, int seasonNumber);
++        List<EditionFile> GetFilesWithoutMediaInfo();
++        List<EditionFile> GetFilesWithRelativePath(int seriesId, string relativePath);
+         void DeleteForSeries(List<int> seriesIds);
+     }
+ 
+-    public class MediaFileRepository : BasicRepository<EpisodeFile>, IMediaFileRepository
++    public class MediaFileRepository : BasicRepository<EditionFile>, IMediaFileRepository
+     {
+         public MediaFileRepository(IMainDatabase database, IEventAggregator eventAggregator)
+             : base(database, eventAggregator)
+         {
+         }
+ 
+-        public List<EpisodeFile> GetFilesBySeries(int seriesId)
++        public List<EditionFile> GetFilesBySeries(int seriesId)
+         {
+-            return Query(c => c.SeriesId == seriesId).ToList();
++            return Query(c => c.AuthorId == seriesId).ToList();
+         }
+ 
+-        public List<EpisodeFile> GetFilesBySeriesIds(List<int> seriesIds)
++        public List<EditionFile> GetFilesByAuthorIds(List<int> seriesIds)
+         {
+-            return Query(c => seriesIds.Contains(c.SeriesId)).ToList();
++            return Query(c => seriesIds.Contains(c.AuthorId)).ToList();
+         }
+ 
+-        public List<EpisodeFile> GetFilesBySeason(int seriesId, int seasonNumber)
++        public List<EditionFile> GetFilesBySeason(int seriesId, int seasonNumber)
+         {
+-            return Query(c => c.SeriesId == seriesId && c.SeasonNumber == seasonNumber).ToList();
++            return Query(c => c.AuthorId == seriesId && c.BookNumber == seasonNumber).ToList();
+         }
+ 
+-        public List<EpisodeFile> GetFilesWithoutMediaInfo()
++        public List<EditionFile> GetFilesWithoutMediaInfo()
+         {
+             return Query(c => c.MediaInfo == null).ToList();
+         }
+ 
+-        public List<EpisodeFile> GetFilesWithRelativePath(int seriesId, string relativePath)
++        public List<EditionFile> GetFilesWithRelativePath(int seriesId, string relativePath)
+         {
+-            return Query(c => c.SeriesId == seriesId && c.RelativePath == relativePath)
++            return Query(c => c.AuthorId == seriesId && c.RelativePath == relativePath)
+                         .ToList();
+         }
+ 
+         public void DeleteForSeries(List<int> seriesIds)
+         {
+-            Delete(x => seriesIds.Contains(x.SeriesId));
++            Delete(x => seriesIds.Contains(x.AuthorId));
+         }
+     }
+ }
+-- 
+2.48.1
+
