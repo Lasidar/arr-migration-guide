@@ -9,4 +9,4 @@
 	url = https://github.com/Readarr/Readarr.git
 [submodule "readarrv2"]
 	path = readarrv2
-	url = https://github.com/Sonarr/Sonarr.git
+	url = https://github.com/Lasidar/Readarrv2_test.git
