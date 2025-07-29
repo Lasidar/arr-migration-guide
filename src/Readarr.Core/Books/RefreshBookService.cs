@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using Readarr.Common.Extensions;
+using Readarr.Common.Instrumentation.Extensions;
 using Readarr.Core.Books.Commands;
 using Readarr.Core.Books.Events;
 using Readarr.Core.Exceptions;
@@ -98,7 +99,7 @@ namespace Readarr.Core.Books
             book.CleanTitle = book.Metadata.Value.Title.CleanBookTitle();
             book.SortTitle = book.Metadata.Value.SortTitle;
 
-            _mediaCoverService.ConvertToLocalUrls(book.Id, MediaCoverEntity.Book, book.Metadata.Value.Images);
+            _mediaCoverService.ConvertToLocalUrls(book.Id, book.Metadata.Value.Images);
 
             // Update editions
             updated |= RefreshEditions(book, bookInfo.Editions);

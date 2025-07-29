@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using Readarr.Common.Extensions;
+using Readarr.Common.Instrumentation.Extensions;
 using Readarr.Core.Books.Commands;
 using Readarr.Core.Books.Events;
 using Readarr.Core.Exceptions;
@@ -70,7 +71,7 @@ namespace Readarr.Core.Books
         {
             var updated = false;
 
-            _logger.ProgressInfo("Updating info for {0}", author.Name);
+            _logger.ProgressInfo("Updating info for {0}", author.Metadata.Value?.Name);
 
             Author authorInfo;
             List<Book> books;
@@ -85,9 +86,9 @@ namespace Readarr.Core.Books
                 }
                 catch (AuthorNotFoundException)
                 {
-                    _logger.Error($"Author '{author.Name}' (GoodreadsId {author.Metadata.Value.ForeignAuthorId}) was not found, it may have been removed from Goodreads.");
+                    _logger.Error($"Author '{author.Metadata.Value?.Name}' (GoodreadsId {author.Metadata.Value.ForeignAuthorId}) was not found, it may have been removed from Goodreads.");
                     
-                    author.Metadata.Value.Status = AuthorStatusType.Ended;
+                    author.Metadata.Value.Status = AuthorStatusType.Deceased;
                     _authorMetadataService.Upsert(author.Metadata.Value);
                     
                     _eventAggregator.PublishEvent(new AuthorDeletedEvent(author, false, false));
@@ -103,7 +104,7 @@ namespace Readarr.Core.Books
 
             if (author.Metadata.Value.ForeignAuthorId != authorInfo.Metadata.Value.ForeignAuthorId)
             {
-                _logger.Warn($"Author '{author.Name}' (GoodreadsId {author.Metadata.Value.ForeignAuthorId}) was replaced with '{authorInfo.Name}' (GoodreadsId {authorInfo.Metadata.Value.ForeignAuthorId})");
+                _logger.Warn($"Author '{author.Metadata.Value?.Name}' (GoodreadsId {author.Metadata.Value.ForeignAuthorId}) was replaced with '{authorInfo.Metadata.Value?.Name}' (GoodreadsId {authorInfo.Metadata.Value.ForeignAuthorId})");
                 
                 author.Metadata.Value.ForeignAuthorId = authorInfo.Metadata.Value.ForeignAuthorId;
             }
@@ -120,14 +121,14 @@ namespace Readarr.Core.Books
             author.Tags = authorInfo.Tags;
             author.Monitored = authorInfo.Monitored;
 
-            _mediaCoverService.ConvertToLocalUrls(author.Id, MediaCoverEntity.Author, author.Metadata.Value.Images);
+            _mediaCoverService.ConvertToLocalUrls(author.Id, author.Metadata.Value.Images);
 
             // Update books
             updated |= RefreshBooks(author, books, forceUpdateFileTags);
 
             _authorService.UpdateAuthor(author);
 
-            _logger.Debug("Finished author refresh for {0}", author.Name);
+            _logger.Debug("Finished author refresh for {0}", author.Metadata.Value?.Name);
 
             return updated;
         }
@@ -176,12 +177,11 @@ namespace Readarr.Core.Books
             
             if (newBooks.Any())
             {
-                _logger.Info($"Adding {newBooks.Count} new books for author {author.Name}");
+                _logger.Info($"Adding {newBooks.Count} new books for author {author.Metadata.Value?.Name}");
                 
                 foreach (var newBook in newBooks)
                 {
                     newBook.AuthorId = author.Id;
-                    newBook.AuthorMetadataId = author.AuthorMetadataId;
                     newBook.Added = DateTime.UtcNow;
                     newBook.LastInfoSync = DateTime.UtcNow;
                     newBook.Monitored = author.Monitored;
@@ -196,7 +196,7 @@ namespace Readarr.Core.Books
             
             if (booksToDelete.Any())
             {
-                _logger.Info($"Removing {booksToDelete.Count} books for author {author.Name}");
+                _logger.Info($"Removing {booksToDelete.Count} books for author {author.Metadata.Value?.Name}");
                 _bookService.DeleteBooks(booksToDelete.Select(b => b.Id).ToList(), false, false);
                 updated = true;
             }
@@ -220,13 +220,13 @@ namespace Readarr.Core.Books
                     }
                     catch (Exception e)
                     {
-                        _logger.Error(e, $"Couldn't refresh info for {author.Name}");
+                        _logger.Error(e, $"Couldn't refresh info for {author.Metadata.Value?.Name}");
                         throw;
                     }
                 }
                 else
                 {
-                    _logger.Info($"Skipping refresh of author: {author.Name}");
+                    _logger.Info($"Skipping refresh of author: {author.Metadata.Value?.Name}");
                 }
             }
             else
@@ -243,12 +243,12 @@ namespace Readarr.Core.Books
                         }
                         catch (Exception e)
                         {
-                            _logger.Error(e, $"Couldn't refresh info for {author.Name}");
+                            _logger.Error(e, $"Couldn't refresh info for {author.Metadata.Value?.Name}");
                         }
                     }
                     else
                     {
-                        _logger.Info($"Skipping refresh of author: {author.Name}");
+                        _logger.Info($"Skipping refresh of author: {author.Metadata.Value?.Name}");
                     }
                 }
             }

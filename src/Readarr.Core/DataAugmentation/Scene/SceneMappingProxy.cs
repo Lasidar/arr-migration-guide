@@ -13,11 +13,13 @@ namespace Readarr.Core.DataAugmentation.Scene
     {
         private readonly IHttpClient _httpClient;
         private readonly IHttpRequestBuilderFactory _requestBuilder;
+        private readonly Logger _logger;
 
-        public SceneMappingProxy(IHttpClient httpClient, IReadarrCloudRequestBuilder requestBuilder)
+        public SceneMappingProxy(IHttpClient httpClient, IReadarrCloudRequestBuilder requestBuilder, Logger logger)
         {
             _httpClient = httpClient;
-            _requestBuilder = requestBuilder.Services;
+            _requestBuilder = requestBuilder.BookInfo;
+            _logger = logger;
         }
 
         public List<SceneMapping> Fetch()

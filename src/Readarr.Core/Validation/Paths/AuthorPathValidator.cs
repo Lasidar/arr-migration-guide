@@ -1,4 +1,5 @@
 using FluentValidation.Validators;
+using Readarr.Common.Extensions;
 using Readarr.Core.Books;
 
 namespace Readarr.Core.Validation.Paths

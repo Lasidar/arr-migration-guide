@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -160,7 +160,7 @@ namespace Readarr.Core.DataAugmentation.Scene
 
                         foreach (var sceneMapping in mappings)
                         {
-                            sceneMapping.ParseTerm = sceneMapping.Title.CleanSeriesTitle();
+                            sceneMapping.ParseTerm = Parser.Parser.CleanSeriesTitle(sceneMapping.Title);
                             sceneMapping.Type = sceneMappingProvider.GetType().Name;
                         }
 
@@ -189,7 +189,7 @@ namespace Readarr.Core.DataAugmentation.Scene
                 RefreshCache();
             }
 
-            var candidates = _getTvdbIdCache.Find(seriesTitle.CleanSeriesTitle());
+            var candidates = _getTvdbIdCache.Find(Parser.Parser.CleanSeriesTitle(seriesTitle));
 
             if (candidates == null)
             {

@@ -21,7 +21,7 @@ namespace Readarr.Core.DataAugmentation.DailySeries
         public DailySeriesDataProxy(IHttpClient httpClient, IReadarrCloudRequestBuilder requestBuilder, Logger logger)
         {
             _httpClient = httpClient;
-            _requestBuilder = requestBuilder.Services;
+            _requestBuilder = requestBuilder.BookInfo;
             _logger = logger;
         }
 

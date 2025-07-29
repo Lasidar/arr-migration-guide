@@ -5,6 +5,7 @@ using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
 using NLog;
+using Readarr.Common.Disk;
 using Readarr.Common.EnsureThat;
 using Readarr.Core.Books.Events;
 using Readarr.Core.Exceptions;
@@ -12,6 +13,8 @@ using Readarr.Core.MetadataSource;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Organizer;
 using Readarr.Core.Parser;
+using Readarr.Core.Validation;
+using Readarr.Core.Validation.Paths;
 
 namespace Readarr.Core.Books
 {
