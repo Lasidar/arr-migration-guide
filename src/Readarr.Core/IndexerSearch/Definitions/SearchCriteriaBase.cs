@@ -18,9 +18,52 @@ namespace Readarr.Core.IndexerSearch.Definitions
         public List<string> SceneTitles { get; set; }
         public List<Episode> Episodes { get; set; }
         public SearchMode SearchMode { get; set; }
-        public virtual bool MonitoredEpisodesOnly { get; set; }
+        public virtual bool MonitoredBooksOnly { get; set; }
         public virtual bool UserInvokedSearch { get; set; }
         public virtual bool InteractiveSearch { get; set; }
+
+        public List<int> IndexerIds { get; set; }
+        public List<int> Categories { get; set; }
+
+        public SearchCriteriaBase()
+        {
+            IndexerIds = new List<int>();
+            Categories = new List<int>();
+        }
+
+        public bool IsRssSearch => !UserInvokedSearch && !InteractiveSearch;
+
+        public override string ToString()
+        {
+            var args = new List<string>();
+
+            if (MonitoredBooksOnly)
+            {
+                args.Add("MonitoredOnly");
+            }
+
+            if (UserInvokedSearch)
+            {
+                args.Add("UserInvoked");
+            }
+
+            if (InteractiveSearch)
+            {
+                args.Add("Interactive");
+            }
+
+            if (IndexerIds.Any())
+            {
+                args.Add($"IndexerIds: {string.Join(",", IndexerIds)}");
+            }
+
+            if (Categories.Any())
+            {
+                args.Add($"Categories: {string.Join(",", Categories)}");
+            }
+
+            return string.Join(", ", args);
+        }
 
         public List<string> AllSceneTitles => SceneTitles.Concat(CleanSceneTitles).Distinct().ToList();
         public List<string> CleanSceneTitles => SceneTitles.Select(GetCleanSceneTitle).Distinct().ToList();
