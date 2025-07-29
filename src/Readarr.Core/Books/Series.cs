@@ -8,7 +8,6 @@ namespace Readarr.Core.Books
     {
         public Series()
         {
-            Books = new List<SeriesBookLink>();
         }
 
         // Series Identifiers
@@ -26,7 +25,7 @@ namespace Readarr.Core.Books
         
         // Relationships
         public LazyLoaded<Author> Author { get; set; }
-        public List<SeriesBookLink> Books { get; set; }
+        public LazyLoaded<List<SeriesBookLink>> Books { get; set; }
 
         public override string ToString()
         {
