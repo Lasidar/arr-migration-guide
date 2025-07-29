@@ -10,7 +10,9 @@ namespace Readarr.Core.MediaCover
         Fanart = 3,
         Screenshot = 4,
         Headshot = 5,
-        Clearlogo = 6
+        Clearlogo = 6,
+        Cover = 7,
+        Disc = 8
     }
 
     public class MediaCover : IEmbeddedDocument

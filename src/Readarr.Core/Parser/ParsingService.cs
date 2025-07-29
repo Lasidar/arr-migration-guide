@@ -379,7 +379,7 @@ namespace Readarr.Core.Parser
 
             if (searchCriteria != null)
             {
-                if (searchCriteria.Series.CleanTitle == parsedEpisodeInfo.SeriesTitle.CleanSeriesTitle())
+                if (searchCriteria.Series.CleanTitle == Parser.Parser.CleanSeriesTitle(parsedEpisodeInfo.SeriesTitle))
                 {
                     return new FindSeriesResult(searchCriteria.Series, SeriesMatchType.Title);
                 }

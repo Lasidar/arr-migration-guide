@@ -147,7 +147,7 @@ namespace Readarr.Core.Tv
                 newSeries.Path = Path.Combine(newSeries.RootFolderPath, folderName);
             }
 
-            newSeries.CleanTitle = newSeries.Title.CleanSeriesTitle();
+            newSeries.CleanTitle = Parser.Parser.CleanSeriesTitle(newSeries.Title);
             newSeries.SortTitle = SeriesTitleNormalizer.Normalize(newSeries.Title, newSeries.TvdbId);
             newSeries.Added = DateTime.UtcNow;
 

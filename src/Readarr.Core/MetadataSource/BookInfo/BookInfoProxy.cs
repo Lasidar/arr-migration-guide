@@ -207,7 +207,7 @@ namespace Readarr.Core.MetadataSource.BookInfo
                 CleanName = resource.AuthorName.CleanAuthorName(),
                 SortName = resource.AuthorNameLastFirst,
                 Monitored = true,
-                MonitorNewItems = MonitorTypes.All
+                MonitorNewItems = (NewItemMonitorTypes)MonitorTypes.All
             };
 
             if (resource.Books != null)
@@ -284,7 +284,6 @@ namespace Readarr.Core.MetadataSource.BookInfo
         {
             var book = new Book
             {
-                ForeignBookId = resource.ForeignBookId,
                 Monitored = true,
                 AnyEditionOk = true,
                 Metadata = MapBookMetadata(resource),
@@ -323,8 +322,8 @@ namespace Readarr.Core.MetadataSource.BookInfo
                 Overview = resource.Overview,
                 Publisher = resource.Publisher,
                 ReleaseDate = resource.ReleaseDate,
-                PageCount = resource.PageCount,
-                Images = resource.Images?.Select(MapImage).ToList() ?? new List<MediaCover>(),
+                PageCount = resource.PageCount ?? 0,
+                Images = resource.Images?.Select(MapImage).ToList() ?? new List<Readarr.Core.MediaCover.MediaCover>(),
                 Genres = resource.Genres ?? new List<string>(),
                 Links = resource.Links?.Select(MapLink).ToList() ?? new List<Links>(),
                 Ratings = resource.Ratings != null ? MapRatings(resource.Ratings) : new Ratings()
@@ -345,9 +344,9 @@ namespace Readarr.Core.MetadataSource.BookInfo
                 Format = resource.Format,
                 IsEbook = resource.IsEbook,
                 Publisher = resource.Publisher,
-                PageCount = resource.PageCount,
+                PageCount = resource.PageCount ?? 0,
                 ReleaseDate = resource.ReleaseDate,
-                Images = resource.Images?.Select(MapImage).ToList() ?? new List<MediaCover>(),
+                Images = resource.Images?.Select(MapImage).ToList() ?? new List<Readarr.Core.MediaCover.MediaCover>(),
                 Ratings = resource.Ratings != null ? MapRatings(resource.Ratings) : new Ratings(),
                 Monitored = true
             };
