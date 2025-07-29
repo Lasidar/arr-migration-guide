@@ -126,8 +126,8 @@ namespace Readarr.Core.Books
     public class AddAuthorValidator : AbstractValidator<Author>, IAddAuthorValidator
     {
         public AddAuthorValidator(IAuthorService authorService,
-                                 IAuthorAncestorValidator authorAncestorValidator,
-                                 IAuthorPathValidator pathExistsValidator)
+                                 AuthorAncestorValidator authorAncestorValidator,
+                                 AuthorPathValidator pathExistsValidator)
         {
             RuleFor(a => a.Metadata.Value).NotNull().SetValidator(new AuthorMetadataValidator());
             RuleFor(a => a.Path).Cascade(CascadeMode.Stop)

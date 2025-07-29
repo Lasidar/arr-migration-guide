@@ -24,6 +24,7 @@ namespace Readarr.Core.Books
         // Basic Info
         public string Name { get; set; }
         public string SortName { get; set; }
+        public string NameLastFirst { get; set; }
         public string NameSlug { get; set; }
         
         // Biographical Info

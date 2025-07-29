@@ -38,11 +38,13 @@ namespace Readarr.Core.Books
         private bool ShouldRefresh(Book book)
         {
             // Check if book needs refresh based on last refresh time
-            var refreshInterval = _configService.MetadataRefreshInterval;
+            var refreshInterval = 30; // Default to 30 days if config not available
+            // TODO: Get from config when IConfigService has MetadataRefreshInterval
+            // var refreshInterval = _configService.MetadataRefreshInterval;
             
             if (book.LastInfoSync == null)
             {
-                _logger.Trace($"Book {book.Title} has never been refreshed");
+                _logger.Trace($"Book {book.Metadata.Value?.Title} has never been refreshed");
                 return true;
             }
 
@@ -50,11 +52,11 @@ namespace Readarr.Core.Books
             
             if (timeSinceLastRefresh > TimeSpan.FromDays(refreshInterval))
             {
-                _logger.Trace($"Book {book.Title} last refreshed {timeSinceLastRefresh.TotalDays:N1} days ago, should refresh");
+                _logger.Trace($"Book {book.Metadata.Value?.Title} last refreshed {timeSinceLastRefresh.TotalDays:N1} days ago, should refresh");
                 return true;
             }
 
-            _logger.Trace($"Book {book.Title} last refreshed {timeSinceLastRefresh.TotalDays:N1} days ago, skipping");
+            _logger.Trace($"Book {book.Metadata.Value?.Title} last refreshed {timeSinceLastRefresh.TotalDays:N1} days ago, skipping");
             return false;
         }
     }

@@ -18,7 +18,12 @@ namespace Readarr.Core.Books
         Dictionary<int, string> AllAuthorPaths();
         Dictionary<int, List<int>> AllAuthorTags();
         Author FindById(int authorId);
-        List<Author> GetAuthorsWithoutMetadata();
+        Author GetAuthorByMetadataId(int authorMetadataId);
+        List<Author> GetAllAuthors();
+        List<Author> AllForTag(int tagId);
+        List<Author> GetAuthorsByIds(List<int> authorIds);
+        List<Author> GetRecentlyAdded(int count);
+        void SetMonitoredFlag(List<int> authorIds, bool monitored);
     }
 
     public class AuthorRepository : BasicRepository<Author>, IAuthorRepository
@@ -117,6 +122,55 @@ namespace Readarr.Core.Books
         public Author FindById(int authorId)
         {
             return Query(a => a.Id == authorId).SingleOrDefault();
+        }
+
+        public Author GetAuthorByMetadataId(int authorMetadataId)
+        {
+            return Query(a => a.AuthorMetadataId == authorMetadataId).SingleOrDefault();
+        }
+
+        public List<Author> GetAllAuthors()
+        {
+            return Query(a => true).ToList();
+        }
+
+        public List<Author> AllForTag(int tagId)
+        {
+            var sql = @"SELECT Authors.* FROM Authors 
+                        JOIN AuthorTags ON Authors.Id = AuthorTags.AuthorId 
+                        WHERE AuthorTags.TagId = @tagId";
+
+            using (var conn = _database.OpenConnection())
+            {
+                return conn.Query<Author>(sql, new { tagId }).ToList();
+            }
+        }
+
+        public List<Author> GetAuthorsByIds(List<int> authorIds)
+        {
+            var sql = "SELECT * FROM Authors WHERE Id IN @authorIds";
+            using (var conn = _database.OpenConnection())
+            {
+                return conn.Query<Author>(sql, new { authorIds }).ToList();
+            }
+        }
+
+        public List<Author> GetRecentlyAdded(int count)
+        {
+            var sql = "SELECT * FROM Authors ORDER BY Added DESC LIMIT @count";
+            using (var conn = _database.OpenConnection())
+            {
+                return conn.Query<Author>(sql, new { count }).ToList();
+            }
+        }
+
+        public void SetMonitoredFlag(List<int> authorIds, bool monitored)
+        {
+            var sql = "UPDATE Authors SET Monitored = @monitored WHERE Id IN @authorIds";
+            using (var conn = _database.OpenConnection())
+            {
+                conn.Execute(sql, new { monitored, authorIds });
+            }
         }
 
         public List<Author> GetAuthorsWithoutMetadata()

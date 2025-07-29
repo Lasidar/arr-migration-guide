@@ -68,7 +68,7 @@ namespace Readarr.Core.Books
 
         public Author GetAuthorByMetadataId(int authorMetadataId)
         {
-            return _authorRepository.Query(a => a.AuthorMetadataId == authorMetadataId).SingleOrDefault();
+            return _authorRepository.GetAuthorByMetadataId(authorMetadataId);
         }
 
         public List<Author> GetAuthors(IEnumerable<int> authorIds)
@@ -159,7 +159,6 @@ namespace Readarr.Core.Books
             var storedAuthor = GetAuthor(author.Id);
 
             var updatedAuthor = _authorRepository.Update(author);
-            _autoTaggingService.TagsUpdated();
 
             if (publishUpdatedEvent)
             {
@@ -175,18 +174,17 @@ namespace Readarr.Core.Books
 
             foreach (var author in authors)
             {
-                _logger.Trace("Updating: {0}", author.Name);
+                _logger.Trace("Updating: {0}", author.Metadata.Value?.Name);
 
                 if (!useExistingRelativeFolder && author.Path.IsNotNullOrWhiteSpace())
                 {
                     author.Path = _authorPathBuilder.BuildPath(author, false);
                 }
 
-                _logger.Trace("Changing path for {0} to {1}", author.Name, author.Path);
+                _logger.Trace("Changing path for {0} to {1}", author.Metadata.Value?.Name, author.Path);
             }
 
             _authorRepository.UpdateMany(authors);
-            _autoTaggingService.TagsUpdated();
             _logger.Debug("{0} authors updated", authors.Count);
 
             return authors;
@@ -202,32 +200,33 @@ namespace Readarr.Core.Books
             _authorRepository.SetFields(author, a => a.AddOptions);
         }
 
-        public bool UpdateTags(Author author)
+        private bool UpdateTags(Author author)
         {
             var tagsAdded = new HashSet<int>();
             var tagsRemoved = new HashSet<int>();
 
-            var changes = _autoTaggingService.GetTagChanges(author);
+            // TODO: Implement auto-tagging for authors
+            // var changes = _autoTaggingService.GetTagChanges(author);
 
-            foreach (var tag in changes.TagsToAdd)
-            {
-                if (!author.Tags.Contains(tag))
-                {
-                    author.Tags.Add(tag);
-                    tagsAdded.Add(tag);
-                }
-            }
+            // foreach (var tag in changes.TagsToAdd)
+            // {
+            //     if (!author.Tags.Contains(tag))
+            //     {
+            //         author.Tags.Add(tag);
+            //         tagsAdded.Add(tag);
+            //     }
+            // }
 
-            foreach (var tag in changes.TagsToRemove)
-            {
-                author.Tags.Remove(tag);
-                tagsRemoved.Add(tag);
-            }
+            // foreach (var tag in changes.TagsToRemove)
+            // {
+            //     author.Tags.Remove(tag);
+            //     tagsRemoved.Add(tag);
+            // }
 
             if (tagsAdded.Any() || tagsRemoved.Any())
             {
                 _authorRepository.Update(author);
-                _logger.Debug("Updated tags for '{0}'. Added: {1}, Removed: {2}", author.Name, tagsAdded.Count, tagsRemoved.Count);
+                _logger.Debug("Updated tags for '{0}'. Added: {1}, Removed: {2}", author.Metadata.Value?.Name, tagsAdded.Count, tagsRemoved.Count);
 
                 return true;
             }
