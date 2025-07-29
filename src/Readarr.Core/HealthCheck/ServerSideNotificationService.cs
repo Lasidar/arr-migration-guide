@@ -30,7 +30,7 @@ namespace Readarr.Core.HealthCheck
 
         public override HealthCheck Check()
         {
-            var request = _cloudRequestBuilder.Services.Create()
+            var request = _cloudRequestBuilder.BookInfo.Create()
                 .Resource("/notification")
                 .AddQueryParam("version", BuildInfo.Version)
                 .AddQueryParam("os", OsInfo.Os.ToString().ToLowerInvariant())

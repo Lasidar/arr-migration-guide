@@ -272,7 +272,7 @@ namespace Readarr.Core.IndexerSearch
                 }
 
                 // By default we do a alt title search in case indexers don't have the release properly indexed.  Services can override this behavior.
-                var searchMode = sceneMapping.SearchMode ?? ((mappingSceneSeasonNumber.HasValue && series.CleanTitle != sceneMapping.SearchTerm.CleanSeriesTitle()) ? SearchMode.SearchTitle : SearchMode.Default);
+                var searchMode = sceneMapping.SearchMode ?? ((mappingSceneSeasonNumber.HasValue && series.CleanTitle != Parser.Parser.CleanSeriesTitle(sceneMapping.SearchTerm)) ? SearchMode.SearchTitle : SearchMode.Default);
 
                 if (ignoreSceneNumbering)
                 {

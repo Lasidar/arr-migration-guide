@@ -18,7 +18,7 @@ namespace Readarr.Core.Housekeeping.Housekeepers
         {
             _logger.Debug("Running cleanup of orphaned book files");
 
-            var mapper = _database.GetDataMapper();
+            using var mapper = _database.OpenConnection();
 
             // Delete book files that don't have a matching book
             mapper.ExecuteNonQuery(@"DELETE FROM ""BookFiles""

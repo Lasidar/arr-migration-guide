@@ -8,6 +8,7 @@ namespace Readarr.Core.MediaFiles
     {
         // Book methods
         void Delete(BookFile bookFile);
+        void Delete(BookFile bookFile, DeleteMediaFileReason reason);
         BookFile Get(int id);
         List<BookFile> Get(IEnumerable<int> ids);
         List<BookFile> GetFilesByAuthor(int authorId);

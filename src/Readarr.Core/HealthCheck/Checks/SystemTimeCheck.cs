@@ -25,7 +25,7 @@ namespace Readarr.Core.HealthCheck.Checks
         {
             try
             {
-                var request = _cloudRequestBuilder.Create()
+                var request = _cloudRequestBuilder.BookInfo.Create()
                     .Resource("/time")
                     .Build();
 

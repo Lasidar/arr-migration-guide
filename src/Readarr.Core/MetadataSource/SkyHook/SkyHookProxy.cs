@@ -32,11 +32,10 @@ namespace Readarr.Core.MetadataSource.SkyHook
                             Logger logger)
         {
             _httpClient = httpClient;
-            _requestBuilder = requestBuilder.SkyHookTvdb;
+            _requestBuilder = requestBuilder.BookInfo;
             _logger = logger;
             _seriesService = seriesService;
             _dailySeriesService = dailySeriesService;
-            _requestBuilder = requestBuilder.SkyHookTvdb;
         }
 
         public Tuple<Series, List<Episode>> GetSeriesInfo(int tvdbSeriesId)

@@ -18,7 +18,7 @@ namespace Readarr.Core.Housekeeping.Housekeepers
         {
             _logger.Debug("Running cleanup of orphaned metadata");
 
-            var mapper = _database.GetDataMapper();
+            using var mapper = _database.OpenConnection();
 
             // Delete author metadata not linked to any authors
             mapper.ExecuteNonQuery(@"DELETE FROM ""AuthorMetadata""

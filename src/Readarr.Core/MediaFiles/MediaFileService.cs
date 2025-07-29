@@ -110,6 +110,12 @@ namespace Readarr.Core.MediaFiles
             throw new NotImplementedException();
         }
 
+        public void Delete(BookFile bookFile, DeleteMediaFileReason reason)
+        {
+            // TODO: Implement book file deletion with reason
+            throw new NotImplementedException();
+        }
+
         BookFile IMediaFileService.Get(int id)
         {
             // TODO: Implement book file retrieval

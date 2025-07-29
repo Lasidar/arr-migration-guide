@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Readarr.Core.Parser;
 using Readarr.Core.Tv;
 
@@ -19,7 +19,7 @@ namespace Readarr.Core.Housekeeping.Housekeepers
 
             series.ForEach(s =>
             {
-                var cleanTitle = s.Title.CleanSeriesTitle();
+                var cleanTitle = Parser.Parser.CleanSeriesTitle(s.Title);
                 if (s.CleanTitle != cleanTitle)
                 {
                     s.CleanTitle = cleanTitle;
