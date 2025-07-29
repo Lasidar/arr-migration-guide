@@ -1,30 +1,30 @@
-# <img width="24px" src="./Logo/256.png" alt="Sonarr"></img> Sonarr
+# <img width="24px" src="./Logo/256.png" alt="Readarr"></img> Readarr v2
 
-[![Translated](https://translate.servarr.com/widget/servarr/sonarr/svg-badge.svg)](https://translate.servarr.com/engage/servarr/)
-[![Backers on Open Collective](https://opencollective.com/Sonarr/backers/badge.svg)](#backers)
-[![Sponsors on Open Collective](https://opencollective.com/Sonarr/sponsors/badge.svg)](#sponsors)
-[![Mega Sponsors on Open Collective](https://opencollective.com/Sonarr/megasponsors/badge.svg)](#mega-sponsors)
+[![Translated](https://translate.servarr.com/widget/servarr/readarr/svg-badge.svg)](https://translate.servarr.com/engage/servarr/)
+[![Backers on Open Collective](https://opencollective.com/Readarr/backers/badge.svg)](#backers)
+[![Sponsors on Open Collective](https://opencollective.com/Readarr/sponsors/badge.svg)](#sponsors)
+[![Mega Sponsors on Open Collective](https://opencollective.com/Readarr/megasponsors/badge.svg)](#mega-sponsors)
 
-Sonarr is a PVR for Usenet and BitTorrent users. It can monitor multiple RSS feeds for new episodes of your favorite shows and will grab, sort and rename them. It can also be configured to automatically upgrade the quality of files already downloaded when a better quality format becomes available.
+Readarr v2 is a PVR for Usenet and BitTorrent users. It can monitor multiple RSS feeds for new books from your favorite authors and will grab, sort and rename them. It can also be configured to automatically upgrade the quality of files already downloaded when a better quality format becomes available.
 
 ## Getting Started
 
-- [Download/Installation](https://sonarr.tv/#downloads-v3)
-- [FAQ](https://wiki.servarr.com/sonarr/faq)
-- [Wiki](https://wiki.servarr.com/Sonarr)
-- [API Documentation](https://sonarr.tv/docs/api)
-- [Donate](https://sonarr.tv/donate)
+- [Download/Installation](https://readarr.com/#downloads-v2)
+- [FAQ](https://wiki.servarr.com/readarr/faq)
+- [Wiki](https://wiki.servarr.com/Readarr)
+- [API Documentation](https://readarr.com/docs/api)
+- [Donate](https://readarr.com/donate)
 
 ## Support
 
 Note: GitHub Issues are for Bugs and Feature Requests Only
 
-- [Forums](https://forums.sonarr.tv/)
+- [Forums](https://forums.readarr.com/)
 - [Discord](https://discord.gg/M6BvZn5)
-- [GitHub - Bugs and Feature Requests Only](https://github.com/Sonarr/Sonarr/issues)
-- [IRC](https://web.libera.chat/?channels=#sonarr)
-- [Reddit](https://www.reddit.com/r/sonarr)
-- [Wiki](https://wiki.servarr.com/sonarr)
+- [GitHub - Bugs and Feature Requests Only](https://github.com/Readarr/Readarr/issues)
+- [IRC](https://web.libera.chat/?channels=#readarr)
+- [Reddit](https://www.reddit.com/r/readarr)
+- [Wiki](https://wiki.servarr.com/readarr)
 
 ## Features
 

@@ -1,5 +1,5 @@
 ﻿using RestSharp;
-using Sonarr.Api.V3.Indexers;
+using Readarr.Api.V3.Indexers;
 
 namespace NzbDrone.Integration.Test.Client
 {

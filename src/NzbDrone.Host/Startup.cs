@@ -26,14 +26,14 @@ using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Host.AccessControl;
 using NzbDrone.Http.Authentication;
 using NzbDrone.SignalR;
-using Sonarr.Api.V3.System;
-using Sonarr.Api.V5.Series;
-using Sonarr.Http;
-using Sonarr.Http.Authentication;
-using Sonarr.Http.ClientSchema;
-using Sonarr.Http.ErrorManagement;
-using Sonarr.Http.Frontend;
-using Sonarr.Http.Middleware;
+using Readarr.Api.V3.System;
+using Readarr.Api.V5.Series;
+using Readarr.Http;
+using Readarr.Http.Authentication;
+using Readarr.Http.ClientSchema;
+using Readarr.Http.ErrorManagement;
+using Readarr.Http.Frontend;
+using Readarr.Http.Middleware;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace NzbDrone.Host

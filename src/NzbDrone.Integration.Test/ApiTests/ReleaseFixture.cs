@@ -2,7 +2,7 @@
 using System.Net;
 using FluentAssertions;
 using NUnit.Framework;
-using Sonarr.Api.V3.Indexers;
+using Readarr.Api.V3.Indexers;
 
 namespace NzbDrone.Integration.Test.ApiTests
 {

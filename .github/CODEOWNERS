@@ -1,0 +1,11 @@
+# Readarr v2 Code Owners
+# This file defines who is responsible for code in this repository
+#
+# Each line is a file pattern followed by one or more owners.
+# The owners can be GitHub usernames or team names.
+#
+# Examples:
+# /src/NzbDrone.Core/ @readarr-team/core
+# /src/Readarr.Core.Books/ @readarr-team/core
+# /src/Readarr.Api.V1/ @readarr-team/api
+# /frontend/ @readarr-team/frontend

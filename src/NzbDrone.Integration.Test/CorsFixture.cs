@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using RestSharp;
-using Sonarr.Http.Extensions;
+using Readarr.Http.Extensions;
 
 namespace NzbDrone.Integration.Test
 {
