@@ -7,7 +7,7 @@ using Readarr.Core.Profiles.Releases;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {
-    public class ReleaseRestrictionsSpecification : IDownloadDecisionEngineSpecification
+    public class ReleaseRestrictionsSpecification : IDualDownloadDecisionEngineSpecification
     {
         private readonly Logger _logger;
         private readonly IReleaseProfileService _releaseProfileService;
@@ -23,13 +23,28 @@ namespace Readarr.Core.DecisionEngine.Specifications
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
 
+        public virtual DownloadSpecDecision IsSatisfiedBy(RemoteBook subject, ReleaseDecisionInformation information)
+        {
+            _logger.Debug("Checking if release meets restrictions: {0}", subject);
+
+            var title = subject.Release.Title;
+            var releaseProfiles = _releaseProfileService.EnabledForTags(subject.Author.Tags, subject.Release.IndexerId);
+            
+            return CheckRestrictions(title, releaseProfiles);
+        }
+
         public virtual DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {
             _logger.Debug("Checking if release meets restrictions: {0}", subject);
 
             var title = subject.Release.Title;
             var releaseProfiles = _releaseProfileService.EnabledForTags(subject.Series.Tags, subject.Release.IndexerId);
+            
+            return CheckRestrictions(title, releaseProfiles);
+        }
 
+        private DownloadSpecDecision CheckRestrictions(string title, IEnumerable<ReleaseProfile> releaseProfiles)
+        {
             var required = releaseProfiles.Where(r => r.Required.Any());
             var ignored = releaseProfiles.Where(r => r.Ignored.Any());
 
@@ -59,7 +74,7 @@ namespace Readarr.Core.DecisionEngine.Specifications
                 }
             }
 
-            _logger.Debug("[{0}] No restrictions apply, allowing", subject);
+            _logger.Debug("[{0}] No restrictions apply, allowing", title);
             return DownloadSpecDecision.Accept();
         }
 
