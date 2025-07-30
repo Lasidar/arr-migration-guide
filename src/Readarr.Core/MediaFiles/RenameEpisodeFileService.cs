@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -184,7 +184,9 @@ namespace Readarr.Core.MediaFiles
             var episodeFiles = _mediaFileService.Get(message.Files);
 
             _logger.ProgressInfo("Renaming {0} files for {1}", episodeFiles.Count, series.Title);
-            var renamedFiles = RenameFiles(episodeFiles, series);
+            // TODO: This service is TV-specific and needs to be replaced with RenameBookFileService
+            // var renamedFiles = RenameFiles(episodeFiles, series);
+            var renamedFiles = new List<RenameEpisodeFilePreview>();
             _logger.ProgressInfo("{0} selected episode files renamed for {1}", renamedFiles.Count, series.Title);
 
             _eventAggregator.PublishEvent(new RenameCompletedEvent());

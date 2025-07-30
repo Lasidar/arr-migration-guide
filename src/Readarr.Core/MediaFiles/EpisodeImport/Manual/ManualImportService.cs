@@ -225,7 +225,7 @@ namespace Readarr.Core.MediaFiles.EpisodeImport.Manual
                     ReleaseType = releaseType
                 };
 
-                return MapItem(new ImportDecision(localEpisode, new ImportRejection(ImportRejectionReason.NoEpisodes, "Episodes not selected")), rootFolder, downloadId, null);
+                return MapItem(new ImportDecision(localEpisode, new ImportRejection("Episodes not selected", RejectionType.Permanent)), rootFolder, downloadId, null);
             }
 
             return ProcessFile(rootFolder, rootFolder, path, downloadId, series);
@@ -337,7 +337,7 @@ namespace Readarr.Core.MediaFiles.EpisodeImport.Manual
                     localEpisode.Size = _diskProvider.GetFileSize(file);
 
                     return MapItem(new ImportDecision(localEpisode,
-                        new ImportRejection(ImportRejectionReason.UnknownSeries, "Unknown Series")),
+                        new ImportRejection("Unknown Series", RejectionType.Permanent)),
                         rootFolder,
                         downloadId,
                         null);

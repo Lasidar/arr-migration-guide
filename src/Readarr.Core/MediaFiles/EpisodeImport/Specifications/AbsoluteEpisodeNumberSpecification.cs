@@ -27,7 +27,7 @@ namespace Readarr.Core.MediaFiles.EpisodeImport.Specifications
                 return ImportSpecDecision.Accept();
             }
 
-            if (!_buildFileNames.RequiresAbsoluteEpisodeNumber())
+            if (!_buildFileNames.RequiresAbsoluteEpisodeNumber(localEpisode.Series, localEpisode.Episodes))
             {
                 _logger.Debug("File name format does not require absolute episode number, skipping check");
                 return ImportSpecDecision.Accept();

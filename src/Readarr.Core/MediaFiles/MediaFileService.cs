@@ -99,7 +99,8 @@ namespace Readarr.Core.MediaFiles
 
         public void HandleAsync(SeriesDeletedEvent message)
         {
-            var files = GetFilesBySeries(message.Series.Id);
+            var seriesIds = message.Series.Select(s => s.Id).ToList();
+            var files = GetFilesBySeriesIds(seriesIds);
             _mediaFileRepository.DeleteMany(files);
         }
 
