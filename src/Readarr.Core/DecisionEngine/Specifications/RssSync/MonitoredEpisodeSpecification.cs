@@ -18,11 +18,12 @@ namespace Readarr.Core.DecisionEngine.Specifications.RssSync
 
         public virtual DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {
-            if (information.SearchCriteria is { MonitoredEpisodesOnly: false })
-            {
-                _logger.Debug("Skipping monitored check during search");
-                return DownloadSpecDecision.Accept();
-            }
+            // TODO: This is TV-specific and should be replaced with MonitoredBookSpecification
+            // if (information.SearchCriteria is { MonitoredEpisodesOnly: false })
+            // {
+            //     _logger.Debug("Skipping monitored check during search");
+            //     return DownloadSpecDecision.Accept();
+            // }
 
             if (!subject.Series.Monitored)
             {

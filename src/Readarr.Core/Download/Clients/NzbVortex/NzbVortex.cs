@@ -58,7 +58,7 @@ namespace Readarr.Core.Download.Clients.NzbVortex
             {
                 var queueItem = new DownloadClientItem();
 
-                queueItem.DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, false);
+                queueItem.DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this);
                 queueItem.DownloadId = vortexQueueItem.AddUUID ?? vortexQueueItem.Id.ToString();
                 queueItem.Category = vortexQueueItem.GroupName;
                 queueItem.Title = vortexQueueItem.UiTitle;

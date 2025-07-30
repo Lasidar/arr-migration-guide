@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using NLog;
 using Readarr.Common.EnsureThat;
@@ -6,18 +7,21 @@ using Readarr.Common.Extensions;
 using Readarr.Common.Http;
 using Readarr.Common.Instrumentation.Extensions;
 using Readarr.Common.TPL;
+using Readarr.Core.Configuration;
 using Readarr.Core.Download.Clients;
 using Readarr.Core.Download.Pending;
 using Readarr.Core.Exceptions;
 using Readarr.Core.Indexers;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.MediaFiles.Events;
 
 namespace Readarr.Core.Download
 {
     public interface IDownloadService
     {
         Task DownloadReport(RemoteEpisode remoteEpisode, int? downloadClientId);
+        Task DownloadReport(RemoteBook remoteBook, int? downloadClientId);
     }
 
     public class DownloadService : IDownloadService
@@ -140,6 +144,39 @@ namespace Readarr.Core.Download
 
             _logger.ProgressInfo("Report sent to {0}. Indexer {1}. {2}", downloadClient.Definition.Name, remoteEpisode.Release.Indexer, downloadTitle);
             _eventAggregator.PublishEvent(episodeGrabbedEvent);
+        }
+
+        public async Task DownloadReport(RemoteBook remoteBook, int? downloadClientId)
+        {
+            var filterBlockedClients = remoteBook.Release.PendingReleaseReason == PendingReleaseReason.DownloadClientUnavailable;
+
+            var tags = remoteBook.Author?.Tags;
+
+            var downloadClient = downloadClientId.HasValue
+                ? _downloadClientProvider.Get(downloadClientId.Value)
+                : _downloadClientProvider.GetDownloadClient(remoteBook.Release.DownloadProtocol, remoteBook.Release.IndexerId, filterBlockedClients, tags);
+
+            await DownloadReport(remoteBook, downloadClient);
+        }
+
+        private async Task DownloadReport(RemoteBook remoteBook, IDownloadClient downloadClient)
+        {
+            Ensure.That(remoteBook.Author, () => remoteBook.Author).IsNotNull();
+            Ensure.That(remoteBook.Books, () => remoteBook.Books).HasItems();
+
+            var downloadTitle = remoteBook.Release.Title;
+
+            if (downloadClient == null)
+            {
+                throw new DownloadClientUnavailableException($"{remoteBook.Release.DownloadProtocol} Download client isn't configured yet");
+            }
+
+            // TODO: Implement book-specific download logic
+            // For now, just pass through to the download client
+            var downloadClientId = await downloadClient.Download(remoteBook, false);
+            var authorId = remoteBook.Author.Id;
+
+            _eventAggregator.PublishEvent(new BookGrabbedEvent(remoteBook));
         }
     }
 }

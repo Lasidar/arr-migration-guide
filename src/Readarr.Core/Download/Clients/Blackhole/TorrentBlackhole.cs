@@ -91,7 +91,7 @@ namespace Readarr.Core.Download.Clients.Blackhole
             {
                 var queueItem = new DownloadClientItem
                 {
-                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, false),
+                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this),
                     DownloadId = Definition.Name + "_" + item.DownloadId,
                     Category = "sonarr",
                     Title = item.Title,

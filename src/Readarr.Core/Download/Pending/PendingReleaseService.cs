@@ -88,25 +88,25 @@ namespace Readarr.Core.Download.Pending
 
         public void AddMany(List<Tuple<DownloadDecision, PendingReleaseReason>> decisions)
         {
-            foreach (var seriesDecisions in decisions.GroupBy(v => v.Item1.RemoteEpisode.Series.Id))
+            foreach (var authorDecisions in decisions.GroupBy(v => v.Item1.RemoteBook.Author.Id))
             {
-                var series = seriesDecisions.First().Item1.RemoteEpisode.Series;
-                var alreadyPending = _repository.AllBySeriesId(series.Id);
+                var author = authorDecisions.First().Item1.RemoteBook.Author;
+                var alreadyPending = _repository.AllBySeriesId(author.Id);
 
-                alreadyPending = IncludeRemoteEpisodes(alreadyPending, seriesDecisions.ToDictionaryIgnoreDuplicates(v => v.Item1.RemoteEpisode.Release.Title, v => v.Item1.RemoteEpisode));
+                alreadyPending = IncludeRemoteEpisodes(alreadyPending, authorDecisions.ToDictionaryIgnoreDuplicates(v => v.Item1.RemoteBook.Release.Title, v => v.Item1.RemoteBook));
                 var alreadyPendingByEpisode = CreateEpisodeLookup(alreadyPending);
 
-                foreach (var pair in seriesDecisions)
+                foreach (var pair in authorDecisions)
                 {
                     var decision = pair.Item1;
                     var reason = pair.Item2;
 
-                    var episodeIds = decision.RemoteEpisode.Episodes.Select(e => e.Id);
+                    var episodeIds = decision.RemoteBook.Episodes.Select(e => e.Id);
 
                     var existingReports = episodeIds.SelectMany(v => alreadyPendingByEpisode[v])
                                                     .Distinct().ToList();
 
-                    var matchingReports = existingReports.Where(MatchingReleasePredicate(decision.RemoteEpisode.Release)).ToList();
+                    var matchingReports = existingReports.Where(MatchingReleasePredicate(decision.RemoteBook.Release)).ToList();
 
                     if (matchingReports.Any())
                     {
@@ -116,23 +116,23 @@ namespace Readarr.Core.Download.Pending
                         {
                             if (matchingReport.Reason == PendingReleaseReason.DownloadClientUnavailable)
                             {
-                                _logger.Debug("The release {0} is already pending with reason {1}, not changing reason", decision.RemoteEpisode, matchingReport.Reason);
+                                _logger.Debug("The release {0} is already pending with reason {1}, not changing reason", decision.RemoteBook, matchingReport.Reason);
                             }
                             else
                             {
-                                _logger.Debug("The release {0} is already pending with reason {1}, changing to {2}", decision.RemoteEpisode, matchingReport.Reason, reason);
+                                _logger.Debug("The release {0} is already pending with reason {1}, changing to {2}", decision.RemoteBook, matchingReport.Reason, reason);
                                 matchingReport.Reason = reason;
                                 _repository.Update(matchingReport);
                             }
                         }
                         else
                         {
-                            _logger.Debug("The release {0} is already pending with reason {1}, not adding again", decision.RemoteEpisode, reason);
+                            _logger.Debug("The release {0} is already pending with reason {1}, not adding again", decision.RemoteBook, reason);
                         }
 
                         if (matchingReports.Count > 1)
                         {
-                            _logger.Debug("The release {0} had {1} duplicate pending, removing duplicates.", decision.RemoteEpisode, matchingReports.Count - 1);
+                            _logger.Debug("The release {0} had {1} duplicate pending, removing duplicates.", decision.RemoteBook, matchingReports.Count - 1);
 
                             foreach (var duplicate in matchingReports.Skip(1))
                             {
@@ -145,7 +145,7 @@ namespace Readarr.Core.Download.Pending
                         continue;
                     }
 
-                    _logger.Debug("Adding release {0} to pending releases with reason {1}", decision.RemoteEpisode, reason);
+                    _logger.Debug("Adding release {0} to pending releases with reason {1}", decision.RemoteBook, reason);
                     Insert(decision, reason);
                 }
             }

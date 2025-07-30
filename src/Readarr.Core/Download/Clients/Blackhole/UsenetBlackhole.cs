@@ -65,9 +65,9 @@ namespace Readarr.Core.Download.Clients.Blackhole
                     DownloadId = Definition.Name + "_" + item.DownloadId,
                     Title = item.Title,
 
-                    TotalSize = files.Sum(f => f.Length),
+                    TotalSize = item.TotalSize,
 
-                    OutputPath = outputPath,
+                    OutputPath = item.OutputPath,
 
                     Status = item.Status,
                 };

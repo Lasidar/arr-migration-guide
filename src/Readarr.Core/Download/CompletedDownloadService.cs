@@ -216,12 +216,24 @@ namespace Readarr.Core.Download
                 _logger.Debug("All episodes were imported for {0}", trackedDownload.DownloadItem.Title);
                 trackedDownload.State = TrackedDownloadState.Imported;
 
-                _eventAggregator.PublishEvent(new DownloadCompletedEvent(trackedDownload,
-                    trackedDownload.RemoteEpisode.Series.Id,
-                    importResults.Where(c => c.Result == ImportResultType.Imported).Select(c => c.EpisodeFile).ToList(),
-                    releaseInfo));
+                // TODO: This needs to be properly refactored to handle books
+                if (trackedDownload.RemoteBook != null)
+                {
+                    // Book handling - for now just mark as imported
+                    trackedDownload.State = TrackedDownloadState.Imported;
+                    _eventAggregator.PublishEvent(new DownloadCompletedEvent(trackedDownload, trackedDownload.RemoteBook.Author.Id, new List<EpisodeFile>(), releaseInfo));
+                    return true;
+                }
+                else if (trackedDownload.RemoteEpisode != null)
+                {
+                    var episodes = _episodeService.GetEpisodes(trackedDownload.RemoteEpisode.Episodes.Select(e => e.Id));
+                    var files = _mediaFileService.Get(episodes.Select(e => e.EpisodeFileId).Where(i => i > 0).Distinct());
 
-                return true;
+                    trackedDownload.State = TrackedDownloadState.Imported;
+                    _eventAggregator.PublishEvent(new DownloadCompletedEvent(trackedDownload, trackedDownload.RemoteEpisode.Series.Id, files, releaseInfo));
+
+                    return true;
+                }
             }
 
             // Double check if all episodes were imported by checking the history if at least one
@@ -249,7 +261,7 @@ namespace Readarr.Core.Download
                 {
                     _logger.ForDebugEvent()
                            .Message("No Episodes were just imported, but all episodes were previously imported, possible issue with download history.")
-                           .Property("SeriesId", trackedDownload.RemoteEpisode.Series.Id)
+                           .Property("SeriesId", trackedDownload.RemoteEpisode?.Series?.Id ?? trackedDownload.RemoteBook?.Author?.Id ?? 0)
                            .Property("DownloadId", trackedDownload.DownloadItem.DownloadId)
                            .Property("Title", trackedDownload.DownloadItem.Title)
                            .Property("Path", trackedDownload.ImportItem.OutputPath.ToString())

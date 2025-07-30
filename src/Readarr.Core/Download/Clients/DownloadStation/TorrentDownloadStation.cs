@@ -91,7 +91,7 @@ namespace Readarr.Core.Download.Clients.DownloadStation
                 var item = new DownloadClientItem
                 {
                     Category = Settings.TvCategory,
-                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, false),
+                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this),
                     DownloadId = CreateDownloadId(torrent.Id, serialNumber),
                     Title = torrent.Title,
                     TotalSize = torrent.Size,

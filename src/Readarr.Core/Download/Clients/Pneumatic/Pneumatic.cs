@@ -75,7 +75,7 @@ namespace Readarr.Core.Download.Clients.Pneumatic
 
                 var historyItem = new DownloadClientItem
                 {
-                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, false),
+                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this),
                     DownloadId = GetDownloadClientId(file),
                     Title = title,
 
