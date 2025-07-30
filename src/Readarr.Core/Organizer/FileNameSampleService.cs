@@ -4,6 +4,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Qualities;
 using Readarr.Core.Tv;
+using System.Linq;
 
 namespace Readarr.Core.Organizer
 {
@@ -255,24 +256,24 @@ namespace Readarr.Core.Organizer
 
         public string GetSeriesFolderSample(NamingConfig nameSpec)
         {
-            return _buildFileNames.GetSeriesFolder(_standardSeries, nameSpec);
+            return _buildFileNames.GetSeriesFolder(_standardSeries);
         }
 
         public string GetSeasonFolderSample(NamingConfig nameSpec)
         {
-            return _buildFileNames.GetSeasonFolder(_standardSeries, _episode1.SeasonNumber, nameSpec);
+            return _buildFileNames.GetSeasonFolder(_standardSeries, _episode1.SeasonNumber);
         }
 
         public string GetSpecialsFolderSample(NamingConfig nameSpec)
         {
-            return _buildFileNames.GetSeasonFolder(_standardSeries, 0, nameSpec);
+            return _buildFileNames.GetSeasonFolder(_standardSeries, 0);
         }
 
         private string BuildSample(List<Episode> episodes, Series series, EpisodeFile episodeFile, NamingConfig nameSpec, List<CustomFormat> customFormats)
         {
             try
             {
-                return _buildFileNames.BuildFileName(episodes, series, episodeFile, "", nameSpec, customFormats);
+                return _buildFileNames.BuildFileName(episodes, series, episodeFile, "", nameSpec, customFormats?.Select(cf => cf.Name).ToList());
             }
             catch (NamingFormatException)
             {

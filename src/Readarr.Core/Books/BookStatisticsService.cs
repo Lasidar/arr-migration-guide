@@ -32,7 +32,6 @@ namespace Readarr.Core.Books
             {
                 BookId = bookId,
                 EditionCount = 0,
-                EditionFileCount = 0,
                 TotalEditionCount = 0,
                 BookFileCount = 0,
                 SizeOnDisk = 0

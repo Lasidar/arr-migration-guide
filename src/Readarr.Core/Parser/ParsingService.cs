@@ -690,7 +690,7 @@ namespace Readarr.Core.Parser
         public ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, int tvdbId, int tvRageId, SearchCriteriaBase searchCriteria = null)
         {
             // This is already implemented in the existing code
-            return ParseSpecialEpisodeTitle(releaseTitle, tvdbId, tvRageId, searchCriteria);
+            return ParseSpecialEpisodeTitle(parsedEpisodeInfo, releaseTitle, tvdbId, tvRageId, null, searchCriteria);
         }
     }
 }

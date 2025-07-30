@@ -158,7 +158,7 @@ namespace Readarr.Core.MediaFiles
             environmentVariables.Add("Sonarr_EpisodeFile_SceneName", localEpisode.SceneName ?? string.Empty);
 
             environmentVariables.Add("Sonarr_Download_Client", downloadClientInfo?.Name ?? string.Empty);
-            environmentVariables.Add("Sonarr_Download_Client_Type", downloadClientInfo?.Type ?? string.Empty);
+            environmentVariables.Add("Sonarr_Download_Client_Type", downloadClientInfo?.Type?.ToString() ?? string.Empty);
             environmentVariables.Add("Sonarr_Download_Id", downloadId ?? string.Empty);
             environmentVariables.Add("Sonarr_EpisodeFile_MediaInfo_AudioChannels", MediaInfoFormatter.FormatAudioChannels(localEpisode.MediaInfo).ToString());
             environmentVariables.Add("Sonarr_EpisodeFile_MediaInfo_AudioCodec", MediaInfoFormatter.FormatAudioCodec(localEpisode.MediaInfo, null));
