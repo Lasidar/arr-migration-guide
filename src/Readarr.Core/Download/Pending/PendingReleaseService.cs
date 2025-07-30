@@ -41,7 +41,7 @@ namespace Readarr.Core.Download.Pending
     {
         private readonly IIndexerStatusService _indexerStatusService;
         private readonly IPendingReleaseRepository _repository;
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
         private readonly IParsingService _parsingService;
         private readonly IDelayProfileService _delayProfileService;
         private readonly ITaskManager _taskManager;
@@ -55,7 +55,7 @@ namespace Readarr.Core.Download.Pending
 
         public PendingReleaseService(IIndexerStatusService indexerStatusService,
                                     IPendingReleaseRepository repository,
-                                    ISeriesService seriesService,
+                                                                          Tv.ISeriesService seriesService,
                                     IParsingService parsingService,
                                     IDelayProfileService delayProfileService,
                                     ITaskManager taskManager,
@@ -270,7 +270,7 @@ namespace Readarr.Core.Download.Pending
         {
             var result = new List<PendingRelease>();
 
-            var seriesMap = new Dictionary<int, Series>();
+            var seriesMap = new Dictionary<int, Tv.Series>();
 
             if (knownRemoteEpisodes != null)
             {
@@ -537,7 +537,7 @@ namespace Readarr.Core.Download.Pending
             return HashConverter.GetHashInt31(string.Format("pending-{0}-ep{1}", pendingRelease.Id, episode?.Id ?? 0));
         }
 
-        private int PrioritizeDownloadProtocol(Series series, DownloadProtocol downloadProtocol)
+        private int PrioritizeDownloadProtocol(Tv.Series series, DownloadProtocol downloadProtocol)
         {
             var delayProfile = _delayProfileService.BestForTags(series.Tags);
 

@@ -15,14 +15,14 @@ namespace Readarr.Core.MediaFiles
     {
         private readonly IRecycleBinProvider _recycleBinProvider;
         private readonly IMediaFileService _mediaFileService;
-        private readonly IEpisodeFileMover _episodeFileMover;
+        private readonly IMoveEpisodeFiles _episodeFileMover;
         private readonly IDiskProvider _diskProvider;
         private readonly IMediaFileRepository _episodeFileRepository;
         private readonly Logger _logger;
 
         public UpgradeMediaFileService(IRecycleBinProvider recycleBinProvider,
                                        IMediaFileService mediaFileService,
-                                       IEpisodeFileMover episodeFileMover,
+                                       IMoveEpisodeFiles episodeFileMover,
                                        IDiskProvider diskProvider,
                                        IMediaFileRepository episodeFileRepository,
                                        Logger logger)

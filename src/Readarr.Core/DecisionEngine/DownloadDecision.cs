@@ -7,6 +7,7 @@ namespace Readarr.Core.DecisionEngine
     public class DownloadDecision
     {
         public RemoteBook RemoteBook { get; private set; }
+        public RemoteEpisode RemoteEpisode { get; private set; }
         public IEnumerable<Rejection> Rejections { get; private set; }
 
         public bool Approved => !Rejections.Any();
@@ -27,9 +28,23 @@ namespace Readarr.Core.DecisionEngine
             }
         }
 
+        public ReleaseInfo RemoteRelease
+        {
+            get
+            {
+                return RemoteBook?.Release ?? RemoteEpisode?.Release;
+            }
+        }
+
         public DownloadDecision(RemoteBook remoteBook, params Rejection[] rejections)
         {
             RemoteBook = remoteBook;
+            Rejections = rejections.ToList();
+        }
+        
+        public DownloadDecision(RemoteEpisode remoteEpisode, params Rejection[] rejections)
+        {
+            RemoteEpisode = remoteEpisode;
             Rejections = rejections.ToList();
         }
 
@@ -37,10 +52,10 @@ namespace Readarr.Core.DecisionEngine
         {
             if (Approved)
             {
-                return "[OK] " + RemoteBook;
+                return "[OK] " + (RemoteRelease?.Title ?? "Unknown");
             }
 
-            return "[Rejected " + Rejections.Count() + "]" + RemoteBook;
+            return "[Rejected " + Rejections.Count() + "]" + (RemoteRelease?.Title ?? "Unknown");
         }
     }
 }
