@@ -24,6 +24,8 @@ namespace Readarr.Core.Books
         List<Author> GetAuthorsByIds(List<int> authorIds);
         List<Author> GetRecentlyAdded(int count);
         void SetMonitoredFlag(List<int> authorIds, bool monitored);
+        List<Author> GetAuthorsWithBooks();
+        Author GetAuthorWithBooks(int authorId);
     }
 
     public class AuthorRepository : BasicRepository<Author>, IAuthorRepository
@@ -176,6 +178,67 @@ namespace Readarr.Core.Books
         public List<Author> GetAuthorsWithoutMetadata()
         {
             return Query(a => a.AuthorMetadataId == 0).ToList();
+        }
+
+        public List<Author> GetAuthorsWithBooks()
+        {
+            var authors = Query.ToList();
+            
+            // Load metadata
+            var metadataIds = authors.Select(a => a.AuthorMetadataId).Distinct().ToList();
+            var metadata = _database.Query<AuthorMetadata>()
+                .Where(m => metadataIds.Contains(m.Id))
+                .ToDictionary(m => m.Id);
+
+            // Load books
+            var authorIds = authors.Select(a => a.Id).ToList();
+            var books = _database.Query<Book>()
+                .Where(b => authorIds.Contains(b.AuthorMetadataId))
+                .ToList()
+                .GroupBy(b => b.AuthorMetadataId)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            // Assign loaded data
+            foreach (var author in authors)
+            {
+                if (metadata.TryGetValue(author.AuthorMetadataId, out var meta))
+                {
+                    author.Metadata = new LazyLoaded<AuthorMetadata>(meta);
+                }
+
+                if (books.TryGetValue(author.AuthorMetadataId, out var authorBooks))
+                {
+                    author.Books = new LazyLoaded<List<Book>>(authorBooks);
+                }
+                else
+                {
+                    author.Books = new LazyLoaded<List<Book>>(new List<Book>());
+                }
+            }
+
+            return authors;
+        }
+
+        public Author GetAuthorWithBooks(int authorId)
+        {
+            var author = Get(authorId);
+            if (author == null) return null;
+
+            // Load metadata
+            author.Metadata = new LazyLoaded<AuthorMetadata>(
+                _database.Query<AuthorMetadata>()
+                    .Where(m => m.Id == author.AuthorMetadataId)
+                    .SingleOrDefault()
+            );
+
+            // Load books
+            author.Books = new LazyLoaded<List<Book>>(
+                _database.Query<Book>()
+                    .Where(b => b.AuthorMetadataId == author.AuthorMetadataId)
+                    .ToList()
+            );
+
+            return author;
         }
 
         private Author ReturnSingleAuthorOrThrow(List<Author> authors)

@@ -37,6 +37,7 @@ namespace Readarr.Core.Books
         void RemoveAddOptions(Book book);
         bool ValidateIsbn13(string isbn);
         bool ValidateIsbn10(string isbn);
+        bool ValidateAsin(string asin);
     }
 
     public class BookService : IBookService
@@ -250,6 +251,24 @@ namespace Readarr.Core.Books
             sum += checkDigit;
             
             return sum % 11 == 0;
+        }
+
+        public bool ValidateAsin(string asin)
+        {
+            if (string.IsNullOrEmpty(asin) || asin.Length != 10)
+                return false;
+            
+            // ASIN format: First character is uppercase letter or digit, followed by 9 uppercase letters or digits
+            if (!char.IsLetterOrDigit(asin[0]) || !char.IsUpper(asin[0]) && char.IsLetter(asin[0]))
+                return false;
+            
+            for (int i = 1; i < 10; i++)
+            {
+                if (!char.IsLetterOrDigit(asin[i]) || !char.IsUpper(asin[i]) && char.IsLetter(asin[i]))
+                    return false;
+            }
+            
+            return true;
         }
     }
 }
