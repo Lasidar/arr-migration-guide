@@ -156,8 +156,52 @@ namespace Readarr.Core.Backup
 
             _logger.Info("Restoring backup: {0}", backup.Name);
 
-            // TODO: Implement restore functionality
-            throw new NotImplementedException("Restore functionality not yet implemented");
+            var tempRestoreFolder = Path.Combine(_appFolderInfo.TempFolder, "readarr_restore_" + Guid.NewGuid());
+
+            try
+            {
+                // Extract backup to temp folder
+                _archiveService.Extract(backup.Path, tempRestoreFolder);
+
+                // Stop any background jobs during restore
+                _eventAggregator.PublishEvent(new ApplicationShutdownRequested());
+
+                // Restore database
+                var dbPath = _appFolderInfo.GetDatabase();
+                var backupDbPath = Path.Combine(tempRestoreFolder, "readarr.db");
+                
+                if (_diskProvider.FileExists(backupDbPath))
+                {
+                    _logger.Info("Restoring database from backup");
+                    _diskProvider.CopyFile(backupDbPath, dbPath, true);
+                }
+
+                // Restore config file
+                var configPath = _appFolderInfo.GetConfigPath();
+                var backupConfigPath = Path.Combine(tempRestoreFolder, "config.xml");
+                
+                if (_diskProvider.FileExists(backupConfigPath))
+                {
+                    _logger.Info("Restoring config from backup");
+                    _diskProvider.CopyFile(backupConfigPath, configPath, true);
+                }
+
+                _logger.Info("Backup restored successfully");
+                _eventAggregator.PublishEvent(new BackupRestoredEvent());
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Failed to restore backup");
+                throw new BackupException("Failed to restore backup", ex);
+            }
+            finally
+            {
+                // Clean up temp folder
+                if (_diskProvider.FolderExists(tempRestoreFolder))
+                {
+                    _diskProvider.DeleteFolder(tempRestoreFolder, true);
+                }
+            }
         }
 
         private void BackupDatabase()

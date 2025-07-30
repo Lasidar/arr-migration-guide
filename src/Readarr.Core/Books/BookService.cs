@@ -35,6 +35,8 @@ namespace Readarr.Core.Books
         void UpdateMany(List<Book> books);
         void DeleteMany(List<Book> books);
         void RemoveAddOptions(Book book);
+        bool ValidateIsbn13(string isbn);
+        bool ValidateIsbn10(string isbn);
     }
 
     public class BookService : IBookService
@@ -199,6 +201,55 @@ namespace Readarr.Core.Books
         public void RemoveAddOptions(Book book)
         {
             _bookRepository.SetFields(book, b => b.AddOptions);
+        }
+
+        public bool ValidateIsbn13(string isbn)
+        {
+            if (string.IsNullOrEmpty(isbn) || isbn.Length != 13)
+                return false;
+            
+            // Check if all characters are digits
+            if (!isbn.All(char.IsDigit))
+                return false;
+            
+            // Calculate checksum
+            var sum = 0;
+            for (int i = 0; i < 12; i++)
+            {
+                sum += (isbn[i] - '0') * (i % 2 == 0 ? 1 : 3);
+            }
+            
+            var checkDigit = (10 - (sum % 10)) % 10;
+            return checkDigit == (isbn[12] - '0');
+        }
+
+        public bool ValidateIsbn10(string isbn)
+        {
+            if (string.IsNullOrEmpty(isbn) || isbn.Length != 10)
+                return false;
+            
+            // First 9 characters must be digits
+            for (int i = 0; i < 9; i++)
+            {
+                if (!char.IsDigit(isbn[i]))
+                    return false;
+            }
+            
+            // Last character can be digit or X
+            if (!char.IsDigit(isbn[9]) && isbn[9] != 'X' && isbn[9] != 'x')
+                return false;
+            
+            // Calculate checksum
+            var sum = 0;
+            for (int i = 0; i < 9; i++)
+            {
+                sum += (isbn[i] - '0') * (10 - i);
+            }
+            
+            var checkDigit = isbn[9] == 'X' || isbn[9] == 'x' ? 10 : (isbn[9] - '0');
+            sum += checkDigit;
+            
+            return sum % 11 == 0;
         }
     }
 }

@@ -6,6 +6,7 @@ using Readarr.Core.AutoTagging;
 using Readarr.Core.Books.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser;
+using System;
 
 namespace Readarr.Core.Books
 {
@@ -86,10 +87,52 @@ namespace Readarr.Core.Books
 
         public List<Author> AddAuthors(List<Author> newAuthors)
         {
-            _authorRepository.InsertMany(newAuthors);
-            _eventAggregator.PublishEvent(new AuthorsImportedEvent(newAuthors.Select(a => a.Id).ToList()));
+            _logger.Debug("Adding {0} authors", newAuthors.Count);
+            
+            newAuthors.ForEach(author =>
+            {
+                author.Added = DateTime.UtcNow;
+                author.CleanName = author.Metadata.Value.Name.CleanAuthorName();
+                author.SortName = Parser.Parser.NormalizeTitle(author.Metadata.Value.Name);
+                author.Added = DateTime.UtcNow;
+            });
 
-            return newAuthors;
+            // Use a transaction to ensure atomicity
+            var addedAuthors = new List<Author>();
+            
+            try
+            {
+                // Note: Transaction support would need to be added to the repository layer
+                // For now, we'll add error handling and rollback logic
+                foreach (var author in newAuthors)
+                {
+                    try
+                    {
+                        var addedAuthor = _authorRepository.Insert(author);
+                        addedAuthors.Add(addedAuthor);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error(ex, "Failed to add author {0}", author.Metadata.Value?.Name);
+                        // Remove any authors that were successfully added
+                        if (addedAuthors.Any())
+                        {
+                            _logger.Debug("Rolling back {0} authors", addedAuthors.Count);
+                            _authorRepository.DeleteMany(addedAuthors);
+                        }
+                        throw;
+                    }
+                }
+
+                _eventAggregator.PublishEvent(new AuthorsImportedEvent(addedAuthors));
+                
+                return addedAuthors;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Failed to add authors");
+                throw;
+            }
         }
 
         public Author FindByForeignAuthorId(string foreignAuthorId)

@@ -14,26 +14,25 @@ namespace Readarr.Http
         public SortDirection? SortDirection { get; set; }
     }
 
-    public class PagingResource<TResource>
+    public class PagingResource<T>
     {
         public int Page { get; set; }
         public int PageSize { get; set; }
         public string SortKey { get; set; }
-        public SortDirection SortDirection { get; set; }
+        public string SortDirection { get; set; }
         public int TotalRecords { get; set; }
-        public List<TResource> Records { get; set; } = new();
+        public List<T> Records { get; set; }
 
         public PagingResource()
         {
+            Records = new List<T>();
         }
+    }
 
-        public PagingResource(PagingRequestResource requestResource)
-        {
-            Page = requestResource.Page ?? 1;
-            PageSize = requestResource.PageSize ?? 10;
-            SortKey = requestResource.SortKey;
-            SortDirection = requestResource.SortDirection ?? SortDirection.Descending;
-        }
+    public class PagingResourceFilter
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
     }
 
     public static class PagingResourceMapper

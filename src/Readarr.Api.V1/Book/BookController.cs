@@ -64,24 +64,116 @@ namespace Readarr.Api.V1.Book
         }
 
         [HttpGet]
-        public List<BookResource> GetBooks([FromQuery]int? authorId)
+        public List<BookResource> GetBooks([FromQuery] int? authorId, [FromQuery] List<int> bookIds, [FromQuery] string titleSlug, [FromQuery] bool includeAllAuthorBooks = false)
         {
-            var bookStats = _bookStatisticsService.BookStatistics();
-            List<BookResource> bookResources;
+            if (!authorId.HasValue && !bookIds.Any() && titleSlug.IsNullOrWhiteSpace())
+            {
+                var books = _bookService.GetAllBooks();
+                
+                var authors = _authorService.GetAllAuthors().ToDictionary(x => x.AuthorMetadataId);
+                
+                foreach (var book in books)
+                {
+                    book.Author = authors[book.AuthorMetadataId];
+                }
+                
+                return MapToResource(books, includeAllAuthorBooks);
+            }
 
             if (authorId.HasValue)
             {
-                bookResources = _bookService.GetBooksByAuthor(authorId.Value).ToResource();
+                var books = _bookService.GetBooksByAuthor(authorId.Value);
+                
+                var author = _authorService.GetAuthor(authorId.Value);
+                
+                foreach (var book in books)
+                {
+                    book.Author = author;
+                }
+                
+                return MapToResource(books, includeAllAuthorBooks);
+            }
+
+            if (titleSlug.IsNotNullOrWhiteSpace())
+            {
+                var book = _bookService.FindBySlug(titleSlug);
+                
+                if (book == null)
+                {
+                    return new List<BookResource>();
+                }
+                
+                if (includeAllAuthorBooks)
+                {
+                    return MapToResource(_bookService.GetBooksByAuthor(book.AuthorMetadataId), false);
+                }
+                else
+                {
+                    return MapToResource(new List<Book> { book }, false);
+                }
+            }
+
+            return MapToResource(_bookService.GetBooks(bookIds), includeAllAuthorBooks);
+        }
+
+        [HttpGet("paged")]
+        public PagingResource<BookResource> GetBooksPaged([FromQuery] PagingRequestResource pagingResource, [FromQuery] int? authorId)
+        {
+            var page = pagingResource.Page ?? 1;
+            var pageSize = pagingResource.PageSize ?? 50;
+            var sortKey = pagingResource.SortKey ?? "title";
+            var sortDirection = pagingResource.SortDirection ?? "asc";
+
+            IQueryable<Book> query;
+            
+            if (authorId.HasValue)
+            {
+                query = _bookService.GetBooksByAuthor(authorId.Value).AsQueryable();
             }
             else
             {
-                bookResources = _bookService.GetAllBooks().ToResource();
+                query = _bookService.GetAllBooks().AsQueryable();
             }
 
-            MapCoversToLocal(bookResources.ToArray());
-            LinkBookStatistics(bookResources, bookStats);
+            // Apply sorting
+            switch (sortKey.ToLower())
+            {
+                case "title":
+                    query = sortDirection == "asc" ? query.OrderBy(b => b.Title) : query.OrderByDescending(b => b.Title);
+                    break;
+                case "releasedate":
+                    query = sortDirection == "asc" ? query.OrderBy(b => b.ReleaseDate) : query.OrderByDescending(b => b.ReleaseDate);
+                    break;
+                case "pagecount":
+                    query = sortDirection == "asc" ? query.OrderBy(b => b.PageCount) : query.OrderByDescending(b => b.PageCount);
+                    break;
+                default:
+                    query = query.OrderBy(b => b.Title);
+                    break;
+            }
 
-            return bookResources;
+            var totalCount = query.Count();
+            var books = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Load authors
+            var authors = _authorService.GetAllAuthors().ToDictionary(x => x.AuthorMetadataId);
+            foreach (var book in books)
+            {
+                book.Author = authors.ContainsKey(book.AuthorMetadataId) ? authors[book.AuthorMetadataId] : null;
+            }
+
+            return new PagingResource<BookResource>
+            {
+                Page = page,
+                PageSize = pageSize,
+                SortKey = sortKey,
+                SortDirection = sortDirection,
+                TotalRecords = totalCount,
+                Records = MapToResource(books, false)
+            };
         }
 
         [RestPostById]
@@ -158,6 +250,30 @@ namespace Readarr.Api.V1.Book
                     };
                 }
             }
+        }
+
+        private List<BookResource> MapToResource(List<Book> books, bool includeAuthor)
+        {
+            var bookResources = books.ToResource();
+            
+            var bookStats = _bookStatisticsService.BookStatistics();
+            MapCoversToLocal(bookResources.ToArray());
+            LinkBookStatistics(bookResources, bookStats);
+            
+            if (includeAuthor)
+            {
+                var authorDict = _authorService.GetAllAuthors().ToDictionary(a => a.AuthorMetadataId);
+                
+                foreach (var book in bookResources)
+                {
+                    if (authorDict.TryGetValue(book.AuthorMetadataId, out var author))
+                    {
+                        book.Author = author.ToResource();
+                    }
+                }
+            }
+            
+            return bookResources;
         }
 
         [NonAction]
