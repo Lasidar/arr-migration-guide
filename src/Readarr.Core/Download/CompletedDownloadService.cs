@@ -144,7 +144,7 @@ namespace Readarr.Core.Download
 
             trackedDownload.State = TrackedDownloadState.Importing;
 
-            var outputPath = trackedDownload.ImportItem.OutputPath.FullPath;
+            var outputPath = trackedDownload.ImportItem.OutputPath.FullPath();
             var importResults = _downloadedEpisodesImportService.ProcessPath(outputPath,
                 ImportMode.Auto,
                 trackedDownload.RemoteEpisode.Series,
@@ -258,7 +258,7 @@ namespace Readarr.Core.Download
                 }
 
                 var episodes = _episodeService.GetEpisodes(trackedDownload.RemoteEpisode.Episodes.Select(e => e.Id));
-                var files = _mediaFileService.GetFiles(episodes.Select(e => e.EpisodeFileId).Where(i => i > 0).Distinct());
+                var files = _mediaFileService.Get(episodes.Select(e => e.EpisodeFileId).Where(i => i > 0).Distinct());
 
                 trackedDownload.State = TrackedDownloadState.Imported;
                 _eventAggregator.PublishEvent(new DownloadCompletedEvent(trackedDownload, trackedDownload.RemoteEpisode.Series.Id, files, releaseInfo));
@@ -296,14 +296,14 @@ namespace Readarr.Core.Download
         {
             var downloadItemOutputPath = trackedDownload.ImportItem.OutputPath;
 
-            if (downloadItemOutputPath.IsEmpty)
+            if (downloadItemOutputPath.IsEmpty())
             {
                 trackedDownload.Warn("Download doesn't contain intermediate path, Skipping.");
                 return false;
             }
 
-            if ((OsInfo.IsWindows && !downloadItemOutputPath.IsWindowsPath) ||
-                (OsInfo.IsNotWindows && !downloadItemOutputPath.IsUnixPath))
+            if ((OsInfo.IsWindows && !downloadItemOutputPath.IsWindowsPath()) ||
+                (OsInfo.IsNotWindows && !downloadItemOutputPath.IsUnixPath()))
             {
                 trackedDownload.Warn("[{0}] is not a valid local path. You may need a Remote Path Mapping. Check the download troubleshooting entry on the wiki for details.", downloadItemOutputPath);
                 return false;

@@ -132,11 +132,11 @@ namespace Readarr.Core.Download.Clients.Aria2
                 var queueItem = new DownloadClientItem
                 {
                     Category = null,
-                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, false),
+                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this),
                     DownloadId = torrent.InfoHash?.ToUpper(),
                     IsEncrypted = false,
                     Message = torrent.ErrorMessage,
-                    OutputPath = outputPath,
+                    OutputPath = outputPath.ToString(),
                     RemainingSize = totalLength - completedLength,
                     RemainingTime = downloadSpeed == 0 ? (TimeSpan?)null : new TimeSpan(0, 0, (int)((totalLength - completedLength) / downloadSpeed)),
                     Removed = torrent.Status == "removed",

@@ -125,7 +125,7 @@ namespace Readarr.Core.Download.Clients.UTorrent
                 item.Title = torrent.Name;
                 item.TotalSize = torrent.Size;
                 item.Category = torrent.Label;
-                item.DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, Settings.TvImportedCategory.IsNotNullOrWhiteSpace());
+                item.DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this),
                 item.RemainingSize = torrent.Remaining;
                 item.SeedRatio = torrent.Ratio;
 

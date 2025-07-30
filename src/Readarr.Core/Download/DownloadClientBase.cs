@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using FluentValidation.Results;
 using NLog;
 using Readarr.Common.Disk;
+using Readarr.Common.Extensions;
 using Readarr.Common.Http;
 using Readarr.Core.Configuration;
 using Readarr.Core.Indexers;

@@ -61,15 +61,13 @@ namespace Readarr.Core.Download.Clients.Blackhole
             {
                 var queueItem = new DownloadClientItem
                 {
-                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, false),
+                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this),
                     DownloadId = Definition.Name + "_" + item.DownloadId,
-                    Category = "sonarr",
                     Title = item.Title,
 
-                    TotalSize = item.TotalSize,
-                    RemainingTime = item.RemainingTime,
+                    TotalSize = files.Sum(f => f.Length),
 
-                    OutputPath = item.OutputPath,
+                    OutputPath = outputPath.ToString(),
 
                     Status = item.Status,
                 };
