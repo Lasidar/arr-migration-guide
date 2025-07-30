@@ -22,9 +22,11 @@ namespace Readarr.Core.Parser.Model
         public List<CustomFormat> CustomFormats { get; set; }
         public int CustomFormatScore { get; set; }
         public SceneMapping SceneMapping { get; set; }
-        public string DownloadAllowed { get; set; }
+        public bool DownloadAllowed { get; set; }
         public TorrentSeedConfiguration SeedConfiguration { get; set; }
         public int PreferredWordScore { get; set; }
+        public ReleaseSourceType ReleaseSource { get; set; }
+        public AuthorMatchType AuthorMatchType { get; set; }
 
         public RemoteBook()
         {
