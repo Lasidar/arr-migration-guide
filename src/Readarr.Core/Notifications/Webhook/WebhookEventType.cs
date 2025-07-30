@@ -12,9 +12,18 @@ namespace Readarr.Core.Notifications.Webhook
         Grab,
         Download,
         Rename,
+        
+        // Book events
+        AuthorAdd,
+        AuthorDelete,
+        BookFileDelete,
+        
+        // TV events (to be removed)
         SeriesAdd,
         SeriesDelete,
         EpisodeFileDelete,
+        
+        // Common events
         Health,
         ApplicationUpdate,
         HealthRestored,

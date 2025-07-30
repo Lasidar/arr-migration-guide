@@ -1,11 +1,11 @@
-﻿using NLog;
+using NLog;
 using Readarr.Core.Datastore;
 using Readarr.Core.Indexers;
 using Readarr.Core.Parser.Model;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {
-    public class TorrentSeedingSpecification : IDownloadDecisionEngineSpecification
+    public class TorrentSeedingSpecification : IDualDownloadDecisionEngineSpecification
     {
         private readonly IIndexerFactory _indexerFactory;
         private readonly Logger _logger;
@@ -19,9 +19,19 @@ namespace Readarr.Core.DecisionEngine.Specifications
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
 
+        public DownloadSpecDecision IsSatisfiedBy(RemoteBook remoteBook, ReleaseDecisionInformation information)
+        {
+            return CheckTorrentSeeding(remoteBook.Release);
+        }
+
         public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode remoteEpisode, ReleaseDecisionInformation information)
         {
-            var torrentInfo = remoteEpisode.Release as TorrentInfo;
+            return CheckTorrentSeeding(remoteEpisode.Release);
+        }
+
+        private DownloadSpecDecision CheckTorrentSeeding(ReleaseInfo release)
+        {
+            var torrentInfo = release as TorrentInfo;
 
             if (torrentInfo == null || torrentInfo.IndexerId == 0)
             {
