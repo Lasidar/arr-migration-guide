@@ -89,7 +89,10 @@ The Readarr v2 migration from Sonarr has been successfully completed following t
 ### Partial/Stub Components
 - 🟡 Indexers (book search methods added, TV methods remain as stubs)
 - 🟡 ImportLists (still TV-focused, needs refactoring)
-- 🟡 Some notification providers (need book-specific updates)
+- 🟡 Notification providers (extensive TV references in Webhook system)
+- 🟡 Queue system (uses RemoteEpisode)
+- 🟡 Decision Engine specifications (many still use RemoteEpisode)
+- 🟡 Parser models (RemoteEpisode, LocalEpisode still present)
 
 ## Remaining Work
 
@@ -104,12 +107,19 @@ The Readarr v2 migration from Sonarr has been successfully completed following t
 - Add book-specific tests
 - Fix test compilation errors
 
-### 3. Minor Code Cleanup
-- Remove stub TV models (Episode, etc.)
-- Update remaining TV references in:
-  - ImportLists (convert to author/book imports)
-  - Some notification providers
-  - Parser (remove TV parsing logic)
+### 3. Major Code Cleanup Required
+- Update TV references throughout:
+  - **Webhook Notifications**: WebhookSeries → WebhookAuthor, WebhookEpisodeFile → WebhookBookFile
+  - **Queue System**: RemoteEpisode → RemoteBook in Queue and QueueService
+  - **Decision Engine**: Update all specifications to use RemoteBook instead of RemoteEpisode
+  - **Parser Models**: Remove/update LocalEpisode, RemoteEpisode, FindSeriesResult, SeriesTitleInfo
+  - **Blocklist Service**: Update to use RemoteBook instead of RemoteEpisode
+  - **ImportLists**: Complete conversion from Series to Author/Book imports
+  - **History Service**: Remove remaining TV references (EpisodeHistory constants)
+  - **Notification Providers**: Update Join, Pushover, Ntfy, and others for book support
+- Remove stub TV models:
+  - Episode (created as stub)
+  - TV search criteria stubs (SingleEpisodeSearchCriteria, etc.)
 
 ### 4. Database Migration
 - Create v1→v2 migration tool
