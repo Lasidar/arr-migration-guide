@@ -25,20 +25,26 @@ namespace Readarr.Core.Backup
         List<BackupResource> GetBackups();
         void DeleteBackup(int id);
         void Restore(int id);
+        string GetBackupFolder();
     }
 
     public class BackupService : IBackupService, IExecute<BackupCommand>
     {
-        private readonly IAppFolderInfo _appFolderInfo;
-        private readonly IConfigService _configService;
-        private readonly IDiskProvider _diskProvider;
-        private readonly IArchiveService _archiveService;
-        private readonly IDiskTransferService _diskTransferService;
         private readonly IMainDatabase _maindDb;
-        private readonly IEventAggregator _eventAggregator;
+        private readonly IMakeDatabaseBackup _makeDatabaseBackup;
+        private readonly IBackupRepository _backupRepository;
+        private readonly IAppFolderInfo _appFolderInfo;
+        private readonly IArchiveService _archiveService;
+        private readonly IDiskProvider _diskProvider;
+        private readonly IDiskTransferService _diskTransferService;
+        private readonly ISeriesService _seriesService;
+        private readonly IConfigService _configService;
         private readonly Logger _logger;
 
         private readonly string _backupTempFolder;
+
+        private static readonly Regex BackupFileRegexValue = new Regex(@"readarr_backup_(v[0-9.]+_)?[._0-9]+\.zip", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        public static Regex BackupFileRegex => BackupFileRegexValue;
 
         public BackupService(IAppFolderInfo appFolderInfo,
                             IConfigService configService,
@@ -226,6 +232,18 @@ namespace Readarr.Core.Backup
                 _logger.Debug("Deleting old backup: {0}", file);
                 _diskProvider.DeleteFile(file);
             }
+        }
+
+        public string GetBackupFolder()
+        {
+            var backupFolder = _configService.BackupFolder;
+            
+            if (Path.IsPathRooted(backupFolder))
+            {
+                return backupFolder;
+            }
+            
+            return Path.Combine(_appFolderInfo.GetAppDataPath(), backupFolder);
         }
 
         public void Execute(BackupCommand message)

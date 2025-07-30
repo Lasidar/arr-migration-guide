@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FizzWare.NBuilder;
 using Moq;
 using NUnit.Framework;
+using Readarr.Common.Crypto;
 using Readarr.Common.Extensions;
-using Readarr.Core.Datastore;
 using Readarr.Core.DecisionEngine;
-using Readarr.Core.Download;
 using Readarr.Core.Download.Pending;
 using Readarr.Core.Indexers;
 using Readarr.Core.Parser;
@@ -63,7 +63,7 @@ namespace Readarr.Core.Test.Download.Pending.PendingReleaseServiceTests
             _remoteEpisode.ParsedEpisodeInfo = _parsedEpisodeInfo;
             _remoteEpisode.Release = _release;
 
-            _temporarilyRejected = new DownloadDecision(_remoteEpisode, new DownloadRejection(DownloadRejectionReason.MinimumAgeDelay, "Temp Rejected", RejectionType.Temporary));
+            _temporarilyRejected = new DownloadDecision(_remoteEpisode, new Rejection("Temp Rejected", RejectionType.Temporary));
 
             Mocker.GetMock<IPendingReleaseRepository>()
                   .Setup(s => s.All())

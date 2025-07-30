@@ -79,8 +79,8 @@ namespace Readarr.Core.Test.TvTests.SeriesServiceTests
             series.ForEach(s => s.RootFolderPath = newRoot);
 
             Mocker.GetMock<IBuildFileNames>()
-                  .Setup(s => s.GetSeriesFolder(It.IsAny<Series>(), (NamingConfig)null))
-                  .Returns<Series, NamingConfig>((s, n) => s.Title);
+                  .Setup(s => s.GetSeriesFolder(It.IsAny<Series>()))
+                  .Returns<Series>((s) => s.Title);
 
             Subject.UpdateSeries(series, false);
         }

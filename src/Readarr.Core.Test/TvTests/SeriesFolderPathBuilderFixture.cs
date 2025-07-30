@@ -29,7 +29,7 @@ namespace Readarr.Core.Test.TvTests
         public void GivenSeriesFolderName(string name)
         {
             Mocker.GetMock<IBuildFileNames>()
-                  .Setup(s => s.GetSeriesFolder(_series, null))
+                  .Setup(s => s.GetSeriesFolder(_series))
                   .Returns(name);
         }
 
