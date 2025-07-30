@@ -5,7 +5,7 @@ using Readarr.Core.Parser.Model;
 
 namespace Readarr.Core.DecisionEngine.Specifications.RssSync
 {
-    public class PendingSpecification : IDownloadDecisionEngineSpecification
+    public class PendingSpecification : IDualDownloadDecisionEngineSpecification
     {
         private readonly IPendingReleaseService _pendingReleaseService;
         private readonly Logger _logger;
@@ -19,6 +19,37 @@ namespace Readarr.Core.DecisionEngine.Specifications.RssSync
 
         public SpecificationPriority Priority => SpecificationPriority.Database;
         public RejectionType Type => RejectionType.Temporary;
+
+        public DownloadSpecDecision IsSatisfiedBy(RemoteBook subject, ReleaseDecisionInformation information)
+        {
+            // Skip this check for RSS sync and interactive searches,
+
+            if (subject.ReleaseSource == ReleaseSourceType.Rss)
+            {
+                return DownloadSpecDecision.Accept();
+            }
+
+            if (information.SearchCriteria is { UserInvokedSearch: true })
+            {
+                _logger.Debug("Ignoring delay for user invoked search");
+                return DownloadSpecDecision.Accept();
+            }
+
+            var pending = _pendingReleaseService.GetPendingQueue();
+
+            var matchingBook = pending.Where(q => q.RemoteBook?.Author != null &&
+                                                     q.RemoteBook.Author.Id == subject.Author.Id &&
+                                                     q.RemoteBook.Books.Select(b => b.Id).Intersect(subject.Books.Select(b => b.Id)).Any())
+                                       .ToList();
+
+            if (matchingBook.Any())
+            {
+                _logger.Debug("Release containing at least one matching book is already pending. Delaying pushed release");
+                return DownloadSpecDecision.Reject(DownloadRejectionReason.MinimumAgeDelayPushed, "Release containing at least one matching book is already pending, delaying pushed release");
+            }
+
+            return DownloadSpecDecision.Accept();
+        }
 
         public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {

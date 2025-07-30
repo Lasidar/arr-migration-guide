@@ -8,21 +8,24 @@ using Readarr.Core.Parser.Model;
 
 namespace Readarr.Core.DecisionEngine.Specifications.RssSync
 {
-    public class HistorySpecification : IDownloadDecisionEngineSpecification
+    public class HistorySpecification : IDualDownloadDecisionEngineSpecification
     {
         private readonly IHistoryService _historyService;
+        private readonly IBookHistoryService _bookHistoryService;
         private readonly UpgradableSpecification _upgradableSpecification;
         private readonly ICustomFormatCalculationService _formatService;
         private readonly IConfigService _configService;
         private readonly Logger _logger;
 
         public HistorySpecification(IHistoryService historyService,
+                                    IBookHistoryService bookHistoryService,
                                     UpgradableSpecification upgradableSpecification,
                                     ICustomFormatCalculationService formatService,
                                     IConfigService configService,
                                     Logger logger)
         {
             _historyService = historyService;
+            _bookHistoryService = bookHistoryService;
             _upgradableSpecification = upgradableSpecification;
             _formatService = formatService;
             _configService = configService;
@@ -31,6 +34,13 @@ namespace Readarr.Core.DecisionEngine.Specifications.RssSync
 
         public SpecificationPriority Priority => SpecificationPriority.Database;
         public RejectionType Type => RejectionType.Permanent;
+
+        public virtual DownloadSpecDecision IsSatisfiedBy(RemoteBook subject, ReleaseDecisionInformation information)
+        {
+            // Delegate to the existing BookHistorySpecification
+            var bookSpec = new BookHistorySpecification(_bookHistoryService, _upgradableSpecification, _formatService, _configService, _logger);
+            return bookSpec.IsSatisfiedBy(subject, information);
+        }
 
         public virtual DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {

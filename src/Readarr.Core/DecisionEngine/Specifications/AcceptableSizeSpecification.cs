@@ -6,7 +6,7 @@ using Readarr.Core.Tv;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {
-    public class AcceptableSizeSpecification : IDownloadDecisionEngineSpecification
+    public class AcceptableSizeSpecification : IDualDownloadDecisionEngineSpecification
     {
         private readonly IEpisodeService _episodeService;
         private readonly Logger _logger;
@@ -19,6 +19,13 @@ namespace Readarr.Core.DecisionEngine.Specifications
 
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
+
+        public DownloadSpecDecision IsSatisfiedBy(RemoteBook subject, ReleaseDecisionInformation information)
+        {
+            // Delegate to the book-specific size specification
+            var bookSpec = new AcceptableBookSizeSpecification(_logger);
+            return bookSpec.IsSatisfiedBy(subject, information);
+        }
 
         public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {

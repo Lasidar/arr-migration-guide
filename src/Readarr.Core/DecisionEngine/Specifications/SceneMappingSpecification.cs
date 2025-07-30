@@ -4,7 +4,7 @@ using Readarr.Core.Parser.Model;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {
-    public class SceneMappingSpecification : IDownloadDecisionEngineSpecification
+    public class SceneMappingSpecification : IDualDownloadDecisionEngineSpecification
     {
         private readonly Logger _logger;
 
@@ -15,6 +15,13 @@ namespace Readarr.Core.DecisionEngine.Specifications
 
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Temporary; // Temporary till there's a mapping
+
+        public DownloadSpecDecision IsSatisfiedBy(RemoteBook remoteBook, ReleaseDecisionInformation information)
+        {
+            // Books don't have scene mapping like TV shows
+            _logger.Debug("Scene mapping is not applicable to books, accepting.");
+            return DownloadSpecDecision.Accept();
+        }
 
         public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode remoteEpisode, ReleaseDecisionInformation information)
         {

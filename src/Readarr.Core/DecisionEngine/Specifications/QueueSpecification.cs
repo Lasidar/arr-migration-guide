@@ -9,7 +9,7 @@ using Readarr.Core.Queue;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {
-    public class QueueSpecification : IDownloadDecisionEngineSpecification
+    public class QueueSpecification : IDualDownloadDecisionEngineSpecification
     {
         private readonly IQueueService _queueService;
         private readonly UpgradableSpecification _upgradableSpecification;
@@ -32,6 +32,85 @@ namespace Readarr.Core.DecisionEngine.Specifications
 
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
+
+        public DownloadSpecDecision IsSatisfiedBy(RemoteBook subject, ReleaseDecisionInformation information)
+        {
+            var queue = _queueService.GetQueue();
+            var matchingBook = queue.Where(q => q.RemoteBook?.Author != null &&
+                                                   q.RemoteBook.Author.Id == subject.Author.Id &&
+                                                   q.RemoteBook.Books.Select(b => b.Id).Intersect(subject.Books.Select(b => b.Id)).Any())
+                                       .ToList();
+
+            foreach (var queueItem in matchingBook)
+            {
+                var remoteBook = queueItem.RemoteBook;
+                var qualityProfile = subject.Author.QualityProfile.Value;
+
+                // To avoid a race make sure it's not FailedPending (failed awaiting removal/search).
+                // Failed items (already searching for a replacement) won't be part of the queue since
+                // it's a copy, of the tracked download, not a reference.
+
+                if (queueItem.TrackedDownloadState == TrackedDownloadState.FailedPending)
+                {
+                    continue;
+                }
+
+                var queuedItemCustomFormats = _formatService.ParseCustomFormat(remoteBook, (long)queueItem.Size);
+
+                _logger.Debug("Checking if existing release in queue meets cutoff. Queued: {0}", remoteBook.Quality);
+
+                if (!_upgradableSpecification.CutoffNotMet(qualityProfile,
+                    remoteBook.Quality,
+                    queuedItemCustomFormats,
+                    subject.Quality))
+                {
+                    return DownloadSpecDecision.Reject(DownloadRejectionReason.QueueCutoffMet, "Release in queue already meets cutoff: {0}", remoteBook.Quality);
+                }
+
+                _logger.Debug("Checking if release is higher quality than queued release. Queued: {0}", remoteBook.Quality);
+
+                var upgradeableRejectReason = _upgradableSpecification.IsUpgradable(qualityProfile,
+                    remoteBook.Quality,
+                    queuedItemCustomFormats,
+                    subject.Quality,
+                    subject.CustomFormats);
+
+                switch (upgradeableRejectReason)
+                {
+                    case UpgradeableRejectReason.BetterQuality:
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.QueueHigherPreference, "Release in queue is of equal or higher preference: {0}", remoteBook.Quality);
+
+                    case UpgradeableRejectReason.BetterRevision:
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.QueueHigherRevision, "Release in queue is of equal or higher revision: {0}", remoteBook.Quality.Revision);
+
+                    case UpgradeableRejectReason.QualityCutoff:
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.QueueCutoffMet, "Release in queue meets quality cutoff: {0}", qualityProfile.Items[qualityProfile.GetIndex(qualityProfile.Cutoff).Index]);
+
+                    case UpgradeableRejectReason.CustomFormatCutoff:
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.QueueCustomFormatCutoffMet, "Release in queue meets Custom Format cutoff: {0}", qualityProfile.CutoffFormatScore);
+
+                    case UpgradeableRejectReason.CustomFormatScore:
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.QueueCustomFormatScore, "Release in queue has an equal or higher Custom Format score: {0}", qualityProfile.CalculateCustomFormatScore(queuedItemCustomFormats));
+
+                    case UpgradeableRejectReason.MinCustomFormatScore:
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.QueueCustomFormatScoreIncrement, "Release in queue has Custom Format score within Custom Format score increment: {0}", qualityProfile.MinUpgradeFormatScore);
+
+                    case UpgradeableRejectReason.UpgradesNotAllowed:
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.QueueUpgradesNotAllowed, "Release in queue and Quality Profile '{0}' does not allow upgrades", qualityProfile.Name);
+                }
+
+                if (_upgradableSpecification.IsRevisionUpgrade(remoteBook.Quality, subject.Quality))
+                {
+                    if (_configService.DownloadPropersAndRepacks == ProperDownloadTypes.DoNotUpgrade)
+                    {
+                        _logger.Debug("Auto downloading of propers is disabled");
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.QueuePropersDisabled, "Proper downloading is disabled");
+                    }
+                }
+            }
+
+            return DownloadSpecDecision.Accept();
+        }
 
         public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {
