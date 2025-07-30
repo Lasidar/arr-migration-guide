@@ -1,25 +1,27 @@
+using System.Collections.Generic;
 using Readarr.Core.Messaging.Commands;
 
 namespace Readarr.Core.Books.Commands
 {
     public class RefreshAuthorCommand : Command
     {
-        public int? AuthorId { get; set; }
-        public bool ForceUpdateFileTags { get; set; }
+        public List<int> AuthorIds { get; set; }
+        public bool IsNewAuthor { get; set; }
 
         public RefreshAuthorCommand()
         {
+            AuthorIds = new List<int>();
         }
 
-        public RefreshAuthorCommand(int? authorId, bool forceUpdateFileTags = false)
+        public RefreshAuthorCommand(List<int> authorIds, bool isNewAuthor = false)
         {
-            AuthorId = authorId;
-            ForceUpdateFileTags = forceUpdateFileTags;
+            AuthorIds = authorIds;
+            IsNewAuthor = isNewAuthor;
         }
 
         public override bool SendUpdatesToClient => true;
 
-        public override bool UpdateScheduledTask => !AuthorId.HasValue;
+        public override bool UpdateScheduledTask => !IsNewAuthor;
 
         public override bool IsExclusive => true;
     }
