@@ -366,7 +366,7 @@ namespace Readarr.Core.Download.Clients.QBittorrent
         public override DownloadClientItem GetImportItem(DownloadClientItem item, DownloadClientItem previousImportAttempt)
         {
             // On API version >= 2.6.1 this is already set correctly
-            if (!item.OutputPath.IsEmpty())
+            if (!item.OutputPath.ToString().IsEmpty())
             {
                 return item;
             }

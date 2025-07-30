@@ -7,6 +7,7 @@ using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.MediaFiles.EpisodeImport;
 using Readarr.Core.Parser.Model;
 using System;
+using System.Collections.Generic;
 
 namespace Readarr.Core.MediaFiles
 {
@@ -31,57 +32,35 @@ namespace Readarr.Core.MediaFiles
             _logger = logger;
         }
 
-        public EpisodeFileMoveResult UpgradeEpisodeFile(EpisodeFile episodeFile, LocalEpisode localEpisode, bool copyOnly = false)
+        public EpisodeFileUpgradeResult UpgradeEpisodeFile(EpisodeFile episodeFile, LocalEpisode localEpisode, bool copyOnly = false)
         {
-            var moveFileResult = new EpisodeFileMoveResult();
+            // TODO: This is a temporary implementation for TV compatibility
+            // Should be removed when TV-specific code is fully migrated
+            var result = new EpisodeFileUpgradeResult
+            {
+                EpisodeFile = episodeFile,
+                OldFiles = new List<EpisodeFile>()
+            };
+
             var existingFiles = localEpisode.Episodes
-                                            .Where(e => e.EpisodeFileId > 0)
-                                            .Select(e => e.EpisodeFile.Value)
-                                            .Where(e => e != null)
-                                            .GroupBy(e => e.Id)
-                                            .ToList();
+                .SelectMany(e => _mediaFileService.GetFilesByEpisodeIds(new List<int> { e.Id }))
+                .GroupBy(e => e.Id)
+                .Select(g => g.First())
+                .ToList();
 
-            var rootFolder = _diskProvider.GetParentFolder(localEpisode.Series.Path);
+            result.OldFiles.AddRange(existingFiles);
 
-            // If there are existing episode files and the root folder is missing, throw, so the old file isn't left behind during the import process.
-            if (existingFiles.Any() && !_diskProvider.FolderExists(rootFolder))
+            // Move or copy the file
+            episodeFile = _episodeFileMover.MoveEpisodeFile(episodeFile, localEpisode);
+
+            // Delete old files if not copying
+            if (!copyOnly)
             {
-                throw new RootFolderNotFoundException($"Root folder '{rootFolder}' was not found.");
+                _mediaFileService.DeleteMany(existingFiles, DeleteMediaFileReason.Upgrade);
             }
 
-            foreach (var existingFile in existingFiles)
-            {
-                var file = existingFile.First();
-                var episodeFilePath = Path.Combine(localEpisode.Series.Path, file.RelativePath);
-                var subfolder = rootFolder.GetRelativePath(_diskProvider.GetParentFolder(episodeFilePath));
-                string recycleBinPath = null;
-
-                if (_diskProvider.FileExists(episodeFilePath))
-                {
-                    _logger.Debug("Removing existing episode file: {0}", file);
-                    recycleBinPath = _recycleBinProvider.DeleteFile(episodeFilePath, subfolder);
-                }
-                else
-                {
-                    _logger.Warn("Existing episode file missing from disk: {0}", episodeFilePath);
-                }
-
-                moveFileResult.OldFiles.Add(new DeletedEpisodeFile(file, recycleBinPath));
-                _mediaFileService.Delete(file, DeleteMediaFileReason.Upgrade);
-            }
-
-            localEpisode.OldFiles = moveFileResult.OldFiles;
-
-            if (copyOnly)
-            {
-                moveFileResult.EpisodeFile = _episodeFileMover.CopyEpisodeFile(episodeFile, localEpisode);
-            }
-            else
-            {
-                moveFileResult.EpisodeFile = _episodeFileMover.MoveEpisodeFile(episodeFile, localEpisode);
-            }
-
-            return moveFileResult;
+            result.EpisodeFile = episodeFile;
+            return result;
         }
 
         // Book interface implementation (stub for now)

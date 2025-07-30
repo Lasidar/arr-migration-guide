@@ -149,7 +149,7 @@ namespace Readarr.Core.MediaFiles.EpisodeImport
                     }
                     else
                     {
-                        decision = new ImportDecision(localEpisode, new ImportRejection(ImportRejectionReason.InvalidSeasonOrEpisode, "Invalid season or episode"));
+                        decision = new ImportDecision(localEpisode, new ImportRejection("Invalid season or episode", RejectionType.Permanent));
                     }
                 }
                 else
@@ -172,13 +172,13 @@ namespace Readarr.Core.MediaFiles.EpisodeImport
             }
             catch (AugmentingFailedException)
             {
-                decision = new ImportDecision(localEpisode, new ImportRejection(ImportRejectionReason.UnableToParse, "Unable to parse file"));
+                                    decision = new ImportDecision(localEpisode, new ImportRejection("Unable to parse file", RejectionType.Permanent));
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "Couldn't import file. {0}", localEpisode.Path);
 
-                decision = new ImportDecision(localEpisode, new ImportRejection(ImportRejectionReason.Error, "Unexpected error processing file"));
+                                    decision = new ImportDecision(localEpisode, new ImportRejection("Unexpected error processing file", RejectionType.Permanent));
             }
 
             if (decision == null)
@@ -213,7 +213,7 @@ namespace Readarr.Core.MediaFiles.EpisodeImport
                 // e.Data.Add("report", remoteEpisode.Report.ToJson());
                 // e.Data.Add("parsed", remoteEpisode.ParsedEpisodeInfo.ToJson());
                 _logger.Error(e, "Couldn't evaluate decision on {0}", localEpisode.Path);
-                return new ImportRejection(ImportRejectionReason.DecisionError, $"{spec.GetType().Name}: {e.Message}");
+                return new ImportRejection($"{spec.GetType().Name}: {e.Message}", RejectionType.Permanent);
             }
 
             return null;

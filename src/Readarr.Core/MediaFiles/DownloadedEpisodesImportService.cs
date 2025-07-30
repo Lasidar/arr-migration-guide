@@ -258,7 +258,7 @@ namespace Readarr.Core.MediaFiles
 
                 return new List<ImportResult>
                        {
-                           new ImportResult(new ImportDecision(new LocalEpisode { Path = fileInfo.FullName }, new ImportRejection(ImportRejectionReason.InvalidFilePath, "Invalid video file, filename starts with '._'")), "Invalid video file, filename starts with '._'")
+                           new ImportResult(new ImportDecision(new LocalEpisode { Path = fileInfo.FullName }, new ImportRejection("Invalid video file, filename starts with '._'", RejectionType.Permanent)), "Invalid video file, filename starts with '._'")
                        };
             }
 
@@ -269,7 +269,7 @@ namespace Readarr.Core.MediaFiles
                 return new List<ImportResult>
                 {
                     new ImportResult(new ImportDecision(new LocalEpisode { Path = fileInfo.FullName },
-                            new ImportRejection(ImportRejectionReason.DangerousFile, $"Caution: Found potentially dangerous file with extension: {extension}")),
+                            new ImportRejection($"Caution: Found potentially dangerous file with extension: {extension}", RejectionType.Permanent)),
                         $"Caution: Found potentially dangerous file with extension: {extension}")
                 };
             }
@@ -279,7 +279,7 @@ namespace Readarr.Core.MediaFiles
                 return new List<ImportResult>
                 {
                     new ImportResult(new ImportDecision(new LocalEpisode { Path = fileInfo.FullName },
-                            new ImportRejection(ImportRejectionReason.ExecutableFile, $"Caution: Found executable file with extension: '{extension}'")),
+                            new ImportRejection($"Caution: Found executable file with extension: '{extension}'", RejectionType.Permanent)),
                         $"Caution: Found executable file with extension: '{extension}'")
                 };
             }
@@ -299,7 +299,7 @@ namespace Readarr.Core.MediaFiles
                                 {
                                     Path = fileInfo.FullName
                                 },
-                                new ImportRejection(ImportRejectionReason.UserRejectedExtension, $"Caution: Found file with user defined rejected extension: '{extension}'")),
+                                new ImportRejection($"Caution: Found file with user defined rejected extension: '{extension}'", RejectionType.Permanent)),
                             $"Caution: Found executable file with user defined rejected extension: '{extension}'")
                     };
                 }
@@ -312,7 +312,7 @@ namespace Readarr.Core.MediaFiles
                 return new List<ImportResult>
                        {
                            new ImportResult(new ImportDecision(new LocalEpisode { Path = fileInfo.FullName },
-                               new ImportRejection(ImportRejectionReason.UnsupportedExtension, $"Invalid video file, unsupported extension: '{extension}'")),
+                               new ImportRejection($"Invalid video file, unsupported extension: '{extension}'", RejectionType.Permanent)),
                                $"Invalid video file, unsupported extension: '{extension}'")
                        };
             }
@@ -344,14 +344,14 @@ namespace Readarr.Core.MediaFiles
         private ImportResult FileIsLockedResult(string videoFile)
         {
             _logger.Debug("[{0}] is currently locked by another process, skipping", videoFile);
-            return new ImportResult(new ImportDecision(new LocalEpisode { Path = videoFile }, new ImportRejection(ImportRejectionReason.FileLocked, "Locked file, try again later")), "Locked file, try again later");
+                            return new ImportResult(new ImportDecision(new LocalEpisode { Path = videoFile }, new ImportRejection("Locked file, try again later", RejectionType.Temporary)), "Locked file, try again later");
         }
 
         private ImportResult UnknownSeriesResult(string message, string videoFile = null)
         {
             var localEpisode = videoFile == null ? null : new LocalEpisode { Path = videoFile };
 
-            return new ImportResult(new ImportDecision(localEpisode, new ImportRejection(ImportRejectionReason.UnknownSeries, "Unknown Series")), message);
+                            return new ImportResult(new ImportDecision(localEpisode, new ImportRejection("Unknown Series", RejectionType.Permanent)), message);
         }
 
         private ImportResult RejectionResult(ImportRejectionReason reason, string message)

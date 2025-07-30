@@ -577,13 +577,13 @@ namespace Readarr.Core.Download.Clients.Sabnzbd
         {
             var downloadItemOutputPath = downloadClientItem.OutputPath;
 
-            if (downloadItemOutputPath.IsEmpty())
+            if (downloadItemOutputPath.ToString().IsEmpty())
             {
                 return false;
             }
 
-            if ((OsInfo.IsWindows && !downloadItemOutputPath.IsWindowsPath()) ||
-                (OsInfo.IsNotWindows && !downloadItemOutputPath.IsUnixPath()))
+            if ((OsInfo.IsWindows && !downloadItemOutputPath.ToString().IsWindowsPath()) ||
+                (OsInfo.IsNotWindows && !downloadItemOutputPath.ToString().IsUnixPath()))
             {
                 return false;
             }

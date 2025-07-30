@@ -224,7 +224,7 @@ namespace Readarr.Core.MediaFiles.EpisodeImport
 
             // Adding all the rejected decisions
             importResults.AddRange(decisions.Where(c => !c.Approved)
-                                            .Select(d => new ImportResult(d, d.Rejections.Select(r => r.Message).ToArray())));
+                                            .Select(d => new ImportResult(d, d.Rejections.Select(r => r.Reason).ToArray())));
 
             return importResults;
         }
@@ -233,9 +233,9 @@ namespace Readarr.Core.MediaFiles.EpisodeImport
         {
             var path = localEpisode.Path;
 
-            if (downloadClientItem != null && !downloadClientItem.OutputPath.IsEmpty())
+            if (downloadClientItem != null && !downloadClientItem.OutputPath.ToString().IsEmpty())
             {
-                var outputDirectory = new OsPath(downloadClientItem.OutputPath).Directory.ToString();
+                var outputDirectory = downloadClientItem.OutputPath.Directory.ToString();
 
                 if (outputDirectory.IsParentPath(path))
                 {
