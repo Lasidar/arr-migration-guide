@@ -1,10 +1,5 @@
 namespace Readarr.Core.Download
 {
-    public interface IProvideImportItemService
-    {
-        DownloadClientItem ProvideImportItem(DownloadClientItem item, DownloadClientItem previousImportAttempt, int downloadClientId);
-    }
-
     public class ProvideImportItemService : IProvideImportItemService
     {
         private readonly IProvideDownloadClient _downloadClientProvider;
