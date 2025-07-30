@@ -51,83 +51,75 @@ namespace Readarr.Core.History
             return Query(h => h.DownloadId == downloadId);
         }
 
-        public List<EpisodeHistory> GetBySeries(int seriesId, EpisodeHistoryEventType? eventType)
+        public List<BookHistory> GetByAuthor(int authorId, HistoryEventType? eventType)
         {
-            var builder = Builder().Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
-                                   .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id)
-                                   .Where<EpisodeHistory>(h => h.SeriesId == seriesId);
+            var builder = Builder().Join<BookHistory, Author>((h, a) => h.AuthorId == a.Id)
+                                   .Join<BookHistory, Book>((h, b) => h.BookId == b.Id)
+                                   .Where<BookHistory>(h => h.AuthorId == authorId);
 
             if (eventType.HasValue)
             {
-                builder.Where<EpisodeHistory>(h => h.EventType == eventType);
+                builder.Where<BookHistory>(h => h.EventType == eventType);
             }
 
             return Query(builder).OrderByDescending(h => h.Date).ToList();
         }
 
-        public List<EpisodeHistory> GetBySeason(int seriesId, int seasonNumber, EpisodeHistoryEventType? eventType)
+        public List<BookHistory> GetByBook(int bookId, HistoryEventType? eventType)
         {
             var builder = Builder()
-                .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id)
-                .Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
-                .Where<EpisodeHistory>(h => h.SeriesId == seriesId && h.Episode.SeasonNumber == seasonNumber);
+                .Where<BookHistory>(h => h.BookId == bookId);
 
             if (eventType.HasValue)
             {
-                builder.Where<EpisodeHistory>(h => h.EventType == eventType);
+                builder.Where<BookHistory>(h => h.EventType == eventType);
             }
 
-            return _database.QueryJoined<EpisodeHistory, Episode>(
-                builder,
-                (history, episode) =>
-                {
-                    history.Episode = episode;
-                    return history;
-                }).OrderByDescending(h => h.Date).ToList();
+            return Query(builder).OrderByDescending(h => h.Date).ToList();
         }
 
-        public List<EpisodeHistory> FindDownloadHistory(int idSeriesId, QualityModel quality)
+        public List<BookHistory> FindDownloadHistory(int authorId, QualityModel quality)
         {
             return Query(h =>
-                 h.SeriesId == idSeriesId &&
+                 h.AuthorId == authorId &&
                  h.Quality == quality &&
-                 (h.EventType == EpisodeHistoryEventType.Grabbed ||
-                 h.EventType == EpisodeHistoryEventType.DownloadFailed ||
-                 h.EventType == EpisodeHistoryEventType.DownloadFolderImported))
+                 (h.EventType == HistoryEventType.Grabbed ||
+                 h.EventType == HistoryEventType.DownloadFailed ||
+                 h.EventType == HistoryEventType.DownloadFolderImported))
                  .ToList();
         }
 
-        public void DeleteForSeries(List<int> seriesIds)
+        public void DeleteForAuthor(List<int> authorIds)
         {
-            Delete(c => seriesIds.Contains(c.SeriesId));
+            Delete(c => authorIds.Contains(c.AuthorId));
         }
 
-        public List<EpisodeHistory> Since(DateTime date, EpisodeHistoryEventType? eventType)
+        public List<BookHistory> Since(DateTime date, HistoryEventType? eventType)
         {
             var builder = Builder()
-                .Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
-                .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id)
-                .Where<EpisodeHistory>(x => x.Date >= date);
+                .Join<BookHistory, Author>((h, a) => h.AuthorId == a.Id)
+                .Join<BookHistory, Book>((h, b) => h.BookId == b.Id)
+                .Where<BookHistory>(x => x.Date >= date);
 
             if (eventType.HasValue)
             {
-                builder.Where<EpisodeHistory>(h => h.EventType == eventType);
+                builder.Where<BookHistory>(h => h.EventType == eventType);
             }
 
-            return _database.QueryJoined<EpisodeHistory, Series, Episode>(builder, (history, series, episode) =>
+            return _database.QueryJoined<BookHistory, Author, Book>(builder, (history, author, book) =>
             {
-                history.Series = series;
-                history.Episode = episode;
+                history.Author = author;
+                history.Book = book;
                 return history;
             }).OrderBy(h => h.Date).ToList();
         }
 
-        public PagingSpec<EpisodeHistory> GetPaged(PagingSpec<EpisodeHistory> pagingSpec, int[] languages, int[] qualities)
+        public PagingSpec<BookHistory> GetPaged(PagingSpec<BookHistory> pagingSpec, int[] languages, int[] qualities)
         {
             pagingSpec.Records = GetPagedRecords(PagedBuilder(languages, qualities), pagingSpec, PagedQuery);
 
-            var countTemplate = $"SELECT COUNT(*) FROM (SELECT /**select**/ FROM \"{TableMapping.Mapper.TableNameMapping(typeof(EpisodeHistory))}\" /**join**/ /**innerjoin**/ /**leftjoin**/ /**where**/ /**groupby**/ /**having**/) AS \"Inner\"";
-            pagingSpec.TotalRecords = GetPagedRecordCount(PagedBuilder(languages, qualities).Select(typeof(EpisodeHistory)), pagingSpec, countTemplate);
+            var countTemplate = $"SELECT COUNT(*) FROM (SELECT /**select**/ FROM \"{TableMapping.Mapper.TableNameMapping(typeof(BookHistory))}\" /**join**/ /**innerjoin**/ /**leftjoin**/ /**where**/ /**groupby**/ /**having**/) AS \"Inner\"";
+            pagingSpec.TotalRecords = GetPagedRecordCount(PagedBuilder(languages, qualities).Select(typeof(BookHistory)), pagingSpec, countTemplate);
 
             return pagingSpec;
         }
@@ -135,8 +127,8 @@ namespace Readarr.Core.History
         private SqlBuilder PagedBuilder(int[] languages, int[] qualities)
         {
             var builder = Builder()
-                .Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
-                .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id);
+                .Join<BookHistory, Author>((h, a) => h.AuthorId == a.Id)
+                .Join<BookHistory, Book>((h, b) => h.BookId == b.Id);
 
             if (languages is { Length: > 0 })
             {
@@ -151,11 +143,11 @@ namespace Readarr.Core.History
             return builder;
         }
 
-        protected override IEnumerable<EpisodeHistory> PagedQuery(SqlBuilder builder) =>
-            _database.QueryJoined<EpisodeHistory, Series, Episode>(builder, (history, series, episode) =>
+        protected override IEnumerable<BookHistory> PagedQuery(SqlBuilder builder) =>
+            _database.QueryJoined<BookHistory, Author, Book>(builder, (history, author, book) =>
             {
-                history.Series = series;
-                history.Episode = episode;
+                history.Author = author;
+                history.Book = book;
                 return history;
             });
 
@@ -170,10 +162,10 @@ namespace Readarr.Core.History
                 // - When it's the last value in the array and on different OSes
                 // - When it was converted from a single language
 
-                clauses.Add($"\"{TableMapping.Mapper.TableNameMapping(typeof(EpisodeHistory))}\".\"Languages\" LIKE '[% {language},%]'");
-                clauses.Add($"\"{TableMapping.Mapper.TableNameMapping(typeof(EpisodeHistory))}\".\"Languages\" LIKE '[% {language}' || CHAR(13) || '%]'");
-                clauses.Add($"\"{TableMapping.Mapper.TableNameMapping(typeof(EpisodeHistory))}\".\"Languages\" LIKE '[% {language}' || CHAR(10) || '%]'");
-                clauses.Add($"\"{TableMapping.Mapper.TableNameMapping(typeof(EpisodeHistory))}\".\"Languages\" LIKE '[{language}]'");
+                clauses.Add($"\"{TableMapping.Mapper.TableNameMapping(typeof(BookHistory))}\".\"Languages\" LIKE '[% {language},%]'");
+                clauses.Add($"\"{TableMapping.Mapper.TableNameMapping(typeof(BookHistory))}\".\"Languages\" LIKE '[% {language}' || CHAR(13) || '%]'");
+                clauses.Add($"\"{TableMapping.Mapper.TableNameMapping(typeof(BookHistory))}\".\"Languages\" LIKE '[% {language}' || CHAR(10) || '%]'");
+                clauses.Add($"\"{TableMapping.Mapper.TableNameMapping(typeof(BookHistory))}\".\"Languages\" LIKE '[{language}]'");
             }
 
             return $"({string.Join(" OR ", clauses)})";
@@ -185,7 +177,7 @@ namespace Readarr.Core.History
 
             foreach (var quality in qualities)
             {
-                clauses.Add($"\"{TableMapping.Mapper.TableNameMapping(typeof(EpisodeHistory))}\".\"Quality\" LIKE '%_quality_: {quality},%'");
+                clauses.Add($"\"{TableMapping.Mapper.TableNameMapping(typeof(BookHistory))}\".\"Quality\" LIKE '%_quality_: {quality},%'");
             }
 
             return $"({string.Join(" OR ", clauses)})";
