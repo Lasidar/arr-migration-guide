@@ -289,7 +289,7 @@ namespace Readarr.Core.Download
 
         private void SetImportItem(TrackedDownload trackedDownload)
         {
-            trackedDownload.ImportItem = _provideImportItemService.ProvideImportItem(trackedDownload.DownloadItem, trackedDownload.ImportItem);
+            trackedDownload.ImportItem = _provideImportItemService.ProvideImportItem(trackedDownload.DownloadItem, trackedDownload.ImportItem, trackedDownload.DownloadClient);
         }
 
         private bool ValidatePath(TrackedDownload trackedDownload)

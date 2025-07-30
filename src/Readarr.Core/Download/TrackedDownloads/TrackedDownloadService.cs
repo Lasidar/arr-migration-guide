@@ -117,11 +117,11 @@ namespace Readarr.Core.Download.TrackedDownloads
                     .OrderByDescending(h => h.Date)
                     .ToList();
 
-                var parsedEpisodeInfo = Parser.Parser.ParseTitle(trackedDownload.DownloadItem.Title);
+                var bookInfo = Parser.Parser.ParseBookTitle(trackedDownload.DownloadItem.Title);
 
-                if (parsedEpisodeInfo != null)
+                if (bookInfo != null)
                 {
-                    trackedDownload.RemoteEpisode = _parsingService.Map(parsedEpisodeInfo, 0, 0, null);
+                    trackedDownload.RemoteBook = _parsingService.Map(bookInfo, null);
                 }
 
                 var downloadHistory = _downloadHistoryService.GetLatestDownloadHistoryItem(downloadItem.DownloadId);
@@ -140,52 +140,51 @@ namespace Readarr.Core.Download.TrackedDownloads
                     trackedDownload.Indexer = grabbedEvent?.Data?.GetValueOrDefault("indexer");
                     trackedDownload.Added = grabbedEvent?.Date;
 
-                    if (parsedEpisodeInfo == null ||
-                        trackedDownload.RemoteEpisode?.Series == null ||
-                        trackedDownload.RemoteEpisode.Episodes.Empty())
+                    if (bookInfo == null ||
+                        trackedDownload.RemoteBook?.Author == null ||
+                        !trackedDownload.RemoteBook.Books.Any())
                     {
                         // Try parsing the original source title and if that fails, try parsing it as a special
-                        // TODO: Pass the TVDB ID and TVRage IDs in as well so we have a better chance for finding the item
-                        parsedEpisodeInfo = Parser.Parser.ParseTitle(firstHistoryItem.SourceTitle) ??
-                                            _parsingService.ParseSpecialEpisodeTitle(parsedEpisodeInfo, firstHistoryItem.SourceTitle, 0, 0, null);
+                        // TODO: Implement special book title parsing if needed
+                        bookInfo = Parser.Parser.ParseBookTitle(firstHistoryItem.SourceTitle);
 
-                        if (parsedEpisodeInfo != null)
+                        if (bookInfo != null)
                         {
-                            trackedDownload.RemoteEpisode = _parsingService.Map(parsedEpisodeInfo,
+                            trackedDownload.RemoteBook = _parsingService.Map(bookInfo,
                                 firstHistoryItem.SeriesId,
                                 historyItems.Where(v => v.EventType == EpisodeHistoryEventType.Grabbed)
                                     .Select(h => h.EpisodeId).Distinct());
                         }
                     }
 
-                    if (trackedDownload.RemoteEpisode != null)
+                    if (trackedDownload.RemoteBook != null)
                     {
-                        trackedDownload.RemoteEpisode.Release ??= new ReleaseInfo();
-                        trackedDownload.RemoteEpisode.Release.Indexer = trackedDownload.Indexer;
-                        trackedDownload.RemoteEpisode.Release.Title = trackedDownload.RemoteEpisode.ParsedEpisodeInfo?.ReleaseTitle;
+                        trackedDownload.RemoteBook.Release ??= new ReleaseInfo();
+                        trackedDownload.RemoteBook.Release.Indexer = trackedDownload.Indexer;
+                        trackedDownload.RemoteBook.Release.Title = trackedDownload.RemoteBook.ParsedBookInfo?.ReleaseTitle;
 
                         if (Enum.TryParse(grabbedEvent?.Data?.GetValueOrDefault("indexerFlags"), true, out IndexerFlags flags))
                         {
-                            trackedDownload.RemoteEpisode.Release.IndexerFlags = flags;
+                            trackedDownload.RemoteBook.Release.IndexerFlags = flags;
                         }
 
                         if (downloadHistory != null)
                         {
-                            trackedDownload.RemoteEpisode.Release.IndexerId = downloadHistory.IndexerId;
+                            trackedDownload.RemoteBook.Release.IndexerId = downloadHistory.IndexerId;
                         }
                     }
                 }
 
-                if (trackedDownload.RemoteEpisode != null)
+                if (trackedDownload.RemoteBook != null)
                 {
-                    _aggregationService.Augment(trackedDownload.RemoteEpisode);
+                    _aggregationService.Augment(trackedDownload.RemoteBook);
 
                     // Calculate custom formats
-                    trackedDownload.RemoteEpisode.CustomFormats = _formatCalculator.ParseCustomFormat(trackedDownload.RemoteEpisode, downloadItem.TotalSize);
+                    trackedDownload.RemoteBook.CustomFormats = _formatCalculator.ParseCustomFormat(trackedDownload.RemoteBook, downloadItem.TotalSize);
                 }
 
                 // Track it so it can be displayed in the queue even though we can't determine which series it is for
-                if (trackedDownload.RemoteEpisode == null)
+                if (trackedDownload.RemoteBook == null)
                 {
                     _logger.Trace("No Episode found for download '{0}'", trackedDownload.DownloadItem.Title);
                 }
@@ -244,11 +243,14 @@ namespace Readarr.Core.Download.TrackedDownloads
 
         private void UpdateCachedItem(TrackedDownload trackedDownload)
         {
-            var parsedEpisodeInfo = Parser.Parser.ParseTitle(trackedDownload.DownloadItem.Title);
+            var bookInfo = Parser.Parser.ParseBookTitle(trackedDownload.DownloadItem.Title);
 
-            trackedDownload.RemoteEpisode = parsedEpisodeInfo == null ? null : _parsingService.Map(parsedEpisodeInfo, 0, 0, null);
+            trackedDownload.RemoteBook = bookInfo == null ? null : _parsingService.Map(bookInfo, null);
 
-            _aggregationService.Augment(trackedDownload.RemoteEpisode);
+            if (trackedDownload.RemoteBook != null)
+            {
+                _aggregationService.Augment(trackedDownload.RemoteBook);
+            }
         }
 
         private static TrackedDownloadState GetStateFromHistory(DownloadHistoryEventType eventType)

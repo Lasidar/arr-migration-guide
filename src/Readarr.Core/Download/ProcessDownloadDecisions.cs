@@ -50,10 +50,10 @@ namespace Readarr.Core.Download
 
             foreach (var report in prioritizedDecisions)
             {
-                var downloadProtocol = report.RemoteEpisode.Release.DownloadProtocol;
+                var downloadProtocol = report.RemoteBook.Release.DownloadProtocol;
 
                 // Skip if already grabbed
-                if (IsEpisodeProcessed(grabbed, report))
+                if (IsBookProcessed(grabbed, report))
                 {
                     continue;
                 }
@@ -161,17 +161,17 @@ namespace Readarr.Core.Download
         internal bool IsQualifiedReport(DownloadDecision decision)
         {
             // Process both approved and temporarily rejected
-            return (decision.Approved || decision.TemporarilyRejected) && decision.RemoteEpisode.Episodes.Any();
+            return (decision.Approved || decision.TemporarilyRejected) && decision.RemoteBook.Books.Any();
         }
 
-        private bool IsEpisodeProcessed(List<DownloadDecision> decisions, DownloadDecision report)
+        private bool IsBookProcessed(List<DownloadDecision> decisions, DownloadDecision report)
         {
-            var episodeIds = report.RemoteEpisode.Episodes.Select(e => e.Id).ToList();
+            var bookIds = report.RemoteBook.Books.Select(b => b.Id).ToList();
 
-            return decisions.SelectMany(r => r.RemoteEpisode.Episodes)
-                            .Select(e => e.Id)
+            return decisions.SelectMany(r => r.RemoteBook.Books)
+                            .Select(b => b.Id)
                             .ToList()
-                            .Intersect(episodeIds)
+                            .Intersect(bookIds)
                             .Any();
         }
 
@@ -183,8 +183,8 @@ namespace Readarr.Core.Download
             // was sent to another client we still list it normally so it apparent that it'll grab next time.
             // Delayed is treated the same, but only the first is listed the subsequent items as stored as Fallback.
 
-            if (IsEpisodeProcessed(grabbed, report) ||
-                IsEpisodeProcessed(pending, report))
+            if (IsBookProcessed(grabbed, report) ||
+                IsBookProcessed(pending, report))
             {
                 reason = PendingReleaseReason.Fallback;
             }
@@ -195,31 +195,31 @@ namespace Readarr.Core.Download
 
         private async Task<ProcessedDecisionResult> ProcessDecisionInternal(DownloadDecision decision, int? downloadClientId = null)
         {
-            var remoteEpisode = decision.RemoteEpisode;
-            var remoteIndexer = remoteEpisode.Release.Indexer;
+            var remoteBook = decision.RemoteBook;
+            var remoteIndexer = remoteBook.Release.Indexer;
 
             try
             {
-                _logger.Trace("Grabbing release '{0}' from Indexer {1} at priority {2}.", remoteEpisode, remoteIndexer, remoteEpisode.Release.IndexerPriority);
-                await _downloadService.DownloadReport(remoteEpisode, downloadClientId);
+                _logger.Trace("Grabbing release '{0}' from Indexer {1} at priority {2}.", remoteBook, remoteIndexer, remoteBook.Release.IndexerPriority);
+                await _downloadService.DownloadReport(remoteBook, downloadClientId);
 
                 return ProcessedDecisionResult.Grabbed;
             }
             catch (ReleaseUnavailableException)
             {
-                _logger.Warn("Failed to download release '{0}' from Indexer {1}. Release not available", remoteEpisode, remoteIndexer);
+                _logger.Warn("Failed to download release '{0}' from Indexer {1}. Release not available", remoteBook, remoteIndexer);
                 return ProcessedDecisionResult.Rejected;
             }
             catch (Exception ex)
             {
                 if (ex is DownloadClientUnavailableException || ex is DownloadClientAuthenticationException)
                 {
-                    _logger.Debug(ex, "Failed to send release '{0}' from Indexer {1} to download client, storing until later.", remoteEpisode, remoteIndexer);
+                    _logger.Debug(ex, "Failed to send release '{0}' from Indexer {1} to download client, storing until later.", remoteBook, remoteIndexer);
                     return ProcessedDecisionResult.Failed;
                 }
                 else
                 {
-                    _logger.Warn(ex, "Couldn't add release '{0}' from Indexer {1} to download queue.", remoteEpisode, remoteIndexer);
+                    _logger.Warn(ex, "Couldn't add release '{0}' from Indexer {1} to download queue.", remoteBook, remoteIndexer);
                     return ProcessedDecisionResult.Skipped;
                 }
             }
