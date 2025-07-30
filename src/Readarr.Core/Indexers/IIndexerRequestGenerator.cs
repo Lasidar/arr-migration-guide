@@ -5,6 +5,12 @@ namespace Readarr.Core.Indexers
     public interface IIndexerRequestGenerator
     {
         IndexerPageableRequestChain GetRecentRequests();
+        
+        // Book search methods
+        IndexerPageableRequestChain GetSearchRequests(BookSearchCriteria searchCriteria);
+        IndexerPageableRequestChain GetSearchRequests(AuthorSearchCriteria searchCriteria);
+        
+        // TV search methods (to be removed)
         IndexerPageableRequestChain GetSearchRequests(SingleEpisodeSearchCriteria searchCriteria);
         IndexerPageableRequestChain GetSearchRequests(SeasonSearchCriteria searchCriteria);
         IndexerPageableRequestChain GetSearchRequests(DailyEpisodeSearchCriteria searchCriteria);

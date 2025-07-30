@@ -74,6 +74,12 @@ namespace Readarr.Core.Indexers
         protected TSettings Settings => (TSettings)Definition.Settings;
 
         public abstract Task<IList<ReleaseInfo>> FetchRecent();
+        
+        // Book search methods
+        public abstract Task<IList<ReleaseInfo>> Fetch(BookSearchCriteria searchCriteria);
+        public abstract Task<IList<ReleaseInfo>> Fetch(AuthorSearchCriteria searchCriteria);
+        
+        // TV search methods (to be removed)
         public abstract Task<IList<ReleaseInfo>> Fetch(SeasonSearchCriteria searchCriteria);
         public abstract Task<IList<ReleaseInfo>> Fetch(SingleEpisodeSearchCriteria searchCriteria);
         public abstract Task<IList<ReleaseInfo>> Fetch(DailyEpisodeSearchCriteria searchCriteria);
@@ -81,6 +87,7 @@ namespace Readarr.Core.Indexers
         public abstract Task<IList<ReleaseInfo>> Fetch(AnimeEpisodeSearchCriteria searchCriteria);
         public abstract Task<IList<ReleaseInfo>> Fetch(AnimeSeasonSearchCriteria searchCriteria);
         public abstract Task<IList<ReleaseInfo>> Fetch(SpecialEpisodeSearchCriteria searchCriteria);
+        
         public abstract HttpRequest GetDownloadRequest(string link);
 
         protected virtual IList<ReleaseInfo> CleanupReleases(IEnumerable<ReleaseInfo> releases)

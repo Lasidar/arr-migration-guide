@@ -51,6 +51,28 @@ namespace Readarr.Core.Indexers
             return FetchReleases(g => g.GetRecentRequests(), true);
         }
 
+        // Book search methods
+        public override Task<IList<ReleaseInfo>> Fetch(BookSearchCriteria searchCriteria)
+        {
+            if (!SupportsSearch)
+            {
+                return Task.FromResult<IList<ReleaseInfo>>(Array.Empty<ReleaseInfo>());
+            }
+
+            return FetchReleases(g => g.GetSearchRequests(searchCriteria));
+        }
+
+        public override Task<IList<ReleaseInfo>> Fetch(AuthorSearchCriteria searchCriteria)
+        {
+            if (!SupportsSearch)
+            {
+                return Task.FromResult<IList<ReleaseInfo>>(Array.Empty<ReleaseInfo>());
+            }
+
+            return FetchReleases(g => g.GetSearchRequests(searchCriteria));
+        }
+
+        // TV search methods (to be removed)
         public override Task<IList<ReleaseInfo>> Fetch(SingleEpisodeSearchCriteria searchCriteria)
         {
             if (!SupportsSearch)

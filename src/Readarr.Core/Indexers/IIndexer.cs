@@ -14,6 +14,12 @@ namespace Readarr.Core.Indexers
         DownloadProtocol Protocol { get; }
 
         Task<IList<ReleaseInfo>> FetchRecent();
+        
+        // Book search methods
+        Task<IList<ReleaseInfo>> Fetch(BookSearchCriteria searchCriteria);
+        Task<IList<ReleaseInfo>> Fetch(AuthorSearchCriteria searchCriteria);
+        
+        // TV search methods (to be removed)
         Task<IList<ReleaseInfo>> Fetch(SeasonSearchCriteria searchCriteria);
         Task<IList<ReleaseInfo>> Fetch(SingleEpisodeSearchCriteria searchCriteria);
         Task<IList<ReleaseInfo>> Fetch(DailyEpisodeSearchCriteria searchCriteria);
@@ -21,6 +27,7 @@ namespace Readarr.Core.Indexers
         Task<IList<ReleaseInfo>> Fetch(AnimeEpisodeSearchCriteria searchCriteria);
         Task<IList<ReleaseInfo>> Fetch(AnimeSeasonSearchCriteria searchCriteria);
         Task<IList<ReleaseInfo>> Fetch(SpecialEpisodeSearchCriteria searchCriteria);
+        
         HttpRequest GetDownloadRequest(string link);
     }
 }
