@@ -465,7 +465,8 @@ namespace Readarr.Core.IndexerSearch
                                                            episodes.Select(e => e.SceneSeasonNumber ?? e.SeasonNumber).Distinct().ToList());
 
             spec.Episodes = episodes;
-            spec.MonitoredEpisodesOnly = monitoredOnly;
+            // TODO: This is TV-specific and needs to be replaced with book-specific logic
+            // spec.MonitoredEpisodesOnly = monitoredOnly;
             spec.UserInvokedSearch = userInvokedSearch;
             spec.InteractiveSearch = interactiveSearch;
 
@@ -487,7 +488,8 @@ namespace Readarr.Core.IndexerSearch
             spec.SearchMode = mapping.SearchMode;
 
             spec.Episodes = new List<Episode> { mapping.Episode };
-            spec.MonitoredEpisodesOnly = monitoredOnly;
+            // TODO: This is TV-specific and needs to be replaced with book-specific logic
+            // spec.MonitoredEpisodesOnly = monitoredOnly;
             spec.UserInvokedSearch = userInvokedSearch;
             spec.InteractiveSearch = interactiveSearch;
 
@@ -504,7 +506,8 @@ namespace Readarr.Core.IndexerSearch
             spec.SearchMode = mapping.SearchMode;
 
             spec.Episodes = mapping.Episodes;
-            spec.MonitoredEpisodesOnly = monitoredOnly;
+            // TODO: This is TV-specific and needs to be replaced with book-specific logic
+            // spec.MonitoredEpisodesOnly = monitoredOnly;
             spec.UserInvokedSearch = userInvokedSearch;
             spec.InteractiveSearch = interactiveSearch;
 
@@ -560,8 +563,8 @@ namespace Readarr.Core.IndexerSearch
         private List<DownloadDecision> DeDupeDecisions(List<DownloadDecision> decisions)
         {
             // De-dupe reports by guid so duplicate results aren't returned. Pick the one with the least rejections and higher indexer priority.
-            return decisions.GroupBy(d => d.RemoteEpisode.Release.Guid)
-                .Select(d => d.OrderBy(v => v.Rejections.Count()).ThenBy(v => v.RemoteEpisode?.Release?.IndexerPriority ?? IndexerDefinition.DefaultPriority).First())
+            return decisions.GroupBy(d => d.RemoteBook.Release.Guid)
+                .Select(d => d.OrderBy(v => v.Rejections.Count()).ThenBy(v => v.RemoteBook?.Release?.IndexerPriority ?? IndexerDefinition.DefaultPriority).First())
                 .ToList();
         }
     }

@@ -98,6 +98,13 @@ namespace Readarr.Core.Download
         public abstract DownloadProtocol Protocol { get; }
 
         public abstract Task<string> Download(RemoteEpisode remoteEpisode, IIndexer indexer);
+        
+        public virtual Task<string> Download(RemoteBook remoteBook, IIndexer indexer)
+        {
+            // Default implementation - convert RemoteBook to RemoteEpisode for backward compatibility
+            // This should be overridden in book-specific download clients
+            throw new NotImplementedException("Download client does not support book downloads. Please override this method in book-specific download clients.");
+        }
         public abstract IEnumerable<DownloadClientItem> GetItems();
 
         public virtual DownloadClientItem GetImportItem(DownloadClientItem item, DownloadClientItem previousImportAttempt)

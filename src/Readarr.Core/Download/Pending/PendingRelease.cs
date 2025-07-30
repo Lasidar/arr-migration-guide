@@ -20,7 +20,7 @@ namespace Readarr.Core.Download.Pending
         
         // Book-related properties (not persisted)
         public RemoteBook RemoteBook { get; set; }
-        public ParsedBookInfo ParsedBookInfo { get; set; }
+        public BookInfo ParsedBookInfo { get; set; }
         public Author Author { get; set; }
     }
 

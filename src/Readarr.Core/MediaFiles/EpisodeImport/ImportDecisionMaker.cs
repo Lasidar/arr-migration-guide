@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using NLog;
 using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
-using Readarr.Core.CustomFormats;
-using Readarr.Core.Download;
-using Readarr.Core.Download.TrackedDownloads;
+using Readarr.Core.Configuration;
+using Readarr.Core.DecisionEngine;
 using Readarr.Core.MediaFiles.EpisodeImport.Aggregation;
+using Readarr.Core.MediaFiles.EpisodeImport.Specifications;
+using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Qualities;
 using Readarr.Core.Tv;
 
 namespace Readarr.Core.MediaFiles.EpisodeImport
@@ -135,11 +138,11 @@ namespace Readarr.Core.MediaFiles.EpisodeImport
                 {
                     if (IsPartialSeason(localEpisode))
                     {
-                        decision = new ImportDecision(localEpisode, new ImportRejection(ImportRejectionReason.PartialSeason, "Partial season packs are not supported"));
+                        decision = new ImportDecision(localEpisode, new ImportRejection("Partial season packs are not supported", RejectionType.Permanent));
                     }
                     else if (IsSeasonExtra(localEpisode))
                     {
-                        decision = new ImportDecision(localEpisode, new ImportRejection(ImportRejectionReason.SeasonExtra, "Extras are not supported"));
+                        decision = new ImportDecision(localEpisode, new ImportRejection("Extras are not supported", RejectionType.Permanent));
                     }
                     else
                     {
