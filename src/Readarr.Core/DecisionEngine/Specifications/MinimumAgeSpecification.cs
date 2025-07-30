@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using NLog;
 using Readarr.Core.Configuration;
 using Readarr.Core.Parser.Model;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {
-    public class MinimumAgeSpecification : IDownloadDecisionEngineSpecification
+    public class MinimumAgeSpecification : IDualDownloadDecisionEngineSpecification
     {
         private readonly IConfigService _configService;
         private readonly Logger _logger;
@@ -19,15 +19,25 @@ namespace Readarr.Core.DecisionEngine.Specifications
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Temporary;
 
+        public virtual DownloadSpecDecision IsSatisfiedBy(RemoteBook subject, ReleaseDecisionInformation information)
+        {
+            return CheckAge(subject.Release);
+        }
+
         public virtual DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {
-            if (subject.Release.DownloadProtocol != Indexers.DownloadProtocol.Usenet)
+            return CheckAge(subject.Release);
+        }
+
+        private DownloadSpecDecision CheckAge(ReleaseInfo release)
+        {
+            if (release.DownloadProtocol != Indexers.DownloadProtocol.Usenet)
             {
                 _logger.Debug("Not checking minimum age requirement for non-usenet report");
                 return DownloadSpecDecision.Accept();
             }
 
-            var age = subject.Release.AgeMinutes;
+            var age = release.AgeMinutes;
             var minimumAge = _configService.MinimumAge;
             var ageRounded = Math.Round(age, 1);
 

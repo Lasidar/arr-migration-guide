@@ -1,11 +1,11 @@
-﻿using NLog;
+using NLog;
 using Readarr.Common.Extensions;
 using Readarr.Core.Configuration;
 using Readarr.Core.Parser.Model;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {
-    public class MaximumSizeSpecification : IDownloadDecisionEngineSpecification
+    public class MaximumSizeSpecification : IDualDownloadDecisionEngineSpecification
     {
         private readonly IConfigService _configService;
         private readonly Logger _logger;
@@ -19,9 +19,19 @@ namespace Readarr.Core.DecisionEngine.Specifications
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
 
+        public DownloadSpecDecision IsSatisfiedBy(RemoteBook subject, ReleaseDecisionInformation information)
+        {
+            return CheckSize(subject.Release);
+        }
+
         public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {
-            var size = subject.Release.Size;
+            return CheckSize(subject.Release);
+        }
+
+        private DownloadSpecDecision CheckSize(ReleaseInfo release)
+        {
+            var size = release.Size;
             var maximumSize = _configService.MaximumSize.Megabytes();
 
             if (maximumSize == 0)
