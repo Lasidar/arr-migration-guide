@@ -29,7 +29,7 @@ namespace Readarr.Core.ImportLists.MyAnimeList
             : base(httpClient, importListStatusService, configService, parsingService, localizationService, logger)
         {
             _importListRepository = netImportRepository;
-            _requestBuilder = requestBuilder.Services;
+            _requestBuilder = requestBuilder.BookInfo;
         }
 
         public override ImportListFetchResult Fetch()

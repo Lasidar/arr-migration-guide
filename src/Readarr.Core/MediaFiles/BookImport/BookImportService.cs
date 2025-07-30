@@ -117,7 +117,7 @@ namespace Readarr.Core.MediaFiles.BookImport
                     allImportedBookFiles.Add(bookFile);
                     allOldBookFiles.AddRange(oldFiles);
 
-                    _logger.Info("[{0}] Imported {1}", localBook.Author.Name, bookFile.RelativePath);
+                    _logger.Info("[{0}] Imported {1}", localBook.Author.Metadata.Value?.Name ?? "Unknown Author", bookFile.RelativePath);
                 }
                 catch (RootFolderNotFoundException e)
                 {
@@ -159,7 +159,7 @@ namespace Readarr.Core.MediaFiles.BookImport
             {
                 var title = Parser.Parser.RemoveFileExtension(downloadClientItem.Title);
 
-                if (downloadClientItem.DownloadClientInfo.Type != DownloadClientType.Usenet && 
+                if (downloadClientItem.DownloadClientInfo.Type != DownloadClientType.Usenet.ToString() && 
                     title == Path.GetFileNameWithoutExtension(localBook.Path))
                 {
                     return title;

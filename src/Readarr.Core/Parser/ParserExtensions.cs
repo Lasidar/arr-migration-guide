@@ -9,34 +9,14 @@ namespace Readarr.Core.Parser
 
         public static string CleanAuthorName(this string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return string.Empty;
-            }
-
-            // Remove invalid characters
-            var cleaned = InvalidCharRegex.Replace(name, string.Empty);
-            
-            // Replace multiple spaces with single space
-            cleaned = MultipleSpacesRegex.Replace(cleaned, " ");
-            
-            return cleaned.Trim().ToLowerInvariant();
+            // TODO: Implement author-specific name cleaning
+            return CleanSeriesTitle(name);
         }
-
+        
         public static string CleanBookTitle(this string title)
         {
-            if (string.IsNullOrWhiteSpace(title))
-            {
-                return string.Empty;
-            }
-
-            // Remove invalid characters
-            var cleaned = InvalidCharRegex.Replace(title, string.Empty);
-            
-            // Replace multiple spaces with single space
-            cleaned = MultipleSpacesRegex.Replace(cleaned, " ");
-            
-            return cleaned.Trim().ToLowerInvariant();
+            // TODO: Implement book-specific title cleaning
+            return CleanSeriesTitle(title);
         }
 
         public static string CleanSeriesTitle(this string title)

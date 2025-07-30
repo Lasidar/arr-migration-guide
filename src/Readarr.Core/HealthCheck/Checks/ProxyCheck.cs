@@ -27,7 +27,7 @@ namespace Readarr.Core.HealthCheck.Checks
             _client = client;
             _logger = logger;
 
-            _cloudRequestBuilder = cloudRequestBuilder.Services;
+            _cloudRequestBuilder = cloudRequestBuilder.BookInfo;
         }
 
         public override HealthCheck Check()
