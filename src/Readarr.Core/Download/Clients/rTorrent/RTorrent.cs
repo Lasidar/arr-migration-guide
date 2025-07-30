@@ -150,7 +150,7 @@ namespace Readarr.Core.Download.Clients.RTorrent
                 }
 
                 var item = new DownloadClientItem();
-                item.DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, Settings.TvImportedCategory.IsNotNullOrWhiteSpace());
+                item.DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this);
                 item.Title = torrent.Name;
                 item.DownloadId = torrent.Hash;
                 item.OutputPath = _remotePathMappingService.RemapRemoteToLocal(Settings.Host, new OsPath(torrent.Path));

@@ -14,7 +14,7 @@ namespace Readarr.Core.Download
         public long RemainingSize { get; set; }
         public TimeSpan? RemainingTime { get; set; }
         public DateTime? CompletedTime { get; set; }
-        public string OutputPath { get; set; }
+        public OsPath OutputPath { get; set; }
         public string Category { get; set; }
         public DownloadItemStatus Status { get; set; }
         public bool IsEncrypted { get; set; }
@@ -24,7 +24,7 @@ namespace Readarr.Core.Download
         public string Message { get; set; }
         public double? SeedRatio { get; set; }
 
-        public DownloadClientInfo DownloadClientInfo { get; set; }
+        public DownloadClientItemClientInfo DownloadClientInfo { get; set; }
         
         public DownloadClientItem Clone()
         {

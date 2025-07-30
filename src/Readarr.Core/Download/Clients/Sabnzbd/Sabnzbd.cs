@@ -65,7 +65,7 @@ namespace Readarr.Core.Download.Clients.Sabnzbd
                 }
 
                 var queueItem = new DownloadClientItem();
-                queueItem.DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, false);
+                queueItem.DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this);
                 queueItem.DownloadId = sabQueueItem.Id;
                 queueItem.Category = sabQueueItem.Category;
                 queueItem.Title = sabQueueItem.Title;
@@ -120,7 +120,7 @@ namespace Readarr.Core.Download.Clients.Sabnzbd
 
                 var historyItem = new DownloadClientItem
                 {
-                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, false),
+                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this),
                     DownloadId = sabHistoryItem.Id,
                     Category = sabHistoryItem.Category,
                     Title = sabHistoryItem.Title,
@@ -577,13 +577,13 @@ namespace Readarr.Core.Download.Clients.Sabnzbd
         {
             var downloadItemOutputPath = downloadClientItem.OutputPath;
 
-            if (downloadItemOutputPath.IsEmpty)
+            if (downloadItemOutputPath.IsEmpty())
             {
                 return false;
             }
 
-            if ((OsInfo.IsWindows && !downloadItemOutputPath.IsWindowsPath) ||
-                (OsInfo.IsNotWindows && !downloadItemOutputPath.IsUnixPath))
+            if ((OsInfo.IsWindows && !downloadItemOutputPath.IsWindowsPath()) ||
+                (OsInfo.IsNotWindows && !downloadItemOutputPath.IsUnixPath()))
             {
                 return false;
             }

@@ -67,7 +67,7 @@ namespace Readarr.Core.Download.Clients.Blackhole
 
                     TotalSize = files.Sum(f => f.Length),
 
-                    OutputPath = outputPath.ToString(),
+                    OutputPath = outputPath,
 
                     Status = item.Status,
                 };

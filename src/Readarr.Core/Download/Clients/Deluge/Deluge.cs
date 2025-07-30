@@ -145,7 +145,7 @@ namespace Readarr.Core.Download.Clients.Deluge
                 item.DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this);
 
                 var outputPath = _remotePathMappingService.RemapRemoteToLocal(Settings.Host, new OsPath(torrent.DownloadPath));
-                item.OutputPath = outputPath.ToString();
+                item.OutputPath = outputPath + torrent.Name;
                 item.RemainingSize = torrent.Size - torrent.BytesDownloaded;
                 item.SeedRatio = torrent.Ratio;
 

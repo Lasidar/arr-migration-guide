@@ -259,7 +259,7 @@ namespace Readarr.Core.Download.Clients.QBittorrent
                     Category = torrent.Category.IsNotNullOrWhiteSpace() ? torrent.Category : torrent.Label,
                     Title = torrent.Name,
                     TotalSize = torrent.Size,
-                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, Settings.TvImportedCategory.IsNotNullOrWhiteSpace()),
+                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this),
                     RemainingSize = (long)(torrent.Size * (1.0 - torrent.Progress)),
                     RemainingTime = GetRemainingTime(torrent),
                     SeedRatio = torrent.Ratio
@@ -366,7 +366,7 @@ namespace Readarr.Core.Download.Clients.QBittorrent
         public override DownloadClientItem GetImportItem(DownloadClientItem item, DownloadClientItem previousImportAttempt)
         {
             // On API version >= 2.6.1 this is already set correctly
-            if (!item.OutputPath.IsEmpty)
+            if (!item.OutputPath.IsEmpty())
             {
                 return item;
             }

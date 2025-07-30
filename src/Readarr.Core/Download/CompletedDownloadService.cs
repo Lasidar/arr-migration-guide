@@ -144,7 +144,7 @@ namespace Readarr.Core.Download
 
             trackedDownload.State = TrackedDownloadState.Importing;
 
-            var outputPath = trackedDownload.ImportItem.OutputPath.FullPath();
+            var outputPath = trackedDownload.ImportItem.OutputPath.FullPath;
             var importResults = _downloadedEpisodesImportService.ProcessPath(outputPath,
                 ImportMode.Auto,
                 trackedDownload.RemoteEpisode.Series,

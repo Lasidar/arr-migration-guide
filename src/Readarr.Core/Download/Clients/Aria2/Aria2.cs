@@ -136,7 +136,7 @@ namespace Readarr.Core.Download.Clients.Aria2
                     DownloadId = torrent.InfoHash?.ToUpper(),
                     IsEncrypted = false,
                     Message = torrent.ErrorMessage,
-                    OutputPath = outputPath.ToString(),
+                    OutputPath = outputPath,
                     RemainingSize = totalLength - completedLength,
                     RemainingTime = downloadSpeed == 0 ? (TimeSpan?)null : new TimeSpan(0, 0, (int)((totalLength - completedLength) / downloadSpeed)),
                     Removed = torrent.Status == "removed",

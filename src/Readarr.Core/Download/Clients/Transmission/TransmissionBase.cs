@@ -81,7 +81,7 @@ namespace Readarr.Core.Download.Clients.Transmission
                     DownloadId = torrent.HashString.ToUpper(),
                     Category = Settings.TvCategory,
                     Title = torrent.Name,
-                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, Settings.TvImportedCategory.IsNotNullOrWhiteSpace() && SupportsLabels),
+                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this),
                     OutputPath = GetOutputPath(outputPath, torrent),
                     TotalSize = torrent.TotalSize,
                     RemainingSize = torrent.LeftUntilDone,
