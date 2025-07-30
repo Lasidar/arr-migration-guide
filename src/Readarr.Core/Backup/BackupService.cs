@@ -16,6 +16,7 @@ using Readarr.Core.Configuration;
 using Readarr.Core.Datastore;
 using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Messaging.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Backup
 {
@@ -32,13 +33,12 @@ namespace Readarr.Core.Backup
     {
         private readonly IMainDatabase _maindDb;
         private readonly IMakeDatabaseBackup _makeDatabaseBackup;
-        private readonly IBackupRepository _backupRepository;
         private readonly IAppFolderInfo _appFolderInfo;
         private readonly IArchiveService _archiveService;
         private readonly IDiskProvider _diskProvider;
         private readonly IDiskTransferService _diskTransferService;
-        private readonly ISeriesService _seriesService;
         private readonly IConfigService _configService;
+        private readonly IEventAggregator _eventAggregator;
         private readonly Logger _logger;
 
         private readonly string _backupTempFolder;
@@ -52,6 +52,7 @@ namespace Readarr.Core.Backup
                             IArchiveService archiveService,
                             IDiskTransferService diskTransferService,
                             IMainDatabase maindDb,
+                            IMakeDatabaseBackup makeDatabaseBackup,
                             IEventAggregator eventAggregator,
                             Logger logger)
         {
@@ -61,6 +62,7 @@ namespace Readarr.Core.Backup
             _archiveService = archiveService;
             _diskTransferService = diskTransferService;
             _maindDb = maindDb;
+            _makeDatabaseBackup = makeDatabaseBackup;
             _eventAggregator = eventAggregator;
             _logger = logger;
 
