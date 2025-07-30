@@ -1,8 +1,8 @@
-# Readarr v2 Migration - Final Status
+# Readarr v2 Migration - Current Status
 
-## Migration Complete ✅
+## Migration Progress 🚧
 
-The Readarr v2 migration from Sonarr has been successfully completed following the systematic phase-by-phase approach outlined in the migration plan.
+The Readarr v2 migration from Sonarr is in progress. Major infrastructure work has been completed, but build verification and testing remain.
 
 ## What Was Accomplished
 
@@ -87,12 +87,15 @@ The Readarr v2 migration from Sonarr has been successfully completed following t
 - ✅ Performance optimizations
 
 ### Partial/Stub Components
+- ✅ Decision Engine specifications (ALL now support dual RemoteBook/RemoteEpisode)
+- ✅ Queue system (updated to support both RemoteBook and RemoteEpisode)
+- ✅ Blocklist Service (updated to support both book and TV types)
+- ✅ Import List infrastructure (book-specific base classes created)
+- ✅ Webhook infrastructure (book-specific base classes and payloads created)
 - 🟡 Indexers (book search methods added, TV methods remain as stubs)
-- 🟡 ImportLists (still TV-focused, needs refactoring)
-- 🟡 Notification providers (extensive TV references in Webhook system)
-- 🟡 Queue system (uses RemoteEpisode)
-- 🟡 Decision Engine specifications (many still use RemoteEpisode)
-- 🟡 Parser models (RemoteEpisode, LocalEpisode still present)
+- 🟡 ImportLists (infrastructure ready, specific implementations need conversion)
+- 🟡 Notification providers (infrastructure ready, specific providers need conversion)
+- 🟡 Parser models (RemoteEpisode, LocalEpisode still present but dual support added)
 
 ## Remaining Work
 
@@ -108,18 +111,18 @@ The Readarr v2 migration from Sonarr has been successfully completed following t
 - Fix test compilation errors
 
 ### 3. Major Code Cleanup Required
-- Update TV references throughout:
-  - **Webhook Notifications**: WebhookSeries → WebhookAuthor, WebhookEpisodeFile → WebhookBookFile
-  - **Queue System**: RemoteEpisode → RemoteBook in Queue and QueueService
-  - **Decision Engine**: Update all specifications to use RemoteBook instead of RemoteEpisode
-  - **Parser Models**: Remove/update LocalEpisode, RemoteEpisode, FindSeriesResult, SeriesTitleInfo
-  - **Blocklist Service**: Update to use RemoteBook instead of RemoteEpisode
-  - **ImportLists**: Complete conversion from Series to Author/Book imports
+- Update remaining TV references:
+  - **ImportLists**: Convert specific implementations (Sonarr, Trakt, etc.) to use book infrastructure
+  - **Notification Providers**: Convert specific providers (Join, Pushover, Ntfy, etc.) to use book infrastructure
+  - **Parser Models**: Eventually remove LocalEpisode, RemoteEpisode (currently dual support)
   - **History Service**: Remove remaining TV references (EpisodeHistory constants)
-  - **Notification Providers**: Update Join, Pushover, Ntfy, and others for book support
 - Remove stub TV models:
   - Episode (created as stub)
   - TV search criteria stubs (SingleEpisodeSearchCriteria, etc.)
+- Complete dual-support strategy:
+  - Many components now support both books and TV
+  - This allows gradual migration without breaking existing functionality
+  - Eventually TV support can be removed entirely
 
 ### 4. Database Migration
 - Create v1→v2 migration tool
@@ -167,6 +170,22 @@ The systematic phase-by-phase approach was highly successful:
    - Prepare release notes
    - Community beta testing
 
+## Major Accomplishments in This Session
+
+1. **Decision Engine Complete**: ALL specifications now support both RemoteBook and RemoteEpisode through the dual-support pattern
+2. **Import List Infrastructure**: Created book-specific base classes and interfaces for import lists
+3. **Webhook Infrastructure**: Created book-specific webhook base classes and payload types
+4. **Queue System**: Updated to support both book and TV types
+5. **Blocklist Service**: Updated to support both book and TV types
+
+## Dual-Support Strategy
+
+A key innovation in this migration is the dual-support strategy:
+- Created `IDualDownloadDecisionEngineSpecification` interface
+- Components support both RemoteBook and RemoteEpisode
+- Allows gradual migration without breaking existing functionality
+- Makes the codebase more maintainable during transition
+
 ## Conclusion
 
-The backend migration from Sonarr to Readarr v2 is functionally complete. The codebase has been successfully transformed from TV management to book management, with all major components updated or replaced. The systematic approach ensured a clean, maintainable result that's ready for final polish and production deployment.
+The backend migration from Sonarr to Readarr v2 has made significant progress. The dual-support strategy allows the system to handle both books and TV content during the transition period. Major infrastructure components have been updated, and the path forward is clear for completing the remaining specific implementations.
