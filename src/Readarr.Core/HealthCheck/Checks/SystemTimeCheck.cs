@@ -17,7 +17,7 @@ namespace Readarr.Core.HealthCheck.Checks
             : base(localizationService)
         {
             _client = client;
-            _cloudRequestBuilder = cloudRequestBuilder.Services;
+            _cloudRequestBuilder = cloudRequestBuilder.BookInfo;
             _logger = logger;
         }
 
@@ -25,7 +25,7 @@ namespace Readarr.Core.HealthCheck.Checks
         {
             try
             {
-                var request = _cloudRequestBuilder.BookInfo.Create()
+                var request = _cloudRequestBuilder.Create()
                     .Resource("/time")
                     .Build();
 

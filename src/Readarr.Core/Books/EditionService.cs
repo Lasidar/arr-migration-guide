@@ -102,12 +102,14 @@ namespace Readarr.Core.Books
 
         public void SetFileId(int editionId, int fileId)
         {
-            _editionRepository.SetFileId(editionId, fileId);
+            var edition = _editionRepository.Get(editionId);
+            _editionRepository.SetFileId(edition, fileId);
         }
 
         public void ClearFileId(int editionId)
         {
-            _editionRepository.ClearFileId(editionId);
+            var edition = _editionRepository.Get(editionId);
+            _editionRepository.ClearFileId(edition, false);
         }
     }
 }

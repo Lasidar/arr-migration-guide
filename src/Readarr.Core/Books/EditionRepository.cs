@@ -20,6 +20,7 @@ namespace Readarr.Core.Books
         Edition GetEditionByFileId(int fileId);
         List<Edition> EditionsWithFiles(int bookId);
         PagingSpec<Edition> EditionsWithoutFiles(PagingSpec<Edition> pagingSpec);
+        List<Edition> EditionsWithoutFiles(int authorId);
         PagingSpec<Edition> EditionsWhereCutoffUnmet(PagingSpec<Edition> pagingSpec, List<QualitiesBelowCutoff> qualitiesBelowCutoff);
         List<Edition> EditionsBetweenDates(DateTime startDate, DateTime endDate, bool includeUnmonitored);
         void SetMonitored(Edition edition, bool monitored);
@@ -91,10 +92,22 @@ namespace Readarr.Core.Books
 
         public PagingSpec<Edition> EditionsWithoutFiles(PagingSpec<Edition> pagingSpec)
         {
-            pagingSpec.Records = GetPagedRecords(Builder().Where(e => e.BookFileId == 0), pagingSpec, PagedQuery);
-            pagingSpec.TotalRecords = GetPagedRecordCount(Builder().Where(e => e.BookFileId == 0), pagingSpec);
+            pagingSpec.Records = GetPagedRecords(Builder().Where<Edition>(e => e.BookFileId == 0), pagingSpec, PagedQuery);
+            pagingSpec.TotalRecords = GetPagedRecordCount(Builder().Where<Edition>(e => e.BookFileId == 0), pagingSpec);
 
             return pagingSpec;
+        }
+
+        public List<Edition> EditionsWithoutFiles(int authorId)
+        {
+            var sql = @"SELECT Editions.* FROM Editions 
+                        JOIN Books ON Editions.BookId = Books.Id 
+                        WHERE Books.AuthorId = @authorId AND Editions.BookFileId = 0";
+
+            using (var conn = _database.OpenConnection())
+            {
+                return conn.Query<Edition>(sql, new { authorId }).ToList();
+            }
         }
 
         public PagingSpec<Edition> EditionsWhereCutoffUnmet(PagingSpec<Edition> pagingSpec, List<QualitiesBelowCutoff> qualitiesBelowCutoff)
@@ -108,11 +121,11 @@ namespace Readarr.Core.Books
         public List<Edition> EditionsBetweenDates(DateTime startDate, DateTime endDate, bool includeUnmonitored)
         {
             var builder = Builder()
-                .Where(e => e.ReleaseDate >= startDate && e.ReleaseDate <= endDate);
+                .Where<Edition>(e => e.ReleaseDate >= startDate && e.ReleaseDate <= endDate);
 
             if (!includeUnmonitored)
             {
-                builder = builder.Where(e => e.Monitored == true);
+                builder = builder.Where<Edition>(e => e.Monitored == true);
             }
 
             return Query(builder).ToList();
@@ -160,11 +173,12 @@ namespace Readarr.Core.Books
         private SqlBuilder BuildQualityCutoffQuery(List<QualitiesBelowCutoff> qualitiesBelowCutoff)
         {
             var builder = Builder()
-                .Where(e => e.BookFileId > 0);
+                .Where<Edition>(e => e.BookFileId > 0);
 
             if (qualitiesBelowCutoff.Any())
             {
-                var clauses = qualitiesBelowCutoff.Select(q => $"(BookFiles.Quality = {q.Quality.Id})");
+                var qualityIds = qualitiesBelowCutoff.SelectMany(q => q.QualityIds).Distinct();
+                var clauses = qualityIds.Select(id => $"(BookFiles.Quality = {id})");
                 builder = builder.Where($"({string.Join(" OR ", clauses)})");
             }
 
