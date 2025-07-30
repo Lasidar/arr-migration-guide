@@ -227,7 +227,9 @@ namespace Readarr.Core.Download
                 else if (trackedDownload.RemoteEpisode != null)
                 {
                     var episodes = _episodeService.GetEpisodes(trackedDownload.RemoteEpisode.Episodes.Select(e => e.Id));
-                    var files = _mediaFileService.Get(episodes.Select(e => e.EpisodeFileId).Where(i => i > 0).Distinct());
+                    var episodeFileIds = episodes.Select(e => e.EpisodeFileId).Where(i => i > 0).Distinct().ToList();
+                    var files = episodeFileIds.Count > 0 ? _mediaFileService.GetFilesBySeries(trackedDownload.RemoteEpisode.Series.Id)
+                        .Where(f => episodeFileIds.Contains(f.Id)).ToList() : new List<EpisodeFile>();
 
                     trackedDownload.State = TrackedDownloadState.Imported;
                     _eventAggregator.PublishEvent(new DownloadCompletedEvent(trackedDownload, trackedDownload.RemoteEpisode.Series.Id, files, releaseInfo));
@@ -270,7 +272,9 @@ namespace Readarr.Core.Download
                 }
 
                 var episodes = _episodeService.GetEpisodes(trackedDownload.RemoteEpisode.Episodes.Select(e => e.Id));
-                var files = _mediaFileService.Get(episodes.Select(e => e.EpisodeFileId).Where(i => i > 0).Distinct());
+                var episodeFileIds = episodes.Select(e => e.EpisodeFileId).Where(i => i > 0).Distinct().ToList();
+                var files = episodeFileIds.Count > 0 ? _mediaFileService.GetFilesBySeries(trackedDownload.RemoteEpisode.Series.Id)
+                    .Where(f => episodeFileIds.Contains(f.Id)).ToList() : new List<EpisodeFile>();
 
                 trackedDownload.State = TrackedDownloadState.Imported;
                 _eventAggregator.PublishEvent(new DownloadCompletedEvent(trackedDownload, trackedDownload.RemoteEpisode.Series.Id, files, releaseInfo));

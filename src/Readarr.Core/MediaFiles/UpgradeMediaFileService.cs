@@ -15,20 +15,23 @@ namespace Readarr.Core.MediaFiles
     {
         private readonly IRecycleBinProvider _recycleBinProvider;
         private readonly IMediaFileService _mediaFileService;
-        private readonly IMoveEpisodeFiles _episodeFileMover;
+        private readonly IEpisodeFileMover _episodeFileMover;
         private readonly IDiskProvider _diskProvider;
+        private readonly IMediaFileRepository _episodeFileRepository;
         private readonly Logger _logger;
 
         public UpgradeMediaFileService(IRecycleBinProvider recycleBinProvider,
                                        IMediaFileService mediaFileService,
-                                       IMoveEpisodeFiles episodeFileMover,
+                                       IEpisodeFileMover episodeFileMover,
                                        IDiskProvider diskProvider,
+                                       IMediaFileRepository episodeFileRepository,
                                        Logger logger)
         {
             _recycleBinProvider = recycleBinProvider;
             _mediaFileService = mediaFileService;
             _episodeFileMover = episodeFileMover;
             _diskProvider = diskProvider;
+            _episodeFileRepository = episodeFileRepository;
             _logger = logger;
         }
 
@@ -43,9 +46,11 @@ namespace Readarr.Core.MediaFiles
             };
 
             var existingFiles = localEpisode.Episodes
-                .SelectMany(e => _mediaFileService.GetFilesByEpisodeIds(new List<int> { e.Id }))
-                .GroupBy(e => e.Id)
-                .Select(g => g.First())
+                .Where(e => e.EpisodeFileId > 0)
+                .Select(e => e.EpisodeFileId)
+                .Distinct()
+                .Select(id => _episodeFileRepository.Get(id))
+                .Where(f => f != null)
                 .ToList();
 
             result.OldFiles.AddRange(existingFiles);
@@ -56,7 +61,10 @@ namespace Readarr.Core.MediaFiles
             // Delete old files if not copying
             if (!copyOnly)
             {
-                _mediaFileService.DeleteMany(existingFiles, DeleteMediaFileReason.Upgrade);
+                foreach (var file in existingFiles)
+                {
+                    _mediaFileService.Delete(file, DeleteMediaFileReason.Upgrade);
+                }
             }
 
             result.EpisodeFile = episodeFile;

@@ -170,7 +170,10 @@ namespace Readarr.Core.MediaFiles
             // Update any files that had a file size change, but didn't get media info updated.
             if (filesToUpdate.Any())
             {
-                _mediaFileService.Update(filesToUpdate);
+                foreach (var file in filesToUpdate)
+                {
+                    _mediaFileService.Update(file);
+                }
             }
 
             fileInfoStopwatch.Stop();

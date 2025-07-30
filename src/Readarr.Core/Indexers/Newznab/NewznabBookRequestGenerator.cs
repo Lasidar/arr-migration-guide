@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using NLog;
 using Readarr.Common.Extensions;
 using Readarr.Common.Http;
 using Readarr.Common.Instrumentation;
 using Readarr.Core.IndexerSearch.Definitions;
 using Readarr.Core.ThingiProvider;
+using Readarr.Core.Parser;
 
 namespace Readarr.Core.Indexers.Newznab
 {

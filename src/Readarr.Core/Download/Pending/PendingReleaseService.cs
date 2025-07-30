@@ -4,6 +4,7 @@ using System.Linq;
 using NLog;
 using Readarr.Common.Crypto;
 using Readarr.Common.Extensions;
+using Readarr.Core.Books;
 using Readarr.Core.Configuration;
 using Readarr.Core.CustomFormats;
 using Readarr.Core.DecisionEngine;
