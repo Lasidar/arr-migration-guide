@@ -345,7 +345,7 @@ namespace Readarr.Core.Test.DecisionEngineTests
             var result = Subject.GetRssDecision(_reports);
 
             result.Should().HaveCount(1);
-            result.First().Rejections.First().Message.Should().Contain("12345");
+            result.First().Rejections.First().Reason.Should().Contain("12345");
         }
     }
 }

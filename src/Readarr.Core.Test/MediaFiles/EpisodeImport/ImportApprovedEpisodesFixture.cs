@@ -7,8 +7,10 @@ using Moq;
 using NUnit.Framework;
 using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
+using Readarr.Core.DecisionEngine;
 using Readarr.Core.Download;
-using Readarr.Core.History;
+using Readarr.Core.Download.TrackedDownloads;
+using Readarr.Core.Languages;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.EpisodeImport;
 using Readarr.Core.MediaFiles.Events;
@@ -46,9 +48,9 @@ namespace Readarr.Core.Test.MediaFiles.EpisodeImport
             var episodes = Builder<Episode>.CreateListOfSize(5)
                                            .Build();
 
-            _rejectedDecisions.Add(new ImportDecision(new LocalEpisode(), new ImportRejection(ImportRejectionReason.Unknown, "Rejected!")));
-            _rejectedDecisions.Add(new ImportDecision(new LocalEpisode(), new ImportRejection(ImportRejectionReason.Unknown, "Rejected!")));
-            _rejectedDecisions.Add(new ImportDecision(new LocalEpisode(), new ImportRejection(ImportRejectionReason.Unknown, "Rejected!")));
+            _rejectedDecisions.Add(new ImportDecision(new LocalEpisode(), new ImportRejection("Rejected!", RejectionType.Permanent)));
+            _rejectedDecisions.Add(new ImportDecision(new LocalEpisode(), new ImportRejection("Rejected!", RejectionType.Permanent)));
+            _rejectedDecisions.Add(new ImportDecision(new LocalEpisode(), new ImportRejection("Rejected!", RejectionType.Permanent)));
             _rejectedDecisions.ForEach(r => r.LocalEpisode.FileEpisodeInfo = new ParsedEpisodeInfo());
 
             foreach (var episode in episodes)

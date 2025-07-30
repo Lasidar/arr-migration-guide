@@ -34,7 +34,7 @@ namespace Readarr.Core.Test.IndexerSearchTests
                   .Setup(s => s.AutomaticSearchEnabled(true))
                   .Returns(new List<IIndexer> { _mockIndexer.Object });
 
-            Mocker.GetMock<IMakeDownloadDecision>()
+            Mocker.GetMock<IDownloadDecisionMaker>()
                 .Setup(s => s.GetSearchDecision(It.IsAny<List<Parser.Model.ReleaseInfo>>(), It.IsAny<SearchCriteriaBase>()))
                 .Returns(new List<DownloadDecision>());
 

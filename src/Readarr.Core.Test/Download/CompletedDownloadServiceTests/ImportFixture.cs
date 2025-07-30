@@ -1,16 +1,18 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Readarr.Common.Disk;
+using Readarr.Core.DecisionEngine;
 using Readarr.Core.Download;
 using Readarr.Core.Download.TrackedDownloads;
 using Readarr.Core.History;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.EpisodeImport;
 using Readarr.Core.Messaging.Events;
-using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Tv;
@@ -122,13 +124,13 @@ namespace Readarr.Core.Test.Download.CompletedDownloadServiceTests
                     new ImportResult(
                         new ImportDecision(
                             new LocalEpisode { Path = @"C:\TestPath\Droned.S01E01.mkv", Episodes = { _episode1 } },
-                            new ImportRejection(ImportRejectionReason.Unknown, "Rejected!")),
+                            new ImportRejection("Rejected!", RejectionType.Permanent)),
                         "Test Failure"),
 
                     new ImportResult(
                         new ImportDecision(
                             new LocalEpisode { Path = @"C:\TestPath\Droned.S01E02.mkv", Episodes = { _episode2 } },
-                            new ImportRejection(ImportRejectionReason.Unknown, "Rejected!")),
+                            new ImportRejection("Rejected!", RejectionType.Permanent)),
                         "Test Failure")
                 });
 
@@ -149,12 +151,12 @@ namespace Readarr.Core.Test.Download.CompletedDownloadServiceTests
                            {
                                new ImportResult(
                                    new ImportDecision(
-                                       new LocalEpisode { Path = @"C:\TestPath\Droned.S01E01.mkv", Episodes = { _episode1 } }, new ImportRejection(ImportRejectionReason.Unknown, "Rejected!")),
+                                       new LocalEpisode { Path = @"C:\TestPath\Droned.S01E01.mkv", Episodes = { _episode1 } }, new ImportRejection("Rejected!", RejectionType.Permanent)),
                                    "Test Failure"),
 
                                new ImportResult(
                                    new ImportDecision(
-                                       new LocalEpisode { Path = @"C:\TestPath\Droned.S01E02.mkv", Episodes = { _episode2 } }, new ImportRejection(ImportRejectionReason.Unknown, "Rejected!")),
+                                       new LocalEpisode { Path = @"C:\TestPath\Droned.S01E02.mkv", Episodes = { _episode2 } }, new ImportRejection("Rejected!", RejectionType.Permanent)),
                                    "Test Failure")
                            });
 

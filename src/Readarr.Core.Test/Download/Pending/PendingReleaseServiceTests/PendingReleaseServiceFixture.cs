@@ -36,7 +36,7 @@ namespace Readarr.Core.Test.Download.Pending.PendingReleaseServiceTests
             var results = Subject.GetPending();
 
             results.Should().NotBeEmpty();
-            Mocker.GetMock<IMakeDownloadDecision>()
+            Mocker.GetMock<IDownloadDecisionMaker>()
                   .Verify(v => v.GetRssDecision(It.Is<List<ReleaseInfo>>(d => d.Count == 0), It.IsAny<bool>()), Times.Never());
         }
 
