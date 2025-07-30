@@ -406,7 +406,7 @@ namespace Readarr.Core.MetadataSource.BookInfo
             {
                 Votes = resource.Count,
                 Value = (decimal)resource.Value,
-                Popularity = resource.Popularity ?? 0
+                Popularity = resource.Popularity.HasValue ? (decimal)resource.Popularity.Value : 0
             };
         }
 

@@ -1273,19 +1273,21 @@ namespace Readarr.Core.Organizer
         public string GetAuthorFolder(Author author)
         {
             // TODO: Implement author folder naming
-            return author.Name.CleanFileName();
+            return author.Metadata.Value?.Name.CleanFileName() ?? "Unknown Author";
         }
 
         public string GetBookFolder(Book book)
         {
             // TODO: Implement book folder naming
-            return book.Title.CleanFileName();
+            return book.Metadata.Value?.Title.CleanFileName() ?? "Unknown Book";
         }
 
         public string GetBookFileName(Book book, BookFile bookFile)
         {
             // TODO: Implement book file naming
-            return $"{book.Author.Value?.Name} - {book.Title}".CleanFileName();
+            var authorName = book.Author.Value?.Metadata.Value?.Name ?? "Unknown Author";
+            var bookTitle = book.Metadata.Value?.Title ?? "Unknown Book";
+            return $"{authorName} - {bookTitle}".CleanFileName();
         }
     }
 

@@ -30,7 +30,7 @@ namespace Readarr.Core.Parser.Model
 
         public bool IsRecentBook()
         {
-            return Books.Any() && Books.First().ReleaseDate >= DateTime.UtcNow.Date.AddDays(-14);
+            return Books.Any() && Books.First().Metadata.Value?.ReleaseDate >= DateTime.UtcNow.Date.AddDays(-14);
         }
 
         public override string ToString()

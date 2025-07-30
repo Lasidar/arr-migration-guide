@@ -177,10 +177,12 @@ namespace Readarr.Core.Download.TrackedDownloads
 
                 if (trackedDownload.RemoteBook != null)
                 {
-                    _aggregationService.Augment(trackedDownload.RemoteBook);
+                    // TODO: Implement RemoteBookAggregationService
+                    // _aggregationService.Augment(trackedDownload.RemoteBook);
 
                     // Calculate custom formats
-                    trackedDownload.RemoteBook.CustomFormats = _formatCalculator.ParseCustomFormat(trackedDownload.RemoteBook, downloadItem.TotalSize);
+                    // TODO: Update format calculator for books
+                    // trackedDownload.RemoteBook.CustomFormats = _formatCalculator.ParseCustomFormat(trackedDownload.RemoteBook, downloadItem.TotalSize);
                 }
 
                 // Track it so it can be displayed in the queue even though we can't determine which series it is for
@@ -249,7 +251,8 @@ namespace Readarr.Core.Download.TrackedDownloads
 
             if (trackedDownload.RemoteBook != null)
             {
-                _aggregationService.Augment(trackedDownload.RemoteBook);
+                // TODO: Implement RemoteBookAggregationService
+                // _aggregationService.Augment(trackedDownload.RemoteBook);
             }
         }
 
