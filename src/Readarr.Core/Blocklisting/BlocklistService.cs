@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Readarr.Common.Extensions;
+using Readarr.Core.Books;
 using Readarr.Core.Datastore;
 using Readarr.Core.Download;
 using Readarr.Core.Indexers;
@@ -14,10 +15,16 @@ namespace Readarr.Core.Blocklisting
 {
     public interface IBlocklistService
     {
-        bool Blocklisted(int seriesId, ReleaseInfo release);
-        bool BlocklistedTorrentHash(int seriesId, string hash);
-        PagingSpec<Blocklist> Paged(PagingSpec<Blocklist> pagingSpec);
+        // Book methods
+        bool Blocklisted(int authorId, ReleaseInfo release);
+        bool BlocklistedTorrentHash(int authorId, string hash);
+        void Block(RemoteBook remoteBook, string message);
+        
+        // TV methods (to be removed)
         void Block(RemoteEpisode remoteEpisode, string message);
+        
+        // Common methods
+        PagingSpec<Blocklist> Paged(PagingSpec<Blocklist> pagingSpec);
         void Delete(int id);
         void Delete(List<int> ids);
     }
@@ -34,7 +41,7 @@ namespace Readarr.Core.Blocklisting
             _blocklistRepository = blocklistRepository;
         }
 
-        public bool Blocklisted(int seriesId, ReleaseInfo release)
+        public bool Blocklisted(int authorId, ReleaseInfo release)
         {
             if (release.DownloadProtocol == DownloadProtocol.Torrent)
             {
@@ -45,24 +52,24 @@ namespace Readarr.Core.Blocklisting
 
                 if (torrentInfo.InfoHash.IsNotNullOrWhiteSpace())
                 {
-                    var blocklistedByTorrentInfohash = _blocklistRepository.BlocklistedByTorrentInfoHash(seriesId, torrentInfo.InfoHash);
+                    var blocklistedByTorrentInfohash = _blocklistRepository.BlocklistedByTorrentInfoHash(authorId, torrentInfo.InfoHash);
 
                     return blocklistedByTorrentInfohash.Any(b => SameTorrent(b, torrentInfo));
                 }
 
-                return _blocklistRepository.BlocklistedByTitle(seriesId, release.Title)
+                return _blocklistRepository.BlocklistedByTitle(authorId, release.Title)
                     .Where(b => b.Protocol == DownloadProtocol.Torrent)
                     .Any(b => SameTorrent(b, torrentInfo));
             }
 
-            return _blocklistRepository.BlocklistedByTitle(seriesId, release.Title)
+            return _blocklistRepository.BlocklistedByTitle(authorId, release.Title)
                 .Where(b => b.Protocol == DownloadProtocol.Usenet)
                 .Any(b => SameNzb(b, release));
         }
 
-        public bool BlocklistedTorrentHash(int seriesId, string hash)
+        public bool BlocklistedTorrentHash(int authorId, string hash)
         {
-            return _blocklistRepository.BlocklistedByTorrentInfoHash(seriesId, hash).Any(b =>
+            return _blocklistRepository.BlocklistedByTorrentInfoHash(authorId, hash).Any(b =>
                 b.TorrentInfoHash.Equals(hash, StringComparison.InvariantCultureIgnoreCase));
         }
 
@@ -89,6 +96,31 @@ namespace Readarr.Core.Blocklisting
                             };
 
             if (remoteEpisode.Release is TorrentInfo torrentRelease)
+            {
+                blocklist.TorrentInfoHash = torrentRelease.InfoHash;
+            }
+
+            _blocklistRepository.Insert(blocklist);
+        }
+
+        public void Block(RemoteBook remoteBook, string message)
+        {
+            var blocklist = new Blocklist
+            {
+                AuthorId = remoteBook.Author.Id,
+                BookIds = remoteBook.Books.Select(b => b.Id).ToList(),
+                SourceTitle = remoteBook.Release.Title,
+                Quality = remoteBook.Quality,
+                Date = DateTime.UtcNow,
+                PublishedDate = remoteBook.Release.PublishDate,
+                Size = remoteBook.Release.Size,
+                Indexer = remoteBook.Release.Indexer,
+                Protocol = remoteBook.Release.DownloadProtocol,
+                Message = message,
+                Languages = remoteBook.Languages
+            };
+
+            if (remoteBook.Release is TorrentInfo torrentRelease)
             {
                 blocklist.TorrentInfoHash = torrentRelease.InfoHash;
             }
