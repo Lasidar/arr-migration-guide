@@ -18,6 +18,7 @@ namespace Readarr.Core.Parser
         // TV methods (for compatibility)
         Tv.Series GetSeries(string title);
         ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, int tvdbId, int tvRageId, SearchCriteriaBase searchCriteria = null);
+        ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, Tv.Series series);
         List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Tv.Series series, bool sceneSource, SearchCriteriaBase searchCriteria = null);
     }
 }

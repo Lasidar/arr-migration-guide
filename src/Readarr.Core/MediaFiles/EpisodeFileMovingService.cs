@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NLog;
+using NzbDrone.Common.Disk;
+using NzbDrone.Common.EnsureThat;
+using NzbDrone.Common.Extensions;
 using Readarr.Common.Disk;
-using Readarr.Common.EnsureThat;
 using Readarr.Common.Extensions;
 using Readarr.Core.Configuration;
 using Readarr.Core.MediaFiles.EpisodeImport;
@@ -82,7 +84,7 @@ namespace Readarr.Core.MediaFiles
 
         public EpisodeFile MoveEpisodeFile(EpisodeFile episodeFile, LocalEpisode localEpisode)
         {
-            var filePath = _buildFileNames.BuildFilePath(localEpisode.Episodes, localEpisode.Series, episodeFile, Path.GetExtension(localEpisode.Path), null, localEpisode.CustomFormats);
+            var filePath = _buildFileNames.BuildFilePath(localEpisode.Episodes, localEpisode.Series, episodeFile, Path.GetExtension(localEpisode.Path), null, localEpisode.CustomFormats?.Select(cf => cf.Name).ToList());
 
             EnsureEpisodeFolder(episodeFile, localEpisode, filePath);
 
@@ -93,7 +95,7 @@ namespace Readarr.Core.MediaFiles
 
         public EpisodeFile CopyEpisodeFile(EpisodeFile episodeFile, LocalEpisode localEpisode)
         {
-            var filePath = _buildFileNames.BuildFilePath(localEpisode.Episodes, localEpisode.Series, episodeFile, Path.GetExtension(localEpisode.Path), null, localEpisode.CustomFormats);
+            var filePath = _buildFileNames.BuildFilePath(localEpisode.Episodes, localEpisode.Series, episodeFile, Path.GetExtension(localEpisode.Path), null, localEpisode.CustomFormats?.Select(cf => cf.Name).ToList());
 
             EnsureEpisodeFolder(episodeFile, localEpisode, filePath);
 

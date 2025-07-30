@@ -360,7 +360,7 @@ namespace Readarr.Core.MediaFiles
 
         private ImportResult RejectionResult(ImportRejectionReason reason, string message)
         {
-            return new ImportResult(new ImportDecision(null, new ImportRejection(reason, message)), message);
+            return new ImportResult(new ImportDecision(null, new ImportRejection(message, RejectionType.Permanent)), message);
         }
 
         private ImportResult CheckEmptyResultForIssue(string folder)

@@ -20,6 +20,7 @@ namespace Readarr.Core.MediaFiles
         List<EpisodeFile> GetFilesBySeries(int seriesId);
         List<EpisodeFile> GetFilesBySeason(int seriesId, int seasonNumber);
         List<EpisodeFile> GetFilesBySeriesIds(List<int> seriesIds);
+        EpisodeFile Add(EpisodeFile episodeFile);
         void Update(EpisodeFile episodeFile);
         void Update(BookFile bookFile);
         void Delete(EpisodeFile episodeFile, DeleteMediaFileReason reason);

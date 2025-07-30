@@ -156,7 +156,8 @@ namespace Readarr.Core.MediaFiles.EpisodeImport
                         episodeFile.SceneName = localEpisode.SceneName;
                         episodeFile.OriginalFilePath = GetOriginalFilePath(downloadClientItem, localEpisode);
 
-                        oldFiles = _episodeFileUpgrader.UpgradeEpisodeFile(episodeFile, localEpisode, copyOnly).OldFiles;
+                        var upgradeResult = _episodeFileUpgrader.UpgradeEpisodeFile(episodeFile, localEpisode, copyOnly);
+                        oldFiles = upgradeResult.OldFiles.Select(f => new DeletedEpisodeFile(f, null)).ToList();
                     }
                     else
                     {

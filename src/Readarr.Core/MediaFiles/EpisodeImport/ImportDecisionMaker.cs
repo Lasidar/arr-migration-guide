@@ -205,7 +205,7 @@ namespace Readarr.Core.MediaFiles.EpisodeImport
 
                 if (!result.Accepted)
                 {
-                    return new ImportRejection(result.Reason, result.Message);
+                    return new ImportRejection(result.Message, RejectionType.Permanent);
                 }
             }
             catch (Exception e)

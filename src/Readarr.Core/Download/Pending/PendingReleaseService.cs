@@ -317,20 +317,11 @@ namespace Readarr.Core.Download.Pending
                 }
                 else if (ValidateParsedEpisodeInfo.ValidateForSeriesType(release.ParsedEpisodeInfo, series))
                 {
-                    try
-                    {
-                        var remoteEpisode = _parsingService.Map(release.ParsedEpisodeInfo, series);
-
-                        release.RemoteEpisode.MappedSeasonNumber = remoteEpisode.MappedSeasonNumber;
-                        release.RemoteEpisode.Episodes = remoteEpisode.Episodes;
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        _logger.Debug(ex, ex.Message);
-
-                        release.RemoteEpisode.MappedSeasonNumber = release.ParsedEpisodeInfo.SeasonNumber;
-                        release.RemoteEpisode.Episodes = new List<Episode>();
-                    }
+                    // TODO: This TV-specific mapping needs to be fixed
+                    // The _parsingService.Map method expects BookInfo, not ParsedEpisodeInfo
+                    // For now, just set default values
+                    release.RemoteEpisode.MappedSeasonNumber = release.ParsedEpisodeInfo.SeasonNumber;
+                    release.RemoteEpisode.Episodes = new List<Episode>();
                 }
                 else
                 {
