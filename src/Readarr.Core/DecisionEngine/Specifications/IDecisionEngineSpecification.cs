@@ -10,14 +10,4 @@ namespace Readarr.Core.DecisionEngine.Specifications
 
         Decision IsSatisfiedBy(RemoteBook remoteBook, SearchCriteriaBase searchCriteria);
     }
-
-    public enum SpecificationPriority
-    {
-        Default = 0,
-        Parsing = 1,
-        Database = 2,
-        Search = 3,
-        Quality = 4,
-        Cutoff = 5
-    }
 }

@@ -296,14 +296,14 @@ namespace Readarr.Core.Download
         {
             var downloadItemOutputPath = trackedDownload.ImportItem.OutputPath;
 
-            if (downloadItemOutputPath.IsEmpty())
+            if (downloadItemOutputPath.ToString().IsEmpty())
             {
                 trackedDownload.Warn("Download doesn't contain intermediate path, Skipping.");
                 return false;
             }
 
-            if ((OsInfo.IsWindows && !downloadItemOutputPath.IsWindowsPath()) ||
-                (OsInfo.IsNotWindows && !downloadItemOutputPath.IsUnixPath()))
+            if ((OsInfo.IsWindows && !downloadItemOutputPath.ToString().IsWindowsPath()) ||
+                (OsInfo.IsNotWindows && !downloadItemOutputPath.ToString().IsUnixPath()))
             {
                 trackedDownload.Warn("[{0}] is not a valid local path. You may need a Remote Path Mapping. Check the download troubleshooting entry on the wiki for details.", downloadItemOutputPath);
                 return false;

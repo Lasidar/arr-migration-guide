@@ -166,14 +166,14 @@ namespace Readarr.Core.Books
             // This would need to be implemented with proper paging logic
             // For now, return a simple implementation
             // TODO: Implement proper query that checks editions without files
-            var allBooksWithoutFiles = GetAll().Where(b => !b.Editions.IsLoaded || b.Editions.Value.All(e => e.BookFileId == 0)).ToList();
+            var allBooksWithoutFiles = All().Where(b => !b.Editions.IsLoaded || b.Editions.Value.All(e => e.BookFileId == 0)).ToList();
             
             pagingSpec.Records = allBooksWithoutFiles
                 .Skip((pagingSpec.Page - 1) * pagingSpec.PageSize)
                 .Take(pagingSpec.PageSize)
                 .ToList();
             
-            pagingSpec.TotalRecords = allBooksWithoutFiles.Count;
+            pagingSpec.TotalRecords = allBooksWithoutFiles.Count();
             
             return pagingSpec;
         }

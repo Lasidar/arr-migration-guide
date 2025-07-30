@@ -38,6 +38,8 @@ namespace Readarr.Core.Download
         public string Type { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
+        public bool HasPostImportCategory { get; set; }
+        public bool RemoveCompletedDownloads { get; set; }
         
         public static DownloadClientItemClientInfo FromDownloadClient<TSettings>(DownloadClientBase<TSettings> downloadClient)
             where TSettings : IProviderConfig, new()
@@ -45,9 +47,11 @@ namespace Readarr.Core.Download
             return new DownloadClientItemClientInfo
             {
                 Protocol = downloadClient.Protocol,
-                Type = downloadClient.Name,
+                Type = downloadClient.Definition.Implementation,
                 Id = downloadClient.Definition.Id,
-                Name = downloadClient.Definition.Name
+                Name = downloadClient.Definition.Name,
+                HasPostImportCategory = false, // TODO: Determine from settings
+                RemoveCompletedDownloads = true // TODO: Get from definition
             };
         }
     }

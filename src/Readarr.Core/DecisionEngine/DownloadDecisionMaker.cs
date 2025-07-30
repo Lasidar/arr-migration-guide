@@ -211,7 +211,7 @@ namespace Readarr.Core.DecisionEngine
             else if (searchCriteria is AuthorSearchCriteria authorSearch)
             {
                 if (authorSearch.AuthorName.IsNotNullOrWhiteSpace() && 
-                    !remoteBook.Author.Name.ContainsIgnoreCase(authorSearch.AuthorName))
+                    !remoteBook.Author.Metadata.Value?.Name.ContainsIgnoreCase(authorSearch.AuthorName) == true)
                 {
                     return false;
                 }
