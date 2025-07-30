@@ -80,10 +80,10 @@ namespace Readarr.Core.Configuration
             return _repository.Get(key.ToLower()) != null;
         }
 
-        public bool AutoUnmonitorPreviouslyDownloadedEpisodes
+        public bool AutoUnmonitorPreviouslyDownloadedBooks
         {
-            get { return GetValueBoolean("AutoUnmonitorPreviouslyDownloadedEpisodes"); }
-            set { SetValue("AutoUnmonitorPreviouslyDownloadedEpisodes", value); }
+            get { return GetValueBoolean("AutoUnmonitorPreviouslyDownloadedBooks"); }
+            set { SetValue("AutoUnmonitorPreviouslyDownloadedBooks", value); }
         }
 
         public int Retention

@@ -24,7 +24,7 @@ namespace Readarr.Core.Configuration
         bool AutoRedownloadFailedFromInteractiveSearch { get; set; }
 
         // Media Management
-        bool AutoUnmonitorPreviouslyDownloadedEpisodes { get; set; }
+        bool AutoUnmonitorPreviouslyDownloadedBooks { get; set; }
         string RecycleBin { get; set; }
         int RecycleBinCleanupDays { get; set; }
         ProperDownloadTypes DownloadPropersAndRepacks { get; set; }

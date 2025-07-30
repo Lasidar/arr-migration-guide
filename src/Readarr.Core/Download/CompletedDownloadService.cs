@@ -29,7 +29,7 @@ namespace Readarr.Core.Download
         private readonly IEventAggregator _eventAggregator;
         private readonly IHistoryService _historyService;
         private readonly IProvideImportItemService _provideImportItemService;
-        private readonly IDownloadedEpisodesImportService _downloadedEpisodesImportService;
+        private readonly IDownloadedBooksImportService _downloadedBooksImportService;
         private readonly IParsingService _parsingService;
         private readonly ISeriesService _seriesService;
         private readonly ITrackedDownloadAlreadyImported _trackedDownloadAlreadyImported;
@@ -41,7 +41,7 @@ namespace Readarr.Core.Download
         public CompletedDownloadService(IEventAggregator eventAggregator,
                                         IHistoryService historyService,
                                         IProvideImportItemService provideImportItemService,
-                                        IDownloadedEpisodesImportService downloadedEpisodesImportService,
+                                        IDownloadedBooksImportService downloadedBooksImportService,
                                         IParsingService parsingService,
                                         ISeriesService seriesService,
                                         ITrackedDownloadAlreadyImported trackedDownloadAlreadyImported,
@@ -53,7 +53,7 @@ namespace Readarr.Core.Download
             _eventAggregator = eventAggregator;
             _historyService = historyService;
             _provideImportItemService = provideImportItemService;
-            _downloadedEpisodesImportService = downloadedEpisodesImportService;
+            _downloadedBooksImportService = downloadedBooksImportService;
             _parsingService = parsingService;
             _seriesService = seriesService;
             _trackedDownloadAlreadyImported = trackedDownloadAlreadyImported;
@@ -145,7 +145,7 @@ namespace Readarr.Core.Download
             trackedDownload.State = TrackedDownloadState.Importing;
 
             var outputPath = trackedDownload.ImportItem.OutputPath.FullPath;
-            var importResults = _downloadedEpisodesImportService.ProcessPath(outputPath,
+            var importResults = _downloadedBooksImportService.ProcessPath(outputPath,
                 ImportMode.Auto,
                 trackedDownload.RemoteEpisode.Series,
                 trackedDownload.ImportItem);

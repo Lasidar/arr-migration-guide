@@ -28,6 +28,7 @@ namespace Readarr.Core.MediaFiles
         string[] GetVideoFiles(string path, bool allDirectories = true);
         string[] GetNonVideoFiles(string path, bool allDirectories = true);
         List<string> FilterPaths(string basePath, IEnumerable<string> files, bool filterExtras = true);
+        string[] GetBookFiles(string path);
     }
 
     public class DiskScanService :
@@ -297,6 +298,22 @@ namespace Readarr.Core.MediaFiles
                     Scan(series);
                 }
             }
+        }
+
+        public string[] GetBookFiles(string path)
+        {
+            _logger.Debug("Scanning for book files in {0}", path);
+
+            var filesOnDisk = _diskProvider.GetFiles(path, true);
+
+            var mediaFileExtensions = BookFileExtensions.GetAllSupportedExtensions();
+
+            var bookFiles = filesOnDisk.Where(file => mediaFileExtensions.Contains(Path.GetExtension(file).ToLowerInvariant()))
+                                       .ToArray();
+
+            _logger.Debug("Found {0} book files in {1}", bookFiles.Length, path);
+
+            return bookFiles;
         }
     }
 }
