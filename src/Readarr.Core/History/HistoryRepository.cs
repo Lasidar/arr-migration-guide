@@ -4,49 +4,49 @@ using System.Linq;
 using Readarr.Core.Datastore;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Qualities;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.History
 {
-    public interface IHistoryRepository : IBasicRepository<EpisodeHistory>
+    public interface IHistoryRepository : IBasicRepository<BookHistory>
     {
-        EpisodeHistory MostRecentForEpisode(int episodeId);
-        List<EpisodeHistory> FindByEpisodeId(int episodeId);
-        EpisodeHistory MostRecentForDownloadId(string downloadId);
-        List<EpisodeHistory> FindByDownloadId(string downloadId);
-        List<EpisodeHistory> GetBySeries(int seriesId, EpisodeHistoryEventType? eventType);
-        List<EpisodeHistory> GetBySeason(int seriesId, int seasonNumber, EpisodeHistoryEventType? eventType);
-        List<EpisodeHistory> FindDownloadHistory(int idSeriesId, QualityModel quality);
-        void DeleteForSeries(List<int> seriesIds);
-        List<EpisodeHistory> Since(DateTime date, EpisodeHistoryEventType? eventType);
-        PagingSpec<EpisodeHistory> GetPaged(PagingSpec<EpisodeHistory> pagingSpec, int[] languages, int[] qualities);
+        BookHistory MostRecentForBook(int bookId);
+        List<BookHistory> FindByBookId(int bookId);
+        BookHistory MostRecentForDownloadId(string downloadId);
+        List<BookHistory> FindByDownloadId(string downloadId);
+        List<BookHistory> GetByAuthor(int authorId, HistoryEventType? eventType);
+        List<BookHistory> GetByBook(int bookId, HistoryEventType? eventType);
+        List<BookHistory> FindDownloadHistory(int authorId, QualityModel quality);
+        void DeleteForAuthor(List<int> authorIds);
+        List<BookHistory> Since(DateTime date, HistoryEventType? eventType);
+        PagingSpec<BookHistory> GetPaged(PagingSpec<BookHistory> pagingSpec, int[] languages, int[] qualities);
     }
 
-    public class HistoryRepository : BasicRepository<EpisodeHistory>, IHistoryRepository
+    public class HistoryRepository : BasicRepository<BookHistory>, IHistoryRepository
     {
         public HistoryRepository(IMainDatabase database, IEventAggregator eventAggregator)
             : base(database, eventAggregator)
         {
         }
 
-        public EpisodeHistory MostRecentForEpisode(int episodeId)
+        public BookHistory MostRecentForBook(int bookId)
         {
-            return Query(h => h.EpisodeId == episodeId).MaxBy(h => h.Date);
+            return Query(h => h.BookId == bookId).MaxBy(h => h.Date);
         }
 
-        public List<EpisodeHistory> FindByEpisodeId(int episodeId)
+        public List<BookHistory> FindByBookId(int bookId)
         {
-            return Query(h => h.EpisodeId == episodeId)
+            return Query(h => h.BookId == bookId)
                         .OrderByDescending(h => h.Date)
                         .ToList();
         }
 
-        public EpisodeHistory MostRecentForDownloadId(string downloadId)
+        public BookHistory MostRecentForDownloadId(string downloadId)
         {
             return Query(h => h.DownloadId == downloadId).MaxBy(h => h.Date);
         }
 
-        public List<EpisodeHistory> FindByDownloadId(string downloadId)
+        public List<BookHistory> FindByDownloadId(string downloadId)
         {
             return Query(h => h.DownloadId == downloadId);
         }
