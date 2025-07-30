@@ -7,7 +7,7 @@ using Readarr.Core.Qualities;
 
 namespace Readarr.Core.DecisionEngine.Specifications.RssSync
 {
-    public class ProperSpecification : IDownloadDecisionEngineSpecification
+    public class ProperSpecification : IDualDownloadDecisionEngineSpecification
     {
         private readonly UpgradableSpecification _upgradableSpecification;
         private readonly IConfigService _configService;
@@ -22,6 +22,44 @@ namespace Readarr.Core.DecisionEngine.Specifications.RssSync
 
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
+
+        public virtual DownloadSpecDecision IsSatisfiedBy(RemoteBook subject, ReleaseDecisionInformation information)
+        {
+            if (information.SearchCriteria != null)
+            {
+                return DownloadSpecDecision.Accept();
+            }
+
+            var downloadPropersAndRepacks = _configService.DownloadPropersAndRepacks;
+
+            if (downloadPropersAndRepacks == ProperDownloadTypes.DoNotPrefer)
+            {
+                _logger.Debug("Propers are not preferred, skipping check");
+                return DownloadSpecDecision.Accept();
+            }
+
+            foreach (var book in subject.Books.Where(b => b.BookFiles.Value.Any()))
+            {
+                var file = book.BookFiles.Value.First();
+                
+                if (_upgradableSpecification.IsRevisionUpgrade(file.Quality, subject.Quality))
+                {
+                    if (downloadPropersAndRepacks == ProperDownloadTypes.DoNotUpgrade)
+                    {
+                        _logger.Debug("Auto downloading of propers is disabled");
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.PropersDisabled, "Proper downloading is disabled");
+                    }
+
+                    if (file.DateAdded < DateTime.Today.AddDays(-7))
+                    {
+                        _logger.Debug("Proper for old file, rejecting: {0}", subject);
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.ProperForOldFile, "Proper for old file");
+                    }
+                }
+            }
+
+            return DownloadSpecDecision.Accept();
+        }
 
         public virtual DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {
