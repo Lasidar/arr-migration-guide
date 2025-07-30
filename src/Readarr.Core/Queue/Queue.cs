@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Readarr.Core.Books;
 using Readarr.Core.Datastore;
 using Readarr.Core.Download.TrackedDownloads;
 using Readarr.Core.Indexers;
@@ -12,8 +13,17 @@ namespace Readarr.Core.Queue
 {
     public class Queue : ModelBase
     {
+        // Book properties
+        public Author Author { get; set; }
+        public Book Book { get; set; }
+        public RemoteBook RemoteBook { get; set; }
+        
+        // TV properties (to be removed)
         public Series Series { get; set; }
         public Episode Episode { get; set; }
+        public RemoteEpisode RemoteEpisode { get; set; }
+        
+        // Common properties
         public List<Language> Languages { get; set; }
         public QualityModel Quality { get; set; }
         public decimal Size { get; set; }
@@ -27,7 +37,6 @@ namespace Readarr.Core.Queue
         public TrackedDownloadState? TrackedDownloadState { get; set; }
         public List<TrackedDownloadStatusMessage> StatusMessages { get; set; }
         public string DownloadId { get; set; }
-        public RemoteEpisode RemoteEpisode { get; set; }
         public DownloadProtocol Protocol { get; set; }
         public string DownloadClient { get; set; }
         public bool DownloadClientHasPostImportCategory { get; set; }

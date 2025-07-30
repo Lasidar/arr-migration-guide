@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Readarr.Common.Crypto;
+using Readarr.Core.Books;
 using Readarr.Core.Download.TrackedDownloads;
 using Readarr.Core.Languages;
 using Readarr.Core.Messaging.Events;
@@ -44,7 +45,16 @@ namespace Readarr.Core.Queue
 
         private IEnumerable<Queue> MapQueue(TrackedDownload trackedDownload)
         {
-            if (trackedDownload.RemoteEpisode?.Episodes != null && trackedDownload.RemoteEpisode.Episodes.Any())
+            // Handle books
+            if (trackedDownload.RemoteBook?.Books != null && trackedDownload.RemoteBook.Books.Any())
+            {
+                foreach (var book in trackedDownload.RemoteBook.Books)
+                {
+                    yield return MapBookQueueItem(trackedDownload, book);
+                }
+            }
+            // Handle TV episodes (to be removed)
+            else if (trackedDownload.RemoteEpisode?.Episodes != null && trackedDownload.RemoteEpisode.Episodes.Any())
             {
                 foreach (var episode in trackedDownload.RemoteEpisode.Episodes)
                 {
@@ -55,6 +65,40 @@ namespace Readarr.Core.Queue
             {
                 yield return MapQueueItem(trackedDownload, null);
             }
+        }
+
+        private Queue MapBookQueueItem(TrackedDownload trackedDownload, Book book)
+        {
+            var queue = new Queue
+            {
+                Author = trackedDownload.RemoteBook?.Author,
+                Book = book,
+                Languages = trackedDownload.RemoteBook?.Languages ?? new List<Language> { Language.Unknown },
+                Quality = trackedDownload.RemoteBook?.Quality ?? new QualityModel(Quality.Unknown),
+                Title = Parser.Parser.RemoveFileExtension(trackedDownload.DownloadItem.Title),
+                Size = trackedDownload.DownloadItem.TotalSize,
+                SizeLeft = trackedDownload.DownloadItem.RemainingSize,
+                TimeLeft = trackedDownload.DownloadItem.RemainingTime,
+                Status = Enum.TryParse(trackedDownload.DownloadItem.Status.ToString(), out QueueStatus outValue) ? outValue : QueueStatus.Unknown,
+                TrackedDownloadStatus = trackedDownload.Status,
+                TrackedDownloadState = trackedDownload.State,
+                StatusMessages = trackedDownload.StatusMessages.ToList(),
+                ErrorMessage = trackedDownload.DownloadItem.Message,
+                RemoteBook = trackedDownload.RemoteBook,
+                DownloadId = trackedDownload.DownloadItem.DownloadId,
+                Protocol = trackedDownload.Protocol,
+                DownloadClient = trackedDownload.DownloadItem.DownloadClientInfo.Name,
+                DownloadClientHasPostImportCategory = trackedDownload.DownloadItem.DownloadClientInfo.HasPostImportCategory,
+                Indexer = trackedDownload.Indexer,
+                OutputPath = trackedDownload.DownloadItem.OutputPath.ToString()
+            };
+
+            if (trackedDownload.DownloadItem.RemainingTime != null)
+            {
+                queue.EstimatedCompletionTime = DateTime.UtcNow.Add(trackedDownload.DownloadItem.RemainingTime.Value);
+            }
+
+            return queue;
         }
 
         private Queue MapQueueItem(TrackedDownload trackedDownload, Episode episode)
