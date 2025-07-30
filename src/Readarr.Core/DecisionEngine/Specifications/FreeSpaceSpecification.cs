@@ -7,7 +7,7 @@ using Readarr.Core.Parser.Model;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {
-    public class FreeSpaceSpecification : IDownloadDecisionEngineSpecification
+    public class FreeSpaceSpecification : IDualDownloadDecisionEngineSpecification
     {
         private readonly IConfigService _configService;
         private readonly IDiskProvider _diskProvider;
@@ -23,16 +23,23 @@ namespace Readarr.Core.DecisionEngine.Specifications
         public SpecificationPriority Priority => SpecificationPriority.Disk;
         public RejectionType Type => RejectionType.Permanent;
 
+        public DownloadSpecDecision IsSatisfiedBy(RemoteBook subject, ReleaseDecisionInformation information)
+        {
+            return CheckFreeSpace(subject.Release.Size, subject.Author.Path);
+        }
+
         public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
+        {
+            return CheckFreeSpace(subject.Release.Size, subject.Series.Path);
+        }
+
+        private DownloadSpecDecision CheckFreeSpace(long size, string path)
         {
             if (_configService.SkipFreeSpaceCheckWhenImporting)
             {
                 _logger.Debug("Skipping free space check");
                 return DownloadSpecDecision.Accept();
             }
-
-            var size = subject.Release.Size;
-            var path = subject.Series.Path;
             long? freeSpace = null;
 
             try

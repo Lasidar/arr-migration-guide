@@ -8,23 +8,43 @@ using Readarr.Core.Parser.Model;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {
-    public class AlreadyImportedSpecification : IDownloadDecisionEngineSpecification
+    public class AlreadyImportedSpecification : IDualDownloadDecisionEngineSpecification
     {
         private readonly IHistoryService _historyService;
+        private readonly IBookHistoryService _bookHistoryService;
         private readonly IConfigService _configService;
         private readonly Logger _logger;
 
         public AlreadyImportedSpecification(IHistoryService historyService,
+                                            IBookHistoryService bookHistoryService,
                                             IConfigService configService,
                                             Logger logger)
         {
             _historyService = historyService;
+            _bookHistoryService = bookHistoryService;
             _configService = configService;
             _logger = logger;
         }
 
         public SpecificationPriority Priority => SpecificationPriority.Database;
         public RejectionType Type => RejectionType.Permanent;
+
+        public DownloadSpecDecision IsSatisfiedBy(RemoteBook subject, ReleaseDecisionInformation information)
+        {
+            var cdhEnabled = _configService.EnableCompletedDownloadHandling;
+
+            if (!cdhEnabled)
+            {
+                _logger.Debug("Skipping already imported check because CDH is disabled");
+                return DownloadSpecDecision.Accept();
+            }
+
+            _logger.Debug("Performing already imported check on report");
+            
+            // Delegate to the existing AlreadyImportedBookSpecification logic
+            var bookSpec = new AlreadyImportedBookSpecification(_bookHistoryService, _configService, _logger);
+            return bookSpec.IsSatisfiedBy(subject, information);
+        }
 
         public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {

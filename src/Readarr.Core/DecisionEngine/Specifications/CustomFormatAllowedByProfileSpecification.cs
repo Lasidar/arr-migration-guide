@@ -4,7 +4,7 @@ using Readarr.Core.Parser.Model;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {
-    public class CustomFormatAllowedbyProfileSpecification : IDownloadDecisionEngineSpecification
+    public class CustomFormatAllowedbyProfileSpecification : IDualDownloadDecisionEngineSpecification
     {
         private readonly Logger _logger;
 
@@ -15,6 +15,21 @@ namespace Readarr.Core.DecisionEngine.Specifications
 
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
+
+        public virtual DownloadSpecDecision IsSatisfiedBy(RemoteBook subject, ReleaseDecisionInformation information)
+        {
+            var minScore = subject.Author.QualityProfile.Value.MinFormatScore;
+            var score = subject.CustomFormatScore;
+
+            if (score < minScore)
+            {
+                return DownloadSpecDecision.Reject(DownloadRejectionReason.CustomFormatMinimumScore, "Custom Formats {0} have score {1} below Author profile minimum {2}", subject.CustomFormats.ConcatToString(), score, minScore);
+            }
+
+            _logger.Trace("Custom Format Score of {0} [{1}] above Author profile minimum {2}", score, subject.CustomFormats.ConcatToString(), minScore);
+
+            return DownloadSpecDecision.Accept();
+        }
 
         public virtual DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {

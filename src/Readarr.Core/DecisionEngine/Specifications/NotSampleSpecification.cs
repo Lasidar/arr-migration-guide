@@ -4,7 +4,7 @@ using Readarr.Core.Parser.Model;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {
-    public class NotSampleSpecification : IDownloadDecisionEngineSpecification
+    public class NotSampleSpecification : IDualDownloadDecisionEngineSpecification
     {
         private readonly Logger _logger;
 
@@ -16,9 +16,19 @@ namespace Readarr.Core.DecisionEngine.Specifications
             _logger = logger;
         }
 
+        public DownloadSpecDecision IsSatisfiedBy(RemoteBook subject, ReleaseDecisionInformation information)
+        {
+            return CheckIfSample(subject.Release);
+        }
+
         public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {
-            if (subject.Release.Title.ToLower().Contains("sample") && subject.Release.Size < 70.Megabytes())
+            return CheckIfSample(subject.Release);
+        }
+
+        private DownloadSpecDecision CheckIfSample(ReleaseInfo release)
+        {
+            if (release.Title.ToLower().Contains("sample") && release.Size < 70.Megabytes())
             {
                 _logger.Debug("Sample release, rejecting.");
                 return DownloadSpecDecision.Reject(DownloadRejectionReason.Sample, "Sample");
