@@ -112,7 +112,7 @@ namespace Readarr.Core.Datastore
 
             Mapper.Entity<SceneMapping>("SceneMappings").RegisterModel();
 
-            Mapper.Entity<EpisodeHistory>("History").RegisterModel();
+            Mapper.Entity<BookHistory>("History").RegisterModel();
 
             // Book domain mappings
             Mapper.Entity<Author>("Authors").RegisterModel()
@@ -176,24 +176,9 @@ namespace Readarr.Core.Datastore
                             f => f.Id > 0)
                   .Ignore(f => f.Path);
 
-            // Keep legacy TV mappings for now (can be removed later)
-            Mapper.Entity<Tv.Series>("Series_Legacy").RegisterModel()
-                  .Ignore(s => s.RootFolderPath)
-                  .HasOne(s => s.QualityProfile, s => s.QualityProfileId);
+            // Legacy TV mappings removed - TV content not supported
 
-            Mapper.Entity<EpisodeFile>("EpisodeFiles").RegisterModel()
-                  .HasOne(f => f.Series, f => f.SeriesId)
-                  .LazyLoad(x => x.Episodes,
-                            (db, parent) => db.Query<Episode>(new SqlBuilder(db.DatabaseType).Where<Episode>(c => c.EpisodeFileId == parent.Id)).ToList(),
-                            t => t.Id > 0)
-                  .Ignore(f => f.Path);
-
-            Mapper.Entity<Episode>("Episodes").RegisterModel()
-                  .Ignore(e => e.SeriesTitle)
-                  .Ignore(e => e.Series)
-                  .Ignore(e => e.HasFile)
-                  .Ignore(e => e.AbsoluteEpisodeNumberAdded)
-                  .HasOne(s => s.EpisodeFile, s => s.EpisodeFileId);
+            // Episode mapping removed - TV content not supported
 
             Mapper.Entity<QualityDefinition>("QualityDefinitions").RegisterModel()
                   .Ignore(d => d.GroupName)

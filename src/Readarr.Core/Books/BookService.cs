@@ -38,6 +38,8 @@ namespace Readarr.Core.Books
         bool ValidateIsbn13(string isbn);
         bool ValidateIsbn10(string isbn);
         bool ValidateAsin(string asin);
+        List<Book> GetBooksBetweenDates(DateTime startDate, DateTime endDate, bool includeUnmonitored);
+        PagingSpec<Book> BooksWithoutFiles(PagingSpec<Book> pagingSpec);
     }
 
     public class BookService : IBookService
@@ -269,6 +271,20 @@ namespace Readarr.Core.Books
             }
             
             return true;
+        }
+
+        public List<Book> GetBooksBetweenDates(DateTime startDate, DateTime endDate, bool includeUnmonitored)
+        {
+            var books = _bookRepository.BooksBetweenDates(startDate.ToUniversalTime(), endDate.ToUniversalTime(), includeUnmonitored);
+            
+            return books;
+        }
+
+        public PagingSpec<Book> BooksWithoutFiles(PagingSpec<Book> pagingSpec)
+        {
+            var booksWithoutFilesSpec = _bookRepository.BooksWithoutFiles(pagingSpec);
+            
+            return booksWithoutFilesSpec;
         }
     }
 }
