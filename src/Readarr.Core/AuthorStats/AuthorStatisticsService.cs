@@ -37,27 +37,16 @@ namespace Readarr.Core.AuthorStats
         {
             var authorStatistics = new AuthorStatistics
             {
-                BookStatistics = bookStatistics,
                 AuthorId = bookStatistics.First().AuthorId,
-                BookCount = bookStatistics.Count,
-                BookFileCount = bookStatistics.Count(s => s.BookFileCount > 0),
-                TotalBookCount = bookStatistics.Count,
+                BookFileCount = bookStatistics.Sum(s => s.BookFileCount),
+                BookCount = bookStatistics.Sum(s => s.BookCount),
+                AvailableBookCount = bookStatistics.Sum(s => s.AvailableBookCount),
+                TotalBookCount = bookStatistics.Sum(s => s.TotalBookCount),
                 SizeOnDisk = bookStatistics.Sum(s => s.SizeOnDisk),
-                AvailableBookCount = bookStatistics.Count(s => s.BookFileCount > 0),
-                MonitoredBookCount = bookStatistics.Count(s => s.Monitored)
+                BookStatistics = bookStatistics
             };
-
-            var bookCounts = bookStatistics.GroupBy(s => s.Monitored).ToDictionary(g => g.Key, g => g.Count());
-            authorStatistics.BookCount = bookCounts.GetValueOrDefault(true, 0);
-            authorStatistics.UnmonitoredBookCount = bookCounts.GetValueOrDefault(false, 0);
 
             return authorStatistics;
         }
-    }
-
-    public interface IAuthorStatisticsRepository
-    {
-        List<BookStatistics> AuthorStatistics();
-        List<BookStatistics> AuthorStatistics(int authorId);
     }
 }

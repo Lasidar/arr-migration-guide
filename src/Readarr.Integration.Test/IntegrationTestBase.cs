@@ -29,6 +29,7 @@ using Readarr.Api.V3.RootFolders;
 using Readarr.Api.V3.Series;
 using Readarr.Api.V3.System.Tasks;
 using Readarr.Api.V3.Tags;
+using Readarr.Api.V1.Author;
 
 namespace Readarr.Integration.Test
 {
@@ -58,6 +59,8 @@ namespace Readarr.Integration.Test
         public ClientBase<EpisodeResource> WantedMissing;
         public ClientBase<EpisodeResource> WantedCutoffUnmet;
         public QueueClient Queue;
+        public AuthorClient Author;
+        public BookClient Book;
 
         private List<SignalRMessage> _signalRReceived;
 
@@ -78,6 +81,7 @@ namespace Readarr.Integration.Test
         public string TempDirectory { get; private set; }
 
         public abstract string SeriesRootFolder { get; }
+        public virtual string AuthorRootFolder => SeriesRootFolder;
 
         protected abstract string RootUrl { get; }
 
@@ -123,6 +127,8 @@ namespace Readarr.Integration.Test
             WantedMissing = new ClientBase<EpisodeResource>(RestClient, ApiKey, "wanted/missing");
             WantedCutoffUnmet = new ClientBase<EpisodeResource>(RestClient, ApiKey, "wanted/cutoff");
             Queue = new QueueClient(RestClient, ApiKey);
+            Author = new AuthorClient(RestClient, ApiKey);
+            Book = new BookClient(RestClient, ApiKey);
         }
 
         [OneTimeTearDown]
@@ -293,6 +299,63 @@ namespace Readarr.Integration.Test
             if (result != null)
             {
                 Series.Delete(result.Id);
+            }
+        }
+
+        public AuthorResource EnsureAuthor(string authorId, string goodreadsEditionId, string authorName, bool? monitored = null)
+        {
+            var result = Author.All().FirstOrDefault(v => v.ForeignAuthorId == authorId);
+
+            if (result == null)
+            {
+                var lookup = Author.Lookup("edition:" + goodreadsEditionId);
+                var author = lookup.First();
+                author.QualityProfileId = 1;
+                author.MetadataProfileId = 1;
+                author.Path = Path.Combine(AuthorRootFolder, author.AuthorName);
+                author.Monitored = true;
+                author.AddOptions = new Core.Books.AddAuthorOptions();
+                Directory.CreateDirectory(author.Path);
+
+                result = Author.Post(author);
+                Commands.WaitAll();
+                WaitForCompletion(() => Book.GetBooksInAuthor(result.Id).Count > 0);
+            }
+
+            var changed = false;
+
+            if (result.RootFolderPath != AuthorRootFolder)
+            {
+                changed = true;
+                result.RootFolderPath = AuthorRootFolder;
+                result.Path = Path.Combine(AuthorRootFolder, result.AuthorName);
+            }
+
+            if (monitored.HasValue)
+            {
+                if (result.Monitored != monitored.Value)
+                {
+                    result.Monitored = monitored.Value;
+                    changed = true;
+                }
+            }
+
+            if (changed)
+            {
+                result.NextBook = result.LastBook = null;
+                Author.Put(result);
+            }
+
+            return result;
+        }
+
+        public void EnsureNoAuthor(string readarrId, string authorTitle)
+        {
+            var result = Author.All().FirstOrDefault(v => v.ForeignAuthorId == readarrId);
+
+            if (result != null)
+            {
+                Author.Delete(result.Id);
             }
         }
 

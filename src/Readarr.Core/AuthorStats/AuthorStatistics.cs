@@ -24,12 +24,9 @@ namespace Readarr.Core.AuthorStats
         public int AuthorId { get; set; }
         public int BookId { get; set; }
         public int BookFileCount { get; set; }
-        public int EditionCount { get; set; }
-        public int EditionFileCount { get; set; }
-        public int TotalEditionCount { get; set; }
+        public int BookCount { get; set; }
+        public int AvailableBookCount { get; set; }
+        public int TotalBookCount { get; set; }
         public long SizeOnDisk { get; set; }
-        public DateTime? ReleaseDate { get; set; }
-        public DateTime? PreviousAiring { get; set; }
-        public bool Monitored { get; set; }
     }
 }

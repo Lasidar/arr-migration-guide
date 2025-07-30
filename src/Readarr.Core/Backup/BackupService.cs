@@ -25,6 +25,8 @@ namespace Readarr.Core.Backup
         List<BackupResource> GetBackups();
         void DeleteBackup(int id);
         void Restore(int id);
+        string GetBackupFolder();
+        string GetBackupFolder(BackupType backupType);
     }
 
     public class BackupService : IBackupService, IExecute<BackupCommand>
@@ -37,6 +39,8 @@ namespace Readarr.Core.Backup
         private readonly IMainDatabase _maindDb;
         private readonly IEventAggregator _eventAggregator;
         private readonly Logger _logger;
+
+        public static readonly Regex BackupFileRegex = new Regex(@"readarr_backup_(v[0-9.]+_)?[._0-9]+\.zip", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private readonly string _backupTempFolder;
 
@@ -195,16 +199,7 @@ namespace Readarr.Core.Backup
             }
         }
 
-        private string GetBackupFolder(BackupType backupType)
-        {
-            return backupType switch
-            {
-                BackupType.Scheduled => _configService.BackupFolder,
-                BackupType.Manual => _configService.BackupFolder,
-                BackupType.Update => Path.Combine(_appFolderInfo.GetUpdateBackUpFolder(), "readarr_v2"),
-                _ => throw new ArgumentException("Unknown backup type")
-            };
-        }
+
 
         private void RemoveOldBackups(BackupType backupType, string backupFolder)
         {
@@ -231,6 +226,23 @@ namespace Readarr.Core.Backup
         public void Execute(BackupCommand message)
         {
             Backup(message.Type);
+        }
+
+        public string GetBackupFolder()
+        {
+            var backupFolder = _configService.BackupFolder;
+
+            if (Path.IsPathRooted(backupFolder))
+            {
+                return backupFolder;
+            }
+
+            return Path.Combine(_appFolderInfo.GetAppDataPath(), backupFolder);
+        }
+
+        public string GetBackupFolder(BackupType backupType)
+        {
+            return Path.Combine(GetBackupFolder(), backupType.ToString().ToLower());
         }
     }
 
