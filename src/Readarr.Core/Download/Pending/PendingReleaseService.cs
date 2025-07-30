@@ -93,7 +93,7 @@ namespace Readarr.Core.Download.Pending
                 var author = authorDecisions.First().Item1.RemoteBook.Author;
                 var alreadyPending = _repository.AllBySeriesId(author.Id);
 
-                alreadyPending = IncludeRemoteEpisodes(alreadyPending, authorDecisions.ToDictionaryIgnoreDuplicates(v => v.Item1.RemoteBook.Release.Title, v => v.Item1.RemoteBook));
+                alreadyPending = IncludeRemoteBooks(alreadyPending, authorDecisions.ToDictionaryIgnoreDuplicates(v => v.Item1.RemoteBook.Release.Title, v => v.Item1.RemoteBook));
                 var alreadyPendingByEpisode = CreateEpisodeLookup(alreadyPending);
 
                 foreach (var pair in authorDecisions)
@@ -101,9 +101,9 @@ namespace Readarr.Core.Download.Pending
                     var decision = pair.Item1;
                     var reason = pair.Item2;
 
-                    var episodeIds = decision.RemoteBook.Episodes.Select(e => e.Id);
+                    var bookIds = decision.RemoteBook.Books.Select(b => b.Id);
 
-                    var existingReports = episodeIds.SelectMany(v => alreadyPendingByEpisode[v])
+                    var existingReports = bookIds.SelectMany(v => alreadyPendingByEpisode[v])
                                                     .Distinct().ToList();
 
                     var matchingReports = existingReports.Where(MatchingReleasePredicate(decision.RemoteBook.Release)).ToList();
@@ -346,6 +346,27 @@ namespace Readarr.Core.Download.Pending
             return result;
         }
 
+        private List<PendingRelease> IncludeRemoteBooks(List<PendingRelease> releases, Dictionary<string, RemoteBook> knownRemoteBooks = null)
+        {
+            // TODO: Implement book-specific logic
+            // For now, just return the releases as-is
+            foreach (var release in releases)
+            {
+                if (release.RemoteBook == null)
+                {
+                    release.RemoteBook = new RemoteBook
+                    {
+                        Author = release.Author,
+                        Books = new List<Book>(),
+                        Release = release.Release,
+                        ParsedBookInfo = release.ParsedBookInfo
+                    };
+                }
+            }
+            
+            return releases;
+        }
+
         private Queue.Queue GetQueueItem(PendingRelease pendingRelease, Lazy<DateTime> nextRssSync, Episode episode)
         {
             var ect = pendingRelease.Release.PublishDate.AddMinutes(GetDelay(pendingRelease.RemoteEpisode));
@@ -401,20 +422,42 @@ namespace Readarr.Core.Download.Pending
 
         private void Insert(DownloadDecision decision, PendingReleaseReason reason)
         {
-            _repository.Insert(new PendingRelease
+            // Handle both RemoteEpisode and RemoteBook
+            if (decision.RemoteBook != null)
             {
-                SeriesId = decision.RemoteEpisode.Series.Id,
-                ParsedEpisodeInfo = decision.RemoteEpisode.ParsedEpisodeInfo,
-                Release = decision.RemoteEpisode.Release,
-                Title = decision.RemoteEpisode.Release.Title,
-                Added = DateTime.UtcNow,
-                Reason = reason,
-                AdditionalInfo = new PendingReleaseAdditionalInfo
+                _repository.Insert(new PendingRelease
                 {
-                    SeriesMatchType = decision.RemoteEpisode.SeriesMatchType,
-                    ReleaseSource = decision.RemoteEpisode.ReleaseSource
-                }
-            });
+                    SeriesId = decision.RemoteBook.Author.Id,
+                    ParsedBookInfo = decision.RemoteBook.ParsedBookInfo,
+                    Release = decision.RemoteBook.Release,
+                    Title = decision.RemoteBook.Release.Title,
+                    Added = DateTime.UtcNow,
+                    Reason = reason,
+                    AdditionalInfo = new PendingReleaseAdditionalInfo
+                    {
+                        // TODO: Add book-specific match type and release source
+                        SeriesMatchType = SeriesMatchType.Unknown,
+                        ReleaseSource = ReleaseSourceType.Unknown
+                    }
+                });
+            }
+            else if (decision.RemoteEpisode != null)
+            {
+                _repository.Insert(new PendingRelease
+                {
+                    SeriesId = decision.RemoteEpisode.Series.Id,
+                    ParsedEpisodeInfo = decision.RemoteEpisode.ParsedEpisodeInfo,
+                    Release = decision.RemoteEpisode.Release,
+                    Title = decision.RemoteEpisode.Release.Title,
+                    Added = DateTime.UtcNow,
+                    Reason = reason,
+                    AdditionalInfo = new PendingReleaseAdditionalInfo
+                    {
+                        SeriesMatchType = decision.RemoteEpisode.SeriesMatchType,
+                        ReleaseSource = decision.RemoteEpisode.ReleaseSource
+                    }
+                });
+            }
 
             _eventAggregator.PublishEvent(new PendingReleasesUpdatedEvent());
         }

@@ -1,4 +1,5 @@
 using System;
+using Readarr.Core.Books;
 using Readarr.Core.Datastore;
 using Readarr.Core.Parser.Model;
 
@@ -16,6 +17,11 @@ namespace Readarr.Core.Download.Pending
 
         // Not persisted
         public RemoteEpisode RemoteEpisode { get; set; }
+        
+        // Book-related properties (not persisted)
+        public RemoteBook RemoteBook { get; set; }
+        public ParsedBookInfo ParsedBookInfo { get; set; }
+        public Author Author { get; set; }
     }
 
     public class PendingReleaseAdditionalInfo

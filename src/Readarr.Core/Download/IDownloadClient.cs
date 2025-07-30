@@ -10,6 +10,7 @@ namespace Readarr.Core.Download
     {
         DownloadProtocol Protocol { get; }
         Task<string> Download(RemoteEpisode remoteEpisode, IIndexer indexer);
+        Task<string> Download(RemoteBook remoteBook, IIndexer indexer);
         IEnumerable<DownloadClientItem> GetItems();
         DownloadClientItem GetImportItem(DownloadClientItem item, DownloadClientItem previousImportAttempt);
         void RemoveItem(DownloadClientItem item, bool deleteData);

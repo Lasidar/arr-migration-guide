@@ -173,7 +173,7 @@ namespace Readarr.Core.Download
 
             // TODO: Implement book-specific download logic
             // For now, just pass through to the download client
-            var downloadClientId = await downloadClient.Download(remoteBook, false);
+            var downloadClientId = await downloadClient.Download(remoteBook, null);
             var authorId = remoteBook.Author.Id;
 
             _eventAggregator.PublishEvent(new BookGrabbedEvent(remoteBook));
