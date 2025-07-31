@@ -109,6 +109,10 @@ The Readarr v2 migration from Sonarr is in progress. Major infrastructure work h
 - Remove TV-specific tests
 - Add book-specific tests
 - Fix test compilation errors
+- Test infrastructure created:
+  - `TestBuilders` with CreateAuthor, CreateBook, CreateBookFile helpers
+  - Updated `CoreTest` base class
+  - Foundation for writing book-specific unit tests
 
 ### 3. Major Code Cleanup Required
 - Update remaining TV references:
@@ -180,8 +184,11 @@ The systematic phase-by-phase approach was highly successful:
 5. **Blocklist Service**: Updated to support both book and TV types
 6. **Example Implementations Created**:
    - Goodreads import list (complete with settings and proxy interface)
+   - RSS book import list (with parser and HTTP base)
    - Discord book notification provider (full implementation)
+   - Email book notification provider (full implementation)
    - These serve as templates for converting other providers
+7. **Test Infrastructure**: Created test builders and helpers for book entities
 
 ## Dual-Support Strategy
 
