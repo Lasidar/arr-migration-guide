@@ -13,6 +13,8 @@ using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Books;
 using Readarr.Core.Books.Events;
+using Readarr.Core.Tv;
+using Readarr.Core.Tv.Events;
 
 namespace Readarr.Core.Download.TrackedDownloads
 {
@@ -34,7 +36,7 @@ namespace Readarr.Core.Download.TrackedDownloads
                                           IHandle<AuthorDeletedEvent>
     {
         private readonly IParsingService _parsingService;
-        private readonly IHistoryService _historyService;
+        private readonly History.IHistoryService _historyService;
         private readonly IEventAggregator _eventAggregator;
         private readonly IDownloadHistoryService _downloadHistoryService;
         private readonly IRemoteEpisodeAggregationService _aggregationService;
@@ -44,7 +46,7 @@ namespace Readarr.Core.Download.TrackedDownloads
 
         public TrackedDownloadService(IParsingService parsingService,
                                       ICacheManager cacheManager,
-                                      IHistoryService historyService,
+                                      History.IHistoryService historyService,
                                       ICustomFormatCalculationService formatCalculator,
                                       IEventAggregator eventAggregator,
                                       IDownloadHistoryService downloadHistoryService,

@@ -8,6 +8,7 @@ using Readarr.Core.Messaging.Events;
 using Readarr.Core.Books;
 using Readarr.Core.Books.Events;
 using System;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.MediaFiles
 {

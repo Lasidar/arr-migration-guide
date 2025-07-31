@@ -14,6 +14,7 @@ using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download
 {
@@ -27,26 +28,26 @@ namespace Readarr.Core.Download
     public class CompletedDownloadService : ICompletedDownloadService
     {
         private readonly IEventAggregator _eventAggregator;
-        private readonly IHistoryService _historyService;
+        private readonly History.IHistoryService _historyService;
         private readonly IProvideImportItemService _provideImportItemService;
         private readonly IDownloadedBooksImportService _downloadedBooksImportService;
         private readonly IParsingService _parsingService;
         private readonly ISeriesService _seriesService;
         private readonly ITrackedDownloadAlreadyImported _trackedDownloadAlreadyImported;
         private readonly IEpisodeService _episodeService;
-        private readonly IMediaFileService _mediaFileService;
+        private readonly MediaFiles.IMediaFileService _mediaFileService;
         private readonly IRejectedImportService _rejectedImportService;
         private readonly Logger _logger;
 
         public CompletedDownloadService(IEventAggregator eventAggregator,
-                                        IHistoryService historyService,
+                                        History.IHistoryService historyService,
                                         IProvideImportItemService provideImportItemService,
                                         IDownloadedBooksImportService downloadedBooksImportService,
                                         IParsingService parsingService,
                                         ISeriesService seriesService,
                                         ITrackedDownloadAlreadyImported trackedDownloadAlreadyImported,
                                         IEpisodeService episodeService,
-                                        IMediaFileService mediaFileService,
+                                        MediaFiles.IMediaFileService mediaFileService,
                                         IRejectedImportService rejectedImportService,
                                         Logger logger)
         {
