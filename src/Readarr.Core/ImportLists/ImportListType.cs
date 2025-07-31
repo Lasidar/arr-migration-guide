@@ -7,6 +7,7 @@ namespace Readarr.Core.ImportLists
         Trakt,
         Simkl,
         Other,
-        Advanced
+        Advanced,
+        Goodreads
     }
 }
