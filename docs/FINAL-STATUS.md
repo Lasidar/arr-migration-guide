@@ -116,8 +116,8 @@ The Readarr v2 migration from Sonarr is in progress. Major infrastructure work h
 
 ### 3. Major Code Cleanup Required
 - Update remaining TV references:
-  - **ImportLists**: Convert specific implementations (Sonarr, Trakt, etc.) to use book infrastructure
-  - **Notification Providers**: Convert specific providers (Join, Pushover, Ntfy, etc.) to use book infrastructure
+  - **ImportLists**: Continue converting (Sonarr, Trakt, etc.) - templates now exist
+  - **Notification Providers**: Continue converting (Pushover, Ntfy, etc.) - templates now exist
   - **Parser Models**: Eventually remove LocalEpisode, RemoteEpisode (currently dual support)
   - **History Service**: EpisodeHistory and EpisodeHistoryEventType are deeply embedded (100s of references)
 - Remove stub TV models:
@@ -183,12 +183,13 @@ The systematic phase-by-phase approach was highly successful:
 4. **Queue System**: Updated to support both book and TV types
 5. **Blocklist Service**: Updated to support both book and TV types
 6. **Example Implementations Created**:
-   - Goodreads import list (complete with settings and proxy interface)
-   - RSS book import list (with parser and HTTP base)
-   - Discord book notification provider (full implementation)
-   - Email book notification provider (full implementation)
-   - These serve as templates for converting other providers
-7. **Test Infrastructure**: Created test builders and helpers for book entities
+   - Import Lists: Goodreads, RSS, Custom book lists
+   - Notifications: Discord, Email, Slack
+   - All with complete implementations serving as templates
+7. **Test Infrastructure**: 
+   - Created TestBuilders with book/author helpers
+   - Created example tests (BookServiceFixture, AuthorServiceFixture)
+   - Demonstrated test patterns for book functionality
 
 ## Dual-Support Strategy
 
