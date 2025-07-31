@@ -3,7 +3,6 @@ using System.Linq;
 using FluentValidation.Results;
 using Readarr.Common.Extensions;
 using Readarr.Core.Books;
-using Readarr.Core.Localization;
 using Readarr.Core.MediaFiles;
 
 namespace Readarr.Core.Notifications.Pushover
@@ -11,27 +10,25 @@ namespace Readarr.Core.Notifications.Pushover
     public class PushoverBook : BookNotificationBase<PushoverSettings>
     {
         private readonly IPushoverProxy _proxy;
-        private readonly ILocalizationService _localizationService;
 
-        public PushoverBook(IPushoverProxy proxy, ILocalizationService localizationService)
+        public PushoverBook(IPushoverProxy proxy)
         {
             _proxy = proxy;
-            _localizationService = localizationService;
         }
 
         public override string Name => "Pushover";
         public override string Link => "https://pushover.net/";
 
-        public override void OnGrab(GrabMessage message)
+        public override void OnGrab(GrabMessage grabMessage)
         {
-            var author = message.Book.Author;
-            var books = message.Book.Books;
-            var quality = message.Quality;
+            var author = grabMessage.Book.Author;
+            var books = grabMessage.Book.Books;
+            var quality = grabMessage.Quality;
 
-            var title = "Readarr - Book Grabbed";
-            var body = $"{author.Name} - {string.Join(", ", books.Select(b => b.Title))} [{quality.Quality.Name}]";
+            var title = Settings.IncludeAuthorName ? $"{author.Name} - Book Grabbed" : "Book Grabbed";
+            var message = $"{string.Join(", ", books.Select(b => b.Title))} [{quality.Quality.Name}]";
 
-            _proxy.SendNotification(title, body, Settings);
+            _proxy.SendNotification(title, message, Settings);
         }
 
         public override void OnImportComplete(ImportCompleteMessage message)
@@ -39,64 +36,70 @@ namespace Readarr.Core.Notifications.Pushover
             var author = message.Author;
             var book = message.BookFile.Books.Value.First();
             
-            var title = message.IsUpgrade ? "Readarr - Book Upgraded" : "Readarr - Book Downloaded";
-            var body = $"{author.Name} - {book.Title}";
+            var title = Settings.IncludeAuthorName ? 
+                $"{author.Name} - {(message.IsUpgrade ? "Book Upgraded" : "Book Downloaded")}" : 
+                (message.IsUpgrade ? "Book Upgraded" : "Book Downloaded");
+            
+            var body = book.Title;
 
             _proxy.SendNotification(title, body, Settings);
         }
 
         public override void OnRename(Author author, List<RenamedBookFile> renamedFiles)
         {
-            var title = "Readarr - Books Renamed";
-            var body = $"{renamedFiles.Count} book files renamed for {author.Name}";
+            var title = Settings.IncludeAuthorName ? $"{author.Name} - Books Renamed" : "Books Renamed";
+            var message = $"{renamedFiles.Count} book files renamed";
 
-            _proxy.SendNotification(title, body, Settings);
+            _proxy.SendNotification(title, message, Settings);
         }
 
         public override void OnAuthorAdd(AuthorAddMessage message)
         {
-            var title = "Readarr - Author Added";
-            var body = $"{message.Author.Name}";
+            var title = "Author Added";
+            var body = message.Author.Name;
 
             _proxy.SendNotification(title, body, Settings);
         }
 
-        public override void OnAuthorDelete(AuthorDeleteMessage message)
+        public override void OnAuthorDelete(AuthorDeleteMessage deleteMessage)
         {
-            var title = "Readarr - Author Deleted";
-            var body = $"{message.Author.Name}";
+            var title = "Author Deleted";
+            var body = deleteMessage.Author.Name;
 
             _proxy.SendNotification(title, body, Settings);
         }
 
-        public override void OnBookFileDelete(BookFileDeleteMessage message)
+        public override void OnBookFileDelete(BookFileDeleteMessage deleteMessage)
         {
-            var title = "Readarr - Book File Deleted";
-            var body = $"{message.Author.Name} - {message.Book.Title}";
+            var author = deleteMessage.Author;
+            var book = deleteMessage.Book;
+            
+            var title = Settings.IncludeAuthorName ? $"{author.Name} - Book File Deleted" : "Book File Deleted";
+            var body = book.Title;
 
             _proxy.SendNotification(title, body, Settings);
         }
 
         public override void OnHealthIssue(HealthCheck.HealthCheck healthCheck)
         {
-            var title = "Readarr - Health Issue";
-            var body = healthCheck.Message;
+            var title = Settings.IncludeHealthWarnings ? "Health Issue" : null;
+            if (title.IsNullOrWhiteSpace()) return;
 
-            _proxy.SendNotification(title, body, Settings, (int)healthCheck.Type);
+            _proxy.SendNotification(title, healthCheck.Message, Settings);
         }
 
         public override void OnHealthRestored(HealthCheck.HealthCheck previousCheck)
         {
-            var title = "Readarr - Health Issue Resolved";
-            var body = $"The following issue has been resolved: {previousCheck.Message}";
+            var title = Settings.IncludeHealthWarnings ? "Health Issue Resolved" : null;
+            if (title.IsNullOrWhiteSpace()) return;
 
-            _proxy.SendNotification(title, body, Settings);
+            _proxy.SendNotification(title, $"The following issue has been resolved: {previousCheck.Message}", Settings);
         }
 
         public override void OnApplicationUpdate(ApplicationUpdateMessage updateMessage)
         {
-            var title = "Readarr - Application Updated";
-            var body = $"Readarr updated to {updateMessage.NewVersion}";
+            var title = "Readarr Updated";
+            var body = $"Readarr has been updated to version {updateMessage.NewVersion}";
 
             _proxy.SendNotification(title, body, Settings);
         }
@@ -106,10 +109,10 @@ namespace Readarr.Core.Notifications.Pushover
             var author = message.Author;
             var books = message.Book.Books;
             
-            var title = "Readarr - Manual Interaction Required";
-            var body = $"{author.Name} - {string.Join(", ", books.Select(b => b.Title))}";
+            var title = Settings.IncludeAuthorName ? $"{author.Name} - Manual Interaction Required" : "Manual Interaction Required";
+            var body = $"{string.Join(", ", books.Select(b => b.Title))}";
 
-            _proxy.SendNotification(title, body, Settings, (int)PushoverPriority.High);
+            _proxy.SendNotification(title, body, Settings);
         }
 
         public override ValidationResult Test()
