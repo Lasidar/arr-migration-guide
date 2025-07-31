@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Readarr.Common.Disk;
 using Readarr.Core.Localization;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.HealthCheck.Checks
 {

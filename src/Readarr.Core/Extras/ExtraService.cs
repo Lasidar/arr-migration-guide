@@ -12,7 +12,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser.Model;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Extras
 {
@@ -26,7 +26,7 @@ namespace Readarr.Core.Extras
                                 IHandle<MediaCoversUpdatedEvent>,
                                 IHandle<EpisodeFolderCreatedEvent>,
                                 IHandle<SeriesScannedEvent>,
-                                IHandle<SeriesRenamedEvent>,
+                                IHandle<AuthorRenamedEvent>,
                                 IHandle<DownloadsProcessedEvent>
     {
         private readonly IMediaFileService _mediaFileService;
@@ -159,7 +159,7 @@ namespace Readarr.Core.Extras
             }
         }
 
-        public void Handle(SeriesRenamedEvent message)
+        public void Handle(AuthorRenamedEvent message)
         {
             var series = message.Series;
             var episodeFiles = GetEpisodeFiles(series.Id);

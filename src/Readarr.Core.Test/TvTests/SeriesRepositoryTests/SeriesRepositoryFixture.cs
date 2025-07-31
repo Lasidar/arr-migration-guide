@@ -5,7 +5,7 @@ using NUnit.Framework;
 using Readarr.Core.Profiles.Qualities;
 using Readarr.Core.Qualities;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.TvTests.SeriesRepositoryTests
 {

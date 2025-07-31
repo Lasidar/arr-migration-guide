@@ -8,7 +8,7 @@ using Readarr.Core.Configuration;
 using Readarr.Core.Localization;
 using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation;
 
 namespace Readarr.Core.ImportLists.Sonarr

@@ -3,7 +3,7 @@ using Readarr.Core.CustomFormats;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Qualities;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using System.Linq;
 
 namespace Readarr.Core.Organizer

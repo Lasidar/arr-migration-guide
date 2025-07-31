@@ -7,7 +7,7 @@ using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Common.Http;
 using Readarr.Core.Localization;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications.Emby
 {

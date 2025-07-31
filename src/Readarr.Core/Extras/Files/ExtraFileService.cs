@@ -8,8 +8,8 @@ using Readarr.Common.Extensions;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
-using Readarr.Core.Tv;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books;
+using Readarr.Core.Books.Events;
 
 namespace Readarr.Core.Extras.Files
 {
@@ -26,7 +26,7 @@ namespace Readarr.Core.Extras.Files
     }
 
     public abstract class ExtraFileService<TExtraFile> : IExtraFileService<TExtraFile>,
-                                                         IHandleAsync<SeriesDeletedEvent>,
+                                                         IHandleAsync<AuthorDeletedEvent>,
                                                          IHandle<EpisodeFileDeletedEvent>
         where TExtraFile : ExtraFile, new()
     {
@@ -95,7 +95,7 @@ namespace Readarr.Core.Extras.Files
             _repository.DeleteMany(ids);
         }
 
-        public void HandleAsync(SeriesDeletedEvent message)
+        public void HandleAsync(AuthorDeletedEvent message)
         {
             _logger.Debug("Deleting Extra from database for series: {0}", string.Join(',', message.Series));
             _repository.DeleteForSeriesIds(message.Series.Select(m => m.Id).ToList());

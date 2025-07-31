@@ -9,10 +9,10 @@ using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Core.Extras.Subtitles;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.MediaFiles.EpisodeImport;
+using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.Extras.Subtitles

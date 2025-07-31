@@ -5,7 +5,7 @@ using FluentValidation.Results;
 using NUnit.Framework;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Notifications;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation;
 using Readarr.Test.Common;
 
@@ -58,7 +58,7 @@ namespace Readarr.Core.Test.NotificationTests
                 TestLogger.Info("OnDownload was called");
             }
 
-            public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+            public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
             {
                 TestLogger.Info("OnRename was called");
             }
@@ -68,7 +68,7 @@ namespace Readarr.Core.Test.NotificationTests
                 TestLogger.Info("Episode OnDelete was called");
             }
 
-            public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+            public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
             {
                 TestLogger.Info("Series OnDelete was called");
             }

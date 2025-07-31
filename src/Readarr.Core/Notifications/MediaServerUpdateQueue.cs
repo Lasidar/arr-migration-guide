@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Readarr.Common.Cache;
 using Readarr.Common.Extensions;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications
 {

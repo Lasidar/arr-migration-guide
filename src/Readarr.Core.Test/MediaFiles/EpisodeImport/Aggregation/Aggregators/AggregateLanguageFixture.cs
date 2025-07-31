@@ -6,11 +6,11 @@ using Moq;
 using NUnit.Framework;
 using Readarr.Core.Download;
 using Readarr.Core.Languages;
-using Readarr.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators;
-using Readarr.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators.Augmenters.Language;
+using Readarr.Core.MediaFiles.BookImport.Aggregation.Aggregators;
+using Readarr.Core.MediaFiles.BookImport.Aggregation.Aggregators.Augmenters.Language;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.MediaFiles.EpisodeImport.Aggregation.Aggregators
 {

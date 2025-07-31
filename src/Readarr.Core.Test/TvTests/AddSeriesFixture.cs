@@ -11,7 +11,7 @@ using Readarr.Core.Exceptions;
 using Readarr.Core.MetadataSource;
 using Readarr.Core.Organizer;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.TvTests

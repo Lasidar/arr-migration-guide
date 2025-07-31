@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using FluentValidation.Results;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.ThingiProvider;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications
 {
@@ -57,7 +57,7 @@ namespace Readarr.Core.Notifications
         {
         }
 
-        public virtual void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public virtual void OnRename(Series series, List<RenamedBookFile> renamedFiles)
         {
         }
 
@@ -65,11 +65,11 @@ namespace Readarr.Core.Notifications
         {
         }
 
-        public virtual void OnSeriesAdd(SeriesAddMessage message)
+        public virtual void OnSeriesAdd(AuthorAddMessage message)
         {
         }
 
-        public virtual void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public virtual void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
         }
 

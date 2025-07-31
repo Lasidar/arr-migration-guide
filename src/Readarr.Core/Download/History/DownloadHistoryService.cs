@@ -5,7 +5,7 @@ using Readarr.Common.Extensions;
 using Readarr.Core.History;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books.Events;
 
 namespace Readarr.Core.Download.History
 {
@@ -18,11 +18,11 @@ namespace Readarr.Core.Download.History
 
     public class DownloadHistoryService : IDownloadHistoryService,
                                           IHandle<EpisodeGrabbedEvent>,
-                                          IHandle<EpisodeImportedEvent>,
+                                          IHandle<BooksImportedEvent>,
                                           IHandle<DownloadCompletedEvent>,
                                           IHandle<DownloadFailedEvent>,
                                           IHandle<DownloadIgnoredEvent>,
-                                          IHandle<SeriesDeletedEvent>
+                                          IHandle<AuthorDeletedEvent>
     {
         private readonly IDownloadHistoryRepository _repository;
         private readonly IHistoryService _historyService;
@@ -121,7 +121,7 @@ namespace Readarr.Core.Download.History
             _repository.Insert(history);
         }
 
-        public void Handle(EpisodeImportedEvent message)
+        public void Handle(BooksImportedEvent message)
         {
             if (!message.NewDownload)
             {
@@ -227,7 +227,7 @@ namespace Readarr.Core.Download.History
             _repository.Insert(history);
         }
 
-        public void Handle(SeriesDeletedEvent message)
+        public void Handle(AuthorDeletedEvent message)
         {
             _repository.DeleteBySeriesIds(message.Series.Select(m => m.Id).ToList());
         }

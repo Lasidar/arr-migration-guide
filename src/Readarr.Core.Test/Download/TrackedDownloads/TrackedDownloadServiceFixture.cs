@@ -12,8 +12,8 @@ using Readarr.Core.Languages;
 using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books;
+using Readarr.Core.Books.Events;
 
 namespace Readarr.Core.Test.Download.TrackedDownloads
 {
@@ -396,7 +396,7 @@ namespace Readarr.Core.Test.Download.TrackedDownloads
                   .Setup(s => s.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), null))
                   .Returns(default(RemoteEpisode));
 
-            Subject.Handle(new SeriesDeletedEvent(new List<Series> { remoteEpisode.Series }, true, true));
+            Subject.Handle(new AuthorDeletedEvent(new List<Series> { remoteEpisode.Series }, true, true));
 
             var trackedDownloads = Subject.GetTrackedDownloads();
             trackedDownloads.Should().HaveCount(1);

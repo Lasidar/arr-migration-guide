@@ -11,14 +11,14 @@ using Readarr.Common.Instrumentation.Extensions;
 using Readarr.Core.Books;
 using Readarr.Core.Configuration;
 using Readarr.Core.MediaFiles.BookImport;
-using Readarr.Core.MediaFiles.EpisodeImport;
+using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.MediaFiles.Commands;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.RootFolders;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.MediaFiles
 {

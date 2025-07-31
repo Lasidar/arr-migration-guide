@@ -8,7 +8,7 @@ using Readarr.Common.Instrumentation;
 using Readarr.Core.DataAugmentation.Scene;
 using Readarr.Core.IndexerSearch.Definitions;
 using Readarr.Core.ThingiProvider;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Indexers.Newznab
 {

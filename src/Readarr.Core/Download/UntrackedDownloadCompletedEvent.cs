@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Readarr.Common.Messaging;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Parser.Model;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Download
 {

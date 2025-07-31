@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Readarr.Core.MediaCover;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Api.V1.Series
 {

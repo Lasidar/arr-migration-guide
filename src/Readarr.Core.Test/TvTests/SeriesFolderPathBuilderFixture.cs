@@ -6,7 +6,7 @@ using NUnit.Framework;
 using Readarr.Core.Organizer;
 using Readarr.Core.RootFolders;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.TvTests

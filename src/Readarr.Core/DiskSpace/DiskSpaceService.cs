@@ -7,7 +7,7 @@ using NLog;
 using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Core.RootFolders;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.DiskSpace
 {

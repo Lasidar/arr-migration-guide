@@ -6,7 +6,7 @@ using NLog;
 using Readarr.Common.Cache;
 using Readarr.Common.Extensions;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications.Xbmc
 {
@@ -48,7 +48,7 @@ namespace Readarr.Core.Notifications.Xbmc
             UpdateAndClean(message.Series);
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
         {
             UpdateAndClean(series);
         }
@@ -61,7 +61,7 @@ namespace Readarr.Core.Notifications.Xbmc
             UpdateAndClean(deleteMessage.Series, true);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             const string header = "Sonarr - Added";
 
@@ -69,7 +69,7 @@ namespace Readarr.Core.Notifications.Xbmc
             UpdateAndClean(message.Series, true);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             if (deleteMessage.DeletedFiles)
             {

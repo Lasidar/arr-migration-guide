@@ -5,7 +5,7 @@ using Readarr.Core.Download.Pending;
 using Readarr.Core.Housekeeping.Housekeepers;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.Housekeeping.Housekeepers
 {

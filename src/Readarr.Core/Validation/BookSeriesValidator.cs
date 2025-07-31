@@ -1,5 +1,7 @@
 using FluentValidation;
 using Readarr.Core.Books;
+using Readarr.Core.Datastore;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Readarr.Core.Validation

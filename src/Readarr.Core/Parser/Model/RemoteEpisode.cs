@@ -5,7 +5,7 @@ using Readarr.Core.CustomFormats;
 using Readarr.Core.DataAugmentation.Scene;
 using Readarr.Core.Download.Clients;
 using Readarr.Core.Languages;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Parser.Model
 {

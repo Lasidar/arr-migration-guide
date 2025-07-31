@@ -13,7 +13,7 @@ using Readarr.Core.Exceptions;
 using Readarr.Core.Indexers;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.Download
 {

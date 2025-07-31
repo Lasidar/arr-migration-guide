@@ -8,7 +8,7 @@ using Readarr.Core.Datastore;
 using Readarr.Core.DecisionEngine.Specifications;
 using Readarr.Core.Download;
 using Readarr.Core.History;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Api.V3.Episodes;
 using Readarr.Api.V3.Series;
 using Readarr.Http;

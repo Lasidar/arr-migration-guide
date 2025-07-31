@@ -4,7 +4,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Readarr.Common.Extensions;
 using Readarr.Core.Messaging.Commands;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Tv.Commands;
 using Readarr.Http;
 

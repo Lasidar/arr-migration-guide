@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Readarr.Common.Extensions;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications;
 

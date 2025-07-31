@@ -13,7 +13,7 @@ using Readarr.Core.Extras.Metadata.Files;
 using Readarr.Core.Extras.Others;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Parser.Model;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Extras.Metadata
 {

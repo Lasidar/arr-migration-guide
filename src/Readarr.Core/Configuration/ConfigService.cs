@@ -9,7 +9,7 @@ using Readarr.Core.Configuration.Events;
 using Readarr.Core.ImportLists;
 using Readarr.Core.Languages;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.MediaFiles.EpisodeImport;
+using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Qualities;
 using Readarr.Core.Security;

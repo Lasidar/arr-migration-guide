@@ -10,6 +10,6 @@ namespace Readarr.Core.Notifications.Webhook
         
         // TV properties (to be removed)
         public WebhookSeries Series { get; set; }
-        public List<WebhookRenamedEpisodeFile> RenamedEpisodeFiles { get; set; }
+        public List<WebhookRenamedBookFile> RenamedBookFiles { get; set; }
     }
 }

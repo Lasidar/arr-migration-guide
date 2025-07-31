@@ -9,11 +9,11 @@ using Readarr.Common.Instrumentation.Extensions;
 using Readarr.Core.Download.TrackedDownloads;
 using Readarr.Core.History;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.MediaFiles.EpisodeImport;
+using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Download
 {

@@ -6,7 +6,7 @@ using Readarr.Common.EnvironmentInfo;
 using Readarr.Common.Extensions;
 using Readarr.Core.Configuration;
 using Readarr.Core.MediaFiles.Commands;
-using Readarr.Core.MediaFiles.EpisodeImport;
+using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Messaging.Commands;
 
 namespace Readarr.Core.MediaFiles

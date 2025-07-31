@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
 {

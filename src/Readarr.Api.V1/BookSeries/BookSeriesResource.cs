@@ -4,7 +4,7 @@ using System.Linq;
 using Readarr.Common.Extensions;
 using Readarr.Core.Languages;
 using Readarr.Core.MediaCover;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Http.REST;
 using Readarr.Api.V1.Book;
 using Readarr.Core.Books;

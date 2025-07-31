@@ -2,15 +2,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Readarr.Common.Extensions;
 using Readarr.Core.Localization;
-using Readarr.Core.Tv;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books;
+using Readarr.Core.Books.Events;
 
 namespace Readarr.Core.HealthCheck.Checks
 {
-    [CheckOn(typeof(SeriesUpdatedEvent))]
-    [CheckOn(typeof(SeriesDeletedEvent))]
+    [CheckOn(typeof(AuthorUpdatedEvent))]
+    [CheckOn(typeof(AuthorDeletedEvent))]
     [CheckOn(typeof(SeriesRefreshCompleteEvent))]
-    public class RemovedSeriesCheck : HealthCheckBase, ICheckOnCondition<SeriesUpdatedEvent>, ICheckOnCondition<SeriesDeletedEvent>
+    public class RemovedSeriesCheck : HealthCheckBase, ICheckOnCondition<AuthorUpdatedEvent>, ICheckOnCondition<AuthorDeletedEvent>
     {
         private readonly ISeriesService _seriesService;
 
@@ -51,12 +51,12 @@ namespace Readarr.Core.HealthCheck.Checks
                 "#series-removed-from-thetvdb");
         }
 
-        public bool ShouldCheckOnEvent(SeriesDeletedEvent deletedEvent)
+        public bool ShouldCheckOnEvent(AuthorDeletedEvent deletedEvent)
         {
             return deletedEvent.Series.Any(s => s.Status == SeriesStatusType.Deleted);
         }
 
-        public bool ShouldCheckOnEvent(SeriesUpdatedEvent updatedEvent)
+        public bool ShouldCheckOnEvent(AuthorUpdatedEvent updatedEvent)
         {
             return updatedEvent.Series.Status == SeriesStatusType.Deleted;
         }

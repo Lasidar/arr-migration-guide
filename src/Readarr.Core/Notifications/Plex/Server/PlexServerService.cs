@@ -10,7 +10,7 @@ using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Core.Localization;
 using Readarr.Core.RootFolders;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation;
 
 namespace Readarr.Core.Notifications.Plex.Server

@@ -8,7 +8,7 @@ using Ical.Net.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Readarr.Common.Extensions;
 using Readarr.Core.Tags;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Http;
 
 namespace Readarr.Api.V1.Calendar

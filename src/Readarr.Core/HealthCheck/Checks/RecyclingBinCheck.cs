@@ -7,7 +7,7 @@ using Readarr.Core.MediaFiles.Events;
 
 namespace Readarr.Core.HealthCheck.Checks
 {
-    [CheckOn(typeof(EpisodeImportedEvent), CheckOnCondition.FailedOnly)]
+    [CheckOn(typeof(BooksImportedEvent), CheckOnCondition.FailedOnly)]
     [CheckOn(typeof(EpisodeImportFailedEvent), CheckOnCondition.SuccessfulOnly)]
     public class RecyclingBinCheck : HealthCheckBase
     {

@@ -7,13 +7,13 @@ using NUnit.Framework;
 using Readarr.Core.Download;
 using Readarr.Core.Languages;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.MediaFiles.EpisodeImport;
-using Readarr.Core.MediaFiles.EpisodeImport.Aggregation;
+using Readarr.Core.MediaFiles.BookImport;
+using Readarr.Core.MediaFiles.BookImport.Aggregation;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Profiles.Qualities;
 using Readarr.Core.Qualities;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.MediaFiles.EpisodeImport

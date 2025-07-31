@@ -14,7 +14,7 @@ namespace Readarr.Core.Download.TrackedDownloads
     public class DownloadMonitoringService : IExecute<RefreshMonitoredDownloadsCommand>,
                                              IExecute<CheckForFinishedDownloadCommand>,
                                              IHandle<EpisodeGrabbedEvent>,
-                                             IHandle<EpisodeImportedEvent>,
+                                             IHandle<BooksImportedEvent>,
                                              IHandle<ManualInteractionRequiredEvent>,
                                              IHandle<DownloadsProcessedEvent>,
                                              IHandle<TrackedDownloadsRemovedEvent>
@@ -176,7 +176,7 @@ namespace Readarr.Core.Download.TrackedDownloads
             _refreshDebounce.Execute();
         }
 
-        public void Handle(EpisodeImportedEvent message)
+        public void Handle(BooksImportedEvent message)
         {
             _refreshDebounce.Execute();
         }

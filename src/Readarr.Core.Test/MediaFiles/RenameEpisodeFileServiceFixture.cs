@@ -8,7 +8,7 @@ using Readarr.Core.MediaFiles.Commands;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.MediaFiles
 {
@@ -63,7 +63,7 @@ namespace Readarr.Core.Test.MediaFiles
             Subject.Execute(new RenameFilesCommand(_series.Id, new List<int> { 1 }));
 
             Mocker.GetMock<IEventAggregator>()
-                  .Verify(v => v.PublishEvent(It.IsAny<SeriesRenamedEvent>()), Times.Never());
+                  .Verify(v => v.PublishEvent(It.IsAny<AuthorRenamedEvent>()), Times.Never());
         }
 
         [Test]
@@ -78,7 +78,7 @@ namespace Readarr.Core.Test.MediaFiles
             Subject.Execute(new RenameFilesCommand(_series.Id, new List<int> { 1 }));
 
             Mocker.GetMock<IEventAggregator>()
-                  .Verify(v => v.PublishEvent(It.IsAny<SeriesRenamedEvent>()), Times.Never());
+                  .Verify(v => v.PublishEvent(It.IsAny<AuthorRenamedEvent>()), Times.Never());
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace Readarr.Core.Test.MediaFiles
             Subject.Execute(new RenameFilesCommand(_series.Id, new List<int> { 1 }));
 
             Mocker.GetMock<IEventAggregator>()
-                  .Verify(v => v.PublishEvent(It.IsAny<SeriesRenamedEvent>()), Times.Once());
+                  .Verify(v => v.PublishEvent(It.IsAny<AuthorRenamedEvent>()), Times.Once());
         }
 
         [Test]

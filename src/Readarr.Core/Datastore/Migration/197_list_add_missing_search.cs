@@ -8,7 +8,7 @@ namespace Readarr.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Alter.Table("ImportLists").AddColumn("SearchForMissingEpisodes").AsBoolean().NotNullable().WithDefaultValue(true);
+            Alter.Table("ImportLists").AddColumn("SearchForMissingBooks").AsBoolean().NotNullable().WithDefaultValue(true);
         }
     }
 }

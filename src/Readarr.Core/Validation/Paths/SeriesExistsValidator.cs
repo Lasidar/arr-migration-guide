@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using FluentValidation.Validators;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Validation.Paths
 {

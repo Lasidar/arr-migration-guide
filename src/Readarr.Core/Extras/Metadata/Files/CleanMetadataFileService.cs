@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using NLog;
 using Readarr.Common.Disk;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Extras.Metadata.Files
 {

@@ -5,7 +5,7 @@ using NLog;
 using Readarr.Common.Cache;
 using Readarr.Common.Extensions;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications.Emby
 {
@@ -57,7 +57,7 @@ namespace Readarr.Core.Notifications.Emby
             UpdateIfEnabled(message.Series, Created);
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
         {
             UpdateIfEnabled(series, Modified);
         }
@@ -72,7 +72,7 @@ namespace Readarr.Core.Notifications.Emby
             UpdateIfEnabled(deleteMessage.Series, Deleted);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             if (Settings.Notify)
             {
@@ -82,7 +82,7 @@ namespace Readarr.Core.Notifications.Emby
             UpdateIfEnabled(message.Series, Created);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             if (Settings.Notify)
             {

@@ -3,11 +3,11 @@ using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
-using Readarr.Core.MediaFiles.EpisodeImport.Specifications;
+using Readarr.Core.MediaFiles.BookImport.Specifications;
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.MediaFiles.EpisodeImport.Specifications

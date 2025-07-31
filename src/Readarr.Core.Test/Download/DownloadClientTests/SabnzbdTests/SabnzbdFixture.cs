@@ -11,7 +11,7 @@ using Readarr.Core.Download;
 using Readarr.Core.Download.Clients.Sabnzbd;
 using Readarr.Core.Download.Clients.Sabnzbd.Responses;
 using Readarr.Core.RemotePathMappings;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation;
 using Readarr.Test.Common;
 

@@ -11,8 +11,8 @@ using Readarr.Core.History;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
-using Readarr.Core.Tv;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books;
+using Readarr.Core.Books.Events;
 
 namespace Readarr.Core.Download.TrackedDownloads
 {
@@ -28,10 +28,10 @@ namespace Readarr.Core.Download.TrackedDownloads
 
     public class TrackedDownloadService : ITrackedDownloadService,
                                           IHandle<EpisodeInfoRefreshedEvent>,
-                                          IHandle<SeriesAddedEvent>,
-                                          IHandle<SeriesEditedEvent>,
+                                          IHandle<AuthorAddedEvent>,
+                                          IHandle<AuthorEditedEvent>,
                                           IHandle<SeriesBulkEditedEvent>,
-                                          IHandle<SeriesDeletedEvent>
+                                          IHandle<AuthorDeletedEvent>
     {
         private readonly IParsingService _parsingService;
         private readonly IHistoryService _historyService;
@@ -296,7 +296,7 @@ namespace Readarr.Core.Download.TrackedDownloads
             }
         }
 
-        public void Handle(SeriesAddedEvent message)
+        public void Handle(AuthorAddedEvent message)
         {
             var cachedItems = _cache.Values
                 .Where(t =>
@@ -312,7 +312,7 @@ namespace Readarr.Core.Download.TrackedDownloads
             }
         }
 
-        public void Handle(SeriesEditedEvent message)
+        public void Handle(AuthorEditedEvent message)
         {
             var cachedItems = _cache.Values
                 .Where(t =>
@@ -344,7 +344,7 @@ namespace Readarr.Core.Download.TrackedDownloads
             }
         }
 
-        public void Handle(SeriesDeletedEvent message)
+        public void Handle(AuthorDeletedEvent message)
         {
             var cachedItems = _cache.Values
                 .Where(t =>

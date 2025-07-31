@@ -10,7 +10,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Notifications.Trakt.Resource;
 using Readarr.Core.Qualities;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation;
 
 namespace Readarr.Core.Notifications.Trakt
@@ -52,13 +52,13 @@ namespace Readarr.Core.Notifications.Trakt
             RemoveEpisodeFromCollection(Settings, deleteMessage.Series, deleteMessage.EpisodeFile);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             RefreshTokenIfNecessary();
             AddSeriesToCollection(Settings, message.Series);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             RefreshTokenIfNecessary();
             RemoveSeriesFromCollection(Settings, deleteMessage.Series);

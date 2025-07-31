@@ -9,7 +9,7 @@ using Readarr.Common.Extensions;
 using Readarr.Core.Indexers;
 using Readarr.Core.IndexerSearch;
 using Readarr.Core.MediaFiles.Commands;
-using Readarr.Core.MediaFiles.EpisodeImport.Manual;
+using Readarr.Core.MediaFiles.BookImport.Manual;
 using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Update.Commands;
 using Readarr.Test.Common;

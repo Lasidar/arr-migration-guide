@@ -3,7 +3,7 @@ using System.Linq;
 using FluentValidation.Results;
 using Readarr.Common.Extensions;
 using Readarr.Core.MediaCover;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications.Pushcut
 {
@@ -49,12 +49,12 @@ namespace Readarr.Core.Notifications.Pushcut
             _proxy.SendNotification(EPISODE_DELETED_TITLE, deleteMessage.Message, GetPosterUrl(deleteMessage.Series), GetLinks(deleteMessage.Series), Settings);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage seriesAddMessage)
+        public override void OnSeriesAdd(AuthorAddMessage seriesAddMessage)
         {
             _proxy.SendNotification(SERIES_ADDED_TITLE, $"{seriesAddMessage.Series.Title} added to library", GetPosterUrl(seriesAddMessage.Series), GetLinks(seriesAddMessage.Series), Settings);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             _proxy.SendNotification(SERIES_DELETED_TITLE, deleteMessage.Message, GetPosterUrl(deleteMessage.Series), GetLinks(deleteMessage.Series), Settings);
         }

@@ -38,12 +38,12 @@ namespace Readarr.Core.Notifications.Twitter
             _twitterService.SendNotification($"Episode Deleted: {deleteMessage.Message}", Settings);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             _twitterService.SendNotification($"Series Added: {message.Message}", Settings);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             _twitterService.SendNotification($"Series Deleted: {deleteMessage.Message}", Settings);
         }

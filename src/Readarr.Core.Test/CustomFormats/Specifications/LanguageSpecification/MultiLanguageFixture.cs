@@ -7,7 +7,7 @@ using Readarr.Core.CustomFormats;
 using Readarr.Core.Languages;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.CustomFormats.Specifications.LanguageSpecification
 {

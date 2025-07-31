@@ -6,7 +6,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Readarr.Core.Datastore;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.Datastore
 {

@@ -17,8 +17,8 @@ using Readarr.Core.Parser.Model;
 using Readarr.Core.Profiles.Delay;
 using Readarr.Core.Qualities;
 using Readarr.Core.Queue;
-using Readarr.Core.Tv;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books;
+using Readarr.Core.Books.Events;
 
 namespace Readarr.Core.Download.Pending
 {
@@ -35,7 +35,7 @@ namespace Readarr.Core.Download.Pending
     }
 
     public class PendingReleaseService : IPendingReleaseService,
-                                         IHandle<SeriesDeletedEvent>,
+                                         IHandle<AuthorDeletedEvent>,
                                          IHandle<EpisodeGrabbedEvent>,
                                          IHandle<RssSyncCompleteEvent>
     {
@@ -540,7 +540,7 @@ namespace Readarr.Core.Download.Pending
             return 1;
         }
 
-        public void Handle(SeriesDeletedEvent message)
+        public void Handle(AuthorDeletedEvent message)
         {
             _repository.DeleteBySeriesIds(message.Series.Select(m => m.Id).ToList());
         }

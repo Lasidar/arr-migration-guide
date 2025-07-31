@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using Readarr.Core.Download;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Books;
+using Readarr.Core.Tv;
 using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications

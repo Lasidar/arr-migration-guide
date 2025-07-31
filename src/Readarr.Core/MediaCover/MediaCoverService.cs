@@ -10,8 +10,8 @@ using Readarr.Common.Extensions;
 using Readarr.Common.Http;
 using Readarr.Core.Configuration;
 using Readarr.Core.Messaging.Events;
-using Readarr.Core.Tv;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books;
+using Readarr.Core.Books.Events;
 
 namespace Readarr.Core.MediaCover
 {
@@ -22,8 +22,8 @@ namespace Readarr.Core.MediaCover
     }
 
     public class MediaCoverService :
-        IHandleAsync<SeriesUpdatedEvent>,
-        IHandleAsync<SeriesDeletedEvent>,
+        IHandleAsync<AuthorUpdatedEvent>,
+        IHandleAsync<AuthorDeletedEvent>,
         IMapCoversToLocal
     {
         private readonly IMediaCoverProxy _mediaCoverProxy;
@@ -230,14 +230,14 @@ namespace Readarr.Core.MediaCover
             }
         }
 
-        public void HandleAsync(SeriesUpdatedEvent message)
+        public void HandleAsync(AuthorUpdatedEvent message)
         {
             var updated = EnsureCovers(message.Series);
 
             _eventAggregator.PublishEvent(new MediaCoversUpdatedEvent(message.Series, updated));
         }
 
-        public void HandleAsync(SeriesDeletedEvent message)
+        public void HandleAsync(AuthorDeletedEvent message)
         {
             foreach (var series in message.Series)
             {

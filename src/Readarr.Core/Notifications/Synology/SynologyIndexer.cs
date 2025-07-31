@@ -5,7 +5,7 @@ using Readarr.Common.EnvironmentInfo;
 using Readarr.Common.Extensions;
 using Readarr.Core.Localization;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications.Synology
 {
@@ -50,7 +50,7 @@ namespace Readarr.Core.Notifications.Synology
             }
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
         {
             if (Settings.UpdateLibrary)
             {
@@ -67,7 +67,7 @@ namespace Readarr.Core.Notifications.Synology
             }
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             if (Settings.UpdateLibrary)
             {
@@ -75,7 +75,7 @@ namespace Readarr.Core.Notifications.Synology
             }
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             if (deleteMessage.DeletedFiles)
             {

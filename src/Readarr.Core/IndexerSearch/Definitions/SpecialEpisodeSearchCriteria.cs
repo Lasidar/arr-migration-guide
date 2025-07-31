@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.IndexerSearch.Definitions
 {

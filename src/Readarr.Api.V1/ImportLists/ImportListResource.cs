@@ -1,13 +1,13 @@
 using System;
 using Readarr.Core.ImportLists;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Api.V1.ImportLists
 {
     public class ImportListResource : ProviderResource<ImportListResource>
     {
         public bool EnableAutomaticAdd { get; set; }
-        public bool SearchForMissingEpisodes { get; set; }
+        public bool SearchForMissingBooks { get; set; }
         public MonitorTypes ShouldMonitor { get; set; }
         public NewItemMonitorTypes MonitorNewItems { get; set; }
         public string RootFolderPath { get; set; }
@@ -31,7 +31,7 @@ namespace Readarr.Api.V1.ImportLists
             var resource = base.ToResource(definition);
 
             resource.EnableAutomaticAdd = definition.EnableAutomaticAdd;
-            resource.SearchForMissingEpisodes = definition.SearchForMissingEpisodes;
+            resource.SearchForMissingBooks = definition.SearchForMissingBooks;
             resource.ShouldMonitor = definition.ShouldMonitor;
             resource.MonitorNewItems = definition.MonitorNewItems;
             resource.RootFolderPath = definition.RootFolderPath;
@@ -55,7 +55,7 @@ namespace Readarr.Api.V1.ImportLists
             var definition = base.ToModel(resource, existingDefinition);
 
             definition.EnableAutomaticAdd = resource.EnableAutomaticAdd;
-            definition.SearchForMissingEpisodes = resource.SearchForMissingEpisodes;
+            definition.SearchForMissingBooks = resource.SearchForMissingBooks;
             definition.ShouldMonitor = resource.ShouldMonitor;
             definition.MonitorNewItems = resource.MonitorNewItems;
             definition.RootFolderPath = resource.RootFolderPath;

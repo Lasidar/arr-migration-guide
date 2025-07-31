@@ -16,7 +16,7 @@ using Readarr.Core.Configuration;
 using Readarr.Core.Datastore;
 using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Messaging.Events;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Backup
 {

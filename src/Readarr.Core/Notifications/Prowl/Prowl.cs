@@ -36,12 +36,12 @@ namespace Readarr.Core.Notifications.Prowl
             _prowlProxy.SendNotification(EPISODE_DELETED_TITLE, deleteMessage.Message, Settings);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             _prowlProxy.SendNotification(SERIES_ADDED_TITLE, message.Message, Settings);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             _prowlProxy.SendNotification(SERIES_DELETED_TITLE, deleteMessage.Message, Settings);
         }

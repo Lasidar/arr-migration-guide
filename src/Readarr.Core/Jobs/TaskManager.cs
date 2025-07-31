@@ -16,7 +16,7 @@ using Readarr.Core.Lifecycle;
 using Readarr.Core.MediaFiles.Commands;
 using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Messaging.Events;
-using Readarr.Core.Tv.Commands;
+using Readarr.Core.Books.Commands;
 using Readarr.Core.Update.Commands;
 
 namespace Readarr.Core.Jobs

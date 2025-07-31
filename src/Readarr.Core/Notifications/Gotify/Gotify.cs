@@ -7,7 +7,7 @@ using NLog;
 using Readarr.Common.Extensions;
 using Readarr.Core.Localization;
 using Readarr.Core.MediaCover;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications.Gotify
 {
@@ -49,12 +49,12 @@ namespace Readarr.Core.Notifications.Gotify
             SendNotification(EPISODE_DELETED_TITLE, message.Message, message.Series);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             SendNotification(SERIES_ADDED_TITLE, message.Message, message.Series);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage message)
+        public override void OnSeriesDelete(AuthorDeleteMessage message)
         {
             SendNotification(SERIES_DELETED_TITLE, message.Message, message.Series);
         }

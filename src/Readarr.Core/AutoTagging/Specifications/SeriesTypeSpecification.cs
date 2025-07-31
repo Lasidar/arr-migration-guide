@@ -1,8 +1,9 @@
 using FluentValidation;
 using Readarr.Core.Annotations;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation;
 
+using Readarr.Core.Tv;
 namespace Readarr.Core.AutoTagging.Specifications
 {
     public class SeriesTypeSpecificationValidator : AbstractValidator<SeriesTypeSpecification>

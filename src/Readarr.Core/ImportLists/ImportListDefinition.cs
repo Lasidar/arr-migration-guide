@@ -2,6 +2,7 @@ using System;
 using Equ;
 using Readarr.Core.ThingiProvider;
 using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.ImportLists
 {
@@ -10,7 +11,7 @@ namespace Readarr.Core.ImportLists
         private static readonly MemberwiseEqualityComparer<ImportListDefinition> Comparer = MemberwiseEqualityComparer<ImportListDefinition>.ByProperties;
 
         public bool EnableAutomaticAdd { get; set; }
-        public bool SearchForMissingEpisodes { get; set; }
+        public bool SearchForMissingBooks { get; set; }
         public MonitorTypes ShouldMonitor { get; set; }
         public NewItemMonitorTypes MonitorNewItems { get; set; }
         public int QualityProfileId { get; set; }

@@ -6,7 +6,7 @@ using NUnit.Framework;
 using Readarr.Core.Extras.Metadata;
 using Readarr.Core.Extras.Metadata.Consumers.Xbmc;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.Extras.Metadata.Consumers.Xbmc

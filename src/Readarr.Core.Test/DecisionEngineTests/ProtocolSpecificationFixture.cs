@@ -7,7 +7,7 @@ using Readarr.Core.Indexers;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Profiles.Delay;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.DecisionEngineTests
 {

@@ -1,7 +1,7 @@
 using FluentValidation;
 using Readarr.Common.Extensions;
 using Readarr.Core.Annotations;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation;
 using Readarr.Core.Validation.Paths;
 

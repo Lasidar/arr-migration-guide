@@ -17,7 +17,7 @@ namespace Readarr.Core.ImportLists.Custom
         private static readonly CustomBookSettingsValidator Validator = new CustomBookSettingsValidator();
 
         [FieldDefinition(0, Label = "List URL", HelpText = "The URL for the custom book list")]
-        public string BaseUrl { get; set; }
+        public override string BaseUrl { get; set; }
 
         public override NzbDroneValidationResult Validate()
         {

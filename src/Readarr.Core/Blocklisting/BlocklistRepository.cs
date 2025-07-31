@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Readarr.Core.Datastore;
 using Readarr.Core.Messaging.Events;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Blocklisting
 {

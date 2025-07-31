@@ -6,7 +6,7 @@ using Readarr.Common.Extensions;
 using Readarr.Core.Localization;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Notifications.Slack.Payloads;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation;
 
 namespace Readarr.Core.Notifications.Slack
@@ -76,7 +76,7 @@ namespace Readarr.Core.Notifications.Slack
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
         {
             var attachments = new List<Attachment>
             {
@@ -106,7 +106,7 @@ namespace Readarr.Core.Notifications.Slack
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             var attachments = new List<Attachment>
             {
@@ -121,7 +121,7 @@ namespace Readarr.Core.Notifications.Slack
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             var attachments = new List<Attachment>
             {

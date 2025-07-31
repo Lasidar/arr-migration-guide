@@ -7,7 +7,7 @@ using Readarr.Core.DecisionEngine.Specifications;
 using Readarr.Core.Indexers;
 using Readarr.Core.Indexers.TorrentRss;
 using Readarr.Core.Parser.Model;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.DecisionEngineTests.Search

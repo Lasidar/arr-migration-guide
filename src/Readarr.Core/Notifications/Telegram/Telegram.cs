@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using FluentValidation.Results;
 using Readarr.Common.Extensions;
 using Readarr.Core.Configuration;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications.Telegram
 {
@@ -58,7 +58,7 @@ namespace Readarr.Core.Notifications.Telegram
             _proxy.SendNotification(title, deleteMessage.Message, links, Settings);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             var title = Settings.IncludeAppNameInTitle ? SERIES_ADDED_TITLE_BRANDED : SERIES_ADDED_TITLE;
             title = Settings.IncludeInstanceNameInTitle ? $"{title} - {InstanceName}" : title;
@@ -67,7 +67,7 @@ namespace Readarr.Core.Notifications.Telegram
             _proxy.SendNotification(title, message.Message, links, Settings);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             var title = Settings.IncludeAppNameInTitle ? SERIES_DELETED_TITLE_BRANDED : SERIES_DELETED_TITLE;
             title = Settings.IncludeInstanceNameInTitle ? $"{title} - {InstanceName}" : title;

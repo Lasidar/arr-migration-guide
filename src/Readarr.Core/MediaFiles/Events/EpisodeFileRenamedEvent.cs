@@ -1,5 +1,5 @@
 ﻿using Readarr.Common.Messaging;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.MediaFiles.Events
 {

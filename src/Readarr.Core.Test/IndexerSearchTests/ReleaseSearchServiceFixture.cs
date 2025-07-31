@@ -13,7 +13,7 @@ using Readarr.Core.Indexers;
 using Readarr.Core.IndexerSearch;
 using Readarr.Core.IndexerSearch.Definitions;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.IndexerSearchTests
 {

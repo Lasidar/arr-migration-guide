@@ -8,7 +8,7 @@ using Readarr.Core.HealthCheck.Checks;
 using Readarr.Core.Localization;
 using Readarr.Core.RootFolders;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.HealthCheck.Checks
