@@ -7,7 +7,7 @@ using Readarr.Core.Exceptions;
 using Readarr.Core.MediaCover;
 using Readarr.Core.MetadataSource.SkyHook;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common.Categories;
 
 namespace Readarr.Core.Test.MetadataSource.SkyHook

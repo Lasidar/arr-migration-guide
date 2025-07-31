@@ -1,7 +1,7 @@
 using FluentValidation;
 using Readarr.Core.Annotations;
 using Readarr.Core.Languages;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation;
 
 namespace Readarr.Core.AutoTagging.Specifications

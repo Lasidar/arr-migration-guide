@@ -5,9 +5,9 @@ using NLog;
 using Readarr.Common.Extensions;
 using Readarr.Core.Extras.Files;
 using Readarr.Core.Languages;
-using Readarr.Core.MediaFiles.EpisodeImport.Aggregation;
+using Readarr.Core.MediaFiles.BookImport.Aggregation;
 using Readarr.Core.Parser.Model;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Extras.Subtitles
 {

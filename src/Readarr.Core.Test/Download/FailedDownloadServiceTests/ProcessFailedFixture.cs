@@ -10,7 +10,7 @@ using Readarr.Core.History;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.Download.FailedDownloadServiceTests

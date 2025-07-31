@@ -10,6 +10,8 @@ using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Qualities;
 using Readarr.Core.ThingiProvider;
+using Readarr.Core.Books;
+using Readarr.Core.Books.Events;
 using Readarr.Core.Tv;
 using Readarr.Core.Tv.Events;
 using Readarr.Core.Update.History.Events;
@@ -18,12 +20,12 @@ namespace Readarr.Core.Notifications
 {
     public class NotificationService
         : IHandle<EpisodeGrabbedEvent>,
-          IHandle<EpisodeImportedEvent>,
+          IHandle<BooksImportedEvent>,
           IHandle<DownloadCompletedEvent>,
           IHandle<UntrackedDownloadCompletedEvent>,
-          IHandle<SeriesRenamedEvent>,
+          IHandle<AuthorRenamedEvent>,
           IHandle<SeriesAddCompletedEvent>,
-          IHandle<SeriesDeletedEvent>,
+          IHandle<AuthorDeletedEvent>,
           IHandle<EpisodeFileDeletedEvent>,
           IHandle<HealthCheckFailedEvent>,
           IHandle<HealthCheckRestoredEvent>,
@@ -168,7 +170,7 @@ namespace Readarr.Core.Notifications
             }
         }
 
-        public void Handle(EpisodeImportedEvent message)
+        public void Handle(BooksImportedEvent message)
         {
             if (!message.NewDownload)
             {
@@ -295,7 +297,7 @@ namespace Readarr.Core.Notifications
             }
         }
 
-        public void Handle(SeriesRenamedEvent message)
+        public void Handle(AuthorRenamedEvent message)
         {
             foreach (var notification in _notificationFactory.OnRenameEnabled())
             {
@@ -428,7 +430,7 @@ namespace Readarr.Core.Notifications
         public void Handle(SeriesAddCompletedEvent message)
         {
             var series = message.Series;
-            var addMessage = new SeriesAddMessage
+            var addMessage = new AuthorAddMessage
             {
                 Series = series,
                 Message = series.Title
@@ -452,11 +454,11 @@ namespace Readarr.Core.Notifications
             }
         }
 
-        public void Handle(SeriesDeletedEvent message)
+        public void Handle(AuthorDeletedEvent message)
         {
             foreach (var series in message.Series)
             {
-                var deleteMessage = new SeriesDeleteMessage(series, message.DeleteFiles);
+                var deleteMessage = new AuthorDeleteMessage(series, message.DeleteFiles);
 
                 foreach (var notification in _notificationFactory.OnSeriesDeleteEnabled())
                 {

@@ -5,13 +5,13 @@ using NLog;
 using Readarr.Common;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
-using Readarr.Core.Tv;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books;
+using Readarr.Core.Books.Events;
 using System;
 
 namespace Readarr.Core.MediaFiles
 {
-    public class MediaFileService : IMediaFileService, IHandleAsync<SeriesDeletedEvent>
+    public class MediaFileService : IMediaFileService, IHandleAsync<AuthorDeletedEvent>
     {
         private readonly IEventAggregator _eventAggregator;
         private readonly IMediaFileRepository _mediaFileRepository;
@@ -97,7 +97,7 @@ namespace Readarr.Core.MediaFiles
             return _mediaFileRepository.GetFilesWithRelativePath(seriesId, relativePath);
         }
 
-        public void HandleAsync(SeriesDeletedEvent message)
+        public void HandleAsync(AuthorDeletedEvent message)
         {
             var seriesIds = message.Series.Select(s => s.Id).ToList();
             var files = GetFilesBySeriesIds(seriesIds);

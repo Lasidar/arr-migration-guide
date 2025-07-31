@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Readarr.Core.Extras.Files;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Extras
 {

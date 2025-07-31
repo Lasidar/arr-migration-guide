@@ -1,7 +1,7 @@
 using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
-using Readarr.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators.Augmenters.Quality;
+using Readarr.Core.MediaFiles.BookImport.Aggregation.Aggregators.Augmenters.Quality;
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Qualities;

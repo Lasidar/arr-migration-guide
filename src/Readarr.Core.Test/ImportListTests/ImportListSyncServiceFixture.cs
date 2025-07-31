@@ -11,7 +11,7 @@ using Readarr.Core.ImportLists.ImportListItems;
 using Readarr.Core.MetadataSource;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.ImportListTests
 {

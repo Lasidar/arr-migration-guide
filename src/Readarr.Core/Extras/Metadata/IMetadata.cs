@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Readarr.Core.Extras.Metadata.Files;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.ThingiProvider;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Extras.Metadata
 {

@@ -7,7 +7,7 @@ using NUnit.Framework;
 using Readarr.Common.Disk;
 using Readarr.Core.Organizer;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Tv.Commands;
 using Readarr.Test.Common;
 

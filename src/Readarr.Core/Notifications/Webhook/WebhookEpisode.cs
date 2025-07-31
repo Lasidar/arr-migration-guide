@@ -1,5 +1,5 @@
 ﻿using System;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications.Webhook
 {

@@ -37,12 +37,12 @@ namespace Readarr.Core.Notifications.Join
             _proxy.SendNotification(EPISODE_DELETED_TITLE_BRANDED, deleteMessage.Message, Settings);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             _proxy.SendNotification(SERIES_ADDED_TITLE_BRANDED, message.Message, Settings);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             _proxy.SendNotification(SERIES_DELETED_TITLE_BRANDED, deleteMessage.Message, Settings);
         }

@@ -57,14 +57,14 @@ namespace Readarr.Core.Notifications.Email
             SendEmail(Settings, EPISODE_DELETED_TITLE_BRANDED, body);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             var body = $"{message.Message}";
 
             SendEmail(Settings, SERIES_ADDED_TITLE_BRANDED, body);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             var body = $"{deleteMessage.Message}";
 

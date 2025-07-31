@@ -9,8 +9,8 @@ using Readarr.Core.Exceptions;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging;
 using Readarr.Core.Messaging.Events;
-using Readarr.Core.Tv;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books;
+using Readarr.Core.Books.Events;
 
 namespace Readarr.Core.MediaFiles
 {
@@ -20,7 +20,7 @@ namespace Readarr.Core.MediaFiles
     }
 
     public class MediaFileDeletionService : IDeleteMediaFiles,
-                                            IHandleAsync<SeriesDeletedEvent>,
+                                            IHandleAsync<AuthorDeletedEvent>,
                                             IHandle<EpisodeFileDeletedEvent>
     {
         private readonly IDiskProvider _diskProvider;
@@ -88,7 +88,7 @@ namespace Readarr.Core.MediaFiles
             _eventAggregator.PublishEvent(new DeleteCompletedEvent());
         }
 
-        public void HandleAsync(SeriesDeletedEvent message)
+        public void HandleAsync(AuthorDeletedEvent message)
         {
             if (message.DeleteFiles)
             {

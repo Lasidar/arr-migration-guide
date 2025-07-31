@@ -1,7 +1,7 @@
 using FluentAssertions;
 using NUnit.Framework;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators;
+using Readarr.Core.MediaFiles.BookImport.Aggregation.Aggregators;
 using Readarr.Core.Test.Framework;
 
 namespace Readarr.Core.Test.MediaFiles.EpisodeImport.Aggregation.Aggregators

@@ -8,7 +8,7 @@ using Readarr.Common.Extensions;
 using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books.Events;
 
 namespace Readarr.Core.DataAugmentation.Scene
 {
@@ -23,8 +23,8 @@ namespace Readarr.Core.DataAugmentation.Scene
 
     public class SceneMappingService : ISceneMappingService,
                                        IHandle<SeriesRefreshStartingEvent>,
-                                       IHandle<SeriesAddedEvent>,
-                                       IHandle<SeriesImportedEvent>,
+                                       IHandle<AuthorAddedEvent>,
+                                       IHandle<AuthorsImportedEvent>,
                                        IExecute<UpdateSceneMappingCommand>
     {
         private readonly ISceneMappingRepository _repository;
@@ -287,7 +287,7 @@ namespace Readarr.Core.DataAugmentation.Scene
             }
         }
 
-        public void Handle(SeriesAddedEvent message)
+        public void Handle(AuthorAddedEvent message)
         {
             if (!_updatedAfterStartup)
             {
@@ -295,7 +295,7 @@ namespace Readarr.Core.DataAugmentation.Scene
             }
         }
 
-        public void Handle(SeriesImportedEvent message)
+        public void Handle(AuthorsImportedEvent message)
         {
             if (!_updatedAfterStartup)
             {

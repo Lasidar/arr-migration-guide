@@ -16,7 +16,7 @@ using Readarr.Core.Qualities;
 using Readarr.Core.Queue;
 using Readarr.Core.Test.CustomFormats;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.DecisionEngineTests
 {

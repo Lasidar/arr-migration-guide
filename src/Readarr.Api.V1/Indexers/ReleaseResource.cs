@@ -7,7 +7,7 @@ using Readarr.Core.Indexers;
 using Readarr.Core.Languages;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Qualities;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Api.V3.CustomFormats;
 using Readarr.Api.V3.Series;
 using Readarr.Http.REST;

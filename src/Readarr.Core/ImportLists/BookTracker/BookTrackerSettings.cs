@@ -19,7 +19,7 @@ namespace Readarr.Core.ImportLists.BookTracker
         private static readonly BookTrackerSettingsValidator Validator = new BookTrackerSettingsValidator();
 
         [FieldDefinition(0, Label = "URL", HelpText = "Book tracker API URL")]
-        public string BaseUrl { get; set; }
+        public override string BaseUrl { get; set; }
 
         [FieldDefinition(1, Label = "Username", HelpText = "Username for the book tracking service")]
         public string Username { get; set; }

@@ -6,7 +6,7 @@ using NUnit.Framework;
 using Readarr.Core.Notifications.Xbmc;
 using Readarr.Core.Notifications.Xbmc.Model;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.NotificationTests.Xbmc.Json
 {

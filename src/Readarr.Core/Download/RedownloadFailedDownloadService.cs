@@ -6,7 +6,7 @@ using Readarr.Core.Messaging;
 using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser.Model;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Download
 {

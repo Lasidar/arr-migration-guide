@@ -10,7 +10,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.MediaFiles.MediaInfo

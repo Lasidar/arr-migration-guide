@@ -16,7 +16,7 @@ using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Parser;
 using Readarr.Core.Tags;
 using Readarr.Core.ThingiProvider;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation;
 
 namespace Readarr.Core.Notifications.CustomScript
@@ -231,7 +231,7 @@ namespace Readarr.Core.Notifications.CustomScript
             ExecuteScript(environmentVariables);
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
         {
             var environmentVariables = new StringDictionary();
 
@@ -303,7 +303,7 @@ namespace Readarr.Core.Notifications.CustomScript
             ExecuteScript(environmentVariables);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             var series = message.Series;
             var environmentVariables = new StringDictionary();
@@ -328,7 +328,7 @@ namespace Readarr.Core.Notifications.CustomScript
             ExecuteScript(environmentVariables);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             var series = deleteMessage.Series;
             var environmentVariables = new StringDictionary();

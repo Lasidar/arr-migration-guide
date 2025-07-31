@@ -40,7 +40,7 @@ using Readarr.Core.RootFolders;
 using Readarr.Core.Tags;
 using Readarr.Core.ThingiProvider;
 using Readarr.Core.Books;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Update.History;
 using static Dapper.SqlMapper;
 

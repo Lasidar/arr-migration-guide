@@ -2,7 +2,7 @@ using System.Linq;
 using NLog;
 using Readarr.Core.Download.TrackedDownloads;
 using Readarr.Core.Indexers;
-using Readarr.Core.MediaFiles.EpisodeImport;
+using Readarr.Core.MediaFiles.BookImport;
 
 namespace Readarr.Core.Download;
 

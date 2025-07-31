@@ -5,7 +5,7 @@ using Readarr.Core.DecisionEngine;
 using Readarr.Core.DecisionEngine.Specifications.Search;
 using Readarr.Core.IndexerSearch.Definitions;
 using Readarr.Core.Parser.Model;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.DecisionEngineTests.Search

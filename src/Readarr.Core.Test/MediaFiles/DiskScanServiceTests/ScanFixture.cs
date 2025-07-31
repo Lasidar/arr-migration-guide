@@ -8,12 +8,12 @@ using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Core.Configuration;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.MediaFiles.EpisodeImport;
+using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.RootFolders;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.MediaFiles.DiskScanServiceTests

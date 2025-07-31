@@ -12,14 +12,14 @@ using Readarr.Core.Download;
 using Readarr.Core.Download.TrackedDownloads;
 using Readarr.Core.Languages;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.MediaFiles.EpisodeImport;
+using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Profiles.Qualities;
 using Readarr.Core.Qualities;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.MediaFiles.EpisodeImport
@@ -148,12 +148,12 @@ namespace Readarr.Core.Test.MediaFiles.EpisodeImport
         }
 
         [Test]
-        public void should_publish_EpisodeImportedEvent_for_new_downloads()
+        public void should_publish_BooksImportedEvent_for_new_downloads()
         {
             Subject.Import(new List<ImportDecision> { _approvedDecisions.First() }, true);
 
             Mocker.GetMock<IEventAggregator>()
-                .Verify(v => v.PublishEvent(It.IsAny<EpisodeImportedEvent>()), Times.Once());
+                .Verify(v => v.PublishEvent(It.IsAny<BooksImportedEvent>()), Times.Once());
         }
 
         [Test]

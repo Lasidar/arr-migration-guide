@@ -4,7 +4,7 @@ using System.Linq;
 using Readarr.Common;
 using Readarr.Common.Extensions;
 using Readarr.Core.Extras.Files;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Extras
 {

@@ -10,7 +10,7 @@ using Readarr.Core.Messaging.Events;
 using Readarr.Core.Notifications;
 using Readarr.Core.Profiles.Delay;
 using Readarr.Core.Profiles.Releases;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Tags
 {

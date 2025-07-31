@@ -13,7 +13,7 @@ using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Organizer;
 using Readarr.Core.Qualities;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.OrganizerTests.FileNameBuilderTests

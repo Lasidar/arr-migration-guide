@@ -4,7 +4,7 @@ using System.Linq;
 using NLog;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Extras
 {

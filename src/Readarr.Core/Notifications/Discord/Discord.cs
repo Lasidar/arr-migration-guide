@@ -10,7 +10,7 @@ using Readarr.Core.MediaCover;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Notifications.Discord.Payloads;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation;
 
 namespace Readarr.Core.Notifications.Discord
@@ -338,7 +338,7 @@ namespace Readarr.Core.Notifications.Discord
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
         {
             var attachments = new List<Embed>
             {
@@ -384,7 +384,7 @@ namespace Readarr.Core.Notifications.Discord
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             var series = message.Series;
             var embed = new Embed
@@ -422,7 +422,7 @@ namespace Readarr.Core.Notifications.Discord
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             var series = deleteMessage.Series;
 

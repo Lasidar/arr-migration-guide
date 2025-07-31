@@ -15,7 +15,7 @@ using Readarr.Core.IndexerSearch;
 using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Profiles.Qualities;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation;
 using Readarr.Http;
 using HttpStatusCode = System.Net.HttpStatusCode;

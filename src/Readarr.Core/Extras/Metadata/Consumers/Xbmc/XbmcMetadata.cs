@@ -17,7 +17,7 @@ using Readarr.Core.MediaCover;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Tags;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
 {

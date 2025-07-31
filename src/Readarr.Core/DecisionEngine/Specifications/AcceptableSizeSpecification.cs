@@ -2,7 +2,7 @@ using System.Linq;
 using NLog;
 using Readarr.Common.Extensions;
 using Readarr.Core.Parser.Model;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {

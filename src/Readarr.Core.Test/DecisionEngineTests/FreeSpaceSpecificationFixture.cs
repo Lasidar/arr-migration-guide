@@ -8,7 +8,7 @@ using Readarr.Core.Configuration;
 using Readarr.Core.DecisionEngine.Specifications;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.DecisionEngineTests

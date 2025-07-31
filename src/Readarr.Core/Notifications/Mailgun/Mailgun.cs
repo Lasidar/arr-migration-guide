@@ -44,14 +44,14 @@ namespace Readarr.Core.Notifications.Mailgun
             _proxy.SendNotification(EPISODE_DELETED_TITLE, body, Settings);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             var body = $"{message.Message}";
 
             _proxy.SendNotification(SERIES_ADDED_TITLE, body, Settings);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             var body = $"{deleteMessage.Message}";
 

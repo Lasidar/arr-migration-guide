@@ -6,7 +6,7 @@ using Readarr.Core.Indexers;
 using Readarr.Core.Languages;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Qualities;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Blocklisting
 {

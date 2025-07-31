@@ -12,6 +12,7 @@ using Readarr.Core.Messaging.Events;
 using Readarr.Core.MetadataSource;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.ThingiProvider.Events;
+using Readarr.Core.Books;
 using Readarr.Core.Tv;
 
 namespace Readarr.Core.ImportLists
@@ -249,7 +250,7 @@ namespace Readarr.Core.ImportLists
                         Tags = importList.Tags,
                         AddOptions = new AddSeriesOptions
                         {
-                            SearchForMissingEpisodes = importList.SearchForMissingEpisodes,
+                            SearchForMissingBooks = importList.SearchForMissingBooks,
 
                             // If seasons are provided use them for syncing monitored status, otherwise use the list setting.
                             Monitor = item.Seasons.Any() ? MonitorTypes.Skip : importList.ShouldMonitor

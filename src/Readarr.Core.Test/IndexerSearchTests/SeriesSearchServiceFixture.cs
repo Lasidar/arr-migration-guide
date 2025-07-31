@@ -9,7 +9,7 @@ using Readarr.Core.Download;
 using Readarr.Core.IndexerSearch;
 using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.IndexerSearchTests
 {

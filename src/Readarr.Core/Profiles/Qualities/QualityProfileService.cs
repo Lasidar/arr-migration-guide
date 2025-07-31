@@ -8,7 +8,7 @@ using Readarr.Core.ImportLists;
 using Readarr.Core.Lifecycle;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Qualities;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Profiles.Qualities
 {

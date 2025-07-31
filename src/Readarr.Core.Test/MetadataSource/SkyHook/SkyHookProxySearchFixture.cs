@@ -4,7 +4,7 @@ using NUnit.Framework;
 using Readarr.Core.MetadataSource;
 using Readarr.Core.MetadataSource.SkyHook;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 using Readarr.Test.Common.Categories;
 

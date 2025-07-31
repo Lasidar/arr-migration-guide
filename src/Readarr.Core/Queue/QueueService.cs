@@ -7,7 +7,7 @@ using Readarr.Core.Download.TrackedDownloads;
 using Readarr.Core.Languages;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Qualities;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Queue
 {

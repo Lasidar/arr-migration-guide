@@ -11,7 +11,7 @@ using Readarr.Core.Extras.Metadata;
 using Readarr.Core.Extras.Metadata.Files;
 using Readarr.Core.Housekeeping.Housekeepers;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.Housekeeping.Housekeepers

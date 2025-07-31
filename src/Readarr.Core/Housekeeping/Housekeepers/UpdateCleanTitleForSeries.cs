@@ -1,6 +1,6 @@
 using System.Linq;
 using Readarr.Core.Parser;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Housekeeping.Housekeepers
 {

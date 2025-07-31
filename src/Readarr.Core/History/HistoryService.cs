@@ -10,7 +10,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser.Model;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books.Events;
 
 namespace Readarr.Core.History
 {
@@ -25,17 +25,17 @@ namespace Readarr.Core.History
         List<EpisodeHistory> GetBySeason(int seriesId, int seasonNumber, EpisodeHistoryEventType? eventType);
         List<EpisodeHistory> Find(string downloadId, EpisodeHistoryEventType eventType);
         List<EpisodeHistory> FindByDownloadId(string downloadId);
-        string FindDownloadId(EpisodeImportedEvent trackedDownload);
+        string FindDownloadId(BooksImportedEvent trackedDownload);
         List<EpisodeHistory> Since(DateTime date, EpisodeHistoryEventType? eventType);
     }
 
     public class HistoryService : IHistoryService,
                                   IHandle<EpisodeGrabbedEvent>,
-                                  IHandle<EpisodeImportedEvent>,
+                                  IHandle<BooksImportedEvent>,
                                   IHandle<DownloadFailedEvent>,
                                   IHandle<EpisodeFileDeletedEvent>,
                                   IHandle<EpisodeFileRenamedEvent>,
-                                  IHandle<SeriesDeletedEvent>,
+                                  IHandle<AuthorDeletedEvent>,
                                   IHandle<DownloadIgnoredEvent>
     {
         private readonly IHistoryRepository _historyRepository;
@@ -92,7 +92,7 @@ namespace Readarr.Core.History
             return _historyRepository.FindByDownloadId(downloadId);
         }
 
-        public string FindDownloadId(EpisodeImportedEvent trackedDownload)
+        public string FindDownloadId(BooksImportedEvent trackedDownload)
         {
             _logger.Debug("Trying to find downloadId for {0} from history", trackedDownload.ImportedEpisode.Path);
 
@@ -187,7 +187,7 @@ namespace Readarr.Core.History
             }
         }
 
-        public void Handle(EpisodeImportedEvent message)
+        public void Handle(BooksImportedEvent message)
         {
             if (!message.NewDownload)
             {
@@ -358,7 +358,7 @@ namespace Readarr.Core.History
             _historyRepository.InsertMany(historyToAdd);
         }
 
-        public void Handle(SeriesDeletedEvent message)
+        public void Handle(AuthorDeletedEvent message)
         {
             _historyRepository.DeleteForSeries(message.Series.Select(m => m.Id).ToList());
         }

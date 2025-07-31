@@ -5,14 +5,14 @@ using Readarr.Common.Extensions;
 using Readarr.Core.Localization;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.RootFolders;
-using Readarr.Core.Tv;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books;
+using Readarr.Core.Books.Events;
 
 namespace Readarr.Core.HealthCheck.Checks
 {
-    [CheckOn(typeof(SeriesDeletedEvent))]
+    [CheckOn(typeof(AuthorDeletedEvent))]
     [CheckOn(typeof(SeriesMovedEvent))]
-    [CheckOn(typeof(EpisodeImportedEvent), CheckOnCondition.FailedOnly)]
+    [CheckOn(typeof(BooksImportedEvent), CheckOnCondition.FailedOnly)]
     [CheckOn(typeof(EpisodeImportFailedEvent), CheckOnCondition.SuccessfulOnly)]
     public class RootFolderCheck : HealthCheckBase
     {

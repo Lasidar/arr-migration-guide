@@ -7,7 +7,7 @@ using Readarr.Core.Localization;
 using Readarr.Core.MediaCover;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Tags;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications.Webhook
 {
@@ -121,7 +121,7 @@ namespace Readarr.Core.Notifications.Webhook
             };
         }
 
-        protected WebhookSeriesAddPayload BuildOnSeriesAdd(SeriesAddMessage addMessage)
+        protected WebhookSeriesAddPayload BuildOnSeriesAdd(AuthorAddMessage addMessage)
         {
             return new WebhookSeriesAddPayload
             {
@@ -132,7 +132,7 @@ namespace Readarr.Core.Notifications.Webhook
             };
         }
 
-        protected WebhookSeriesDeletePayload BuildOnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        protected WebhookSeriesDeletePayload BuildOnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             return new WebhookSeriesDeletePayload
             {
@@ -144,7 +144,7 @@ namespace Readarr.Core.Notifications.Webhook
             };
         }
 
-        protected WebhookRenamePayload BuildOnRenamePayload(Series series, List<RenamedEpisodeFile> renamedFiles)
+        protected WebhookRenamePayload BuildOnRenamePayload(Series series, List<RenamedBookFile> renamedFiles)
         {
             return new WebhookRenamePayload
             {
@@ -152,7 +152,7 @@ namespace Readarr.Core.Notifications.Webhook
                 InstanceName = _configFileProvider.InstanceName,
                 ApplicationUrl = _configService.ApplicationUrl,
                 Series = GetSeries(series),
-                RenamedEpisodeFiles = renamedFiles.ConvertAll(x => new WebhookRenamedEpisodeFile(x))
+                RenamedBookFiles = renamedFiles.ConvertAll(x => new WebhookRenamedBookFile(x))
             };
         }
 

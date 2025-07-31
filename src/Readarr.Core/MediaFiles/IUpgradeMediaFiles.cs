@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Readarr.Core.MediaFiles.BookImport;
-using Readarr.Core.MediaFiles.EpisodeImport;
+using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Parser.Model;
 
 namespace Readarr.Core.MediaFiles

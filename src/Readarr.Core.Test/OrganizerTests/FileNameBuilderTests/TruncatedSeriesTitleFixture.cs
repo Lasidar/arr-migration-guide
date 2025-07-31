@@ -7,7 +7,7 @@ using Readarr.Core.CustomFormats;
 using Readarr.Core.Organizer;
 using Readarr.Core.Qualities;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.OrganizerTests.FileNameBuilderTests
 {

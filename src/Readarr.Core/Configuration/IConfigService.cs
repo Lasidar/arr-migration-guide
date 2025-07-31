@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Readarr.Common.Http.Proxy;
 using Readarr.Core.ImportLists;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.MediaFiles.EpisodeImport;
+using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Qualities;
 using Readarr.Core.Security;
 

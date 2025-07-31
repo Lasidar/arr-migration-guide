@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using Readarr.Common.EnsureThat;
 using Readarr.Common.Extensions;
 using Readarr.Core.DataAugmentation.Scene;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.IndexerSearch.Definitions
 {

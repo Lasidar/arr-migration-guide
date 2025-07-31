@@ -4,7 +4,7 @@ using NLog;
 using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Core.MediaFiles.BookImport;
-using Readarr.Core.MediaFiles.EpisodeImport;
+using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Parser.Model;
 using System;
 using System.Collections.Generic;

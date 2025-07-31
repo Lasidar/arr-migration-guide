@@ -4,7 +4,7 @@ using System.Linq;
 using NLog;
 using Readarr.Common.Http;
 using Readarr.Common.Serializer;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications.Emby
 {

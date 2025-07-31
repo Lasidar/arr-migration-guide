@@ -11,9 +11,9 @@ using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.RootFolders;
 using Readarr.Core.SeriesStats;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Tv.Commands;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books.Events;
 using Readarr.Core.Validation;
 using Readarr.Core.Validation.Paths;
 using Readarr.SignalR;
@@ -26,12 +26,12 @@ namespace Readarr.Api.V3.Series
 {
     [V5ApiController]
     public class SeriesController : RestControllerWithSignalR<SeriesResource, Readarr.Core.Tv.Series>,
-                                IHandle<EpisodeImportedEvent>,
+                                IHandle<BooksImportedEvent>,
                                 IHandle<EpisodeFileDeletedEvent>,
-                                IHandle<SeriesUpdatedEvent>,
-                                IHandle<SeriesEditedEvent>,
-                                IHandle<SeriesDeletedEvent>,
-                                IHandle<SeriesRenamedEvent>,
+                                IHandle<AuthorUpdatedEvent>,
+                                IHandle<AuthorEditedEvent>,
+                                IHandle<AuthorDeletedEvent>,
+                                IHandle<AuthorRenamedEvent>,
                                 IHandle<SeriesBulkEditedEvent>,
                                 IHandle<MediaCoversUpdatedEvent>
     {
@@ -295,7 +295,7 @@ namespace Readarr.Api.V3.Series
         }
 
         [NonAction]
-        public void Handle(EpisodeImportedEvent message)
+        public void Handle(BooksImportedEvent message)
         {
             BroadcastResourceChange(ModelAction.Updated, message.ImportedEpisode.SeriesId);
         }
@@ -312,13 +312,13 @@ namespace Readarr.Api.V3.Series
         }
 
         [NonAction]
-        public void Handle(SeriesUpdatedEvent message)
+        public void Handle(AuthorUpdatedEvent message)
         {
             BroadcastResourceChange(ModelAction.Updated, message.Series.Id);
         }
 
         [NonAction]
-        public void Handle(SeriesEditedEvent message)
+        public void Handle(AuthorEditedEvent message)
         {
             var resource = GetSeriesResource(message.Series, false);
 
@@ -332,7 +332,7 @@ namespace Readarr.Api.V3.Series
         }
 
         [NonAction]
-        public void Handle(SeriesDeletedEvent message)
+        public void Handle(AuthorDeletedEvent message)
         {
             foreach (var series in message.Series)
             {
@@ -348,7 +348,7 @@ namespace Readarr.Api.V3.Series
         }
 
         [NonAction]
-        public void Handle(SeriesRenamedEvent message)
+        public void Handle(AuthorRenamedEvent message)
         {
             BroadcastResourceChange(ModelAction.Updated, message.Series.Id);
         }

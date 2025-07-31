@@ -8,7 +8,7 @@ using Readarr.Core.Blocklisting;
 using Readarr.Core.History;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Parser.Model;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.CustomFormats
 {

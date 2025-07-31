@@ -9,7 +9,7 @@ using Readarr.Common.Cache;
 using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Core.Organizer;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.RootFolders
 {

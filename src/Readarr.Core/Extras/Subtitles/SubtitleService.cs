@@ -10,10 +10,10 @@ using Readarr.Core.Configuration;
 using Readarr.Core.Extras.Files;
 using Readarr.Core.Languages;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.MediaFiles.EpisodeImport;
+using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Extras.Subtitles
 {

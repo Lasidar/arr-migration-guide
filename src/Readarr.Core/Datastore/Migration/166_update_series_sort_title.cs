@@ -1,7 +1,7 @@
 using System.Data;
 using FluentMigrator;
 using Readarr.Core.Datastore.Migration.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Datastore.Migration
 {

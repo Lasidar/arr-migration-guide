@@ -5,7 +5,7 @@ using NLog;
 using Readarr.Common.Disk;
 using Readarr.Core.Configuration;
 using Readarr.Core.Extras.Metadata.Files;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Housekeeping.Housekeepers
 {

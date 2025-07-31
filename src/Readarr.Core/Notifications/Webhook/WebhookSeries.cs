@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Readarr.Core.Languages;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications.Webhook
 {

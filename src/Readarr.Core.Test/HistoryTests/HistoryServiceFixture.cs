@@ -14,7 +14,7 @@ using Readarr.Core.Profiles.Qualities;
 using Readarr.Core.Qualities;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Test.Qualities;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.HistoryTests
 {
@@ -66,7 +66,7 @@ namespace Readarr.Core.Test.HistoryTests
                                          DownloadId = "abcd"
                                      };
 
-            Subject.Handle(new EpisodeImportedEvent(localEpisode, episodeFile, new List<DeletedEpisodeFile>(), true, downloadClientItem));
+            Subject.Handle(new BooksImportedEvent(localEpisode, episodeFile, new List<DeletedEpisodeFile>(), true, downloadClientItem));
 
             Mocker.GetMock<IHistoryRepository>()
                 .Verify(v => v.Insert(It.Is<EpisodeHistory>(h => h.SourceTitle == Path.GetFileNameWithoutExtension(localEpisode.Path))));

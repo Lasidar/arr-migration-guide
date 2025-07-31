@@ -6,7 +6,7 @@ using Readarr.Common.Extensions;
 using Readarr.Core.Configuration;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.MediaFiles.MediaInfo
 {

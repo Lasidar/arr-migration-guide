@@ -9,7 +9,7 @@ using Readarr.Core.Annotations;
 using Readarr.Core.Exceptions;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Notifications.Plex.PlexTv;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation;
 
 namespace Readarr.Core.Notifications.Plex.Server
@@ -42,7 +42,7 @@ namespace Readarr.Core.Notifications.Plex.Server
             UpdateIfEnabled(message.Series);
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
         {
             UpdateIfEnabled(series);
         }
@@ -52,12 +52,12 @@ namespace Readarr.Core.Notifications.Plex.Server
             UpdateIfEnabled(deleteMessage.Series);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             UpdateIfEnabled(message.Series);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             if (deleteMessage.DeletedFiles)
             {

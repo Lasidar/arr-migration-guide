@@ -5,7 +5,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Readarr.Common.EnvironmentInfo;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation.Paths;
 using Readarr.Test.Common;
 

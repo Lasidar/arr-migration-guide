@@ -7,7 +7,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.Notifications;
 using Readarr.Core.Notifications.Xbmc;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.NotificationTests.Xbmc
 {

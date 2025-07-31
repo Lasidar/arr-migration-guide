@@ -4,7 +4,7 @@ using Moq;
 using NUnit.Framework;
 using Readarr.Core.Download;
 using Readarr.Core.Download.History;
-using Readarr.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators.Augmenters.Quality;
+using Readarr.Core.MediaFiles.BookImport.Aggregation.Aggregators.Augmenters.Quality;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Qualities;
 using Readarr.Core.Test.Framework;

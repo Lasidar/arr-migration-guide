@@ -8,7 +8,7 @@ using NUnit.Framework;
 using Readarr.Common.Extensions;
 using Readarr.Core.MetadataSource.SkyHook;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.TvTests

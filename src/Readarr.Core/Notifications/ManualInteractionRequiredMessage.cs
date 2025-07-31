@@ -2,7 +2,7 @@ using Readarr.Core.Download;
 using Readarr.Core.Download.TrackedDownloads;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Qualities;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications
 {

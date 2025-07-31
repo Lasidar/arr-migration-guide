@@ -4,7 +4,7 @@ using System.Linq;
 using FluentValidation.Results;
 using NLog;
 using Readarr.Core.Localization;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Notifications.Xbmc
 {

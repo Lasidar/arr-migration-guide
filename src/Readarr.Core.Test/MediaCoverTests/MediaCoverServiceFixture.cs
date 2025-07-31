@@ -9,8 +9,8 @@ using Readarr.Common.Disk;
 using Readarr.Common.EnvironmentInfo;
 using Readarr.Core.MediaCover;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books;
+using Readarr.Core.Books.Events;
 
 namespace Readarr.Core.Test.MediaCoverTests
 {
@@ -73,7 +73,7 @@ namespace Readarr.Core.Test.MediaCoverTests
                   .Setup(v => v.FileExists(It.IsAny<string>()))
                   .Returns(true);
 
-            Subject.HandleAsync(new SeriesUpdatedEvent(_series));
+            Subject.HandleAsync(new AuthorUpdatedEvent(_series));
 
             Mocker.GetMock<IImageResizer>()
                   .Verify(v => v.Resize(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()), Times.Exactly(2));
@@ -90,7 +90,7 @@ namespace Readarr.Core.Test.MediaCoverTests
                   .Setup(v => v.FileExists(It.IsAny<string>()))
                   .Returns(false);
 
-            Subject.HandleAsync(new SeriesUpdatedEvent(_series));
+            Subject.HandleAsync(new AuthorUpdatedEvent(_series));
 
             Mocker.GetMock<IImageResizer>()
                   .Verify(v => v.Resize(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()), Times.Exactly(2));
@@ -111,7 +111,7 @@ namespace Readarr.Core.Test.MediaCoverTests
                   .Setup(v => v.GetFileSize(It.IsAny<string>()))
                   .Returns(1000);
 
-            Subject.HandleAsync(new SeriesUpdatedEvent(_series));
+            Subject.HandleAsync(new AuthorUpdatedEvent(_series));
 
             Mocker.GetMock<IImageResizer>()
                   .Verify(v => v.Resize(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
@@ -132,7 +132,7 @@ namespace Readarr.Core.Test.MediaCoverTests
                   .Setup(v => v.GetFileSize(It.IsAny<string>()))
                   .Returns(0);
 
-            Subject.HandleAsync(new SeriesUpdatedEvent(_series));
+            Subject.HandleAsync(new AuthorUpdatedEvent(_series));
 
             Mocker.GetMock<IImageResizer>()
                   .Verify(v => v.Resize(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()), Times.Exactly(2));
@@ -153,7 +153,7 @@ namespace Readarr.Core.Test.MediaCoverTests
                   .Setup(v => v.Resize(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()))
                   .Throws<ApplicationException>();
 
-            Subject.HandleAsync(new SeriesUpdatedEvent(_series));
+            Subject.HandleAsync(new AuthorUpdatedEvent(_series));
 
             Mocker.GetMock<IImageResizer>()
                   .Verify(v => v.Resize(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()), Times.Exactly(2));

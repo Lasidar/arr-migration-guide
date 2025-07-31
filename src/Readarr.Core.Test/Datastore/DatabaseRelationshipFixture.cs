@@ -9,7 +9,7 @@ using Readarr.Core.Languages;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Qualities;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.Datastore
 {

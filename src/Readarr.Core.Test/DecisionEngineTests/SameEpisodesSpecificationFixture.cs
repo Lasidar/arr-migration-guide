@@ -6,7 +6,7 @@ using Moq;
 using NUnit.Framework;
 using Readarr.Core.DecisionEngine.Specifications;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.DecisionEngineTests
 {

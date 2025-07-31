@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Http;
 
 namespace Readarr.Api.V1.Series

@@ -7,7 +7,7 @@ using Readarr.Common.Composition;
 using Readarr.Common.Serializer;
 using Readarr.Common.TPL;
 using Readarr.Core.Datastore.Events;
-using Readarr.Core.MediaFiles.EpisodeImport.Manual;
+using Readarr.Core.MediaFiles.BookImport.Manual;
 using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.ProgressMessaging;

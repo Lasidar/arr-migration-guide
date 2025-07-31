@@ -18,7 +18,7 @@ using Readarr.Core.Parser.Model;
 using Readarr.Core.Profiles.Qualities;
 using Readarr.Core.Qualities;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.Download.DownloadApprovedReportsTests

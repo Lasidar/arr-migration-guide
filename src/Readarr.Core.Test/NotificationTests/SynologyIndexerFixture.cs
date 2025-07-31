@@ -5,7 +5,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.Notifications;
 using Readarr.Core.Notifications.Synology;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Test.Common;
 
 namespace Readarr.Core.Test.NotificationTests
@@ -62,7 +62,7 @@ namespace Readarr.Core.Test.NotificationTests
         {
             (Subject.Definition.Settings as SynologyIndexerSettings).UpdateLibrary = false;
 
-            Subject.OnRename(_series, new List<RenamedEpisodeFile>());
+            Subject.OnRename(_series, new List<RenamedBookFile>());
 
             Mocker.GetMock<ISynologyIndexerProxy>()
                 .Verify(v => v.UpdateFolder(_series.Path), Times.Never());
@@ -92,7 +92,7 @@ namespace Readarr.Core.Test.NotificationTests
         [Test]
         public void should_update_entire_series_folder_on_rename()
         {
-            Subject.OnRename(_series, new List<RenamedEpisodeFile>());
+            Subject.OnRename(_series, new List<RenamedBookFile>());
 
             Mocker.GetMock<ISynologyIndexerProxy>()
                 .Verify(v => v.UpdateFolder(@"C:\Test\".AsOsAgnostic()), Times.Once());

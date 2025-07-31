@@ -1,4 +1,4 @@
-﻿using Readarr.Core.Tv;
+﻿using Readarr.Core.Books;
 
 namespace Readarr.Core.Parser.Model
 {

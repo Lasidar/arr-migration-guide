@@ -1,6 +1,6 @@
 using Readarr.Core.Configuration;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.MediaFiles.EpisodeImport;
+using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Qualities;
 using Readarr.Http.REST;
 

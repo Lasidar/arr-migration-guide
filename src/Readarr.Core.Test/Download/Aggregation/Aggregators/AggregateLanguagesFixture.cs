@@ -10,7 +10,7 @@ using Readarr.Core.Indexers.TorrentRss;
 using Readarr.Core.Languages;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Test.Download.Aggregation.Aggregators
 {

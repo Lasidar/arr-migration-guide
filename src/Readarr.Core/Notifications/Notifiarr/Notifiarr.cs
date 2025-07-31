@@ -7,7 +7,7 @@ using Readarr.Core.MediaCover;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Notifications.Webhook;
 using Readarr.Core.Tags;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Validation;
 
 namespace Readarr.Core.Notifications.Notifiarr
@@ -40,7 +40,7 @@ namespace Readarr.Core.Notifications.Notifiarr
             _proxy.SendNotification(BuildOnImportCompletePayload(message), Settings);
         }
 
-        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
         {
             _proxy.SendNotification(BuildOnRenamePayload(series, renamedFiles), Settings);
         }
@@ -50,12 +50,12 @@ namespace Readarr.Core.Notifications.Notifiarr
             _proxy.SendNotification(BuildOnEpisodeFileDelete(deleteMessage), Settings);
         }
 
-        public override void OnSeriesAdd(SeriesAddMessage message)
+        public override void OnSeriesAdd(AuthorAddMessage message)
         {
             _proxy.SendNotification(BuildOnSeriesAdd(message), Settings);
         }
 
-        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(AuthorDeleteMessage deleteMessage)
         {
             _proxy.SendNotification(BuildOnSeriesDelete(deleteMessage), Settings);
         }

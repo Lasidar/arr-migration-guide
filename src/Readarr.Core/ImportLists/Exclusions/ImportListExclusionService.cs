@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Readarr.Core.Datastore;
 using Readarr.Core.Messaging.Events;
-using Readarr.Core.Tv.Events;
+using Readarr.Core.Books.Events;
 
 namespace Readarr.Core.ImportLists.Exclusions
 {
@@ -18,7 +18,7 @@ namespace Readarr.Core.ImportLists.Exclusions
         ImportListExclusion Update(ImportListExclusion importListExclusion);
     }
 
-    public class ImportListExclusionService : IImportListExclusionService, IHandleAsync<SeriesDeletedEvent>
+    public class ImportListExclusionService : IImportListExclusionService, IHandleAsync<AuthorDeletedEvent>
     {
         private readonly IImportListExclusionRepository _repo;
 
@@ -67,7 +67,7 @@ namespace Readarr.Core.ImportLists.Exclusions
             return _repo.GetPaged(pagingSpec);
         }
 
-        public void HandleAsync(SeriesDeletedEvent message)
+        public void HandleAsync(AuthorDeletedEvent message)
         {
             if (!message.AddImportListExclusion)
             {

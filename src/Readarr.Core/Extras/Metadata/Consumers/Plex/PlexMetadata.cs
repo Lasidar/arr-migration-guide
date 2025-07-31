@@ -5,7 +5,7 @@ using System.Text;
 using Readarr.Common.Extensions;
 using Readarr.Core.Extras.Metadata.Files;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 
 namespace Readarr.Core.Extras.Metadata.Consumers.Plex
 {

@@ -11,7 +11,7 @@ using Readarr.Core.Exceptions;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.MetadataSource;
 using Readarr.Core.Test.Framework;
-using Readarr.Core.Tv;
+using Readarr.Core.Books;
 using Readarr.Core.Tv.Commands;
 using Readarr.Test.Common;
 

@@ -27,31 +27,6 @@ namespace Readarr.Core.Exceptions
         }
     }
 
-    public class AuthorNotFoundException : Exception
-    {
-        public int AuthorId { get; set; }
-        public string AuthorName { get; set; }
-
-        public AuthorNotFoundException(int authorId) 
-            : base($"Author with ID {authorId} was not found")
-        {
-            AuthorId = authorId;
-        }
-
-        public AuthorNotFoundException(string authorName) 
-            : base($"Author '{authorName}' was not found")
-        {
-            AuthorName = authorName;
-        }
-
-        public AuthorNotFoundException(int authorId, string authorName) 
-            : base($"Author '{authorName}' (ID: {authorId}) was not found")
-        {
-            AuthorId = authorId;
-            AuthorName = authorName;
-        }
-    }
-
     public class DuplicateAuthorException : Exception
     {
         public string AuthorName { get; set; }
