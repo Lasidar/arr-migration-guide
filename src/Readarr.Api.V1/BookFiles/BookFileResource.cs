@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using Readarr.Core.CustomFormats;
+using System.Linq;
+using Readarr.Core.Books;
 using Readarr.Core.DecisionEngine.Specifications;
 using Readarr.Core.Languages;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.Parser.Model;
+using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Qualities;
-using Readarr.Api.V3.CustomFormats;
 using Readarr.Http.REST;
 
 namespace Readarr.Api.V1.BookFiles
@@ -16,65 +15,102 @@ namespace Readarr.Api.V1.BookFiles
     {
         public int AuthorId { get; set; }
         public int BookId { get; set; }
-        public int EditionId { get; set; }
-        public string RelativePath { get; set; }
         public string Path { get; set; }
         public long Size { get; set; }
         public DateTime DateAdded { get; set; }
         public string SceneName { get; set; }
         public string ReleaseGroup { get; set; }
-        public List<Language> Languages { get; set; }
         public QualityModel Quality { get; set; }
+        public List<Language> Languages { get; set; }
+        public MediaInfoResource MediaInfo { get; set; }
+        public bool QualityCutoffNotMet { get; set; }
         public List<CustomFormatResource> CustomFormats { get; set; }
         public int CustomFormatScore { get; set; }
-        public int? IndexerFlags { get; set; }
-        public ReleaseType? ReleaseType { get; set; }
-        public MediaInfoResource MediaInfo { get; set; }
-        
-        // Book-specific
-        public string CalibreId { get; set; }
-        public int Part { get; set; }
-
-        public bool QualityCutoffNotMet { get; set; }
+        public IndexerFlags IndexerFlags { get; set; }
+        public ReleaseType ReleaseType { get; set; }
     }
 
     public static class BookFileResourceMapper
     {
-        public static BookFileResource ToResource(this BookFile model, Core.Books.Author author, IUpgradableSpecification upgradableSpecification, ICustomFormatCalculationService formatCalculationService)
+        private static BookFileResource ToResource(this BookFile model)
         {
-            if (model == null)
-            {
-                return null;
-            }
-
-            model.Author = author;
-            var customFormats = formatCalculationService?.ParseCustomFormat(model, author);
-            var customFormatScore = author?.QualityProfile?.Value?.CalculateCustomFormatScore(customFormats) ?? 0;
+            if (model == null) return null;
 
             return new BookFileResource
             {
                 Id = model.Id,
-
-                AuthorId = model.AuthorId,
                 BookId = model.BookId,
-                EditionId = model.EditionId,
-                RelativePath = model.RelativePath,
-                Path = Path.Combine(author.Path, model.RelativePath),
+                Path = model.Path,
                 Size = model.Size,
                 DateAdded = model.DateAdded,
                 SceneName = model.SceneName,
                 ReleaseGroup = model.ReleaseGroup,
-                Languages = model.Languages,
                 Quality = model.Quality,
-                MediaInfo = model.MediaInfo.ToResource(model.SceneName),
-                QualityCutoffNotMet = upgradableSpecification.QualityCutoffNotMet(author.QualityProfile.Value, model.Quality),
-                CustomFormats = customFormats.ToResource(false),
-                CustomFormatScore = customFormatScore,
-                IndexerFlags = (int)model.IndexerFlags,
-                ReleaseType = model.ReleaseType,
-                CalibreId = model.CalibreId,
-                Part = model.Part
+                Languages = model.Languages,
+                MediaInfo = model.MediaInfo?.ToResource() ?? new MediaInfoResource(),
+                IndexerFlags = model.IndexerFlags,
+                ReleaseType = model.ReleaseType
             };
         }
+
+        public static BookFileResource ToResource(this BookFile model, Author author, Book book, IUpgradableSpecification upgradableSpecification)
+        {
+            if (model == null) return null;
+
+            var resource = model.ToResource();
+            
+            if (author != null)
+            {
+                resource.AuthorId = author.Id;
+            }
+
+            if (book != null && upgradableSpecification != null)
+            {
+                resource.QualityCutoffNotMet = upgradableSpecification.QualityCutoffNotMet(author.QualityProfile.Value, model.Quality);
+            }
+
+            return resource;
+        }
+
+        public static List<BookFileResource> ToResource(this IEnumerable<BookFile> models, Author author, Book book, IUpgradableSpecification upgradableSpecification)
+        {
+            return models.Select(model => model.ToResource(author, book, upgradableSpecification)).ToList();
+        }
+    }
+
+    public class MediaInfoResource
+    {
+        public decimal AudioChannels { get; set; }
+        public string AudioCodec { get; set; }
+        public List<string> AudioLanguages { get; set; }
+        public int AudioBitrate { get; set; }
+        public int AudioSampleRate { get; set; }
+        public TimeSpan Duration { get; set; }
+        public string Format { get; set; }
+    }
+
+    public static class MediaInfoResourceMapper
+    {
+        public static MediaInfoResource ToResource(this MediaInfoModel model)
+        {
+            if (model == null) return null;
+
+            return new MediaInfoResource
+            {
+                AudioChannels = MediaInfoFormatter.FormatAudioChannels(model),
+                AudioCodec = MediaInfoFormatter.FormatAudioCodec(model, null),
+                AudioLanguages = model.AudioLanguages?.Distinct().ToList() ?? new List<string>(),
+                AudioBitrate = model.AudioBitrate,
+                AudioSampleRate = model.AudioSampleRate,
+                Duration = model.RunTime,
+                Format = model.ContainerFormat
+            };
+        }
+    }
+
+    public class CustomFormatResource
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }
