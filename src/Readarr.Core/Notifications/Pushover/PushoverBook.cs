@@ -28,7 +28,7 @@ namespace Readarr.Core.Notifications.Pushover
             var books = message.Book.Books;
             var quality = message.Quality;
 
-            var title = "Book Grabbed";
+            var title = "Readarr - Book Grabbed";
             var body = $"{author.Name} - {string.Join(", ", books.Select(b => b.Title))} [{quality.Quality.Name}]";
 
             _proxy.SendNotification(title, body, Settings);
@@ -39,7 +39,7 @@ namespace Readarr.Core.Notifications.Pushover
             var author = message.Author;
             var book = message.BookFile.Books.Value.First();
             
-            var title = message.IsUpgrade ? "Book Upgraded" : "Book Downloaded";
+            var title = message.IsUpgrade ? "Readarr - Book Upgraded" : "Readarr - Book Downloaded";
             var body = $"{author.Name} - {book.Title}";
 
             _proxy.SendNotification(title, body, Settings);
@@ -47,7 +47,7 @@ namespace Readarr.Core.Notifications.Pushover
 
         public override void OnRename(Author author, List<RenamedBookFile> renamedFiles)
         {
-            var title = "Books Renamed";
+            var title = "Readarr - Books Renamed";
             var body = $"{renamedFiles.Count} book files renamed for {author.Name}";
 
             _proxy.SendNotification(title, body, Settings);
@@ -55,7 +55,7 @@ namespace Readarr.Core.Notifications.Pushover
 
         public override void OnAuthorAdd(AuthorAddMessage message)
         {
-            var title = "Author Added";
+            var title = "Readarr - Author Added";
             var body = $"{message.Author.Name}";
 
             _proxy.SendNotification(title, body, Settings);
@@ -63,7 +63,7 @@ namespace Readarr.Core.Notifications.Pushover
 
         public override void OnAuthorDelete(AuthorDeleteMessage message)
         {
-            var title = "Author Deleted";
+            var title = "Readarr - Author Deleted";
             var body = $"{message.Author.Name}";
 
             _proxy.SendNotification(title, body, Settings);
@@ -71,7 +71,7 @@ namespace Readarr.Core.Notifications.Pushover
 
         public override void OnBookFileDelete(BookFileDeleteMessage message)
         {
-            var title = "Book File Deleted";
+            var title = "Readarr - Book File Deleted";
             var body = $"{message.Author.Name} - {message.Book.Title}";
 
             _proxy.SendNotification(title, body, Settings);
@@ -79,7 +79,7 @@ namespace Readarr.Core.Notifications.Pushover
 
         public override void OnHealthIssue(HealthCheck.HealthCheck healthCheck)
         {
-            var title = "Health Issue";
+            var title = "Readarr - Health Issue";
             var body = healthCheck.Message;
 
             _proxy.SendNotification(title, body, Settings, (int)healthCheck.Type);
@@ -87,7 +87,7 @@ namespace Readarr.Core.Notifications.Pushover
 
         public override void OnHealthRestored(HealthCheck.HealthCheck previousCheck)
         {
-            var title = "Health Issue Resolved";
+            var title = "Readarr - Health Issue Resolved";
             var body = $"The following issue has been resolved: {previousCheck.Message}";
 
             _proxy.SendNotification(title, body, Settings);
@@ -95,7 +95,7 @@ namespace Readarr.Core.Notifications.Pushover
 
         public override void OnApplicationUpdate(ApplicationUpdateMessage updateMessage)
         {
-            var title = "Application Updated";
+            var title = "Readarr - Application Updated";
             var body = $"Readarr updated to {updateMessage.NewVersion}";
 
             _proxy.SendNotification(title, body, Settings);
@@ -106,7 +106,7 @@ namespace Readarr.Core.Notifications.Pushover
             var author = message.Author;
             var books = message.Book.Books;
             
-            var title = "Manual Interaction Required";
+            var title = "Readarr - Manual Interaction Required";
             var body = $"{author.Name} - {string.Join(", ", books.Select(b => b.Title))}";
 
             _proxy.SendNotification(title, body, Settings, (int)PushoverPriority.High);
