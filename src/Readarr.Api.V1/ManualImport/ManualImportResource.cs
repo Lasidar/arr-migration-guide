@@ -1,15 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using Readarr.Common.Crypto;
+using Readarr.Common.Extensions;
 using Readarr.Core.DecisionEngine;
 using Readarr.Core.Languages;
-using Readarr.Core.MediaFiles.EpisodeImport;
-using Readarr.Core.MediaFiles.EpisodeImport.Manual;
+using Readarr.Core.MediaFiles.BookImport.Manual;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Qualities;
-using Readarr.Api.V3.CustomFormats;
-using Readarr.Api.V3.Episodes;
-using Readarr.Api.V3.Series;
 using Readarr.Http.REST;
 
 namespace Readarr.Api.V1.ManualImport
@@ -17,24 +13,35 @@ namespace Readarr.Api.V1.ManualImport
     public class ManualImportResource : RestResource
     {
         public string Path { get; set; }
-        public string RelativePath { get; set; }
-        public string FolderName { get; set; }
         public string Name { get; set; }
         public long Size { get; set; }
-        public SeriesResource Series { get; set; }
-        public int? SeasonNumber { get; set; }
-        public List<EpisodeResource> Episodes { get; set; }
-        public int? EpisodeFileId { get; set; }
-        public string ReleaseGroup { get; set; }
+        public Author Author { get; set; }
+        public Book Book { get; set; }
         public QualityModel Quality { get; set; }
         public List<Language> Languages { get; set; }
+        public string ReleaseGroup { get; set; }
         public int QualityWeight { get; set; }
         public string DownloadId { get; set; }
-        public List<CustomFormatResource> CustomFormats { get; set; }
-        public int CustomFormatScore { get; set; }
-        public int IndexerFlags { get; set; }
+        public List<Rejection> Rejections { get; set; }
+        public ParsedBookInfo ParsedBookInfo { get; set; }
+        public bool AdditionalFile { get; set; }
+        public bool ReplaceExistingFiles { get; set; }
+        public IndexerFlags IndexerFlags { get; set; }
         public ReleaseType ReleaseType { get; set; }
-        public IEnumerable<ImportRejectionResource> Rejections { get; set; }
+
+        public class Author
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public string ForeignAuthorId { get; set; }
+        }
+
+        public class Book
+        {
+            public int Id { get; set; }
+            public string Title { get; set; }
+            public string ForeignBookId { get; set; }
+        }
     }
 
     public static class ManualImportResourceMapper
@@ -46,61 +53,58 @@ namespace Readarr.Api.V1.ManualImport
                 return null;
             }
 
-            var customFormats = model.CustomFormats;
-            var customFormatScore = model.Series?.QualityProfile?.Value?.CalculateCustomFormatScore(customFormats) ?? 0;
-
-            return new ManualImportResource
+            var resource = new ManualImportResource
             {
-                Id = HashConverter.GetHashInt31(model.Path),
+                Id = model.Id,
                 Path = model.Path,
-                RelativePath = model.RelativePath,
-                FolderName = model.FolderName,
                 Name = model.Name,
                 Size = model.Size,
-                Series = model.Series.ToResource(),
-                SeasonNumber = model.SeasonNumber,
-                Episodes = model.Episodes.ToResource(),
-                EpisodeFileId = model.EpisodeFileId,
-                ReleaseGroup = model.ReleaseGroup,
                 Quality = model.Quality,
                 Languages = model.Languages,
-                CustomFormats = customFormats.ToResource(false),
-                CustomFormatScore = customFormatScore,
-
-                // QualityWeight
+                ReleaseGroup = model.ReleaseGroup,
                 DownloadId = model.DownloadId,
+                Rejections = model.Rejections,
+                ParsedBookInfo = model.ParsedBookInfo,
+                AdditionalFile = model.AdditionalFile,
+                ReplaceExistingFiles = model.ReplaceExistingFiles,
                 IndexerFlags = model.IndexerFlags,
-                ReleaseType = model.ReleaseType,
-                Rejections = model.Rejections.Select(r => r.ToResource())
+                ReleaseType = model.ReleaseType
             };
+
+            if (model.Author != null)
+            {
+                resource.Author = new ManualImportResource.Author
+                {
+                    Id = model.Author.Id,
+                    Name = model.Author.Name,
+                    ForeignAuthorId = model.Author.Metadata.Value?.ForeignAuthorId
+                };
+            }
+
+            if (model.Book != null)
+            {
+                resource.Book = new ManualImportResource.Book
+                {
+                    Id = model.Book.Id,
+                    Title = model.Book.Title,
+                    ForeignBookId = model.Book.ForeignBookId
+                };
+            }
+
+            if (model.Quality != null)
+            {
+                resource.QualityWeight = Core.Qualities.Quality.DefaultQualityDefinitions
+                    .Single(q => q.Quality == model.Quality.Quality).Weight;
+                resource.QualityWeight += model.Quality.Revision.Real * 10;
+                resource.QualityWeight += model.Quality.Revision.Version;
+            }
+
+            return resource;
         }
 
         public static List<ManualImportResource> ToResource(this IEnumerable<ManualImportItem> models)
         {
             return models.Select(ToResource).ToList();
-        }
-    }
-
-    public class ImportRejectionResource
-    {
-        public string Reason { get; set; }
-        public RejectionType Type { get; set; }
-    }
-
-    public static class ImportRejectionResourceMapper
-    {
-        public static ImportRejectionResource ToResource(this ImportRejection rejection)
-        {
-            if (rejection == null)
-            {
-                return null;
-            }
-
-            return new ImportRejectionResource
-            {
-                Reason = rejection.Message,
-                Type = rejection.Type
-            };
         }
     }
 }

@@ -1,94 +1,74 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Readarr.Common.Extensions;
-using Readarr.Core.Languages;
-using Readarr.Core.MediaFiles.EpisodeImport.Manual;
+using Readarr.Core.Books;
+using Readarr.Core.MediaFiles.BookImport.Manual;
 using Readarr.Core.Qualities;
-using Readarr.Api.V3.CustomFormats;
-using Readarr.Api.V3.Episodes;
 using Readarr.Http;
-using Readarr.Http.REST;
 
 namespace Readarr.Api.V1.ManualImport
 {
-    [V3ApiController]
+    [V1ApiController("manualimport")]
     public class ManualImportController : Controller
     {
+        private readonly IAuthorService _authorService;
+        private readonly IBookService _bookService;
         private readonly IManualImportService _manualImportService;
 
-        public ManualImportController(IManualImportService manualImportService)
+        public ManualImportController(IAuthorService authorService,
+                                     IBookService bookService,
+                                     IManualImportService manualImportService)
         {
+            _authorService = authorService;
+            _bookService = bookService;
             _manualImportService = manualImportService;
         }
 
         [HttpGet]
-        [Produces("application/json")]
-        public List<ManualImportResource> GetMediaFiles(string folder, string downloadId, int? seriesId, int? seasonNumber, bool filterExistingFiles = true)
+        public List<ManualImportResource> GetMediaFiles([FromQuery] string folder,
+                                                       [FromQuery] string downloadId,
+                                                       [FromQuery] int? authorId,
+                                                       [FromQuery] bool filterExistingFiles = true)
         {
-            if (seriesId.HasValue && downloadId.IsNullOrWhiteSpace())
+            if (string.IsNullOrWhiteSpace(folder) && string.IsNullOrWhiteSpace(downloadId))
             {
-                return _manualImportService.GetMediaFiles(seriesId.Value, seasonNumber).ToResource().Select(AddQualityWeight).ToList();
+                throw new BadRequestException("Either folder or downloadId must be provided");
             }
 
-            return _manualImportService.GetMediaFiles(folder, downloadId, seriesId, filterExistingFiles).ToResource().Select(AddQualityWeight).ToList();
+            var filter = filterExistingFiles ? FilterFilesType.Matched : FilterFilesType.None;
+
+            return _manualImportService.GetMediaFiles(folder, downloadId, authorId, filter)
+                                      .Select(f => f.ToResource())
+                                      .ToList();
         }
 
         [HttpPost]
-        [Consumes("application/json")]
-        public object ReprocessItems([FromBody] List<ManualImportReprocessResource> items)
+        public IActionResult UpdateItems([FromBody] List<ManualImportUpdateResource> items)
         {
-            if (items is { Count: 0 })
-            {
-                throw new BadRequestException("items must be provided");
-            }
+            var updateItems = new List<ManualImportItem>();
 
             foreach (var item in items)
             {
-                var processedItem = _manualImportService.ReprocessItem(item.Path, item.DownloadId, item.SeriesId, item.SeasonNumber, item.EpisodeIds ?? new List<int>(), item.ReleaseGroup, item.Quality, item.Languages, item.IndexerFlags, item.ReleaseType);
-
-                item.SeasonNumber = processedItem.SeasonNumber;
-                item.Episodes = processedItem.Episodes.ToResource();
-                item.ReleaseType = processedItem.ReleaseType;
-                item.IndexerFlags = processedItem.IndexerFlags;
-                item.Rejections = processedItem.Rejections.Select(r => r.ToResource());
-                item.CustomFormats = processedItem.CustomFormats.ToResource(false);
-                item.CustomFormatScore = processedItem.CustomFormatScore;
-
-                // Only set the language/quality if they're unknown and languages were returned.
-                // Languages won't be returned when reprocessing if the season/episode isn't filled in yet and we don't want to return no languages to the client.
-                if (item.Languages.Count <= 1 && (item.Languages.SingleOrDefault() ?? Language.Unknown) == Language.Unknown && processedItem.Languages.Any())
+                var manualImportItem = new ManualImportItem
                 {
-                    item.Languages = processedItem.Languages;
-                }
+                    Id = item.Id,
+                    Path = item.Path,
+                    Name = item.Name,
+                    Author = item.AuthorId.HasValue ? _authorService.GetAuthor(item.AuthorId.Value) : null,
+                    Book = item.BookId.HasValue ? _bookService.GetBook(item.BookId.Value) : null,
+                    Quality = item.Quality,
+                    ReleaseGroup = item.ReleaseGroup,
+                    Languages = item.Languages,
+                    DownloadId = item.DownloadId,
+                    AdditionalFile = item.AdditionalFile,
+                    ReplaceExistingFiles = item.ReplaceExistingFiles,
+                    DisableReleaseSwitching = item.DisableReleaseSwitching
+                };
 
-                if (item.Quality?.Quality == Quality.Unknown)
-                {
-                    item.Quality = processedItem.Quality;
-                }
-
-                if (item.ReleaseGroup.IsNotNullOrWhiteSpace())
-                {
-                    item.ReleaseGroup = processedItem.ReleaseGroup;
-                }
-
-                // Clear episode IDs in favour of the full episode
-                item.EpisodeIds = null;
+                updateItems.Add(manualImportItem);
             }
 
-            return items;
-        }
-
-        private ManualImportResource AddQualityWeight(ManualImportResource item)
-        {
-            if (item.Quality != null)
-            {
-                item.QualityWeight = Quality.DefaultQualityDefinitions.Single(q => q.Quality == item.Quality.Quality).Weight;
-                item.QualityWeight += item.Quality.Revision.Real * 10;
-                item.QualityWeight += item.Quality.Revision.Version;
-            }
-
-            return item;
+            return Ok(_manualImportService.UpdateItems(updateItems).Select(x => x.ToResource()));
         }
     }
 }
