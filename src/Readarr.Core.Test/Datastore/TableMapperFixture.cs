@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Readarr.Core.Datastore;
 using Readarr.Core.Datastore.Converters;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Datastore
 {

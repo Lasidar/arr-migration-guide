@@ -2,6 +2,7 @@ using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using Readarr.Core.Test.Framework;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.ParserTests
 {

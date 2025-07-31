@@ -4,6 +4,7 @@ using System.Linq;
 using Readarr.Common.Cache;
 using Readarr.Common.Extensions;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications
 {
@@ -23,7 +24,7 @@ namespace Readarr.Core.Notifications
             _pendingSeriesCache = cacheManager.GetRollingCache<UpdateQueue>(typeof(TQueueHost), "pendingSeries", TimeSpan.FromDays(1));
         }
 
-        public void Add(string identifier, Series series, TItemInfo info)
+        public void Add(string identifier, Tv.Series series, TItemInfo info)
         {
             var queue = _pendingSeriesCache.Get(identifier, () => new UpdateQueue());
 
@@ -93,10 +94,10 @@ namespace Readarr.Core.Notifications
 
     public class UpdateQueueItem<TItemInfo>
     {
-        public Series Series { get; set; }
+        public Tv.Series Series { get; set; }
         public HashSet<TItemInfo> Info { get; set; }
 
-        public UpdateQueueItem(Series series)
+        public UpdateQueueItem(Tv.Series series)
         {
             Series = series;
             Info = new HashSet<TItemInfo>();

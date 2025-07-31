@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using NLog;
 using Readarr.Common.TPL;
 using Readarr.Core.ImportLists.ImportListItems;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.ImportLists
 {

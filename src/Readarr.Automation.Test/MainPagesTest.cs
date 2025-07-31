@@ -3,6 +3,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Readarr.Automation.Test.PageModel;
 using OpenQA.Selenium;
+using Readarr.Core.Tv;
 
 namespace Readarr.Automation.Test
 {

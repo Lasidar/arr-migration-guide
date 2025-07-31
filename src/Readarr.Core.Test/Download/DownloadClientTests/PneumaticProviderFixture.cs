@@ -17,6 +17,7 @@ using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Test.IndexerTests;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadClientTests
 {

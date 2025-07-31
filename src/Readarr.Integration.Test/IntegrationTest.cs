@@ -9,6 +9,7 @@ using Readarr.Core.Datastore.Migration.Framework;
 using Readarr.Core.Indexers.Newznab;
 using Readarr.Test.Common;
 using Readarr.Test.Common.Datastore;
+using Readarr.Core.Tv;
 
 namespace Readarr.Integration.Test
 {

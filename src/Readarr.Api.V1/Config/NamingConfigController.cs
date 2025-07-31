@@ -8,6 +8,7 @@ using Readarr.Core.Organizer;
 using Readarr.Http;
 using Readarr.Http.REST;
 using Readarr.Http.REST.Attributes;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Config
 {

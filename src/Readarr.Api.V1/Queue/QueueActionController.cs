@@ -4,6 +4,7 @@ using Readarr.Core.Download;
 using Readarr.Core.Download.Pending;
 using Readarr.Http;
 using Readarr.Http.REST;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Queue
 {

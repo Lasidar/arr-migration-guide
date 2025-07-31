@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Readarr.Core.Organizer;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.OrganizerTests.FileNameBuilderTests
 {

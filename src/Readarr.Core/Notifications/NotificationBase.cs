@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.ThingiProvider;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications
 {
@@ -57,7 +58,7 @@ namespace Readarr.Core.Notifications
         {
         }
 
-        public virtual void OnRename(Series series, List<RenamedBookFile> renamedFiles)
+        public virtual void OnRename(Tv.Series series, List<RenamedBookFile> renamedFiles)
         {
         }
 

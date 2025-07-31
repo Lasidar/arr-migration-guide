@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using Readarr.Core.Download.Pending;
 using Readarr.Core.Indexers;
 using Readarr.Core.Languages;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Parser.Model
 {

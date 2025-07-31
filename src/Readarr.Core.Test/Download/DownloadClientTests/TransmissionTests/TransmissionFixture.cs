@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using Readarr.Core.Download;
 using Readarr.Core.Download.Clients.Transmission;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadClientTests.TransmissionTests
 {

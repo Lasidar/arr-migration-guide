@@ -3,13 +3,14 @@ using Readarr.Core.Download.TrackedDownloads;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Qualities;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications
 {
     public class ManualInteractionRequiredMessage
     {
         public string Message { get; set; }
-        public Series Series { get; set; }
+        public Tv.Series Series { get; set; }
         public RemoteEpisode Episode { get; set; }
         public TrackedDownload TrackedDownload { get; set; }
         public QualityModel Quality { get; set; }

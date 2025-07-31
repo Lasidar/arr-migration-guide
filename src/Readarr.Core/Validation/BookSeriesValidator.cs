@@ -3,6 +3,7 @@ using Readarr.Core.Books;
 using Readarr.Core.Datastore;
 using System.Collections.Generic;
 using System.Linq;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Validation
 {
@@ -29,9 +30,9 @@ namespace Readarr.Core.Validation
 
     public class BookSeriesCollectionValidator : AbstractValidator<Book>
     {
-        private readonly ISeriesService _seriesService;
+        private readonly Books.ISeriesService _seriesService;
 
-        public BookSeriesCollectionValidator(ISeriesService seriesService)
+        public BookSeriesCollectionValidator(Tv.ISeriesService seriesService)
         {
             _seriesService = seriesService;
 

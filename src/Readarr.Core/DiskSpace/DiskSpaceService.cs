@@ -8,6 +8,7 @@ using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Core.RootFolders;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.DiskSpace
 {
@@ -18,14 +19,14 @@ namespace Readarr.Core.DiskSpace
 
     public class DiskSpaceService : IDiskSpaceService
     {
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
         private readonly IRootFolderService _rootFolderService;
         private readonly IDiskProvider _diskProvider;
         private readonly Logger _logger;
 
         private static readonly Regex _regexSpecialDrive = new Regex(@"^/var/lib/(docker|rancher|kubelet)(/|$)|^/(boot|etc)(/|$)|/docker(/var)?/aufs(/|$)|/\.timemachine", RegexOptions.Compiled);
 
-        public DiskSpaceService(ISeriesService seriesService, IRootFolderService rootFolderService, IDiskProvider diskProvider, Logger logger)
+        public DiskSpaceService(Tv.ISeriesService seriesService, IRootFolderService rootFolderService, IDiskProvider diskProvider, Logger logger)
         {
             _seriesService = seriesService;
             _rootFolderService = rootFolderService;

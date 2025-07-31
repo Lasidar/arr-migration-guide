@@ -43,6 +43,7 @@ using Readarr.Core.Books;
 using Readarr.Core.Books;
 using Readarr.Core.Update.History;
 using static Dapper.SqlMapper;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Datastore
 {

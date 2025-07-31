@@ -2,6 +2,7 @@ using FluentValidation;
 using Readarr.Core.Annotations;
 using Readarr.Core.Books;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.AutoTagging.Specifications
 {
@@ -29,7 +30,7 @@ namespace Readarr.Core.AutoTagging.Specifications
         [FieldDefinition(2, Label = "AutoTaggingSpecificationMaximumYear", Type = FieldType.Number)]
         public int Max { get; set; }
 
-        protected override bool IsSatisfiedByWithoutNegate(Series series)
+        protected override bool IsSatisfiedByWithoutNegate(Tv.Series series)
         {
             return series.Year >= Min && series.Year <= Max;
         }

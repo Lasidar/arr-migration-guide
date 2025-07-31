@@ -10,6 +10,7 @@ using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Core.Organizer;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.RootFolders
 {

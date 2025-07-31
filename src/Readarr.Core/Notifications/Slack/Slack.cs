@@ -8,6 +8,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.Notifications.Slack.Payloads;
 using Readarr.Core.Books;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Slack
 {
@@ -76,7 +77,7 @@ namespace Readarr.Core.Notifications.Slack
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
+        public override void OnRename(Tv.Series series, List<RenamedBookFile> renamedFiles)
         {
             var attachments = new List<Attachment>
             {
@@ -264,7 +265,7 @@ namespace Readarr.Core.Notifications.Slack
             return payload;
         }
 
-        private string GetTitle(Series series, List<Episode> episodes)
+        private string GetTitle(Tv.Series series, List<Episode> episodes)
         {
             if (series.SeriesType == SeriesTypes.Daily)
             {

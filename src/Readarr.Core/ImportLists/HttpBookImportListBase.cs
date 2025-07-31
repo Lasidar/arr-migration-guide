@@ -19,7 +19,7 @@ namespace Readarr.Core.ImportLists
     {
         protected readonly IHttpClient _httpClient;
 
-        public override bool Enabled => true;
+        public bool Enabled => true;
         public bool SupportsPaging => PageSize > 0;
         public virtual int PageSize => 0;
         public virtual TimeSpan RateLimit => TimeSpan.FromSeconds(2);

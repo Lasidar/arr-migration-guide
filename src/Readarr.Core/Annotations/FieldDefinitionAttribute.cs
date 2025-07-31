@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Annotations
 {

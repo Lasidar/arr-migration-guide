@@ -11,6 +11,7 @@ using Readarr.Core.Notifications;
 using Readarr.Core.Profiles.Delay;
 using Readarr.Core.Profiles.Releases;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Tags
 {
@@ -35,7 +36,7 @@ namespace Readarr.Core.Tags
         private readonly IImportListFactory _importListFactory;
         private readonly INotificationFactory _notificationFactory;
         private readonly IReleaseProfileService _releaseProfileService;
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
         private readonly IIndexerFactory _indexerService;
         private readonly IAutoTaggingService _autoTaggingService;
         private readonly IDownloadClientFactory _downloadClientFactory;
@@ -46,7 +47,7 @@ namespace Readarr.Core.Tags
                           IImportListFactory importListFactory,
                           INotificationFactory notificationFactory,
                           IReleaseProfileService releaseProfileService,
-                          ISeriesService seriesService,
+                          Tv.ISeriesService seriesService,
                           IIndexerFactory indexerService,
                           IAutoTaggingService autoTaggingService,
                           IDownloadClientFactory downloadClientFactory)

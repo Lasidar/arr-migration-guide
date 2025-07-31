@@ -7,6 +7,7 @@ using Readarr.Common.Serializer;
 using RestSharp;
 using Readarr.Http;
 using Readarr.Http.REST;
+using Readarr.Core.Tv;
 
 namespace Readarr.Integration.Test.Client
 {

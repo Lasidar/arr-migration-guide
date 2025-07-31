@@ -1,14 +1,15 @@
 using System.Collections.Generic;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Books
 {
     public interface ISeriesService
     {
         Series GetSeries(int seriesId);
-        List<Series> GetAllSeries();
-        List<Series> GetByAuthorId(int authorId);
-        Series AddSeries(Series series);
-        Series UpdateSeries(Series series);
+        List<Tv.Series> GetAllSeries();
+        List<Tv.Series> GetByAuthorId(int authorId);
+        Series AddSeries(Tv.Series series);
+        Series UpdateSeries(Tv.Series series);
         void DeleteSeries(int seriesId);
         
         // Book linking
@@ -19,7 +20,7 @@ namespace Readarr.Core.Books
         // Search methods
         Series FindByForeignSeriesId(string foreignSeriesId);
         Series FindByTitle(string title);
-        List<Series> FindByTitleInexact(string title);
+        List<Tv.Series> FindByTitleInexact(string title);
         Dictionary<int, List<int>> GetAllSeriesBookIds();
     }
 }

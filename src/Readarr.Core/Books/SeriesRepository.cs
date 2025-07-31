@@ -3,22 +3,23 @@ using System.Linq;
 using Dapper;
 using Readarr.Core.Datastore;
 using Readarr.Core.Messaging.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Books
 {
-    public interface ISeriesRepository : IBasicRepository<Series>
+    public interface ISeriesRepository : IBasicRepository<Tv.Series>
     {
         Series FindByForeignSeriesId(string foreignSeriesId);
         Series FindByTitle(string title);
-        List<Series> GetByAuthorId(int authorId);
-        List<Series> FindByTitleInexact(string title);
+        List<Tv.Series> GetByAuthorId(int authorId);
+        List<Tv.Series> FindByTitleInexact(string title);
         Dictionary<int, List<int>> GetAllSeriesBookIds();
         void InsertSeriesBookLink(SeriesBookLink link);
         void DeleteSeriesBookLink(int seriesId, int bookId);
         List<SeriesBookLink> GetSeriesBookLinks(int seriesId);
     }
 
-    public class SeriesRepository : BasicRepository<Series>, ISeriesRepository
+    public class SeriesRepository : BasicRepository<Tv.Series>, ISeriesRepository
     {
         public SeriesRepository(IMainDatabase database, IEventAggregator eventAggregator)
             : base(database, eventAggregator)
@@ -36,12 +37,12 @@ namespace Readarr.Core.Books
             return Query(s => s.CleanTitle == cleanTitle).SingleOrDefault();
         }
 
-        public List<Series> GetByAuthorId(int authorId)
+        public List<Tv.Series> GetByAuthorId(int authorId)
         {
             return Query(s => s.AuthorId == authorId).ToList();
         }
 
-        public List<Series> FindByTitleInexact(string title)
+        public List<Tv.Series> FindByTitleInexact(string title)
         {
             var builder = Builder().Where($"instr(@title, \"Series\".\"CleanTitle\")", new { title = title.ToLowerInvariant() });
 

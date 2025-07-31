@@ -7,6 +7,7 @@ using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Books;
 using Readarr.Core.Tv.Commands;
 using Readarr.Http;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Series
 {

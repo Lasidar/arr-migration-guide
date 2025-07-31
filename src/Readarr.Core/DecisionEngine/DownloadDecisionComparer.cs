@@ -8,6 +8,7 @@ using Readarr.Core.Parser.Model;
 using Readarr.Core.Profiles.Delay;
 using Readarr.Core.Qualities;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.DecisionEngine
 {

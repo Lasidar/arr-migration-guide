@@ -6,6 +6,7 @@ using Readarr.Common.Serializer;
 using Readarr.Core.Datastore.Migration;
 using Readarr.Core.Notifications.Email;
 using Readarr.Core.Test.Framework;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Datastore.Migration
 {

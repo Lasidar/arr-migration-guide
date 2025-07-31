@@ -18,6 +18,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Tags;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
 {
@@ -48,7 +49,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
 
         public override string Name => "Kodi (XBMC) / Emby";
 
-        public override string GetFilenameAfterMove(Series series, EpisodeFile episodeFile, MetadataFile metadataFile)
+        public override string GetFilenameAfterMove(Tv.Series series, EpisodeFile episodeFile, MetadataFile metadataFile)
         {
             var episodeFilePath = Path.Combine(series.Path, episodeFile.RelativePath);
 
@@ -66,7 +67,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
             return Path.Combine(series.Path, metadataFile.RelativePath);
         }
 
-        public override MetadataFile FindMetadataFile(Series series, string path)
+        public override MetadataFile FindMetadataFile(Tv.Series series, string path)
         {
             var filename = Path.GetFileName(path);
 
@@ -138,7 +139,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
             return null;
         }
 
-        public override MetadataFileResult SeriesMetadata(Series series, SeriesMetadataReason reason)
+        public override MetadataFileResult SeriesMetadata(Tv.Series series, SeriesMetadataReason reason)
         {
             if (reason == SeriesMetadataReason.EpisodesImported)
             {
@@ -275,7 +276,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
             return xmlResult.IsNullOrWhiteSpace() ? null : new MetadataFileResult("tvshow.nfo", xmlResult);
         }
 
-        public override MetadataFileResult EpisodeMetadata(Series series, EpisodeFile episodeFile)
+        public override MetadataFileResult EpisodeMetadata(Tv.Series series, EpisodeFile episodeFile)
         {
             if (!Settings.EpisodeMetadata)
             {
@@ -422,7 +423,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
             return new MetadataFileResult(GetEpisodeMetadataFilename(episodeFile.RelativePath), xmlResult.Trim(Environment.NewLine.ToCharArray()));
         }
 
-        public override List<ImageFileResult> SeriesImages(Series series)
+        public override List<ImageFileResult> SeriesImages(Tv.Series series)
         {
             if (!Settings.SeriesImages)
             {
@@ -432,7 +433,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
             return ProcessSeriesImages(series).ToList();
         }
 
-        public override List<ImageFileResult> SeasonImages(Series series, Season season)
+        public override List<ImageFileResult> SeasonImages(Tv.Series series, Season season)
         {
             if (!Settings.SeasonImages)
             {
@@ -442,7 +443,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
             return ProcessSeasonImages(series, season).ToList();
         }
 
-        public override List<ImageFileResult> EpisodeImages(Series series, EpisodeFile episodeFile)
+        public override List<ImageFileResult> EpisodeImages(Tv.Series series, EpisodeFile episodeFile)
         {
             if (!Settings.EpisodeImages)
             {
@@ -480,7 +481,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
             }
         }
 
-        private IEnumerable<ImageFileResult> ProcessSeriesImages(Series series)
+        private IEnumerable<ImageFileResult> ProcessSeriesImages(Tv.Series series)
         {
             foreach (var image in series.Images)
             {
@@ -491,7 +492,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
             }
         }
 
-        private IEnumerable<ImageFileResult> ProcessSeasonImages(Series series, Season season)
+        private IEnumerable<ImageFileResult> ProcessSeasonImages(Tv.Series series, Season season)
         {
             foreach (var image in season.Images)
             {
@@ -516,7 +517,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
             return Path.ChangeExtension(episodeFilePath, "").Trim('.') + "-thumb.jpg";
         }
 
-        private bool GetExistingWatchedStatus(Series series, string episodeFilePath)
+        private bool GetExistingWatchedStatus(Tv.Series series, string episodeFilePath)
         {
             var fullPath = Path.Combine(series.Path, GetEpisodeMetadataFilename(episodeFilePath));
 

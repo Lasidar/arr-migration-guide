@@ -3,6 +3,7 @@ using Readarr.Core.Indexers;
 using Readarr.Core.Validation;
 using Readarr.SignalR;
 using Readarr.Http;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Indexers
 {

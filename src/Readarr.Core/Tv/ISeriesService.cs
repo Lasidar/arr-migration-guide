@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Tv
 {
@@ -6,11 +7,11 @@ namespace Readarr.Core.Tv
     public interface ISeriesService
     {
         Series GetSeries(int seriesId);
-        List<Series> GetAllSeries();
+        List<Tv.Series> GetAllSeries();
         Series AddSeries(Series newSeries);
-        void UpdateSeries(Series series);
+        void UpdateSeries(Tv.Series series);
         void DeleteSeries(int seriesId, bool deleteFiles);
-        List<Series> GetSeriesByTvdbId(int tvdbId);
+        List<Tv.Series> GetSeriesByTvdbId(int tvdbId);
         Series FindByTitle(string title);
         Series FindByTitleInexact(string title);
         void SetSeriesType(int seriesId, SeriesTypes seriesType);

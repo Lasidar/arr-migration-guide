@@ -15,7 +15,7 @@ namespace Readarr.Core.History
         public QualityModel Quality { get; set; }
         public DateTime Date { get; set; }
         public Episode Episode { get; set; }
-        public Series Series { get; set; }
+        public Tv.Series Series { get; set; }
         public EpisodeHistoryEventType EventType { get; set; }
         public Dictionary<string, string> Data { get; set; }
         public string DownloadId { get; set; }

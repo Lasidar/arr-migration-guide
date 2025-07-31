@@ -9,18 +9,19 @@ using Readarr.Core.Configuration;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Files
 {
     public interface IManageExtraFiles
     {
         int Order { get; }
-        IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Series series);
-        IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EpisodeFile> episodeFiles);
-        IEnumerable<ExtraFile> CreateAfterEpisodesImported(Series series);
-        IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EpisodeFile episodeFile);
-        IEnumerable<ExtraFile> CreateAfterEpisodeFolder(Series series, string seriesFolder, string seasonFolder);
-        IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EpisodeFile> episodeFiles);
+        IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Tv.Series series);
+        IEnumerable<ExtraFile> CreateAfterSeriesScan(Tv.Series series, List<EpisodeFile> episodeFiles);
+        IEnumerable<ExtraFile> CreateAfterEpisodesImported(Tv.Series series);
+        IEnumerable<ExtraFile> CreateAfterEpisodeImport(Tv.Series series, EpisodeFile episodeFile);
+        IEnumerable<ExtraFile> CreateAfterEpisodeFolder(Tv.Series series, string seriesFolder, string seasonFolder);
+        IEnumerable<ExtraFile> MoveFilesAfterRename(Tv.Series series, List<EpisodeFile> episodeFiles);
         bool CanImportFile(LocalEpisode localEpisode, EpisodeFile episodeFile, string path, string extension, bool readOnly);
         IEnumerable<ExtraFile> ImportFiles(LocalEpisode localEpisode, EpisodeFile episodeFile, List<string> files, bool isReadOnly);
     }
@@ -45,16 +46,16 @@ namespace Readarr.Core.Extras.Files
         }
 
         public abstract int Order { get; }
-        public abstract IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Series series);
-        public abstract IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EpisodeFile> episodeFiles);
-        public abstract IEnumerable<ExtraFile> CreateAfterEpisodesImported(Series series);
-        public abstract IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EpisodeFile episodeFile);
-        public abstract IEnumerable<ExtraFile> CreateAfterEpisodeFolder(Series series, string seriesFolder, string seasonFolder);
-        public abstract IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EpisodeFile> episodeFiles);
+        public abstract IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Tv.Series series);
+        public abstract IEnumerable<ExtraFile> CreateAfterSeriesScan(Tv.Series series, List<EpisodeFile> episodeFiles);
+        public abstract IEnumerable<ExtraFile> CreateAfterEpisodesImported(Tv.Series series);
+        public abstract IEnumerable<ExtraFile> CreateAfterEpisodeImport(Tv.Series series, EpisodeFile episodeFile);
+        public abstract IEnumerable<ExtraFile> CreateAfterEpisodeFolder(Tv.Series series, string seriesFolder, string seasonFolder);
+        public abstract IEnumerable<ExtraFile> MoveFilesAfterRename(Tv.Series series, List<EpisodeFile> episodeFiles);
         public abstract bool CanImportFile(LocalEpisode localEpisode, EpisodeFile episodeFile, string path, string extension, bool readOnly);
         public abstract IEnumerable<ExtraFile> ImportFiles(LocalEpisode localEpisode, EpisodeFile episodeFile, List<string> files, bool isReadOnly);
 
-        protected TExtraFile ImportFile(Series series, EpisodeFile episodeFile, string path, bool readOnly, string extension, string fileNameSuffix = null)
+        protected TExtraFile ImportFile(Tv.Series series, EpisodeFile episodeFile, string path, bool readOnly, string extension, string fileNameSuffix = null)
         {
             var newFolder = Path.GetDirectoryName(Path.Combine(series.Path, episodeFile.RelativePath));
             var filenameBuilder = new StringBuilder(Path.GetFileNameWithoutExtension(episodeFile.RelativePath));
@@ -86,7 +87,7 @@ namespace Readarr.Core.Extras.Files
             };
         }
 
-        protected TExtraFile MoveFile(Series series, EpisodeFile episodeFile, TExtraFile extraFile, string fileNameSuffix = null)
+        protected TExtraFile MoveFile(Tv.Series series, EpisodeFile episodeFile, TExtraFile extraFile, string fileNameSuffix = null)
         {
             _logger.Trace("Renaming extra file: {0}", extraFile);
 

@@ -10,6 +10,7 @@ using Readarr.Core.RootFolders;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.HealthCheck.Checks
 {

@@ -25,7 +25,7 @@ namespace Readarr.Core.ImportLists
         private readonly IImportListItemService _importListItemService;
         private readonly IFetchAndParseImportList _listFetcherAndParser;
         private readonly ISearchForNewSeries _seriesSearchService;
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
         private readonly IAddSeriesService _addSeriesService;
         private readonly IConfigService _configService;
         private readonly ITaskManager _taskManager;
@@ -37,7 +37,7 @@ namespace Readarr.Core.ImportLists
                               IImportListItemService importListItemService,
                               IFetchAndParseImportList listFetcherAndParser,
                               ISearchForNewSeries seriesSearchService,
-                              ISeriesService seriesService,
+                              Tv.ISeriesService seriesService,
                               IAddSeriesService addSeriesService,
                               IConfigService configService,
                               ITaskManager taskManager,
@@ -118,7 +118,7 @@ namespace Readarr.Core.ImportLists
 
         private void ProcessListItems(List<ImportListItemInfo> items)
         {
-            var seriesToAdd = new List<Series>();
+            var seriesToAdd = new List<Tv.Series>();
 
             if (items.Count == 0)
             {
@@ -296,7 +296,7 @@ namespace Readarr.Core.ImportLists
                 return;
             }
 
-            var seriesToUpdate = new List<Series>();
+            var seriesToUpdate = new List<Tv.Series>();
             var seriesInLibrary = _seriesService.GetAllSeries();
             var allListItems = _importListItemService.All();
 

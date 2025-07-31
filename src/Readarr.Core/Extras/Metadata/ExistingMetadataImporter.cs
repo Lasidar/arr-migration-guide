@@ -9,6 +9,7 @@ using Readarr.Core.Extras.Subtitles;
 using Readarr.Core.MediaFiles.BookImport.Aggregation;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Metadata
 {
@@ -33,7 +34,7 @@ namespace Readarr.Core.Extras.Metadata
 
         public override int Order => 0;
 
-        public override IEnumerable<ExtraFile> ProcessFiles(Series series, List<string> filesOnDisk, List<string> importedFiles, string fileNameBeforeRename)
+        public override IEnumerable<ExtraFile> ProcessFiles(Tv.Series series, List<string> filesOnDisk, List<string> importedFiles, string fileNameBeforeRename)
         {
             _logger.Debug("Looking for existing metadata in {0}", series.Path);
 

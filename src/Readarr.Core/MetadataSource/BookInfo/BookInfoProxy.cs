@@ -12,6 +12,7 @@ using Readarr.Core.Http;
 using Readarr.Core.MediaCover;
 using Readarr.Core.MetadataSource.BookInfo.Resources;
 using Readarr.Core.Parser;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.MetadataSource.BookInfo
 {

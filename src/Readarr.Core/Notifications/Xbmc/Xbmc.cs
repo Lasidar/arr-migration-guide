@@ -7,6 +7,7 @@ using Readarr.Common.Cache;
 using Readarr.Common.Extensions;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Xbmc
 {
@@ -48,7 +49,7 @@ namespace Readarr.Core.Notifications.Xbmc
             UpdateAndClean(message.Series);
         }
 
-        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
+        public override void OnRename(Tv.Series series, List<RenamedBookFile> renamedFiles)
         {
             UpdateAndClean(series);
         }
@@ -156,7 +157,7 @@ namespace Readarr.Core.Notifications.Xbmc
             }
         }
 
-        private void UpdateAndClean(Series series, bool clean = true)
+        private void UpdateAndClean(Tv.Series series, bool clean = true)
         {
             if (Settings.UpdateLibrary || Settings.CleanLibrary)
             {

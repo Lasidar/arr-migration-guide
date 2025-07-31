@@ -11,6 +11,7 @@ using Readarr.Core.Languages;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.Aggregation.Aggregators
 {

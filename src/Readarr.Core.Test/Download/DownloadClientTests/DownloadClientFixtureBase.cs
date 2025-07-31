@@ -17,6 +17,7 @@ using Readarr.Core.RemotePathMappings;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Test.IndexerTests;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadClientTests
 {

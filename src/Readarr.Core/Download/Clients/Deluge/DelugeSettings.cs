@@ -1,6 +1,7 @@
 using FluentValidation;
 using Readarr.Core.Annotations;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download.Clients.Deluge
 {

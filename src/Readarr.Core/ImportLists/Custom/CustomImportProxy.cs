@@ -11,6 +11,7 @@ using NLog;
 using Readarr.Common.Extensions;
 using Readarr.Common.Http;
 using Readarr.Core.Localization;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.ImportLists.Custom
 {

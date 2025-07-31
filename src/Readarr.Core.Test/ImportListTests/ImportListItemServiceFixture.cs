@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Readarr.Core.ImportLists.ImportListItems;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.ImportListTests
 {

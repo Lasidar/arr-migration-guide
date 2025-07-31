@@ -36,7 +36,7 @@ namespace Readarr.Core.Download.TrackedDownloads
                                           IHandle<AuthorDeletedEvent>
     {
         private readonly IParsingService _parsingService;
-        private readonly History.IHistoryService _historyService;
+        private readonly Readarr.Core.History.IHistoryService _historyService;
         private readonly IEventAggregator _eventAggregator;
         private readonly IDownloadHistoryService _downloadHistoryService;
         private readonly IRemoteEpisodeAggregationService _aggregationService;

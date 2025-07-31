@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Readarr.Core.Messaging.Commands;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.MediaFiles.Commands
 {

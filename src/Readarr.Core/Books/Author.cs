@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Readarr.Common.Extensions;
 using Readarr.Core.Datastore;
 using Readarr.Core.Profiles.Qualities;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Books
 {
@@ -38,7 +39,7 @@ namespace Readarr.Core.Books
         
         // Relationships
         public LazyLoaded<List<Book>> Books { get; set; }
-        public LazyLoaded<List<Series>> Series { get; set; }
+        public LazyLoaded<List<Tv.Series>> Series { get; set; }
         public HashSet<int> Tags { get; set; }
         public AddAuthorOptions AddOptions { get; set; }
 

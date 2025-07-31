@@ -8,6 +8,7 @@ using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Parser.Model;
 using System;
 using System.Collections.Generic;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.MediaFiles
 {
@@ -75,6 +76,12 @@ namespace Readarr.Core.MediaFiles
         public BookFileUpgradeResult UpgradeBookFile(BookFile bookFile, LocalBook localBook, bool copyOnly = false)
         {
             // TODO: Implement book file upgrade
+            throw new NotImplementedException();
+        }
+
+        public BookFileUpgradeResult UpgradeBookFile(BookFile bookFile, Parser.Model.LocalBook localBook, bool copyOnly = false)
+        {
+            // Stub implementation for TV compatibility
             throw new NotImplementedException();
         }
     }

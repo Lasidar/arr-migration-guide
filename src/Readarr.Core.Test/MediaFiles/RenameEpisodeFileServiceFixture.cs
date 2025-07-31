@@ -9,6 +9,7 @@ using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.MediaFiles
 {

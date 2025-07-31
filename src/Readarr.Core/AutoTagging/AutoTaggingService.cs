@@ -5,6 +5,7 @@ using Readarr.Common.Extensions;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.RootFolders;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.AutoTagging
 {
@@ -16,7 +17,7 @@ namespace Readarr.Core.AutoTagging
         AutoTag GetById(int id);
         void Delete(int id);
         List<AutoTag> AllForTag(int tagId);
-        AutoTaggingChanges GetTagChanges(Series series);
+        AutoTaggingChanges GetTagChanges(Tv.Series series);
     }
 
     public class AutoTaggingService : IAutoTaggingService
@@ -85,7 +86,7 @@ namespace Readarr.Core.AutoTagging
                 .ToList();
         }
 
-        public AutoTaggingChanges GetTagChanges(Series series)
+        public AutoTaggingChanges GetTagChanges(Tv.Series series)
         {
             var autoTags = All();
             var changes = new AutoTaggingChanges();

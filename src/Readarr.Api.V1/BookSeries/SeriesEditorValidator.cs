@@ -2,6 +2,7 @@ using FluentValidation;
 using Readarr.Common.Extensions;
 using Readarr.Core.Validation;
 using Readarr.Core.Validation.Paths;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Series
 {

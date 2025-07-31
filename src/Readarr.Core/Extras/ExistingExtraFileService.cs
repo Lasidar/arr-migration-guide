@@ -5,12 +5,13 @@ using NLog;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras
 {
     public interface IExistingExtraFiles
     {
-        List<string> ImportExtraFiles(Series series, List<string> possibleExtraFiles, string fileNameBeforeRename);
+        List<string> ImportExtraFiles(Tv.Series series, List<string> possibleExtraFiles, string fileNameBeforeRename);
     }
 
     public class ExistingExtraFileService : IExistingExtraFiles, IHandle<SeriesScannedEvent>
@@ -25,7 +26,7 @@ namespace Readarr.Core.Extras
             _logger = logger;
         }
 
-        public List<string> ImportExtraFiles(Series series, List<string> possibleExtraFiles, string fileNameBeforeRename)
+        public List<string> ImportExtraFiles(Tv.Series series, List<string> possibleExtraFiles, string fileNameBeforeRename)
         {
             _logger.Debug("Looking for existing extra files in {0}", series.Path);
 

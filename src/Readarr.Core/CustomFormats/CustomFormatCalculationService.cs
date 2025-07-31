@@ -9,16 +9,17 @@ using Readarr.Core.History;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.CustomFormats
 {
     public interface ICustomFormatCalculationService
     {
         List<CustomFormat> ParseCustomFormat(RemoteEpisode remoteEpisode, long size);
-        List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile, Series series);
+        List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile, Tv.Series series);
         List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile);
-        List<CustomFormat> ParseCustomFormat(Blocklist blocklist, Series series);
-        List<CustomFormat> ParseCustomFormat(EpisodeHistory history, Series series);
+        List<CustomFormat> ParseCustomFormat(Blocklist blocklist, Tv.Series series);
+        List<CustomFormat> ParseCustomFormat(EpisodeHistory history, Tv.Series series);
         List<CustomFormat> ParseCustomFormat(LocalEpisode localEpisode);
     }
 
@@ -48,7 +49,7 @@ namespace Readarr.Core.CustomFormats
             return ParseCustomFormat(input);
         }
 
-        public List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile, Series series)
+        public List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile, Tv.Series series)
         {
             return ParseCustomFormat(episodeFile, series, _formatService.All());
         }
@@ -58,7 +59,7 @@ namespace Readarr.Core.CustomFormats
             return ParseCustomFormat(episodeFile, episodeFile.Series.Value, _formatService.All());
         }
 
-        public List<CustomFormat> ParseCustomFormat(Blocklist blocklist, Series series)
+        public List<CustomFormat> ParseCustomFormat(Blocklist blocklist, Tv.Series series)
         {
             var parsed = Parser.Parser.ParseTitle(blocklist.SourceTitle);
 
@@ -84,7 +85,7 @@ namespace Readarr.Core.CustomFormats
             return ParseCustomFormat(input);
         }
 
-        public List<CustomFormat> ParseCustomFormat(EpisodeHistory history, Series series)
+        public List<CustomFormat> ParseCustomFormat(EpisodeHistory history, Tv.Series series)
         {
             var parsed = Parser.Parser.ParseTitle(history.SourceTitle);
 
@@ -167,7 +168,7 @@ namespace Readarr.Core.CustomFormats
             return matches.OrderBy(x => x.Name).ToList();
         }
 
-        private List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile, Series series, List<CustomFormat> allCustomFormats)
+        private List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile, Tv.Series series, List<CustomFormat> allCustomFormats)
         {
             var releaseTitle = string.Empty;
 

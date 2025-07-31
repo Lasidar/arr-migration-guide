@@ -2,6 +2,7 @@ using FluentValidation;
 using Readarr.Core.Annotations;
 using Readarr.Core.ThingiProvider;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
 {

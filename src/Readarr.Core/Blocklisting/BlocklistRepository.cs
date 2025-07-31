@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Readarr.Core.Datastore;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Blocklisting
 {

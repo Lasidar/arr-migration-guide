@@ -4,12 +4,13 @@ using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Others
 {
     public interface IOtherExtraFileRenamer
     {
-        void RenameOtherExtraFile(Series series, string path);
+        void RenameOtherExtraFile(Tv.Series series, string path);
     }
 
     public class OtherExtraFileRenamer : IOtherExtraFileRenamer
@@ -17,11 +18,11 @@ namespace Readarr.Core.Extras.Others
         private readonly Logger _logger;
         private readonly IDiskProvider _diskProvider;
         private readonly IRecycleBinProvider _recycleBinProvider;
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
         private readonly IOtherExtraFileService _otherExtraFileService;
 
         public OtherExtraFileRenamer(IOtherExtraFileService otherExtraFileService,
-                                     ISeriesService seriesService,
+                                     Tv.ISeriesService seriesService,
                                      IRecycleBinProvider recycleBinProvider,
                                      IDiskProvider diskProvider,
                                      Logger logger)
@@ -33,7 +34,7 @@ namespace Readarr.Core.Extras.Others
             _otherExtraFileService = otherExtraFileService;
         }
 
-        public void RenameOtherExtraFile(Series series, string path)
+        public void RenameOtherExtraFile(Tv.Series series, string path)
         {
             if (!_diskProvider.FileExists(path))
             {
@@ -58,7 +59,7 @@ namespace Readarr.Core.Extras.Others
             }
         }
 
-        private void RemoveOtherExtraFile(Series series, string path)
+        private void RemoveOtherExtraFile(Tv.Series series, string path)
         {
             if (!_diskProvider.FileExists(path))
             {

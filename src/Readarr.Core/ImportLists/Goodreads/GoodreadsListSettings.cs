@@ -23,6 +23,8 @@ namespace Readarr.Core.ImportLists.Goodreads
         [FieldDefinition(1, Label = "API Key", Privacy = PrivacyLevel.ApiKey, HelpText = "Goodreads API Key")]
         public string ApiKey { get; set; }
 
+        public override string BaseUrl { get; set; } = "https://www.goodreads.com";
+
         public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));

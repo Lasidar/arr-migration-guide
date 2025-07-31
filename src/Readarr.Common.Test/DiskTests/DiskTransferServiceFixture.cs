@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Common.Test.DiskTests
 {

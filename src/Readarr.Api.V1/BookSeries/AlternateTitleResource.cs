@@ -1,5 +1,6 @@
 ﻿using Readarr.Common.Extensions;
 using Readarr.Core.DataAugmentation.Scene;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Series
 {

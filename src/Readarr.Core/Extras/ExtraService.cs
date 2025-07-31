@@ -13,12 +13,13 @@ using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras
 {
     public interface IExtraService
     {
-        void MoveFilesAfterRename(Series series, EpisodeFile episodeFile);
+        void MoveFilesAfterRename(Tv.Series series, EpisodeFile episodeFile);
         void ImportEpisode(LocalEpisode localEpisode, EpisodeFile episodeFile, bool isReadOnly);
     }
 
@@ -29,14 +30,14 @@ namespace Readarr.Core.Extras
                                 IHandle<AuthorRenamedEvent>,
                                 IHandle<DownloadsProcessedEvent>
     {
-        private readonly IMediaFileService _mediaFileService;
+        private readonly MediaFiles.IMediaFileService _mediaFileService;
         private readonly IEpisodeService _episodeService;
         private readonly IDiskProvider _diskProvider;
         private readonly IConfigService _configService;
         private readonly List<IManageExtraFiles> _extraFileManagers;
         private readonly Dictionary<int, Series> _seriesWithImportedFiles;
 
-        public ExtraService(IMediaFileService mediaFileService,
+        public ExtraService(MediaFiles.IMediaFileService mediaFileService,
                             IEpisodeService episodeService,
                             IDiskProvider diskProvider,
                             IConfigService configService,
@@ -102,7 +103,7 @@ namespace Readarr.Core.Extras
             }
         }
 
-        private void CreateAfterEpisodeImport(Series series, EpisodeFile episodeFile)
+        private void CreateAfterEpisodeImport(Tv.Series series, EpisodeFile episodeFile)
         {
             lock (_seriesWithImportedFiles)
             {
@@ -149,7 +150,7 @@ namespace Readarr.Core.Extras
             }
         }
 
-        public void MoveFilesAfterRename(Series series, EpisodeFile episodeFile)
+        public void MoveFilesAfterRename(Tv.Series series, EpisodeFile episodeFile)
         {
             var episodeFiles = new List<EpisodeFile> { episodeFile };
 
@@ -172,7 +173,7 @@ namespace Readarr.Core.Extras
 
         public void Handle(DownloadsProcessedEvent message)
         {
-            var allSeries = new List<Series>();
+            var allSeries = new List<Tv.Series>();
 
             lock (_seriesWithImportedFiles)
             {

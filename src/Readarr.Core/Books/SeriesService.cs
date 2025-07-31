@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using Readarr.Core.Messaging.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Books
 {
@@ -25,17 +26,17 @@ namespace Readarr.Core.Books
             return _seriesRepository.Get(seriesId);
         }
 
-        public List<Series> GetAllSeries()
+        public List<Tv.Series> GetAllSeries()
         {
             return _seriesRepository.All().ToList();
         }
 
-        public List<Series> GetByAuthorId(int authorId)
+        public List<Tv.Series> GetByAuthorId(int authorId)
         {
             return _seriesRepository.GetByAuthorId(authorId);
         }
 
-        public Series AddSeries(Series series)
+        public Series AddSeries(Tv.Series series)
         {
             _seriesRepository.Insert(series);
             _logger.Debug("Added book series {0}", series.Title);
@@ -43,7 +44,7 @@ namespace Readarr.Core.Books
             return series;
         }
 
-        public Series UpdateSeries(Series series)
+        public Series UpdateSeries(Tv.Series series)
         {
             var updatedSeries = _seriesRepository.Update(series);
             _logger.Debug("Updated book series {0}", series.Title);
@@ -92,7 +93,7 @@ namespace Readarr.Core.Books
             return _seriesRepository.FindByTitle(title);
         }
 
-        public List<Series> FindByTitleInexact(string title)
+        public List<Tv.Series> FindByTitleInexact(string title)
         {
             return _seriesRepository.FindByTitleInexact(title);
         }

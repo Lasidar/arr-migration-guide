@@ -10,6 +10,7 @@ using Readarr.Core.Download.Pending;
 using Readarr.Core.Languages;
 using Readarr.Core.Qualities;
 using Readarr.Core.Test.Framework;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Datastore.Migration
 {

@@ -9,6 +9,7 @@ using Readarr.Core.MediaFiles.BookImport.Aggregation.Aggregators.Augmenters.Qual
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Qualities;
 using Readarr.Core.Test.Framework;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.MediaFiles.EpisodeImport.Aggregation.Aggregators
 {

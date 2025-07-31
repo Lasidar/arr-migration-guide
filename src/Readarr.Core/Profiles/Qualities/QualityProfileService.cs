@@ -9,6 +9,7 @@ using Readarr.Core.Lifecycle;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Qualities;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Profiles.Qualities
 {
@@ -32,13 +33,13 @@ namespace Readarr.Core.Profiles.Qualities
         private readonly IQualityProfileRepository _qualityProfileRepository;
         private readonly IImportListFactory _importListFactory;
         private readonly ICustomFormatService _formatService;
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
         private readonly Logger _logger;
 
         public QualityProfileService(IQualityProfileRepository qualityProfileRepository,
                                      IImportListFactory importListFactory,
                                      ICustomFormatService formatService,
-                                     ISeriesService seriesService,
+                                     Tv.ISeriesService seriesService,
                                      Logger logger)
         {
             _qualityProfileRepository = qualityProfileRepository;

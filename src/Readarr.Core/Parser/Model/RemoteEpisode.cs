@@ -6,6 +6,7 @@ using Readarr.Core.DataAugmentation.Scene;
 using Readarr.Core.Download.Clients;
 using Readarr.Core.Languages;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Parser.Model
 {
@@ -15,7 +16,7 @@ namespace Readarr.Core.Parser.Model
         public ParsedEpisodeInfo ParsedEpisodeInfo { get; set; }
         public SceneMapping SceneMapping { get; set; }
         public int MappedSeasonNumber { get; set; }
-        public Series Series { get; set; }
+        public Tv.Series Series { get; set; }
         public List<Episode> Episodes { get; set; }
         public bool EpisodeRequested { get; set; }
         public bool DownloadAllowed { get; set; }

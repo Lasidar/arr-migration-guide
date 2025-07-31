@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Tv
 {
@@ -6,6 +7,6 @@ namespace Readarr.Core.Tv
     public interface IAddSeriesService
     {
         Series AddSeries(Series newSeries);
-        List<Series> AddSeries(List<Series> newSeries);
+        List<Tv.Series> AddSeries(List<Tv.Series> newSeries);
     }
 }

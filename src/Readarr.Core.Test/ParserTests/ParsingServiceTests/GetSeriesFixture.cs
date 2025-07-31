@@ -5,6 +5,7 @@ using Readarr.Core.DataAugmentation.Scene;
 using Readarr.Core.Parser;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.ParserTests.ParsingServiceTests
 {

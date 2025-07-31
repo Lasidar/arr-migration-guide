@@ -11,6 +11,7 @@ using Readarr.Core.Datastore.Migration.Framework;
 using Readarr.Core.MediaFiles.BookImport.Aggregation.Aggregators;
 using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Datastore.Migration
 {

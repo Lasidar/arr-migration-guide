@@ -5,13 +5,14 @@ using FluentValidation.Results;
 using NLog;
 using Readarr.Core.Localization;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Xbmc
 {
     public interface IXbmcService
     {
         void Notify(XbmcSettings settings, string title, string message);
-        void Update(XbmcSettings settings, Series series);
+        void Update(XbmcSettings settings, Tv.Series series);
         void Clean(XbmcSettings settings);
         ValidationFailure Test(XbmcSettings settings, string message);
     }
@@ -34,7 +35,7 @@ namespace Readarr.Core.Notifications.Xbmc
             _proxy.Notify(settings, title, message);
         }
 
-        public void Update(XbmcSettings settings, Series series)
+        public void Update(XbmcSettings settings, Tv.Series series)
         {
             if (CheckIfVideoPlayerOpen(settings))
             {
@@ -58,7 +59,7 @@ namespace Readarr.Core.Notifications.Xbmc
             _proxy.CleanLibrary(settings);
         }
 
-        public string GetSeriesPath(XbmcSettings settings, Series series)
+        public string GetSeriesPath(XbmcSettings settings, Tv.Series series)
         {
             var allSeries = _proxy.GetSeries(settings);
 
@@ -83,7 +84,7 @@ namespace Readarr.Core.Notifications.Xbmc
             return null;
         }
 
-        private void UpdateLibrary(XbmcSettings settings, Series series)
+        private void UpdateLibrary(XbmcSettings settings, Tv.Series series)
         {
             try
             {

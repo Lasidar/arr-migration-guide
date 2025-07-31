@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Readarr.Common.Http;
 using Readarr.Common.Serializer;
 using Readarr.Core.IndexerSearch.Definitions;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Indexers.HDBits
 {

@@ -8,6 +8,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Qualities;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Parser.Model
 {
@@ -26,7 +27,7 @@ namespace Readarr.Core.Parser.Model
         public ParsedEpisodeInfo DownloadClientEpisodeInfo { get; set; }
         public DownloadClientItem DownloadItem { get; set; }
         public ParsedEpisodeInfo FolderEpisodeInfo { get; set; }
-        public Series Series { get; set; }
+        public Tv.Series Series { get; set; }
         public List<Episode> Episodes { get; set; }
         public List<DeletedEpisodeFile> OldFiles { get; set; }
         public QualityModel Quality { get; set; }

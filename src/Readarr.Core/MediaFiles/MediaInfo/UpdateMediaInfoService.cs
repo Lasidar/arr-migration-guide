@@ -7,13 +7,14 @@ using Readarr.Core.Configuration;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.MediaFiles.MediaInfo
 {
     public interface IUpdateMediaInfo
     {
-        bool Update(EpisodeFile episodeFile, Series series);
-        bool UpdateMediaInfo(EpisodeFile episodeFile, Series series);
+        bool Update(EpisodeFile episodeFile, Tv.Series series);
+        bool UpdateMediaInfo(EpisodeFile episodeFile, Tv.Series series);
     }
 
     public class UpdateMediaInfoService : IUpdateMediaInfo, IHandle<SeriesScannedEvent>
@@ -56,7 +57,7 @@ namespace Readarr.Core.MediaFiles.MediaInfo
             }
         }
 
-        public bool Update(EpisodeFile episodeFile, Series series)
+        public bool Update(EpisodeFile episodeFile, Tv.Series series)
         {
             if (!_configService.EnableMediaInfo)
             {
@@ -67,7 +68,7 @@ namespace Readarr.Core.MediaFiles.MediaInfo
             return UpdateMediaInfo(episodeFile, series);
         }
 
-        public bool UpdateMediaInfo(EpisodeFile episodeFile, Series series)
+        public bool UpdateMediaInfo(EpisodeFile episodeFile, Tv.Series series)
         {
             var path = episodeFile.Path.IsNotNullOrWhiteSpace() ? episodeFile.Path : Path.Combine(series.Path, episodeFile.RelativePath);
 

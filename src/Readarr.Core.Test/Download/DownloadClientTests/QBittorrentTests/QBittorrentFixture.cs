@@ -14,6 +14,7 @@ using Readarr.Core.Download.Clients.QBittorrent;
 using Readarr.Core.Exceptions;
 using Readarr.Core.MediaFiles.TorrentInfo;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadClientTests.QBittorrentTests
 {

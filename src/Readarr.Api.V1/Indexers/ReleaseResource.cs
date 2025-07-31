@@ -11,6 +11,7 @@ using Readarr.Core.Books;
 using Readarr.Api.V3.CustomFormats;
 using Readarr.Api.V3.Series;
 using Readarr.Http.REST;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Indexers
 {

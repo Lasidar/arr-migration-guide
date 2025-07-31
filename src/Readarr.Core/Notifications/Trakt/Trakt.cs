@@ -12,6 +12,7 @@ using Readarr.Core.Notifications.Trakt.Resource;
 using Readarr.Core.Qualities;
 using Readarr.Core.Books;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Trakt
 {
@@ -162,7 +163,7 @@ namespace Readarr.Core.Notifications.Trakt
             }
         }
 
-        private void AddEpisodeToCollection(TraktSettings settings, Series series, EpisodeFile episodeFile)
+        private void AddEpisodeToCollection(TraktSettings settings, Tv.Series series, EpisodeFile episodeFile)
         {
             var payload = new TraktCollectShowsResource
             {
@@ -213,7 +214,7 @@ namespace Readarr.Core.Notifications.Trakt
             _proxy.AddToCollection(payload, settings.AccessToken);
         }
 
-        private void RemoveEpisodeFromCollection(TraktSettings settings, Series series, EpisodeFile episodeFile)
+        private void RemoveEpisodeFromCollection(TraktSettings settings, Tv.Series series, EpisodeFile episodeFile)
         {
             var payload = new TraktCollectShowsResource
             {
@@ -252,7 +253,7 @@ namespace Readarr.Core.Notifications.Trakt
             _proxy.RemoveFromCollection(payload, settings.AccessToken);
         }
 
-        private void AddSeriesToCollection(TraktSettings settings, Series series)
+        private void AddSeriesToCollection(TraktSettings settings, Tv.Series series)
         {
             var payload = new TraktCollectShowsResource
             {
@@ -273,7 +274,7 @@ namespace Readarr.Core.Notifications.Trakt
             _proxy.AddToCollection(payload, settings.AccessToken);
         }
 
-        private void RemoveSeriesFromCollection(TraktSettings settings, Series series)
+        private void RemoveSeriesFromCollection(TraktSettings settings, Tv.Series series)
         {
             var payload = new TraktCollectShowsResource
             {

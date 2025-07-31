@@ -4,6 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Readarr.Test.Common;
 using Readarr.Api.V3.Series;
+using Readarr.Core.Tv;
 
 namespace Readarr.Integration.Test.ApiTests
 {

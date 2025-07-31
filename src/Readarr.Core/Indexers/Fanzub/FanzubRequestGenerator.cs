@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Readarr.Common.Extensions;
 using Readarr.Common.Http;
 using Readarr.Core.IndexerSearch.Definitions;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Indexers.Fanzub
 {

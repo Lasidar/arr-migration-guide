@@ -7,6 +7,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.Validation;
 using Readarr.Core.Validation.Paths;
 using Readarr.Http;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Config
 {

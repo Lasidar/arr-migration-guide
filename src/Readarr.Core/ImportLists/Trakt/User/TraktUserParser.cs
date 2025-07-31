@@ -3,6 +3,7 @@ using System.Linq;
 using Readarr.Common.Extensions;
 using Readarr.Common.Serializer;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.ImportLists.Trakt.User
 {

@@ -4,6 +4,7 @@ using System.Linq;
 using Readarr.Core.Languages;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Qualities;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Webhook
 {

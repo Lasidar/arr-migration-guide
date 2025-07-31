@@ -4,6 +4,7 @@ using Readarr.Common.Http;
 using Readarr.Core.IndexerSearch.Definitions;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.ThingiProvider;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Indexers
 {

@@ -8,6 +8,7 @@ using Readarr.Core.Languages;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Qualities;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Queue
 {
@@ -19,7 +20,7 @@ namespace Readarr.Core.Queue
         public RemoteBook RemoteBook { get; set; }
         
         // TV properties (to be removed)
-        public Series Series { get; set; }
+        public Tv.Series Series { get; set; }
         public Episode Episode { get; set; }
         public RemoteEpisode RemoteEpisode { get; set; }
         

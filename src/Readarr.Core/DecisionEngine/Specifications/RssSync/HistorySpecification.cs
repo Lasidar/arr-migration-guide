@@ -5,6 +5,7 @@ using Readarr.Core.Configuration;
 using Readarr.Core.CustomFormats;
 using Readarr.Core.History;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.DecisionEngine.Specifications.RssSync
 {

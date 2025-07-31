@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Readarr.Core.Datastore;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.DataAugmentation.Scene
 {

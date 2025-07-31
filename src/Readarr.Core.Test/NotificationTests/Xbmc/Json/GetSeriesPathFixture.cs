@@ -7,6 +7,7 @@ using Readarr.Core.Notifications.Xbmc;
 using Readarr.Core.Notifications.Xbmc.Model;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.NotificationTests.Xbmc.Json
 {

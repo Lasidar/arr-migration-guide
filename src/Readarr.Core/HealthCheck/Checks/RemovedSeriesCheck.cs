@@ -4,6 +4,8 @@ using Readarr.Common.Extensions;
 using Readarr.Core.Localization;
 using Readarr.Core.Books;
 using Readarr.Core.Books.Events;
+using Readarr.Core.Tv;
+using Readarr.Core.Tv.Events;
 
 namespace Readarr.Core.HealthCheck.Checks
 {
@@ -12,9 +14,9 @@ namespace Readarr.Core.HealthCheck.Checks
     [CheckOn(typeof(SeriesRefreshCompleteEvent))]
     public class RemovedSeriesCheck : HealthCheckBase, ICheckOnCondition<AuthorUpdatedEvent>, ICheckOnCondition<AuthorDeletedEvent>
     {
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
 
-        public RemovedSeriesCheck(ISeriesService seriesService, ILocalizationService localizationService)
+        public RemovedSeriesCheck(Tv.ISeriesService seriesService, ILocalizationService localizationService)
             : base(localizationService)
         {
             _seriesService = seriesService;

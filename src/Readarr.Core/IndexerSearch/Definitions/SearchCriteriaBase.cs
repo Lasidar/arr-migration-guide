@@ -5,6 +5,7 @@ using Readarr.Common.EnsureThat;
 using Readarr.Common.Extensions;
 using Readarr.Core.DataAugmentation.Scene;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.IndexerSearch.Definitions
 {
@@ -14,7 +15,7 @@ namespace Readarr.Core.IndexerSearch.Definitions
         private static readonly Regex NonWord = new Regex(@"[\W]", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex BeginningThe = new Regex(@"^the\s", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        public Series Series { get; set; }
+        public Tv.Series Series { get; set; }
         public List<string> SceneTitles { get; set; }
         public List<Episode> Episodes { get; set; }
         public SearchMode SearchMode { get; set; }

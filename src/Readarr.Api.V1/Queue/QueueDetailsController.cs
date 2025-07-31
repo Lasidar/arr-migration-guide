@@ -9,6 +9,7 @@ using Readarr.Core.Queue;
 using Readarr.SignalR;
 using Readarr.Http;
 using Readarr.Http.REST;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Queue
 {

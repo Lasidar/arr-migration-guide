@@ -13,6 +13,7 @@ using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Qualities;
 using Readarr.Core.Security;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Configuration
 {

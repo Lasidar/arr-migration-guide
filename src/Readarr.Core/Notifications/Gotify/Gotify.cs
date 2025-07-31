@@ -8,6 +8,7 @@ using Readarr.Common.Extensions;
 using Readarr.Core.Localization;
 using Readarr.Core.MediaCover;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Gotify
 {
@@ -128,7 +129,7 @@ namespace Readarr.Core.Notifications.Gotify
             return new ValidationResult(failures);
         }
 
-        private void SendNotification(string title, string message, Series series)
+        private void SendNotification(string title, string message, Tv.Series series)
         {
             var isMarkdown = false;
             var sb = new StringBuilder();

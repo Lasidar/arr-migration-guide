@@ -12,6 +12,7 @@ using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Tags;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.MediaFiles
 {

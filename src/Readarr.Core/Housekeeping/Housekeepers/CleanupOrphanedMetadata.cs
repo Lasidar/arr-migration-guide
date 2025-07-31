@@ -1,6 +1,7 @@
 using Dapper;
 using NLog;
 using Readarr.Core.Datastore;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Housekeeping.Housekeepers
 {

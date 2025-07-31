@@ -6,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 using Readarr.Core.Configuration;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Configuration
 {

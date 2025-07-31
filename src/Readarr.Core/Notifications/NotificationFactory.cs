@@ -5,6 +5,7 @@ using FluentValidation.Results;
 using NLog;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.ThingiProvider;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications
 {

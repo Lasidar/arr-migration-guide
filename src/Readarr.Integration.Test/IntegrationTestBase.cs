@@ -29,6 +29,7 @@ using Readarr.Api.V3.RootFolders;
 using Readarr.Api.V3.Series;
 using Readarr.Api.V3.System.Tasks;
 using Readarr.Api.V3.Tags;
+using Readarr.Core.Tv;
 
 namespace Readarr.Integration.Test
 {

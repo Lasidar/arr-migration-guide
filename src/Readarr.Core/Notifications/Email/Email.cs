@@ -9,6 +9,7 @@ using NLog;
 using Readarr.Common.Extensions;
 using Readarr.Common.Http.Dispatchers;
 using Readarr.Core.Localization;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Email
 {

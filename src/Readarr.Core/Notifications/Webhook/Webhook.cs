@@ -8,6 +8,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.Tags;
 using Readarr.Core.Books;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Webhook
 {
@@ -38,7 +39,7 @@ namespace Readarr.Core.Notifications.Webhook
             _proxy.SendWebhook(BuildOnImportCompletePayload(message), Settings);
         }
 
-        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
+        public override void OnRename(Tv.Series series, List<RenamedBookFile> renamedFiles)
         {
             _proxy.SendWebhook(BuildOnRenamePayload(series, renamedFiles), Settings);
         }

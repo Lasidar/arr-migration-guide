@@ -14,6 +14,7 @@ using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Subtitles
 {
@@ -43,32 +44,32 @@ namespace Readarr.Core.Extras.Subtitles
 
         public override int Order => 1;
 
-        public override IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Series series)
+        public override IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Tv.Series series)
         {
             return Enumerable.Empty<SubtitleFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EpisodeFile> episodeFiles)
+        public override IEnumerable<ExtraFile> CreateAfterSeriesScan(Tv.Series series, List<EpisodeFile> episodeFiles)
         {
             return Enumerable.Empty<SubtitleFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterEpisodesImported(Series series)
+        public override IEnumerable<ExtraFile> CreateAfterEpisodesImported(Tv.Series series)
         {
             return Enumerable.Empty<SubtitleFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EpisodeFile episodeFile)
+        public override IEnumerable<ExtraFile> CreateAfterEpisodeImport(Tv.Series series, EpisodeFile episodeFile)
         {
             return Enumerable.Empty<SubtitleFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterEpisodeFolder(Series series, string seriesFolder, string seasonFolder)
+        public override IEnumerable<ExtraFile> CreateAfterEpisodeFolder(Tv.Series series, string seriesFolder, string seasonFolder)
         {
             return Enumerable.Empty<SubtitleFile>();
         }
 
-        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EpisodeFile> episodeFiles)
+        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Tv.Series series, List<EpisodeFile> episodeFiles)
         {
             var subtitleFiles = _subtitleFileService.GetFilesBySeries(series.Id);
 

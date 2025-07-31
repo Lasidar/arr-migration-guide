@@ -3,6 +3,7 @@ using System.Linq;
 using NLog;
 using Readarr.Common.Extensions;
 using Readarr.Core.History;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download.TrackedDownloads
 {

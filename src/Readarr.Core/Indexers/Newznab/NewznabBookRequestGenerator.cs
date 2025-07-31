@@ -9,6 +9,7 @@ using Readarr.Common.Instrumentation;
 using Readarr.Core.IndexerSearch.Definitions;
 using Readarr.Core.ThingiProvider;
 using Readarr.Core.Parser;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Indexers.Newznab
 {

@@ -160,7 +160,7 @@ namespace Readarr.Core.MediaFiles
             throw new NotImplementedException();
         }
 
-        public static List<string> FilterExistingFiles(List<string> files, List<EpisodeFile> seriesFiles, Series series)
+        public static List<string> FilterExistingFiles(List<string> files, List<EpisodeFile> seriesFiles, Tv.Series series)
         {
             var seriesFilePaths = seriesFiles.Select(f => Path.Combine(series.Path, f.RelativePath)).ToList();
 

@@ -12,6 +12,7 @@ using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.MediaFiles.MediaInfo
 {

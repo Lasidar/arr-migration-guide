@@ -5,6 +5,7 @@ using Readarr.Common;
 using Readarr.Common.Extensions;
 using Readarr.Core.Extras.Files;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras
 {
@@ -19,9 +20,9 @@ namespace Readarr.Core.Extras
         }
 
         public abstract int Order { get; }
-        public abstract IEnumerable<ExtraFile> ProcessFiles(Series series, List<string> filesOnDisk, List<string> importedFiles, string fileNameBeforeRename);
+        public abstract IEnumerable<ExtraFile> ProcessFiles(Tv.Series series, List<string> filesOnDisk, List<string> importedFiles, string fileNameBeforeRename);
 
-        public virtual ImportExistingExtraFileFilterResult<TExtraFile> FilterAndClean(Series series, List<string> filesOnDisk, List<string> importedFiles, bool keepExistingEntries)
+        public virtual ImportExistingExtraFileFilterResult<TExtraFile> FilterAndClean(Tv.Series series, List<string> filesOnDisk, List<string> importedFiles, bool keepExistingEntries)
         {
             var seriesFiles = _extraFileService.GetFilesBySeries(series.Id);
 
@@ -39,7 +40,7 @@ namespace Readarr.Core.Extras
             return Filter(series, filesOnDisk, importedFiles, seriesFiles);
         }
 
-        private ImportExistingExtraFileFilterResult<TExtraFile> Filter(Series series, List<string> filesOnDisk, List<string> importedFiles, List<TExtraFile> seriesFiles)
+        private ImportExistingExtraFileFilterResult<TExtraFile> Filter(Tv.Series series, List<string> filesOnDisk, List<string> importedFiles, List<TExtraFile> seriesFiles)
         {
             var previouslyImported = seriesFiles.IntersectBy(s => Path.Combine(series.Path, s.RelativePath), filesOnDisk, f => f, PathEqualityComparer.Instance).ToList();
             var filteredFiles = filesOnDisk.Except(previouslyImported.Select(f => Path.Combine(series.Path, f.RelativePath)).ToList(), PathEqualityComparer.Instance)
@@ -51,7 +52,7 @@ namespace Readarr.Core.Extras
             return new ImportExistingExtraFileFilterResult<TExtraFile>(previouslyImported, filteredFiles);
         }
 
-        private void Clean(Series series, List<string> filesOnDisk, List<string> importedFiles, List<TExtraFile> seriesFiles)
+        private void Clean(Tv.Series series, List<string> filesOnDisk, List<string> importedFiles, List<TExtraFile> seriesFiles)
         {
             var alreadyImportedFileIds = seriesFiles.IntersectBy(f => Path.Combine(series.Path, f.RelativePath), importedFiles, i => i, PathEqualityComparer.Instance)
                 .Select(f => f.Id);

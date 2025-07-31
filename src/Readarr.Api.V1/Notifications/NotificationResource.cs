@@ -1,4 +1,5 @@
 using Readarr.Core.Notifications;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Notifications
 {

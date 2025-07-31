@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Readarr.Common.Http;
 using Readarr.Core.IndexerSearch.Definitions;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Indexers.Nyaa
 {

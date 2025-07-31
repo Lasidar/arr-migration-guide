@@ -1,6 +1,7 @@
 using System;
 using Readarr.Core.Indexers;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download.TrackedDownloads
 {

@@ -1,5 +1,6 @@
 using System;
 using Readarr.Core.Datastore;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Tv
 {

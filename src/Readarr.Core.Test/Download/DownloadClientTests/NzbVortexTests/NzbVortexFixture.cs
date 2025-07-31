@@ -14,6 +14,7 @@ using Readarr.Core.Download.Clients.NzbVortex;
 using Readarr.Core.Download.Clients.NzbVortex.Responses;
 using Readarr.Core.RemotePathMappings;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadClientTests.NzbVortexTests
 {

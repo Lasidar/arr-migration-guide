@@ -23,7 +23,7 @@ namespace Readarr.Core.Notifications
           IHandle<BooksImportedEvent>,
           IHandle<DownloadCompletedEvent>,
           IHandle<UntrackedDownloadCompletedEvent>,
-          IHandle<AuthorRenamedEvent>,
+          IHandle<Books.Events.AuthorRenamedEvent>,
           IHandle<SeriesAddCompletedEvent>,
           IHandle<AuthorDeletedEvent>,
           IHandle<EpisodeFileDeletedEvent>,
@@ -47,7 +47,7 @@ namespace Readarr.Core.Notifications
             _logger = logger;
         }
 
-        private string GetMessage(Series series, List<Episode> episodes, QualityModel quality)
+        private string GetMessage(Tv.Series series, List<Episode> episodes, QualityModel quality)
         {
             var qualityString = GetQualityString(series, quality);
 
@@ -75,7 +75,7 @@ namespace Readarr.Core.Notifications
                                     qualityString);
         }
 
-        private string GetFullSeasonMessage(Series series, int seasonNumber, QualityModel quality)
+        private string GetFullSeasonMessage(Tv.Series series, int seasonNumber, QualityModel quality)
         {
             var qualityString = GetQualityString(series, quality);
 
@@ -85,7 +85,7 @@ namespace Readarr.Core.Notifications
                 qualityString);
         }
 
-        private string GetQualityString(Series series, QualityModel quality)
+        private string GetQualityString(Tv.Series series, QualityModel quality)
         {
             var qualityString = quality.Quality.ToString();
 
@@ -104,7 +104,7 @@ namespace Readarr.Core.Notifications
             return qualityString;
         }
 
-        private bool ShouldHandleSeries(ProviderDefinition definition, Series series)
+        private bool ShouldHandleSeries(ProviderDefinition definition, Tv.Series series)
         {
             if (definition.Tags.Empty())
             {
@@ -297,7 +297,7 @@ namespace Readarr.Core.Notifications
             }
         }
 
-        public void Handle(AuthorRenamedEvent message)
+        public void Handle(Books.Events.AuthorRenamedEvent message)
         {
             foreach (var notification in _notificationFactory.OnRenameEnabled())
             {

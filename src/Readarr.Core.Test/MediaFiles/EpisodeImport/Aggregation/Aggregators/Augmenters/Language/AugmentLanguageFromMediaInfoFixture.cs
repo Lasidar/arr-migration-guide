@@ -6,6 +6,7 @@ using Readarr.Core.MediaFiles.BookImport.Aggregation.Aggregators.Augmenters.Lang
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.MediaFiles.EpisodeImport.Aggregation.Aggregators.Augmenters.Language
 {

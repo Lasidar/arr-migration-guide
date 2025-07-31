@@ -11,6 +11,7 @@ using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
 using Readarr.Core.Books.Events;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.DataAugmentation.SceneNumbering
 {

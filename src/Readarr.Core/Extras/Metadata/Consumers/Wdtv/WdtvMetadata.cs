@@ -13,6 +13,7 @@ using Readarr.Core.Extras.Metadata.Files;
 using Readarr.Core.MediaCover;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Metadata.Consumers.Wdtv
 {
@@ -35,7 +36,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Wdtv
 
         public override string Name => "WDTV";
 
-        public override string GetFilenameAfterMove(Series series, EpisodeFile episodeFile, MetadataFile metadataFile)
+        public override string GetFilenameAfterMove(Tv.Series series, EpisodeFile episodeFile, MetadataFile metadataFile)
         {
             var episodeFilePath = Path.Combine(series.Path, episodeFile.RelativePath);
 
@@ -53,7 +54,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Wdtv
             return Path.Combine(series.Path, metadataFile.RelativePath);
         }
 
-        public override MetadataFile FindMetadataFile(Series series, string path)
+        public override MetadataFile FindMetadataFile(Tv.Series series, string path)
         {
             var filename = Path.GetFileName(path);
 
@@ -113,13 +114,13 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Wdtv
             return null;
         }
 
-        public override MetadataFileResult SeriesMetadata(Series series, SeriesMetadataReason reason)
+        public override MetadataFileResult SeriesMetadata(Tv.Series series, SeriesMetadataReason reason)
         {
             // Series metadata is not supported
             return null;
         }
 
-        public override MetadataFileResult EpisodeMetadata(Series series, EpisodeFile episodeFile)
+        public override MetadataFileResult EpisodeMetadata(Tv.Series series, EpisodeFile episodeFile)
         {
             if (!Settings.EpisodeMetadata)
             {
@@ -169,7 +170,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Wdtv
             return new MetadataFileResult(filename, xmlResult.Trim(Environment.NewLine.ToCharArray()));
         }
 
-        public override List<ImageFileResult> SeriesImages(Series series)
+        public override List<ImageFileResult> SeriesImages(Tv.Series series)
         {
             if (!Settings.SeriesImages)
             {
@@ -193,7 +194,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Wdtv
                    };
         }
 
-        public override List<ImageFileResult> SeasonImages(Series series, Season season)
+        public override List<ImageFileResult> SeasonImages(Tv.Series series, Season season)
         {
             if (!Settings.SeasonImages)
             {
@@ -222,7 +223,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Wdtv
             return new List<ImageFileResult> { new ImageFileResult(path, image.RemoteUrl) };
         }
 
-        public override List<ImageFileResult> EpisodeImages(Series series, EpisodeFile episodeFile)
+        public override List<ImageFileResult> EpisodeImages(Tv.Series series, EpisodeFile episodeFile)
         {
             if (!Settings.EpisodeImages)
             {
@@ -250,7 +251,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Wdtv
             return Path.ChangeExtension(episodeFilePath, "metathumb");
         }
 
-        private Dictionary<int, string> GetSeasonFolders(Series series)
+        private Dictionary<int, string> GetSeasonFolders(Tv.Series series)
         {
             var seasonFolderMap = new Dictionary<int, string>();
 

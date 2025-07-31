@@ -7,6 +7,7 @@ using Readarr.Core.Indexers;
 using Readarr.Core.Languages;
 using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download.Aggregation.Aggregators
 {

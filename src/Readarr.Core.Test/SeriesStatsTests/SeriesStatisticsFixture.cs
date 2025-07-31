@@ -11,6 +11,7 @@ using Readarr.Core.Qualities;
 using Readarr.Core.SeriesStats;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.SeriesStatsTests
 {

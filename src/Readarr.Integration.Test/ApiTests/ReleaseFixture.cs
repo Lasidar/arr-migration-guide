@@ -3,6 +3,7 @@ using System.Net;
 using FluentAssertions;
 using NUnit.Framework;
 using Readarr.Api.V3.Indexers;
+using Readarr.Core.Tv;
 
 namespace Readarr.Integration.Test.ApiTests
 {

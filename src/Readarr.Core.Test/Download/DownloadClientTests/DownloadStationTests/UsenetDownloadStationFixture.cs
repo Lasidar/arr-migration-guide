@@ -13,6 +13,7 @@ using Readarr.Core.Download.Clients.DownloadStation.Proxies;
 using Readarr.Core.Organizer;
 using Readarr.Core.Parser.Model;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadClientTests.DownloadStationTests
 {

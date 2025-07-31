@@ -2,12 +2,13 @@ using System.Collections.Generic;
 using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.MediaFiles
 {
     public interface IUpgradeMediaFiles
     {
-        BookFileUpgradeResult UpgradeBookFile(BookFile bookFile, LocalBook localBook, bool copyOnly = false);
+        BookFileUpgradeResult UpgradeBookFile(BookFile bookFile, Parser.Model.LocalBook localBook, bool copyOnly = false);
         EpisodeFileUpgradeResult UpgradeEpisodeFile(EpisodeFile episodeFile, LocalEpisode localEpisode, bool copyOnly = false);
     }
 

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using FluentValidation;
 using FluentValidation.Validators;
 using Readarr.Common.Extensions;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Organizer
 {

@@ -5,6 +5,7 @@ using FluentMigrator;
 using Newtonsoft.Json.Linq;
 using Readarr.Common.Serializer;
 using Readarr.Core.Datastore.Migration.Framework;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Datastore.Migration
 {

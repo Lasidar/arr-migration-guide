@@ -14,6 +14,7 @@ using Readarr.Core.IndexerSearch.Definitions;
 using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.IndexerSearch
 {
@@ -29,14 +30,14 @@ namespace Readarr.Core.IndexerSearch
     {
         private readonly IIndexerFactory _indexerFactory;
         private readonly ISceneMappingService _sceneMapping;
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
         private readonly IEpisodeService _episodeService;
         private readonly IDownloadDecisionMaker _makeDownloadDecision;
         private readonly Logger _logger;
 
         public ReleaseSearchService(IIndexerFactory indexerFactory,
                                 ISceneMappingService sceneMapping,
-                                ISeriesService seriesService,
+                                Tv.ISeriesService seriesService,
                                 IEpisodeService episodeService,
                                                                     IDownloadDecisionMaker makeDownloadDecision,
                                 Logger logger)
@@ -154,7 +155,7 @@ namespace Readarr.Core.IndexerSearch
             return DeDupeDecisions(downloadDecisions);
         }
 
-        private List<SceneSeasonMapping> GetSceneSeasonMappings(Series series, List<Episode> episodes)
+        private List<SceneSeasonMapping> GetSceneSeasonMappings(Tv.Series series, List<Episode> episodes)
         {
             var dict = new Dictionary<SceneSeasonMapping, SceneSeasonMapping>();
 
@@ -199,7 +200,7 @@ namespace Readarr.Core.IndexerSearch
             return dict.Values.ToList();
         }
 
-        private List<SceneEpisodeMapping> GetSceneEpisodeMappings(Series series, Episode episode)
+        private List<SceneEpisodeMapping> GetSceneEpisodeMappings(Tv.Series series, Episode episode)
         {
             var dict = new Dictionary<SceneEpisodeMapping, SceneEpisodeMapping>();
 
@@ -227,7 +228,7 @@ namespace Readarr.Core.IndexerSearch
             return dict.Values.ToList();
         }
 
-        private IEnumerable<SceneEpisodeMapping> GetSceneEpisodeMappings(Series series, Episode episode, List<SceneMapping> sceneMappings)
+        private IEnumerable<SceneEpisodeMapping> GetSceneEpisodeMappings(Tv.Series series, Episode episode, List<SceneMapping> sceneMappings)
         {
             var includeGlobal = true;
 
@@ -314,7 +315,7 @@ namespace Readarr.Core.IndexerSearch
             }
         }
 
-        private async Task<List<DownloadDecision>> SearchSingle(Series series, Episode episode, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+        private async Task<List<DownloadDecision>> SearchSingle(Tv.Series series, Episode episode, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
         {
             var mappings = GetSceneEpisodeMappings(series, episode);
 
@@ -333,7 +334,7 @@ namespace Readarr.Core.IndexerSearch
             return DeDupeDecisions(downloadDecisions);
         }
 
-        private async Task<List<DownloadDecision>> SearchDaily(Series series, Episode episode, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+        private async Task<List<DownloadDecision>> SearchDaily(Tv.Series series, Episode episode, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
         {
             var airDate = DateTime.ParseExact(episode.AirDate, Episode.AIR_DATE_FORMAT, CultureInfo.InvariantCulture);
             var searchSpec = Get<DailyEpisodeSearchCriteria>(series, new List<Episode> { episode }, monitoredOnly, userInvokedSearch, interactiveSearch);
@@ -344,7 +345,7 @@ namespace Readarr.Core.IndexerSearch
             return DeDupeDecisions(downloadDecisions);
         }
 
-        private async Task<List<DownloadDecision>> SearchAnime(Series series, Episode episode, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch, bool isSeasonSearch = false)
+        private async Task<List<DownloadDecision>> SearchAnime(Tv.Series series, Episode episode, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch, bool isSeasonSearch = false)
         {
             var searchSpec = Get<AnimeEpisodeSearchCriteria>(series, new List<Episode> { episode }, monitoredOnly, userInvokedSearch, interactiveSearch);
 
@@ -359,7 +360,7 @@ namespace Readarr.Core.IndexerSearch
             return DeDupeDecisions(downloadDecisions);
         }
 
-        private async Task<List<DownloadDecision>> SearchSpecial(Series series, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+        private async Task<List<DownloadDecision>> SearchSpecial(Tv.Series series, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
         {
             var downloadDecisions = new List<DownloadDecision>();
 
@@ -389,7 +390,7 @@ namespace Readarr.Core.IndexerSearch
             return DeDupeDecisions(downloadDecisions);
         }
 
-        private async Task<List<DownloadDecision>> SearchAnimeSeason(Series series, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+        private async Task<List<DownloadDecision>> SearchAnimeSeason(Tv.Series series, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
         {
             var downloadDecisions = new List<DownloadDecision>();
 
@@ -423,7 +424,7 @@ namespace Readarr.Core.IndexerSearch
             return DeDupeDecisions(downloadDecisions);
         }
 
-        private async Task<List<DownloadDecision>> SearchDailySeason(Series series, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+        private async Task<List<DownloadDecision>> SearchDailySeason(Tv.Series series, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
         {
             var downloadDecisions = new List<DownloadDecision>();
 
@@ -454,7 +455,7 @@ namespace Readarr.Core.IndexerSearch
             return DeDupeDecisions(downloadDecisions);
         }
 
-        private TSpec Get<TSpec>(Series series, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+        private TSpec Get<TSpec>(Tv.Series series, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
             where TSpec : SearchCriteriaBase, new()
         {
             var spec = new TSpec();
@@ -478,7 +479,7 @@ namespace Readarr.Core.IndexerSearch
             return spec;
         }
 
-        private TSpec Get<TSpec>(Series series, SceneEpisodeMapping mapping, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+        private TSpec Get<TSpec>(Tv.Series series, SceneEpisodeMapping mapping, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
             where TSpec : SearchCriteriaBase, new()
         {
             var spec = new TSpec();
@@ -496,7 +497,7 @@ namespace Readarr.Core.IndexerSearch
             return spec;
         }
 
-        private TSpec Get<TSpec>(Series series, SceneSeasonMapping mapping, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+        private TSpec Get<TSpec>(Tv.Series series, SceneSeasonMapping mapping, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
             where TSpec : SearchCriteriaBase, new()
         {
             var spec = new TSpec();

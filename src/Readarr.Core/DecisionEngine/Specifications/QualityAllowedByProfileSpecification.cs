@@ -1,5 +1,6 @@
 using NLog;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {

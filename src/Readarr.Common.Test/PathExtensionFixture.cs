@@ -9,6 +9,7 @@ using Readarr.Common.EnvironmentInfo;
 using Readarr.Common.Extensions;
 using Readarr.Test.Common;
 using Readarr.Test.Common.Categories;
+using Readarr.Core.Tv;
 
 namespace Readarr.Common.Test
 {

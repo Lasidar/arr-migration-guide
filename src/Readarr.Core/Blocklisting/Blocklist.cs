@@ -7,6 +7,7 @@ using Readarr.Core.Languages;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Qualities;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Blocklisting
 {
@@ -19,7 +20,7 @@ namespace Readarr.Core.Blocklisting
         
         // TV properties (to be removed)
         public int SeriesId { get; set; }
-        public Series Series { get; set; }
+        public Tv.Series Series { get; set; }
         public List<int> EpisodeIds { get; set; }
         
         // Common properties

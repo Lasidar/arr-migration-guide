@@ -9,6 +9,8 @@ using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.RootFolders;
 using Readarr.Core.ThingiProvider.Events;
 using Readarr.Core.Books.Events;
+using Readarr.Core.Tv;
+using Readarr.Core.Tv.Events;
 
 namespace Readarr.Core.HealthCheck.Checks
 {

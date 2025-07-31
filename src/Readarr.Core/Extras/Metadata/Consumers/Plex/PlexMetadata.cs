@@ -6,15 +6,16 @@ using Readarr.Common.Extensions;
 using Readarr.Core.Extras.Metadata.Files;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Metadata.Consumers.Plex
 {
     public class PlexMetadata : MetadataBase<PlexMetadataSettings>
     {
         private readonly IEpisodeService _episodeService;
-        private readonly IMediaFileService _mediaFileService;
+        private readonly MediaFiles.IMediaFileService _mediaFileService;
 
-        public PlexMetadata(IEpisodeService episodeService, IMediaFileService mediaFileService)
+        public PlexMetadata(IEpisodeService episodeService, MediaFiles.IMediaFileService mediaFileService)
         {
             _episodeService = episodeService;
             _mediaFileService = mediaFileService;
@@ -22,7 +23,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Plex
 
         public override string Name => "Plex";
 
-        public override MetadataFile FindMetadataFile(Series series, string path)
+        public override MetadataFile FindMetadataFile(Tv.Series series, string path)
         {
             var filename = Path.GetFileName(path);
 
@@ -47,7 +48,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Plex
             return null;
         }
 
-        public override MetadataFileResult SeriesMetadata(Series series, SeriesMetadataReason reason)
+        public override MetadataFileResult SeriesMetadata(Tv.Series series, SeriesMetadataReason reason)
         {
             if (!Settings.SeriesPlexMatchFile)
             {
@@ -83,22 +84,22 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Plex
             return new MetadataFileResult(".plexmatch", content.ToString());
         }
 
-        public override MetadataFileResult EpisodeMetadata(Series series, EpisodeFile episodeFile)
+        public override MetadataFileResult EpisodeMetadata(Tv.Series series, EpisodeFile episodeFile)
         {
             return null;
         }
 
-        public override List<ImageFileResult> SeriesImages(Series series)
+        public override List<ImageFileResult> SeriesImages(Tv.Series series)
         {
             return new List<ImageFileResult>();
         }
 
-        public override List<ImageFileResult> SeasonImages(Series series, Season season)
+        public override List<ImageFileResult> SeasonImages(Tv.Series series, Season season)
         {
             return new List<ImageFileResult>();
         }
 
-        public override List<ImageFileResult> EpisodeImages(Series series, EpisodeFile episodeFile)
+        public override List<ImageFileResult> EpisodeImages(Tv.Series series, EpisodeFile episodeFile)
         {
             return new List<ImageFileResult>();
         }

@@ -1,5 +1,6 @@
 using Readarr.Core.MediaCover;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V3.Series;
 

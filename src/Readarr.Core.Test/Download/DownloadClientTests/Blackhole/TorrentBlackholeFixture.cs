@@ -17,6 +17,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.TorrentInfo;
 using Readarr.Core.Parser.Model;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadClientTests.Blackhole
 {

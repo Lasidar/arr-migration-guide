@@ -4,6 +4,7 @@ using System.Linq;
 using FluentValidation.Results;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Organizer
 {

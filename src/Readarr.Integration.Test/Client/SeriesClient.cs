@@ -2,6 +2,7 @@
 using System.Net;
 using RestSharp;
 using Readarr.Api.V3.Series;
+using Readarr.Core.Tv;
 
 namespace Readarr.Integration.Test.Client
 {

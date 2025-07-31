@@ -8,13 +8,14 @@ using Readarr.Common.Extensions;
 using Readarr.Common.Http;
 using Readarr.Core.Localization;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Emby
 {
     public interface IMediaBrowserService
     {
         void Notify(MediaBrowserSettings settings, string title, string message);
-        void Update(MediaBrowserSettings settings, Series series, string updateType);
+        void Update(MediaBrowserSettings settings, Tv.Series series, string updateType);
         ValidationFailure Test(MediaBrowserSettings settings);
     }
 
@@ -36,7 +37,7 @@ namespace Readarr.Core.Notifications.Emby
             _proxy.Notify(settings, title, message);
         }
 
-        public void Update(MediaBrowserSettings settings, Series series, string updateType)
+        public void Update(MediaBrowserSettings settings, Tv.Series series, string updateType)
         {
             HashSet<string> paths;
 

@@ -12,13 +12,14 @@ using Readarr.Core.Localization;
 using Readarr.Core.RootFolders;
 using Readarr.Core.Books;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Plex.Server
 {
     public interface IPlexServerService
     {
-        void UpdateLibrary(Series series, PlexServerSettings settings);
-        void UpdateLibrary(IEnumerable<Series> series, PlexServerSettings settings);
+        void UpdateLibrary(Tv.Series series, PlexServerSettings settings);
+        void UpdateLibrary(IEnumerable<Tv.Series> series, PlexServerSettings settings);
         ValidationFailure Test(PlexServerSettings settings);
     }
 
@@ -39,12 +40,12 @@ namespace Readarr.Core.Notifications.Plex.Server
             _logger = logger;
         }
 
-        public void UpdateLibrary(Series series, PlexServerSettings settings)
+        public void UpdateLibrary(Tv.Series series, PlexServerSettings settings)
         {
             UpdateLibrary(new[] { series }, settings);
         }
 
-        public void UpdateLibrary(IEnumerable<Series> multipleSeries, PlexServerSettings settings)
+        public void UpdateLibrary(IEnumerable<Tv.Series> multipleSeries, PlexServerSettings settings)
         {
             try
             {
@@ -95,7 +96,7 @@ namespace Readarr.Core.Notifications.Plex.Server
             return version;
         }
 
-        private void UpdateSections(Series series, List<PlexSection> sections, PlexServerSettings settings)
+        private void UpdateSections(Tv.Series series, List<PlexSection> sections, PlexServerSettings settings)
         {
             var rootFolderPath = _rootFolderService.GetBestRootFolderPath(series.Path);
             var seriesRelativePath = rootFolderPath.GetRelativePath(series.Path);

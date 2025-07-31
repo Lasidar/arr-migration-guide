@@ -14,6 +14,7 @@ using Readarr.Core.Extras.Others;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Metadata
 {
@@ -57,7 +58,7 @@ namespace Readarr.Core.Extras.Metadata
 
         public override int Order => 0;
 
-        public override IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Series series)
+        public override IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Tv.Series series)
         {
             var metadataFiles = _metadataFileService.GetFilesBySeries(series.Id);
             _cleanMetadataService.Clean(series);
@@ -82,7 +83,7 @@ namespace Readarr.Core.Extras.Metadata
             return files;
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EpisodeFile> episodeFiles)
+        public override IEnumerable<ExtraFile> CreateAfterSeriesScan(Tv.Series series, List<EpisodeFile> episodeFiles)
         {
             var metadataFiles = _metadataFileService.GetFilesBySeries(series.Id);
             _cleanMetadataService.Clean(series);
@@ -115,7 +116,7 @@ namespace Readarr.Core.Extras.Metadata
             return files;
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterEpisodesImported(Series series)
+        public override IEnumerable<ExtraFile> CreateAfterEpisodesImported(Tv.Series series)
         {
             var metadataFiles = _metadataFileService.GetFilesBySeries(series.Id);
             _cleanMetadataService.Clean(series);
@@ -140,7 +141,7 @@ namespace Readarr.Core.Extras.Metadata
             return files;
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EpisodeFile episodeFile)
+        public override IEnumerable<ExtraFile> CreateAfterEpisodeImport(Tv.Series series, EpisodeFile episodeFile)
         {
             var files = new List<MetadataFile>();
 
@@ -155,7 +156,7 @@ namespace Readarr.Core.Extras.Metadata
             return files;
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterEpisodeFolder(Series series, string seriesFolder, string seasonFolder)
+        public override IEnumerable<ExtraFile> CreateAfterEpisodeFolder(Tv.Series series, string seriesFolder, string seasonFolder)
         {
             var metadataFiles = _metadataFileService.GetFilesBySeries(series.Id);
 
@@ -187,7 +188,7 @@ namespace Readarr.Core.Extras.Metadata
             return files;
         }
 
-        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EpisodeFile> episodeFiles)
+        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Tv.Series series, List<EpisodeFile> episodeFiles)
         {
             var metadataFiles = _metadataFileService.GetFilesBySeries(series.Id);
             var movedFiles = new List<MetadataFile>();
@@ -243,7 +244,7 @@ namespace Readarr.Core.Extras.Metadata
             return seriesMetadata.Where(c => c.Consumer == consumer.GetType().Name).ToList();
         }
 
-        private MetadataFile ProcessSeriesMetadata(IMetadata consumer, Series series, List<MetadataFile> existingMetadataFiles, SeriesMetadataReason reason)
+        private MetadataFile ProcessSeriesMetadata(IMetadata consumer, Tv.Series series, List<MetadataFile> existingMetadataFiles, SeriesMetadataReason reason)
         {
             var seriesMetadata = consumer.SeriesMetadata(series, reason);
 
@@ -286,7 +287,7 @@ namespace Readarr.Core.Extras.Metadata
             return metadata;
         }
 
-        private MetadataFile ProcessEpisodeMetadata(IMetadata consumer, Series series, EpisodeFile episodeFile, List<MetadataFile> existingMetadataFiles)
+        private MetadataFile ProcessEpisodeMetadata(IMetadata consumer, Tv.Series series, EpisodeFile episodeFile, List<MetadataFile> existingMetadataFiles)
         {
             var episodeMetadata = consumer.EpisodeMetadata(series, episodeFile);
 
@@ -339,7 +340,7 @@ namespace Readarr.Core.Extras.Metadata
             return metadata;
         }
 
-        private List<MetadataFile> ProcessSeriesImages(IMetadata consumer, Series series, List<MetadataFile> existingMetadataFiles)
+        private List<MetadataFile> ProcessSeriesImages(IMetadata consumer, Tv.Series series, List<MetadataFile> existingMetadataFiles)
         {
             var result = new List<MetadataFile>();
 
@@ -374,7 +375,7 @@ namespace Readarr.Core.Extras.Metadata
             return result;
         }
 
-        private List<MetadataFile> ProcessSeasonImages(IMetadata consumer, Series series, List<MetadataFile> existingMetadataFiles)
+        private List<MetadataFile> ProcessSeasonImages(IMetadata consumer, Tv.Series series, List<MetadataFile> existingMetadataFiles)
         {
             var result = new List<MetadataFile>();
 
@@ -414,7 +415,7 @@ namespace Readarr.Core.Extras.Metadata
             return result;
         }
 
-        private List<MetadataFile> ProcessEpisodeImages(IMetadata consumer, Series series, EpisodeFile episodeFile, List<MetadataFile> existingMetadataFiles)
+        private List<MetadataFile> ProcessEpisodeImages(IMetadata consumer, Tv.Series series, EpisodeFile episodeFile, List<MetadataFile> existingMetadataFiles)
         {
             var result = new List<MetadataFile>();
 
@@ -465,7 +466,7 @@ namespace Readarr.Core.Extras.Metadata
             return result;
         }
 
-        private void DownloadImage(Series series, ImageFileResult image)
+        private void DownloadImage(Tv.Series series, ImageFileResult image)
         {
             var fullPath = Path.Combine(series.Path, image.RelativePath);
             var downloaded = true;
@@ -510,7 +511,7 @@ namespace Readarr.Core.Extras.Metadata
             _mediaFileAttributeService.SetFilePermissions(path);
         }
 
-        private MetadataFile GetMetadataFile(Series series, List<MetadataFile> existingMetadataFiles, Func<MetadataFile, bool> predicate)
+        private MetadataFile GetMetadataFile(Tv.Series series, List<MetadataFile> existingMetadataFiles, Func<MetadataFile, bool> predicate)
         {
             var matchingMetadataFiles = existingMetadataFiles.Where(predicate).ToList();
 

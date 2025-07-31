@@ -1,3 +1,4 @@
+using Readarr.Core.Books.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using Readarr.Core.Configuration;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Messaging.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download.TrackedDownloads
 {

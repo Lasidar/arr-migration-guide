@@ -5,6 +5,7 @@ using Readarr.Core.DecisionEngine.Specifications.Search;
 using Readarr.Core.IndexerSearch.Definitions;
 using Readarr.Core.Parser.Model;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.DecisionEngineTests.Search.SingleEpisodeSearchMatchSpecificationTests
 {

@@ -11,7 +11,7 @@ namespace Readarr.Core.Notifications
     public class DownloadMessage
     {
         public string Message { get; set; }
-        public Series Series { get; set; }
+        public Tv.Series Series { get; set; }
         public LocalEpisode EpisodeInfo { get; set; }
         public EpisodeFile EpisodeFile { get; set; }
         public List<DeletedEpisodeFile> OldFiles { get; set; }

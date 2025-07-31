@@ -2,12 +2,13 @@
 using NLog;
 using Readarr.Common.Disk;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Metadata.Files
 {
     public interface ICleanMetadataService
     {
-        void Clean(Series series);
+        void Clean(Tv.Series series);
     }
 
     public class CleanExtraFileService : ICleanMetadataService
@@ -25,7 +26,7 @@ namespace Readarr.Core.Extras.Metadata.Files
             _logger = logger;
         }
 
-        public void Clean(Series series)
+        public void Clean(Tv.Series series)
         {
             _logger.Debug("Cleaning missing metadata files for series: {0}", series.Title);
 

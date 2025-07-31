@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Readarr.Core.Download;
 using Readarr.Core.Download.Clients.RTorrent;
 using Readarr.Core.MediaFiles.TorrentInfo;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadClientTests.RTorrentTests
 {

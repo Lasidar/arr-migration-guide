@@ -16,6 +16,7 @@ using Readarr.Core.ThingiProvider;
 using Readarr.Core.Validation;
 using Polly;
 using Polly.Retry;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download
 {

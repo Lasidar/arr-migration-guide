@@ -12,6 +12,7 @@ using Readarr.Core.Download.Clients;
 using Readarr.Core.Download.Clients.FreeboxDownload;
 using Readarr.Core.Download.Clients.FreeboxDownload.Responses;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadClientTests.FreeboxDownloadTests
 {

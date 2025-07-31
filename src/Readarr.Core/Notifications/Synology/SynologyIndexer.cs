@@ -6,6 +6,7 @@ using Readarr.Common.Extensions;
 using Readarr.Core.Localization;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Synology
 {
@@ -50,7 +51,7 @@ namespace Readarr.Core.Notifications.Synology
             }
         }
 
-        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
+        public override void OnRename(Tv.Series series, List<RenamedBookFile> renamedFiles)
         {
             if (Settings.UpdateLibrary)
             {

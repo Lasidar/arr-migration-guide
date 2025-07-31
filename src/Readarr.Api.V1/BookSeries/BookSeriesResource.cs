@@ -8,6 +8,7 @@ using Readarr.Core.Books;
 using Readarr.Http.REST;
 using Readarr.Api.V1.Book;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.BookSeries
 {

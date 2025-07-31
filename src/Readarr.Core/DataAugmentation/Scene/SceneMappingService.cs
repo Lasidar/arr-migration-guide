@@ -9,6 +9,8 @@ using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser;
 using Readarr.Core.Books.Events;
+using Readarr.Core.Tv;
+using Readarr.Core.Tv.Events;
 
 namespace Readarr.Core.DataAugmentation.Scene
 {

@@ -4,6 +4,7 @@ using Readarr.Common.Extensions;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.ThingiProvider.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.ImportLists.ImportListItems
 {

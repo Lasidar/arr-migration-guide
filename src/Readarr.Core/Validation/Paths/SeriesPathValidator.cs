@@ -3,14 +3,15 @@ using FluentValidation.Validators;
 using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Validation.Paths
 {
     public class SeriesPathValidator : PropertyValidator
     {
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
 
-        public SeriesPathValidator(ISeriesService seriesService)
+        public SeriesPathValidator(Tv.ISeriesService seriesService)
         {
             _seriesService = seriesService;
         }

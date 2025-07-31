@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Readarr.Core.SeriesStats;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Series
 {

@@ -10,6 +10,7 @@ using Readarr.Core.Download;
 using Readarr.Core.Download.Clients.Deluge;
 using Readarr.Core.MediaFiles.TorrentInfo;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadClientTests.DelugeTests
 {

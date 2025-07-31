@@ -2,6 +2,7 @@ using FluentValidation;
 using Readarr.Core.Annotations;
 using Readarr.Core.Parser;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.CustomFormats
 {

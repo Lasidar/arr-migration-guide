@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using Readarr.Core.Tv;
 
 namespace Readarr.Automation.Test.PageModel
 {

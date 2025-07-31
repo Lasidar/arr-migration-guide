@@ -5,6 +5,7 @@ using Dapper;
 using Readarr.Core.AutoTagging;
 using Readarr.Core.AutoTagging.Specifications;
 using Readarr.Core.Datastore;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Housekeeping.Housekeepers
 {

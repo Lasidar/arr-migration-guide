@@ -5,6 +5,7 @@ using Readarr.Common.Extensions;
 using Readarr.Common.Http;
 using Readarr.Core.DataAugmentation.Scene;
 using Readarr.Core.IndexerSearch.Definitions;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Indexers.FileList
 {

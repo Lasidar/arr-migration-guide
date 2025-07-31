@@ -19,6 +19,7 @@ using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.RootFolders;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.MediaFiles
 {

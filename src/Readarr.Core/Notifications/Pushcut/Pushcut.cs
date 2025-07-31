@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using Readarr.Common.Extensions;
 using Readarr.Core.MediaCover;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Pushcut
 {
@@ -79,12 +80,12 @@ namespace Readarr.Core.Notifications.Pushcut
             _proxy.SendNotification(MANUAL_INTERACTION_REQUIRED_TITLE_BRANDED, manualInteractionRequiredMessage.Message, null, [], Settings);
         }
 
-        private string GetPosterUrl(Series series)
+        private string GetPosterUrl(Tv.Series series)
         {
             return series.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.RemoteUrl;
         }
 
-        private List<NotificationMetadataLink> GetLinks(Series series)
+        private List<NotificationMetadataLink> GetLinks(Tv.Series series)
         {
             return NotificationMetadataLinkGenerator.GenerateLinks(series, Settings.MetadataLinks);
         }

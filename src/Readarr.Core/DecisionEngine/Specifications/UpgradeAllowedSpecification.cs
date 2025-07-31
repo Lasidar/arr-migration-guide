@@ -2,6 +2,7 @@ using System.Linq;
 using NLog;
 using Readarr.Core.CustomFormats;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {

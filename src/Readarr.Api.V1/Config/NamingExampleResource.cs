@@ -1,4 +1,5 @@
 using Readarr.Core.Organizer;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Config
 {

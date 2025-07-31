@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FluentValidation.Results;
 using NLog;
 using Readarr.Core.Localization;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.SendGrid
 {

@@ -6,6 +6,7 @@ using Readarr.Core.Download.TrackedDownloads;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Qualities;
 using Readarr.Core.Queue;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {

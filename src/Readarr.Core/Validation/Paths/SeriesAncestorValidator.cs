@@ -2,14 +2,15 @@ using System.Linq;
 using FluentValidation.Validators;
 using Readarr.Common.Extensions;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Validation.Paths
 {
     public class SeriesAncestorValidator : PropertyValidator
     {
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
 
-        public SeriesAncestorValidator(ISeriesService seriesService)
+        public SeriesAncestorValidator(Tv.ISeriesService seriesService)
         {
             _seriesService = seriesService;
         }

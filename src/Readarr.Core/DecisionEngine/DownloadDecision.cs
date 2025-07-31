@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.DecisionEngine
 {

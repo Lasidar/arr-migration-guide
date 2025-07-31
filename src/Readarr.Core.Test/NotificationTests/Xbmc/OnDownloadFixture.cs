@@ -8,6 +8,7 @@ using Readarr.Core.Notifications;
 using Readarr.Core.Notifications.Xbmc;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.NotificationTests.Xbmc
 {

@@ -7,6 +7,7 @@ using Readarr.Core.Extras.Files;
 using Readarr.Core.MediaFiles.BookImport.Aggregation;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Others
 {
@@ -28,7 +29,7 @@ namespace Readarr.Core.Extras.Others
 
         public override int Order => 2;
 
-        public override IEnumerable<ExtraFile> ProcessFiles(Series series, List<string> filesOnDisk, List<string> importedFiles, string fileNameBeforeRename)
+        public override IEnumerable<ExtraFile> ProcessFiles(Tv.Series series, List<string> filesOnDisk, List<string> importedFiles, string fileNameBeforeRename)
         {
             _logger.Debug("Looking for existing extra files in {0}", series.Path);
 

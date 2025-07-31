@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.ImportLists.Trakt
 {

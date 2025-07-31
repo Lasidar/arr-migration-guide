@@ -4,6 +4,7 @@ using System.Data;
 using Dapper;
 using FluentMigrator;
 using Readarr.Core.Datastore.Migration.Framework;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Datastore.Migration
 {

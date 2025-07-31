@@ -11,6 +11,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.Notifications.Plex.PlexTv;
 using Readarr.Core.Books;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Plex.Server
 {
@@ -42,7 +43,7 @@ namespace Readarr.Core.Notifications.Plex.Server
             UpdateIfEnabled(message.Series);
         }
 
-        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
+        public override void OnRename(Tv.Series series, List<RenamedBookFile> renamedFiles)
         {
             UpdateIfEnabled(series);
         }
@@ -65,7 +66,7 @@ namespace Readarr.Core.Notifications.Plex.Server
             }
         }
 
-        private void UpdateIfEnabled(Series series)
+        private void UpdateIfEnabled(Tv.Series series)
         {
             _plexTvService.Ping(Settings.AuthToken);
 

@@ -1,5 +1,6 @@
 using Readarr.Core.Books;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.AutoTagging.Specifications
 {
@@ -19,7 +20,7 @@ namespace Readarr.Core.AutoTagging.Specifications
 
         public abstract NzbDroneValidationResult Validate();
 
-        public bool IsSatisfiedBy(Series series)
+        public bool IsSatisfiedBy(Tv.Series series)
         {
             var match = IsSatisfiedByWithoutNegate(series);
 
@@ -31,6 +32,6 @@ namespace Readarr.Core.AutoTagging.Specifications
             return match;
         }
 
-        protected abstract bool IsSatisfiedByWithoutNegate(Series series);
+        protected abstract bool IsSatisfiedByWithoutNegate(Tv.Series series);
     }
 }

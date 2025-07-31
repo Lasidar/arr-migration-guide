@@ -32,7 +32,7 @@ namespace Readarr.Core.Download
         private readonly IProvideImportItemService _provideImportItemService;
         private readonly IDownloadedBooksImportService _downloadedBooksImportService;
         private readonly IParsingService _parsingService;
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
         private readonly ITrackedDownloadAlreadyImported _trackedDownloadAlreadyImported;
         private readonly IEpisodeService _episodeService;
         private readonly MediaFiles.IMediaFileService _mediaFileService;
@@ -44,7 +44,7 @@ namespace Readarr.Core.Download
                                         IProvideImportItemService provideImportItemService,
                                         IDownloadedBooksImportService downloadedBooksImportService,
                                         IParsingService parsingService,
-                                        ISeriesService seriesService,
+                                        Tv.ISeriesService seriesService,
                                         ITrackedDownloadAlreadyImported trackedDownloadAlreadyImported,
                                         IEpisodeService episodeService,
                                         MediaFiles.IMediaFileService mediaFileService,

@@ -7,6 +7,7 @@ using Readarr.Api.V1.Edition;
 using Readarr.Core.Books;
 using Readarr.Core.MediaCover;
 using Readarr.Http.REST;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Book
 {

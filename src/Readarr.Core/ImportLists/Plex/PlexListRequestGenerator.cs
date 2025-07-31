@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Readarr.Core.Notifications.Plex.PlexTv;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.ImportLists.Plex
 {

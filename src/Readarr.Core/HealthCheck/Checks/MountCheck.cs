@@ -3,15 +3,16 @@ using System.Linq;
 using Readarr.Common.Disk;
 using Readarr.Core.Localization;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.HealthCheck.Checks
 {
     public class MountCheck : HealthCheckBase
     {
         private readonly IDiskProvider _diskProvider;
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
 
-        public MountCheck(IDiskProvider diskProvider, ISeriesService seriesService, ILocalizationService localizationService)
+        public MountCheck(IDiskProvider diskProvider, Tv.ISeriesService seriesService, ILocalizationService localizationService)
             : base(localizationService)
         {
             _diskProvider = diskProvider;

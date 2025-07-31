@@ -1,3 +1,4 @@
+using Readarr.Core.MediaFiles.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ using Readarr.Core.Qualities;
 using Readarr.Core.Queue;
 using Readarr.Core.Books;
 using Readarr.Core.Books.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download.Pending
 {

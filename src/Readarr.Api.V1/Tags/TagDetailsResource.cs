@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Readarr.Core.Tags;
 using Readarr.Http.REST;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Tags
 {

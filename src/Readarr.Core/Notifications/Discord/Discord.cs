@@ -12,6 +12,7 @@ using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Notifications.Discord.Payloads;
 using Readarr.Core.Books;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Discord
 {
@@ -338,7 +339,7 @@ namespace Readarr.Core.Notifications.Discord
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
+        public override void OnRename(Tv.Series series, List<RenamedBookFile> renamedFiles)
         {
             var attachments = new List<Embed>
             {
@@ -687,7 +688,7 @@ namespace Readarr.Core.Notifications.Discord
             return string.Format("{0} {1}", (Math.Sign(byteCount) * num).ToString(), suf[place]);
         }
 
-        private string GetLinksString(Series series)
+        private string GetLinksString(Tv.Series series)
         {
             if (series == null)
             {
@@ -708,7 +709,7 @@ namespace Readarr.Core.Notifications.Discord
             return string.Join(" / ", links);
         }
 
-        private string GetTitle(Series series, List<Episode> episodes)
+        private string GetTitle(Tv.Series series, List<Episode> episodes)
         {
             if (series == null)
             {

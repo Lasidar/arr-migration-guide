@@ -16,6 +16,7 @@ using Readarr.Core.Parser.Model;
 using Readarr.Core.RemotePathMappings;
 using Readarr.Core.Tags;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download.Clients.QBittorrent
 {

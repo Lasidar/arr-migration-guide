@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using Readarr.Api.V3.Blocklist;
 using Readarr.Api.V3.Series;
+using Readarr.Core.Tv;
 
 namespace Readarr.Integration.Test.ApiTests
 {

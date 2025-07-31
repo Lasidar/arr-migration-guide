@@ -14,6 +14,7 @@ using Readarr.Core.Download;
 using Readarr.Core.Download.Clients.Blackhole;
 using Readarr.Core.MediaFiles;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadClientTests.Blackhole
 {

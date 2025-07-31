@@ -3,6 +3,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Qualities;
 using Readarr.Http.REST;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Config
 {

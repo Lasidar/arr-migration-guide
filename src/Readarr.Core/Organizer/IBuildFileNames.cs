@@ -1,7 +1,7 @@
 using Readarr.Core.Books;
 using Readarr.Core.MediaFiles;
-using Readarr.Core.Books;
 using System.Collections.Generic;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Organizer
 {

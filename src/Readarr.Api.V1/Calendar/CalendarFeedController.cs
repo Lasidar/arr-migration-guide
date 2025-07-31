@@ -10,6 +10,7 @@ using Readarr.Common.Extensions;
 using Readarr.Core.Tags;
 using Readarr.Core.Books;
 using Readarr.Http;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Calendar
 {

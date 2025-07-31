@@ -8,6 +8,7 @@ using Readarr.Core.MediaCover;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Tags;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Webhook
 {
@@ -144,7 +145,7 @@ namespace Readarr.Core.Notifications.Webhook
             };
         }
 
-        protected WebhookRenamePayload BuildOnRenamePayload(Series series, List<RenamedBookFile> renamedFiles)
+        protected WebhookRenamePayload BuildOnRenamePayload(Tv.Series series, List<RenamedBookFile> renamedFiles)
         {
             return new WebhookRenamePayload
             {
@@ -245,7 +246,7 @@ namespace Readarr.Core.Notifications.Webhook
             };
         }
 
-        private WebhookSeries GetSeries(Series series)
+        private WebhookSeries GetSeries(Tv.Series series)
         {
             if (series == null)
             {
@@ -257,7 +258,7 @@ namespace Readarr.Core.Notifications.Webhook
             return new WebhookSeries(series, GetTagLabels(series));
         }
 
-        private List<string> GetTagLabels(Series series)
+        private List<string> GetTagLabels(Tv.Series series)
         {
             if (series == null)
             {

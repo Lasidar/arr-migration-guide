@@ -7,6 +7,7 @@ using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
 using Readarr.Test.Common;
 using Readarr.Test.Common.Categories;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.MetadataSource.SkyHook
 {

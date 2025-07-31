@@ -3,6 +3,7 @@ using NUnit.Framework;
 using Readarr.Core.Parser;
 using Readarr.Core.Qualities;
 using Readarr.Core.Test.Framework;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.ParserTests
 {

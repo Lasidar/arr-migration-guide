@@ -18,6 +18,7 @@ using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Books.Commands;
 using Readarr.Core.Update.Commands;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Jobs
 {

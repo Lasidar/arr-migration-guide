@@ -6,6 +6,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Readarr.Core.Datastore.Migration;
 using Readarr.Core.Test.Framework;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Datastore.Migration
 {

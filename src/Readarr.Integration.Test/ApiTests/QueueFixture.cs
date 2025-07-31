@@ -7,6 +7,7 @@ using Readarr.Core.Messaging.Commands;
 using Readarr.Integration.Test.Client;
 using Readarr.Api.V3.Queue;
 using Readarr.Http;
+using Readarr.Core.Tv;
 
 namespace Readarr.Integration.Test.ApiTests
 {

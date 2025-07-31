@@ -5,6 +5,7 @@ using Readarr.Common.Extensions;
 using Readarr.Core.Annotations;
 using Readarr.Core.Books;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.AutoTagging.Specifications
 {
@@ -26,7 +27,7 @@ namespace Readarr.Core.AutoTagging.Specifications
         [FieldDefinition(1, Label = "AutoTaggingSpecificationGenre", Type = FieldType.Tag)]
         public IEnumerable<string> Value { get; set; }
 
-        protected override bool IsSatisfiedByWithoutNegate(Series series)
+        protected override bool IsSatisfiedByWithoutNegate(Tv.Series series)
         {
             return series.Genres.Any(genre => Value.ContainsIgnoreCase(genre));
         }

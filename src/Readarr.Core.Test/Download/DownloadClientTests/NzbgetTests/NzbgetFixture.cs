@@ -12,6 +12,7 @@ using Readarr.Core.Download.Clients.Nzbget;
 using Readarr.Core.Exceptions;
 using Readarr.Core.RemotePathMappings;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadClientTests.NzbgetTests
 {

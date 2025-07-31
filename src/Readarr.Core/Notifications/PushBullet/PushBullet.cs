@@ -4,6 +4,7 @@ using System.Linq;
 using FluentValidation.Results;
 using Readarr.Common.Extensions;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.PushBullet
 {

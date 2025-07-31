@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.ThingiProvider;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications
 {
@@ -11,7 +12,7 @@ namespace Readarr.Core.Notifications
 
         void OnGrab(GrabMessage grabMessage);
         void OnDownload(DownloadMessage message);
-        void OnRename(Series series, List<RenamedBookFile> renamedFiles);
+        void OnRename(Tv.Series series, List<RenamedBookFile> renamedFiles);
         void OnImportComplete(ImportCompleteMessage message);
         void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage);
         void OnSeriesAdd(AuthorAddMessage message);

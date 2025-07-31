@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Readarr.Core.DataAugmentation.Scene;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.IndexerSearch.Definitions
 {

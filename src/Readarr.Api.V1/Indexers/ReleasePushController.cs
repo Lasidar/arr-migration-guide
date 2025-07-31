@@ -12,6 +12,7 @@ using Readarr.Core.Indexers;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Profiles.Qualities;
 using Readarr.Http;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Indexers
 {

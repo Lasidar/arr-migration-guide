@@ -3,6 +3,7 @@ using NUnit.Framework;
 using Readarr.Core.DataAugmentation.DailySeries;
 using Readarr.Core.Test.Framework;
 using Readarr.Test.Common.Categories;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.DataAugmentation.DailySeries
 {

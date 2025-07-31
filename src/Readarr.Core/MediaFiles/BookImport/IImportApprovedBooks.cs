@@ -6,6 +6,6 @@ namespace Readarr.Core.MediaFiles.BookImport
 {
     public interface IImportApprovedBooks
     {
-        List<ImportResult> Import(List<ImportDecision> decisions, bool newDownload, DownloadClientItem downloadClientItem = null, ImportMode importMode = ImportMode.Auto);
+        List<ImportResult> Import(List<ImportDecision<LocalBook>> decisions, bool newDownload, DownloadClientItem downloadClientItem = null, ImportMode importMode = ImportMode.Auto);
     }
 }

@@ -1,3 +1,4 @@
+using Readarr.Core.Books;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -12,11 +13,10 @@ using Readarr.Common.Disk;
 using Readarr.Common.EnsureThat;
 using Readarr.Common.Extensions;
 using Readarr.Core.CustomFormats;
-using Readarr.Core.Books;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Qualities;
-using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Organizer
 {

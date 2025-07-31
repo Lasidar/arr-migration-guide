@@ -8,6 +8,7 @@ using Readarr.Core.Download;
 using Readarr.Core.Download.Clients.Transmission;
 using Readarr.Core.Download.Clients.Vuze;
 using Readarr.Core.Test.Download.DownloadClientTests.TransmissionTests;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadClientTests.VuzeTests
 {

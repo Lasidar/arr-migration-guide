@@ -8,6 +8,7 @@ using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
 using Readarr.Core.Validation.Paths;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.ValidationTests
 {

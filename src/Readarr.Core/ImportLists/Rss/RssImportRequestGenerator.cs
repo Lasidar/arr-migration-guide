@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Readarr.Common.Http;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.ImportLists.Rss
 {

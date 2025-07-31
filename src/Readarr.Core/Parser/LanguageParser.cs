@@ -8,6 +8,7 @@ using Readarr.Common.Extensions;
 using Readarr.Common.Instrumentation;
 using Readarr.Core.Languages;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Parser
 {

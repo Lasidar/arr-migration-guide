@@ -8,6 +8,7 @@ using Readarr.Core.IndexerSearch.Definitions;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
 using Readarr.Test.Common.Categories;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.IndexerTests.IntegrationTests
 {

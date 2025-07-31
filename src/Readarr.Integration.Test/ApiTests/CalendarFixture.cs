@@ -5,6 +5,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Readarr.Integration.Test.Client;
 using Readarr.Api.V3.Episodes;
+using Readarr.Core.Tv;
 
 namespace Readarr.Integration.Test.ApiTests
 {

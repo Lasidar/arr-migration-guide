@@ -6,6 +6,7 @@ using Readarr.Core.Extras.Metadata.Files;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.ThingiProvider;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Metadata
 {
@@ -27,7 +28,7 @@ namespace Readarr.Core.Extras.Metadata
             return new ValidationResult();
         }
 
-        public virtual string GetFilenameAfterMove(Series series, EpisodeFile episodeFile, MetadataFile metadataFile)
+        public virtual string GetFilenameAfterMove(Tv.Series series, EpisodeFile episodeFile, MetadataFile metadataFile)
         {
             var existingFilename = Path.Combine(series.Path, metadataFile.RelativePath);
             var extension = Path.GetExtension(existingFilename).TrimStart('.');
@@ -36,13 +37,13 @@ namespace Readarr.Core.Extras.Metadata
             return newFileName;
         }
 
-        public abstract MetadataFile FindMetadataFile(Series series, string path);
+        public abstract MetadataFile FindMetadataFile(Tv.Series series, string path);
 
-        public abstract MetadataFileResult SeriesMetadata(Series series, SeriesMetadataReason reason);
-        public abstract MetadataFileResult EpisodeMetadata(Series series, EpisodeFile episodeFile);
-        public abstract List<ImageFileResult> SeriesImages(Series series);
-        public abstract List<ImageFileResult> SeasonImages(Series series, Season season);
-        public abstract List<ImageFileResult> EpisodeImages(Series series, EpisodeFile episodeFile);
+        public abstract MetadataFileResult SeriesMetadata(Tv.Series series, SeriesMetadataReason reason);
+        public abstract MetadataFileResult EpisodeMetadata(Tv.Series series, EpisodeFile episodeFile);
+        public abstract List<ImageFileResult> SeriesImages(Tv.Series series);
+        public abstract List<ImageFileResult> SeasonImages(Tv.Series series, Season season);
+        public abstract List<ImageFileResult> EpisodeImages(Tv.Series series, EpisodeFile episodeFile);
 
         public virtual object RequestAction(string action, IDictionary<string, string> query)
         {

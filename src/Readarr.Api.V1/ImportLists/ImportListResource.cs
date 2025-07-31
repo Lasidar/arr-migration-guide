@@ -1,6 +1,7 @@
 using System;
 using Readarr.Core.ImportLists;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.ImportLists
 {

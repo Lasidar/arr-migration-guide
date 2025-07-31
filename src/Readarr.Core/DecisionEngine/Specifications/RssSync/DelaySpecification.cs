@@ -4,6 +4,7 @@ using Readarr.Core.Download.Pending;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Profiles.Delay;
 using Readarr.Core.Qualities;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.DecisionEngine.Specifications.RssSync
 {

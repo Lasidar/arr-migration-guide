@@ -19,6 +19,7 @@ using Readarr.Core.Books;
 using Readarr.Core.Validation;
 using Readarr.Http;
 using HttpStatusCode = System.Net.HttpStatusCode;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Indexers
 {

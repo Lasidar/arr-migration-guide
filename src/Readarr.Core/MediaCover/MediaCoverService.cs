@@ -12,6 +12,7 @@ using Readarr.Core.Configuration;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Books;
 using Readarr.Core.Books.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.MediaCover
 {
@@ -107,7 +108,7 @@ namespace Readarr.Core.MediaCover
             return Path.Combine(_coverRootFolder, seriesId.ToString());
         }
 
-        private bool EnsureCovers(Series series)
+        private bool EnsureCovers(Tv.Series series)
         {
             var updated = false;
             var toResize = new List<Tuple<MediaCover, bool>>();
@@ -165,7 +166,7 @@ namespace Readarr.Core.MediaCover
             return updated;
         }
 
-        private void DownloadCover(Series series, MediaCover cover)
+        private void DownloadCover(Tv.Series series, MediaCover cover)
         {
             var fileName = GetCoverPath(series.Id, cover.CoverType);
 
@@ -173,7 +174,7 @@ namespace Readarr.Core.MediaCover
             _httpClient.DownloadFile(cover.RemoteUrl, fileName);
         }
 
-        private void EnsureResizedCovers(Series series, MediaCover cover, bool forceResize)
+        private void EnsureResizedCovers(Tv.Series series, MediaCover cover, bool forceResize)
         {
             int[] heights;
 

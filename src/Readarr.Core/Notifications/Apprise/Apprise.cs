@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using Readarr.Common.Extensions;
 using Readarr.Core.MediaCover;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Apprise
 {
@@ -79,7 +80,7 @@ namespace Readarr.Core.Notifications.Apprise
             return new ValidationResult(failures);
         }
 
-        private static string GetPosterUrl(Series series)
+        private static string GetPosterUrl(Tv.Series series)
         {
             return series?.Images?.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.RemoteUrl;
         }

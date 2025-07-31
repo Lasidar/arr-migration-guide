@@ -3,6 +3,7 @@ using Readarr.Common.Messaging;
 using Readarr.Core.Download.TrackedDownloads;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download
 {

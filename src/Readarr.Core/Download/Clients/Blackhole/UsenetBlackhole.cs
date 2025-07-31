@@ -11,6 +11,7 @@ using Readarr.Core.Localization;
 using Readarr.Core.Organizer;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.RemotePathMappings;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download.Clients.Blackhole
 {

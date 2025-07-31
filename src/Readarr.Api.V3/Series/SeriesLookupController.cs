@@ -4,6 +4,7 @@ using Readarr.Core.MetadataSource;
 using Readarr.Core.Organizer;
 using Readarr.Core.SeriesStats;
 using Readarr.Http;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V3.Series;
 

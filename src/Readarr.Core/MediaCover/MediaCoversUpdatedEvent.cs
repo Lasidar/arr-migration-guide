@@ -1,6 +1,7 @@
 using Readarr.Common.Messaging;
 using Readarr.Core.Books;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.MediaCover
 {

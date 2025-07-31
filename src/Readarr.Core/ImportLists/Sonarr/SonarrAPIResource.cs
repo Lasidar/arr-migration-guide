@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.ImportLists.Sonarr
 {

@@ -6,19 +6,20 @@ using Readarr.Common.Disk;
 using Readarr.Core.Configuration;
 using Readarr.Core.Extras.Metadata.Files;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Housekeeping.Housekeepers
 {
     public class DeleteBadMediaCovers : IHousekeepingTask
     {
         private readonly IMetadataFileService _metaFileService;
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
         private readonly IDiskProvider _diskProvider;
         private readonly IConfigService _configService;
         private readonly Logger _logger;
 
         public DeleteBadMediaCovers(IMetadataFileService metaFileService,
-                                    ISeriesService seriesService,
+                                    Tv.ISeriesService seriesService,
                                     IDiskProvider diskProvider,
                                     IConfigService configService,
                                     Logger logger)

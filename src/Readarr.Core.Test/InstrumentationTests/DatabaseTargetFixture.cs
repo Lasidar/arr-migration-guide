@@ -9,6 +9,7 @@ using Readarr.Core.Instrumentation;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Test.Framework;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.InstrumentationTests
 {

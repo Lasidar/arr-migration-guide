@@ -2,6 +2,7 @@ using System.Linq;
 using NLog;
 using Readarr.Core.Download.TrackedDownloads;
 using Readarr.Core.Messaging.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download
 {

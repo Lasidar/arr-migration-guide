@@ -9,6 +9,7 @@ using Readarr.Core.DataAugmentation.Scene;
 using Readarr.Core.IndexerSearch.Definitions;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Parser
 {

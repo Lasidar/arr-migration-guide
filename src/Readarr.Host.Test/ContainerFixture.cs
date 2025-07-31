@@ -24,6 +24,7 @@ using Readarr.Host;
 using Readarr.SignalR;
 using Readarr.Test.Common;
 using IServiceProvider = System.IServiceProvider;
+using Readarr.Core.Tv;
 
 namespace Readarr.App.Test
 {

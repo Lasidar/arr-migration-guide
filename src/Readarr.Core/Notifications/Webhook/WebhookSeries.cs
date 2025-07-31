@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Readarr.Core.Languages;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Webhook
 {
@@ -26,7 +27,7 @@ namespace Readarr.Core.Notifications.Webhook
         {
         }
 
-        public WebhookSeries(Series series, List<string> tags)
+        public WebhookSeries(Tv.Series series, List<string> tags)
         {
             Id = series.Id;
             Title = series.Title;

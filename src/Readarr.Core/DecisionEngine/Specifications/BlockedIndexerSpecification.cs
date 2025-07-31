@@ -5,6 +5,7 @@ using NLog;
 using Readarr.Common.Cache;
 using Readarr.Core.Indexers;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.DecisionEngine.Specifications
 {

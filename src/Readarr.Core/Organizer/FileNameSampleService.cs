@@ -5,6 +5,7 @@ using Readarr.Core.MediaFiles.MediaInfo;
 using Readarr.Core.Qualities;
 using Readarr.Core.Books;
 using System.Linq;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Organizer
 {
@@ -269,7 +270,7 @@ namespace Readarr.Core.Organizer
             return _buildFileNames.GetSeasonFolder(_standardSeries, 0);
         }
 
-        private string BuildSample(List<Episode> episodes, Series series, EpisodeFile episodeFile, NamingConfig nameSpec, List<CustomFormat> customFormats)
+        private string BuildSample(List<Episode> episodes, Tv.Series series, EpisodeFile episodeFile, NamingConfig nameSpec, List<CustomFormat> customFormats)
         {
             try
             {

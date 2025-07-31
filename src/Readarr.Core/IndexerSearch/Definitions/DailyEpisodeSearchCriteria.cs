@@ -1,4 +1,5 @@
 using System;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.IndexerSearch.Definitions
 {

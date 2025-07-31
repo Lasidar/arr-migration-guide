@@ -1,4 +1,5 @@
 using Readarr.Core.SeriesStats;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V3.Series;
 

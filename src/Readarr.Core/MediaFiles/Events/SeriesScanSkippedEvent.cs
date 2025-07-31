@@ -1,14 +1,15 @@
 using Readarr.Common.Messaging;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.MediaFiles.Events
 {
     public class SeriesScanSkippedEvent : IEvent
     {
-        public Series Series { get; private set; }
+        public Tv.Series Series { get; private set; }
         public SeriesScanSkippedReason Reason { get; set; }
 
-        public SeriesScanSkippedEvent(Series series, SeriesScanSkippedReason reason)
+        public SeriesScanSkippedEvent(Tv.Series series, SeriesScanSkippedReason reason)
         {
             Series = series;
             Reason = reason;

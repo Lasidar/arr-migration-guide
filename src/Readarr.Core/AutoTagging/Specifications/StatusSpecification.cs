@@ -20,7 +20,7 @@ namespace Readarr.Core.AutoTagging.Specifications
         [FieldDefinition(1, Label = "AutoTaggingSpecificationStatus", Type = FieldType.Select, SelectOptions = typeof(SeriesStatusType))]
         public int Status { get; set; }
 
-        protected override bool IsSatisfiedByWithoutNegate(Series series)
+        protected override bool IsSatisfiedByWithoutNegate(Tv.Series series)
         {
             return series.Status == (SeriesStatusType)Status;
         }

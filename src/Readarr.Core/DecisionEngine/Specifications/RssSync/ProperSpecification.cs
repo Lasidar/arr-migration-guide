@@ -4,6 +4,7 @@ using NLog;
 using Readarr.Core.Configuration;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Qualities;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.DecisionEngine.Specifications.RssSync
 {

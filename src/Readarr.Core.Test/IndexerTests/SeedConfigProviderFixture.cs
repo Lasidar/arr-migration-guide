@@ -7,6 +7,7 @@ using Readarr.Core.Indexers;
 using Readarr.Core.Indexers.Torznab;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.IndexerTests
 {

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Readarr.Core.Indexers;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Indexers
 {

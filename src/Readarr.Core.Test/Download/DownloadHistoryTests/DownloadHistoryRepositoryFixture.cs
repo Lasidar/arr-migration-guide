@@ -6,6 +6,7 @@ using NUnit.Framework;
 using Readarr.Core.Download.History;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadHistoryTests
 {

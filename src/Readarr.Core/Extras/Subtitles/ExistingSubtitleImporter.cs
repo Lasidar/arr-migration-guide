@@ -8,6 +8,7 @@ using Readarr.Core.Languages;
 using Readarr.Core.MediaFiles.BookImport.Aggregation;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Subtitles
 {
@@ -29,7 +30,7 @@ namespace Readarr.Core.Extras.Subtitles
 
         public override int Order => 1;
 
-        public override IEnumerable<ExtraFile> ProcessFiles(Series series, List<string> filesOnDisk, List<string> importedFiles, string fileNameBeforeRename)
+        public override IEnumerable<ExtraFile> ProcessFiles(Tv.Series series, List<string> filesOnDisk, List<string> importedFiles, string fileNameBeforeRename)
         {
             _logger.Debug("Looking for existing subtitle files in {0}", series.Path);
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Readarr.Common.Extensions;
 using Readarr.Core.Datastore;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Books
 {
@@ -40,7 +41,7 @@ namespace Readarr.Core.Books
         public string Position { get; set; } // Can be "1", "1.5", "A", etc.
         public int? PositionOrder { get; set; } // For sorting
         
-        public LazyLoaded<Series> Series { get; set; }
+        public LazyLoaded<Tv.Series> Series { get; set; }
         public LazyLoaded<Book> Book { get; set; }
     }
 }

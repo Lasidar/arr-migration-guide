@@ -4,10 +4,10 @@ namespace Readarr.Core.Parser.Model
 {
     public class FindSeriesResult
     {
-        public Series Series { get; set; }
+        public Tv.Series Series { get; set; }
         public SeriesMatchType MatchType { get; set; }
 
-        public FindSeriesResult(Series series, SeriesMatchType matchType)
+        public FindSeriesResult(Tv.Series series, SeriesMatchType matchType)
         {
             Series = series;
             MatchType = matchType;

@@ -7,6 +7,7 @@ using Readarr.Core.Extras.Metadata.Consumers.Wdtv;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Extras.Metadata.Consumers.Wdtv
 {

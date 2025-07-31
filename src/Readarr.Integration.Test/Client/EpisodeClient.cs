@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using RestSharp;
 using Readarr.Api.V3.Episodes;
+using Readarr.Core.Tv;
 
 namespace Readarr.Integration.Test.Client
 {

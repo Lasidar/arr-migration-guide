@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Readarr.Core.MetadataSource;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.MetadataSource
 {

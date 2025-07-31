@@ -15,6 +15,7 @@ using Readarr.Core.Localization;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.RemotePathMappings;
 using Readarr.Core.ThingiProvider.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.HealthCheck.Checks
 {

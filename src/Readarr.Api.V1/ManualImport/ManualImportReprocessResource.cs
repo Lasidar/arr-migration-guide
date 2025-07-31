@@ -5,6 +5,7 @@ using Readarr.Core.Qualities;
 using Readarr.Api.V3.CustomFormats;
 using Readarr.Api.V3.Episodes;
 using Readarr.Http.REST;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.ManualImport
 {

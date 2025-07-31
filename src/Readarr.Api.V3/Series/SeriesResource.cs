@@ -3,6 +3,7 @@ using Readarr.Core.Languages;
 using Readarr.Core.MediaCover;
 using Readarr.Core.Books;
 using Readarr.Http.REST;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V3.Series;
 

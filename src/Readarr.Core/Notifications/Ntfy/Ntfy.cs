@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 using FluentValidation.Results;
 using Readarr.Common.Extensions;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Ntfy
 {

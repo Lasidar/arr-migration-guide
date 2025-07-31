@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Trakt.Resource
 {

@@ -10,6 +10,7 @@ using Readarr.Core.Indexers.TorrentRss;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.IndexerTests.TorrentRssIndexerTests
 {

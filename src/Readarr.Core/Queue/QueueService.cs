@@ -8,6 +8,7 @@ using Readarr.Core.Languages;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Qualities;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Queue
 {

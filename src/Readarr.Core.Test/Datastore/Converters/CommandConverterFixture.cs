@@ -5,6 +5,7 @@ using Readarr.Core.Datastore.Converters;
 using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Tv.Commands;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Datastore.Converters
 {

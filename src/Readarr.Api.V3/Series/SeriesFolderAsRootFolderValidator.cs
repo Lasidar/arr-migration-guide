@@ -1,6 +1,7 @@
 using FluentValidation.Validators;
 using Readarr.Common.Extensions;
 using Readarr.Core.Organizer;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V3.Series
 {

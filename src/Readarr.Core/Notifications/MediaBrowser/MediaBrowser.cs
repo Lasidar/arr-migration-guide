@@ -6,6 +6,7 @@ using Readarr.Common.Cache;
 using Readarr.Common.Extensions;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Emby
 {
@@ -57,7 +58,7 @@ namespace Readarr.Core.Notifications.Emby
             UpdateIfEnabled(message.Series, Created);
         }
 
-        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
+        public override void OnRename(Tv.Series series, List<RenamedBookFile> renamedFiles)
         {
             UpdateIfEnabled(series, Modified);
         }
@@ -135,7 +136,7 @@ namespace Readarr.Core.Notifications.Emby
             });
         }
 
-        private void UpdateIfEnabled(Series series, string updateType)
+        private void UpdateIfEnabled(Tv.Series series, string updateType)
         {
             if (Settings.UpdateLibrary)
             {

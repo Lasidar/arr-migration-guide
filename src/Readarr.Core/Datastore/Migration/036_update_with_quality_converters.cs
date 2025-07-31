@@ -7,6 +7,7 @@ using Readarr.Core.Datastore.Converters;
 using Readarr.Core.Datastore.Migration.Framework;
 using Readarr.Core.Profiles.Qualities;
 using Readarr.Core.Qualities;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Datastore.Migration
 {

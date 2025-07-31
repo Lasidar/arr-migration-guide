@@ -16,6 +16,7 @@ using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Test.Framework;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.HealthCheck.Checks
 {

@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Parser
 {

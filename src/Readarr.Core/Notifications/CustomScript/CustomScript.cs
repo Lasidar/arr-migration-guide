@@ -18,6 +18,7 @@ using Readarr.Core.Tags;
 using Readarr.Core.ThingiProvider;
 using Readarr.Core.Books;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.CustomScript
 {
@@ -231,7 +232,7 @@ namespace Readarr.Core.Notifications.CustomScript
             ExecuteScript(environmentVariables);
         }
 
-        public override void OnRename(Series series, List<RenamedBookFile> renamedFiles)
+        public override void OnRename(Tv.Series series, List<RenamedBookFile> renamedFiles)
         {
             var environmentVariables = new StringDictionary();
 
@@ -480,7 +481,7 @@ namespace Readarr.Core.Notifications.CustomScript
             return possibleParent.IsParentPath(path);
         }
 
-        private List<string> GetTagLabels(Series series)
+        private List<string> GetTagLabels(Tv.Series series)
         {
             if (series == null)
             {

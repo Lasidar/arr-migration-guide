@@ -11,12 +11,13 @@ using Readarr.Core.Messaging;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Books;
 using Readarr.Core.Books.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.MediaFiles
 {
     public interface IDeleteMediaFiles
     {
-        void DeleteEpisodeFile(Series series, EpisodeFile episodeFile);
+        void DeleteEpisodeFile(Tv.Series series, EpisodeFile episodeFile);
     }
 
     public class MediaFileDeletionService : IDeleteMediaFiles,
@@ -26,7 +27,7 @@ namespace Readarr.Core.MediaFiles
         private readonly IDiskProvider _diskProvider;
         private readonly IRecycleBinProvider _recycleBinProvider;
         private readonly IMediaFileService _mediaFileService;
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
         private readonly IConfigService _configService;
         private readonly IEventAggregator _eventAggregator;
         private readonly Logger _logger;
@@ -34,7 +35,7 @@ namespace Readarr.Core.MediaFiles
         public MediaFileDeletionService(IDiskProvider diskProvider,
                                         IRecycleBinProvider recycleBinProvider,
                                         IMediaFileService mediaFileService,
-                                        ISeriesService seriesService,
+                                        Tv.ISeriesService seriesService,
                                         IConfigService configService,
                                         IEventAggregator eventAggregator,
                                         Logger logger)
@@ -48,7 +49,7 @@ namespace Readarr.Core.MediaFiles
             _logger = logger;
         }
 
-        public void DeleteEpisodeFile(Series series, EpisodeFile episodeFile)
+        public void DeleteEpisodeFile(Tv.Series series, EpisodeFile episodeFile)
         {
             var fullPath = Path.Combine(series.Path, episodeFile.RelativePath);
             var rootFolder = _diskProvider.GetParentFolder(series.Path);

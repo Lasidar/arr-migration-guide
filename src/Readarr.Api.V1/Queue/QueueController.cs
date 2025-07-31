@@ -20,6 +20,7 @@ using Readarr.Http;
 using Readarr.Http.Extensions;
 using Readarr.Http.REST;
 using Readarr.Http.REST.Attributes;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Queue
 {

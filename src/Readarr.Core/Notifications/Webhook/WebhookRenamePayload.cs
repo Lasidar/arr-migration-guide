@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Webhook
 {
@@ -10,6 +11,5 @@ namespace Readarr.Core.Notifications.Webhook
         
         // TV properties (to be removed)
         public WebhookSeries Series { get; set; }
-        public List<WebhookRenamedBookFile> RenamedBookFiles { get; set; }
     }
 }

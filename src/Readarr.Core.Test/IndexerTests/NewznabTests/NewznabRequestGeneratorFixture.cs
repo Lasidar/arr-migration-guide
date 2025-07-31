@@ -7,6 +7,7 @@ using Readarr.Core.Indexers;
 using Readarr.Core.Indexers.Newznab;
 using Readarr.Core.IndexerSearch.Definitions;
 using Readarr.Core.Test.Framework;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.IndexerTests.NewznabTests
 {

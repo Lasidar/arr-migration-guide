@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using Readarr.Common.Extensions;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications;
 
 public static class NotificationMetadataLinkGenerator
 {
-    public static List<NotificationMetadataLink> GenerateLinks(Series series, IEnumerable<int> metadataLinks)
+    public static List<NotificationMetadataLink> GenerateLinks(Tv.Series series, IEnumerable<int> metadataLinks)
     {
         var links = new List<NotificationMetadataLink>();
 

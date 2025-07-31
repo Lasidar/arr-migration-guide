@@ -13,6 +13,7 @@ using Readarr.Api.V3.Episodes;
 using Readarr.Api.V3.Series;
 using Readarr.Http;
 using Readarr.Http.Extensions;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.History
 {

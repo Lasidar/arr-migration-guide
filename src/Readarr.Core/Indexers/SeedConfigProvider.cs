@@ -1,6 +1,7 @@
 using System;
 using Readarr.Core.Download.Clients;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Indexers
 {

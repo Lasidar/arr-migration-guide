@@ -6,6 +6,7 @@ using Readarr.Core.History;
 using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Books.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download.History
 {

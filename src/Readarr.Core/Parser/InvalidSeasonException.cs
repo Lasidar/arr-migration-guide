@@ -1,4 +1,5 @@
 using Readarr.Common.Exceptions;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Parser
 {

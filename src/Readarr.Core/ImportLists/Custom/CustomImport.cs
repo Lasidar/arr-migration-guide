@@ -7,6 +7,7 @@ using Readarr.Core.Configuration;
 using Readarr.Core.Localization;
 using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.ImportLists.Custom
 {

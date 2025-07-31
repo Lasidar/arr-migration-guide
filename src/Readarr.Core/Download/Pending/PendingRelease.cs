@@ -2,6 +2,7 @@ using System;
 using Readarr.Core.Books;
 using Readarr.Core.Datastore;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download.Pending
 {

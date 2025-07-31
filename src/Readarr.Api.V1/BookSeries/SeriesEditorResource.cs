@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Api.V1.Series
 {

@@ -10,6 +10,7 @@ using Readarr.Core.Parser;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Books;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.ImportLists.Sonarr
 {

@@ -1,6 +1,7 @@
 using FluentValidation;
 using Readarr.Core.Books;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.AutoTagging.Specifications
 {
@@ -15,7 +16,7 @@ namespace Readarr.Core.AutoTagging.Specifications
         public override int Order => 1;
         public override string ImplementationName => "Monitored";
 
-        protected override bool IsSatisfiedByWithoutNegate(Series series)
+        protected override bool IsSatisfiedByWithoutNegate(Tv.Series series)
         {
             return series.Monitored;
         }

@@ -3,6 +3,7 @@ using Readarr.Core.Annotations;
 using Readarr.Core.Languages;
 using Readarr.Core.Books;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.AutoTagging.Specifications
 {
@@ -24,7 +25,7 @@ namespace Readarr.Core.AutoTagging.Specifications
         [FieldDefinition(1, Label = "AutoTaggingSpecificationOriginalLanguage", Type = FieldType.Select, SelectOptions = typeof(OriginalLanguageFieldConverter))]
         public int Value { get; set; }
 
-        protected override bool IsSatisfiedByWithoutNegate(Series series)
+        protected override bool IsSatisfiedByWithoutNegate(Tv.Series series)
         {
             return Value == series.OriginalLanguage.Id;
         }

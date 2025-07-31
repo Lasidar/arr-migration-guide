@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
 {
@@ -24,7 +25,7 @@ namespace Readarr.Core.Extras.Metadata.Consumers.Xbmc
         {
         }
 
-        public KodiEpisodeGuide(Series series)
+        public KodiEpisodeGuide(Tv.Series series)
         {
             Tvdb = series.TvdbId.ToString();
             TvMaze = series.TvMazeId > 0 ? series.TvMazeId.ToString() : null;

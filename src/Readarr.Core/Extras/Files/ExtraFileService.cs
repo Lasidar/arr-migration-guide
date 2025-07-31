@@ -10,6 +10,7 @@ using Readarr.Core.MediaFiles.Events;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Books;
 using Readarr.Core.Books.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Extras.Files
 {
@@ -31,13 +32,13 @@ namespace Readarr.Core.Extras.Files
         where TExtraFile : ExtraFile, new()
     {
         private readonly IExtraFileRepository<TExtraFile> _repository;
-        private readonly ISeriesService _seriesService;
+        private readonly Tv.ISeriesService _seriesService;
         private readonly IDiskProvider _diskProvider;
         private readonly IRecycleBinProvider _recycleBinProvider;
         private readonly Logger _logger;
 
         public ExtraFileService(IExtraFileRepository<TExtraFile> repository,
-                                ISeriesService seriesService,
+                                Tv.ISeriesService seriesService,
                                 IDiskProvider diskProvider,
                                 IRecycleBinProvider recycleBinProvider,
                                 Logger logger)

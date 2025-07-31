@@ -3,6 +3,7 @@ using System.Linq;
 using Dapper;
 using Readarr.Core.Datastore;
 using Readarr.Core.Messaging.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Books
 {

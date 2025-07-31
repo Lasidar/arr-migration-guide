@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.MediaInfo;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Webhook
 {

@@ -3,6 +3,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Readarr.Core.Indexers;
 using Readarr.Core.Test.Framework;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.ParserTests
 {

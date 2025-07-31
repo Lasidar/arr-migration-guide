@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Readarr.Core.RootFolders;
 using Readarr.Core.Test.Framework;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.RootFolderTests
 {

@@ -15,6 +15,7 @@ using Readarr.Core.Qualities;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Test.Qualities;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.HistoryTests
 {

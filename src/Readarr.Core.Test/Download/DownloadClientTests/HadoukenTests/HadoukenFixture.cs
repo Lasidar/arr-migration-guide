@@ -11,6 +11,7 @@ using Readarr.Core.Download.Clients.Hadouken;
 using Readarr.Core.Download.Clients.Hadouken.Models;
 using Readarr.Core.MediaFiles.TorrentInfo;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.Download.DownloadClientTests.HadoukenTests
 {

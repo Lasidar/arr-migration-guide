@@ -1,5 +1,6 @@
 using Readarr.Core.Books;
 using Readarr.Core.Validation;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.AutoTagging.Specifications
 {
@@ -13,6 +14,6 @@ namespace Readarr.Core.AutoTagging.Specifications
         NzbDroneValidationResult Validate();
 
         IAutoTaggingSpecification Clone();
-        bool IsSatisfiedBy(Series series);
+        bool IsSatisfiedBy(Tv.Series series);
     }
 }

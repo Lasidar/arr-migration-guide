@@ -10,6 +10,7 @@ using Readarr.Core.MetadataSource.SkyHook;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
 using Readarr.Test.Common;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.TvTests
 {

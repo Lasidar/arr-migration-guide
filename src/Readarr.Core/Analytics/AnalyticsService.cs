@@ -4,6 +4,7 @@ using Readarr.Common.EnvironmentInfo;
 using Readarr.Core.Configuration;
 using Readarr.Core.Datastore;
 using Readarr.Core.History;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Analytics
 {

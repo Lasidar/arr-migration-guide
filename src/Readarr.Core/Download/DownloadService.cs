@@ -15,6 +15,7 @@ using Readarr.Core.Indexers;
 using Readarr.Core.Messaging.Events;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.MediaFiles.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Download
 {

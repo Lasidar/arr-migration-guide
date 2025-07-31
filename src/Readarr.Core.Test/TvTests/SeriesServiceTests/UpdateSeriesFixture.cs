@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Readarr.Core.AutoTagging;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.TvTests.SeriesServiceTests
 {

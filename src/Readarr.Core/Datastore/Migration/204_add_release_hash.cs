@@ -6,6 +6,7 @@ using FluentMigrator;
 using Readarr.Common.Extensions;
 using Readarr.Core.Datastore.Migration.Framework;
 using Readarr.Core.Parser.Model;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Datastore.Migration
 {

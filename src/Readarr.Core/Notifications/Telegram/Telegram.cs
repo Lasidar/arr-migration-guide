@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using Readarr.Common.Extensions;
 using Readarr.Core.Configuration;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Telegram
 {
@@ -118,7 +119,7 @@ namespace Readarr.Core.Notifications.Telegram
             return new ValidationResult(failures);
         }
 
-        private List<NotificationMetadataLink> GetLinks(Series series)
+        private List<NotificationMetadataLink> GetLinks(Tv.Series series)
         {
             return NotificationMetadataLinkGenerator.GenerateLinks(series, Settings.MetadataLinks);
         }

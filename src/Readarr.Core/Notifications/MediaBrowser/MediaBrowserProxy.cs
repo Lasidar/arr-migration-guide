@@ -5,6 +5,7 @@ using NLog;
 using Readarr.Common.Http;
 using Readarr.Common.Serializer;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications.Emby
 {
@@ -46,7 +47,7 @@ namespace Readarr.Core.Notifications.Emby
             ProcessRequest(request, settings);
         }
 
-        public HashSet<string> GetPaths(MediaBrowserSettings settings, Series series)
+        public HashSet<string> GetPaths(MediaBrowserSettings settings, Tv.Series series)
         {
             var path = "/Items";
             var url = GetUrl(settings);

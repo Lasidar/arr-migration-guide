@@ -1,6 +1,7 @@
 using System;
 using Equ;
 using Readarr.Core.ThingiProvider;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Notifications
 {

@@ -10,6 +10,7 @@ using Readarr.Core.IndexerSearch;
 using Readarr.Core.Messaging.Commands;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.IndexerSearchTests
 {

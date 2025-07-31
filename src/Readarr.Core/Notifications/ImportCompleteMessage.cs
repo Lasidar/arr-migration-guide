@@ -13,7 +13,7 @@ namespace Readarr.Core.Notifications
     public class ImportCompleteMessage
     {
         public string Message { get; set; }
-        public Series Series { get; set; }
+        public Tv.Series Series { get; set; }
         public List<Episode> Episodes { get; set; }
         public List<EpisodeFile> EpisodeFiles { get; set; }
         public string SourcePath { get; set; }

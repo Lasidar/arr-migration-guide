@@ -5,6 +5,7 @@ using NLog;
 using Readarr.Core.Books.Events;
 using Readarr.Core.Datastore;
 using Readarr.Core.Messaging.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Books
 {
@@ -39,7 +40,6 @@ namespace Readarr.Core.Books
         bool ValidateIsbn10(string isbn);
         bool ValidateAsin(string asin);
         List<Book> GetBooksBetweenDates(DateTime startDate, DateTime endDate, bool includeUnmonitored);
-        PagingSpec<Book> BooksWithoutFiles(PagingSpec<Book> pagingSpec);
     }
 
     public class BookService : IBookService
@@ -278,13 +278,6 @@ namespace Readarr.Core.Books
             var books = _bookRepository.BooksBetweenDates(startDate.ToUniversalTime(), endDate.ToUniversalTime(), includeUnmonitored);
             
             return books;
-        }
-
-        public PagingSpec<Book> BooksWithoutFiles(PagingSpec<Book> pagingSpec)
-        {
-            var booksWithoutFilesSpec = _bookRepository.BooksWithoutFiles(pagingSpec);
-            
-            return booksWithoutFilesSpec;
         }
     }
 }

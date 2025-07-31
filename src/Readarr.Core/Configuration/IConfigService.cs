@@ -5,6 +5,7 @@ using Readarr.Core.MediaFiles;
 using Readarr.Core.MediaFiles.BookImport;
 using Readarr.Core.Qualities;
 using Readarr.Core.Security;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Configuration
 {

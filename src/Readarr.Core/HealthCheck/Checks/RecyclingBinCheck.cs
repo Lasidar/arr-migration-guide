@@ -1,9 +1,11 @@
+using Readarr.Core.Books.Events;
 using System.Collections.Generic;
 using Readarr.Common.Disk;
 using Readarr.Common.Extensions;
 using Readarr.Core.Configuration;
 using Readarr.Core.Localization;
 using Readarr.Core.MediaFiles.Events;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.HealthCheck.Checks
 {

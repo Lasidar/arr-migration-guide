@@ -15,6 +15,7 @@ using Readarr.Core.Qualities;
 using Readarr.Core.Test.CustomFormats;
 using Readarr.Core.Test.Framework;
 using Readarr.Core.Books;
+using Readarr.Core.Tv;
 
 namespace Readarr.Core.Test.DecisionEngineTests.RssSync
 {
