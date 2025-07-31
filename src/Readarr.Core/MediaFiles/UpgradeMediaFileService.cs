@@ -73,15 +73,9 @@ namespace Readarr.Core.MediaFiles
         }
 
         // Book interface implementation (stub for now)
-        public BookFileUpgradeResult UpgradeBookFile(BookFile bookFile, LocalBook localBook, bool copyOnly = false)
-        {
-            // TODO: Implement book file upgrade
-            throw new NotImplementedException();
-        }
-
         public BookFileUpgradeResult UpgradeBookFile(BookFile bookFile, Parser.Model.LocalBook localBook, bool copyOnly = false)
         {
-            // Stub implementation for TV compatibility
+            // TODO: Implement book file upgrade
             throw new NotImplementedException();
         }
     }

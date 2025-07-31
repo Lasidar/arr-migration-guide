@@ -28,7 +28,7 @@ namespace Readarr.Core.Download
     public class CompletedDownloadService : ICompletedDownloadService
     {
         private readonly IEventAggregator _eventAggregator;
-        private readonly History.IHistoryService _historyService;
+        private readonly Readarr.Core.History.IHistoryService _historyService;
         private readonly IProvideImportItemService _provideImportItemService;
         private readonly IDownloadedBooksImportService _downloadedBooksImportService;
         private readonly IParsingService _parsingService;
@@ -40,7 +40,7 @@ namespace Readarr.Core.Download
         private readonly Logger _logger;
 
         public CompletedDownloadService(IEventAggregator eventAggregator,
-                                        History.IHistoryService historyService,
+                                        Readarr.Core.History.IHistoryService historyService,
                                         IProvideImportItemService provideImportItemService,
                                         IDownloadedBooksImportService downloadedBooksImportService,
                                         IParsingService parsingService,

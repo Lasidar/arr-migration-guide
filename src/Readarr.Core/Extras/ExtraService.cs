@@ -35,7 +35,7 @@ namespace Readarr.Core.Extras
         private readonly IDiskProvider _diskProvider;
         private readonly IConfigService _configService;
         private readonly List<IManageExtraFiles> _extraFileManagers;
-        private readonly Dictionary<int, Series> _seriesWithImportedFiles;
+        private readonly Dictionary<int, Tv.Series> _seriesWithImportedFiles;
 
         public ExtraService(MediaFiles.IMediaFileService mediaFileService,
                             IEpisodeService episodeService,
@@ -49,7 +49,7 @@ namespace Readarr.Core.Extras
             _diskProvider = diskProvider;
             _configService = configService;
             _extraFileManagers = extraFileManagers.OrderBy(e => e.Order).ToList();
-            _seriesWithImportedFiles = new Dictionary<int, Series>();
+            _seriesWithImportedFiles = new Dictionary<int, Tv.Series>();
         }
 
         public void ImportEpisode(LocalEpisode localEpisode, EpisodeFile episodeFile, bool isReadOnly)

@@ -353,9 +353,9 @@ namespace Readarr.Core.MetadataSource.BookInfo
             };
         }
 
-        private Series MapSeries(SeriesResource resource)
+        private Tv.Series MapSeries(SeriesResource resource)
         {
-            return new Series
+            return new Tv.Series
             {
                 ForeignSeriesId = resource.ForeignSeriesId,
                 Title = resource.Title,

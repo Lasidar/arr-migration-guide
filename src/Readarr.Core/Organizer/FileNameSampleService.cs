@@ -24,9 +24,9 @@ namespace Readarr.Core.Organizer
     public class FileNameSampleService : IFilenameSampleService
     {
         private readonly IBuildFileNames _buildFileNames;
-        private static Series _standardSeries;
-        private static Series _dailySeries;
-        private static Series _animeSeries;
+        private static Tv.Series _standardSeries;
+        private static Tv.Series _dailySeries;
+        private static Tv.Series _animeSeries;
         private static Episode _episode1;
         private static Episode _episode2;
         private static Episode _episode3;

@@ -46,7 +46,7 @@ namespace Readarr.Core.Download.TrackedDownloads
 
         public TrackedDownloadService(IParsingService parsingService,
                                       ICacheManager cacheManager,
-                                      History.IHistoryService historyService,
+                                      Readarr.Core.History.IHistoryService historyService,
                                       ICustomFormatCalculationService formatCalculator,
                                       IEventAggregator eventAggregator,
                                       IDownloadHistoryService downloadHistoryService,
