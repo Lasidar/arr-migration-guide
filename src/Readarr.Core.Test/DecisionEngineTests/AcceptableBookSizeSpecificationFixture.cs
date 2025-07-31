@@ -1,14 +1,17 @@
+using System.Collections.Generic;
+using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using Readarr.Common.Extensions;
 using Readarr.Core.Books;
+using Readarr.Core.Datastore;
 using Readarr.Core.DecisionEngine.Specifications;
 using Readarr.Core.Parser.Model;
 using Readarr.Core.Profiles.Qualities;
 using Readarr.Core.Qualities;
 using Readarr.Core.Test.Framework;
-using System.Collections.Generic;
 
 namespace Readarr.Core.Test.DecisionEngineTests
 {
@@ -17,111 +20,205 @@ namespace Readarr.Core.Test.DecisionEngineTests
     {
         private RemoteBook _remoteBook;
         private Author _author;
-        private QualityProfile _qualityProfile;
+        private Book _book;
 
         [SetUp]
         public void Setup()
         {
-            _author = TestBuilders.CreateAuthor();
-            
-            _qualityProfile = new QualityProfile
+            _author = TestBuilders.CreateAuthor(1, "Test Author");
+            _book = TestBuilders.CreateBook(1, "Test Book", _author);
+
+            _author.QualityProfile = new LazyLoaded<QualityProfile>(new QualityProfile
             {
+                Cutoff = Quality.EPUB.Id,
                 Items = new List<QualityProfileQualityItem>
                 {
                     new QualityProfileQualityItem
                     {
-                        Quality = Quality.EPUB,
-                        MinSize = 0.5,  // 0.5 MB
-                        MaxSize = 50    // 50 MB
+                        Quality = Quality.PDF,
+                        MinSize = 1,
+                        MaxSize = 10
                     },
                     new QualityProfileQualityItem
                     {
-                        Quality = Quality.PDF,
-                        MinSize = 1,    // 1 MB
-                        MaxSize = 100   // 100 MB
+                        Quality = Quality.EPUB,
+                        MinSize = 2,
+                        MaxSize = 20
+                    },
+                    new QualityProfileQualityItem
+                    {
+                        Quality = Quality.AZW3,
+                        MinSize = 5,
+                        MaxSize = null
+                    },
+                    new QualityProfileQualityItem
+                    {
+                        Quality = Quality.MOBI,
+                        MinSize = null,
+                        MaxSize = 15
                     }
                 }
-            };
-
-            _author.QualityProfile = new LazyLoaded<QualityProfile>(_qualityProfile);
+            });
 
             _remoteBook = new RemoteBook
             {
                 Author = _author,
-                Books = new List<Book> { TestBuilders.CreateBook(1, "Test Book", _author) },
-                Quality = new QualityModel(Quality.EPUB),
-                Release = Builder<ReleaseInfo>.CreateNew()
-                    .With(r => r.Size = 10 * 1024 * 1024) // 10 MB
-                    .Build()
+                Books = new List<Book> { _book },
+                Release = new ReleaseInfo(),
+                Quality = new QualityModel(Quality.EPUB, new Revision(version: 1))
             };
         }
 
-        [Test]
-        public void should_accept_if_size_is_within_limits()
+        [TestCase(5, true)]
+        [TestCase(15, true)]
+        [TestCase(1, false)]
+        [TestCase(25, false)]
+        public void should_return_expected_result_for_epub_quality(long size, bool expected)
         {
-            _remoteBook.Release.Size = 10 * 1024 * 1024; // 10 MB
+            _remoteBook.Release.Size = size.Megabytes();
+            _remoteBook.Quality = new QualityModel(Quality.EPUB, new Revision(version: 1));
 
-            Subject.IsSatisfiedBy(_remoteBook, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteBook, new ReleaseDecisionInformation()).Accepted.Should().Be(expected);
+        }
+
+        [TestCase(2, true)]
+        [TestCase(8, true)]
+        [TestCase(0.5, false)]
+        [TestCase(12, false)]
+        public void should_return_expected_result_for_pdf_quality(double sizeInMb, bool expected)
+        {
+            _remoteBook.Release.Size = sizeInMb.Megabytes();
+            _remoteBook.Quality = new QualityModel(Quality.PDF, new Revision(version: 1));
+
+            Subject.IsSatisfiedBy(_remoteBook, new ReleaseDecisionInformation()).Accepted.Should().Be(expected);
+        }
+
+        [TestCase(6, true)]
+        [TestCase(100, true)]
+        [TestCase(4, false)]
+        public void should_return_expected_result_for_azw3_quality(long size, bool expected)
+        {
+            _remoteBook.Release.Size = size.Megabytes();
+            _remoteBook.Quality = new QualityModel(Quality.AZW3, new Revision(version: 1));
+
+            Subject.IsSatisfiedBy(_remoteBook, new ReleaseDecisionInformation()).Accepted.Should().Be(expected);
+        }
+
+        [TestCase(1, true)]
+        [TestCase(14, true)]
+        [TestCase(20, false)]
+        public void should_return_expected_result_for_mobi_quality(long size, bool expected)
+        {
+            _remoteBook.Release.Size = size.Megabytes();
+            _remoteBook.Quality = new QualityModel(Quality.MOBI, new Revision(version: 1));
+
+            Subject.IsSatisfiedBy(_remoteBook, new ReleaseDecisionInformation()).Accepted.Should().Be(expected);
         }
 
         [Test]
-        public void should_reject_if_size_is_below_minimum()
-        {
-            _remoteBook.Release.Size = 100 * 1024; // 100 KB
-
-            var result = Subject.IsSatisfiedBy(_remoteBook, null);
-            
-            result.Accepted.Should().BeFalse();
-            result.Rejections[0].Type.Should().Be(RejectionType.Permanent);
-            result.Rejections[0].Reason.Should().Contain("smaller than minimum allowed");
-        }
-
-        [Test]
-        public void should_reject_if_size_is_above_maximum()
-        {
-            _remoteBook.Release.Size = 100 * 1024 * 1024; // 100 MB
-
-            var result = Subject.IsSatisfiedBy(_remoteBook, null);
-            
-            result.Accepted.Should().BeFalse();
-            result.Rejections[0].Type.Should().Be(RejectionType.Permanent);
-            result.Rejections[0].Reason.Should().Contain("larger than maximum allowed");
-        }
-
-        [Test]
-        public void should_accept_if_size_is_zero()
+        public void should_return_true_if_size_is_zero()
         {
             _remoteBook.Release.Size = 0;
-
-            Subject.IsSatisfiedBy(_remoteBook, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteBook, new ReleaseDecisionInformation()).Accepted.Should().BeTrue();
         }
 
         [Test]
-        public void should_use_quality_specific_limits()
+        public void should_return_true_if_unlimited_max_size()
         {
-            _remoteBook.Quality = new QualityModel(Quality.PDF);
-            _remoteBook.Release.Size = 80 * 1024 * 1024; // 80 MB
+            _remoteBook.Quality = new QualityModel(Quality.AZW3, new Revision(version: 1));
+            _remoteBook.Release.Size = 1000.Megabytes();
 
-            // This would be rejected for EPUB (max 50MB) but accepted for PDF (max 100MB)
-            Subject.IsSatisfiedBy(_remoteBook, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteBook, new ReleaseDecisionInformation()).Accepted.Should().BeTrue();
         }
 
         [Test]
-        public void should_accept_if_no_size_limits_set()
+        public void should_reject_if_below_minimum_size()
         {
-            _qualityProfile.Items[0].MinSize = null;
-            _qualityProfile.Items[0].MaxSize = null;
+            _remoteBook.Quality = new QualityModel(Quality.EPUB, new Revision(version: 1));
+            _remoteBook.Release.Size = 1.Megabytes();
 
-            Subject.IsSatisfiedBy(_remoteBook, null).Accepted.Should().BeTrue();
+            var result = Subject.IsSatisfiedBy(_remoteBook, new ReleaseDecisionInformation());
+            
+            result.Accepted.Should().BeFalse();
+            result.RejectionReason.Should().Be(DownloadRejectionReason.BelowMinimumSize);
         }
 
         [Test]
-        public void should_accept_if_max_size_is_unlimited()
+        public void should_reject_if_above_maximum_size()
         {
-            _qualityProfile.Items[0].MaxSize = 0;
-            _remoteBook.Release.Size = 1000 * 1024 * 1024; // 1 GB
+            _remoteBook.Quality = new QualityModel(Quality.EPUB, new Revision(version: 1));
+            _remoteBook.Release.Size = 25.Megabytes();
 
-            Subject.IsSatisfiedBy(_remoteBook, null).Accepted.Should().BeTrue();
+            var result = Subject.IsSatisfiedBy(_remoteBook, new ReleaseDecisionInformation());
+            
+            result.Accepted.Should().BeFalse();
+            result.RejectionReason.Should().Be(DownloadRejectionReason.AboveMaximumSize);
+        }
+
+        [Test]
+        public void should_handle_quality_groups()
+        {
+            var qualityProfile = new QualityProfile
+            {
+                Cutoff = Quality.EPUB.Id,
+                Items = new List<QualityProfileQualityItem>
+                {
+                    new QualityProfileQualityItem
+                    {
+                        Id = 1001,
+                        Name = "Ebook Formats",
+                        Items = new List<QualityProfileQualityItem>
+                        {
+                            new QualityProfileQualityItem { Quality = Quality.EPUB, Allowed = true },
+                            new QualityProfileQualityItem { Quality = Quality.MOBI, Allowed = true },
+                            new QualityProfileQualityItem { Quality = Quality.AZW3, Allowed = true }
+                        },
+                        Allowed = true,
+                        MinSize = 1,
+                        MaxSize = 50
+                    }
+                }
+            };
+
+            _author.QualityProfile = new LazyLoaded<QualityProfile>(qualityProfile);
+            _remoteBook.Quality = new QualityModel(Quality.EPUB, new Revision(version: 1));
+            _remoteBook.Release.Size = 30.Megabytes();
+
+            Subject.IsSatisfiedBy(_remoteBook, new ReleaseDecisionInformation()).Accepted.Should().BeTrue();
+        }
+
+        [Test]
+        public void should_use_quality_group_size_when_available()
+        {
+            var qualityProfile = new QualityProfile
+            {
+                Cutoff = Quality.EPUB.Id,
+                Items = new List<QualityProfileQualityItem>
+                {
+                    new QualityProfileQualityItem
+                    {
+                        Id = 1001,
+                        Name = "Ebook Formats",
+                        Items = new List<QualityProfileQualityItem>
+                        {
+                            new QualityProfileQualityItem { Quality = Quality.EPUB, Allowed = true },
+                            new QualityProfileQualityItem { Quality = Quality.MOBI, Allowed = true }
+                        },
+                        Allowed = true,
+                        MinSize = 5,
+                        MaxSize = 15
+                    }
+                }
+            };
+
+            _author.QualityProfile = new LazyLoaded<QualityProfile>(qualityProfile);
+            _remoteBook.Quality = new QualityModel(Quality.EPUB, new Revision(version: 1));
+            _remoteBook.Release.Size = 20.Megabytes();
+
+            var result = Subject.IsSatisfiedBy(_remoteBook, new ReleaseDecisionInformation());
+            
+            result.Accepted.Should().BeFalse();
+            result.RejectionReason.Should().Be(DownloadRejectionReason.AboveMaximumSize);
         }
     }
 }
